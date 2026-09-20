@@ -180,6 +180,10 @@ The authenticated `/api/publisher/review` endpoint accepts a request UUID and an
 existing catalog `articleId` to queue a fresh independent publication review. It
 does not accept a review verdict or new content. This supports testing the full
 pipeline and renewing evidence for existing website articles.
+If such a publisher-requested review reports findings, `/api/publisher/revise`
+accepts its task ID and a new request UUID to start a linked writer revision. This
+endpoint is limited to those review tasks and cannot override a verdict or mark
+anything Published. The writer verifies commands and runs independent review again.
 
 To use a local worker with the production console instead, set `LAVIK_ADMIN_URL`
 and `LAVIK_RUNNER_TOKEN` in the ignored `.env` alongside the model settings:

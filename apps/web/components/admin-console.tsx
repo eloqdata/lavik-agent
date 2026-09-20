@@ -767,7 +767,11 @@ export function AdminConsole() {
                                 {value === "en" ? "English" : "简体中文"}
                               </button>
                             ))}
-                            <span>Private draft</span>
+                            <span>
+                              {detail.task.status === "published"
+                                ? "Published edition"
+                                : "Private draft"}
+                            </span>
                           </div>
                           {edition ? (
                             <Preview
@@ -831,7 +835,9 @@ export function AdminConsole() {
                                 </button>
                               )}
                             </>
-                          ) : (
+                          ) : ["queued", "running"].includes(
+                              detail.task.status,
+                            ) ? (
                             <button
                               className="admin-button danger"
                               disabled={busy}
@@ -839,7 +845,7 @@ export function AdminConsole() {
                             >
                               Cancel task
                             </button>
-                          )}
+                          ) : null}
                         </div>
                       </div>
                       <details className="task-history" open>

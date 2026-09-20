@@ -13,6 +13,7 @@ import {
   publicationClaimSchema,
   publicationUpdateSchema,
   publicationReviewSchema,
+  publicationRevisionSchema,
   resultSchema,
 } from "./contracts.ts";
 import { artifactHash } from "./artifact-id.ts";
@@ -720,6 +721,40 @@ export class TaskStore {
         ),
         201,
       );
+    }
+    if (
+      path === "/api/publisher/revise" &&
+      request.method === "POST" &&
+      publisher
+    ) {
+      const input = publicationRevisionSchema.parse(body);
+      const previous = this.get(input.taskId);
+      if (
+        previous.createdBy !== "publisher" ||
+        previous.status !== "needs_revision" ||
+        !previous.role.endsWith("-reviewer") ||
+        !previous.result ||
+        !previous.articleId
+      )
+        throw new HttpError(
+          409,
+          "Only a publisher-requested review with findings can start this revision.",
+        );
+      const role =
+        previous.role === "manual-reviewer" ? "manual-writer" : "blog-writer";
+      const task = this.create(
+        taskInputSchema.parse({
+          requestId: input.requestId,
+          articleId: previous.articleId,
+          role,
+          title: "Website publication revision",
+          brief:
+            "Revise the existing website article to resolve its saved independent reviewer findings. Preserve supported facts, scope and the public URL. Align execution wording with the actual command receipts. Verify commands and independently review both language editions before automatic publication.",
+        }),
+        "publisher",
+        previous.id,
+      );
+      return json(task, 201);
     }
     if (
       path === "/api/publisher/claim" &&

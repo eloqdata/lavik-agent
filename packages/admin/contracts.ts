@@ -170,6 +170,12 @@ export const publicationReviewSchema = z
     articleId: z.string().regex(/^[a-z0-9][a-z0-9-]{0,80}$/),
   })
   .strict();
+export const publicationRevisionSchema = z
+  .object({
+    requestId: z.string().uuid(),
+    taskId: z.string().uuid(),
+  })
+  .strict();
 export const publicationUpdateSchema = z
   .object({
     leaseToken: z.string().uuid(),

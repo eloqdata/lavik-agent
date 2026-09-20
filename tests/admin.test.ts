@@ -1055,3 +1055,76 @@ test("a revision carries previous review findings and preserves an existing publ
   assert.equal(result.editions.length, 2);
   assert.equal(result.editions[1].article.slug, "reading-the-benchmark");
 });
+
+test("publisher-requested reviews can create verified revisions without overriding the review verdict", async () => {
+  const h = harness();
+  try {
+    await h.api(
+      "/api/runner/check",
+      {
+        ...worker,
+        catalog: [
+          {
+            id: "quick-start",
+            kind: "docs",
+            title: "Quick start",
+            version: "0.1.0",
+          },
+        ],
+      },
+      true,
+    );
+    const request = {
+      requestId: crypto.randomUUID(),
+      articleId: "quick-start",
+    };
+    const task = await (
+      await h.api("/api/publisher/review", request, false, true)
+    ).json();
+    const claim = await (await h.api("/api/runner/claim", worker, true)).json();
+    const result = publicationResult(task.id);
+    result.editions[0].review = {
+      verdict: "revise",
+      findings: ["Match the new execution platform."],
+      checkedSourceIds: ["readme"],
+    };
+    await h.api(
+      `/api/runner/tasks/${task.id}`,
+      { leaseToken: claim.leaseToken, stage: "complete", result },
+      true,
+    );
+    const revision = { requestId: crypto.randomUUID(), taskId: task.id };
+    assert.equal(
+      (await h.api("/api/publisher/revise", revision, true)).status,
+      404,
+    );
+    const next = await (
+      await h.api("/api/publisher/revise", revision, false, true)
+    ).json();
+    const duplicate = await (
+      await h.api("/api/publisher/revise", revision, false, true)
+    ).json();
+    assert.equal(next.id, duplicate.id);
+    assert.equal(next.parentId, task.id);
+    assert.equal(next.role, "manual-writer");
+    assert.equal(next.status, "queued");
+    assert.equal(
+      (await (await h.api(`/api/admin/tasks/${task.id}`)).json()).task.status,
+      "needs_revision",
+    );
+    assert.equal(
+      (
+        await h.api(
+          "/api/publisher/revise",
+          { requestId: crypto.randomUUID(), taskId: next.id },
+          false,
+          true,
+        )
+      ).status,
+      409,
+    );
+    assert.equal(h.store.workStatus().publications, 0);
+  } finally {
+    h.sqlite.close();
+  }
+});
