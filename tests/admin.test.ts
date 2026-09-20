@@ -277,6 +277,11 @@ test("default dispatch transport preserves Cloudflare's native fetch receiver", 
         this === undefined || this === globalThis,
         "native fetch cannot receive the dispatcher as this",
       );
+      assert.equal(
+        options?.redirect,
+        "manual",
+        "Workerd requires manual redirect handling",
+      );
       if (options?.method === "POST") {
         posts++;
         return Promise.resolve(Response.json({ workflow_run_id: 101 }));

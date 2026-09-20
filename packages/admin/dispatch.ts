@@ -61,7 +61,9 @@ export class WorkerDispatcher {
       },
       ...(body ? { body: JSON.stringify(body) } : {}),
       signal: AbortSignal.timeout(15_000),
-      redirect: "error",
+      // Workerd supports manual/follow, not Node's "error" redirect mode.
+      // Any redirect is rejected below rather than forwarding the credential.
+      redirect: "manual",
     });
     if (!response.ok) {
       const detail = [401, 403, 404].includes(response.status)
