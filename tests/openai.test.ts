@@ -72,9 +72,29 @@ test("Azure requests use the configured endpoint, deployment names and role reas
           ]
         : [
             {
+              id: `reasoning_${requests.length}`,
+              type: "reasoning",
+              summary: [],
+            },
+            {
+              id: `commentary_${requests.length}`,
+              type: "message",
+              role: "assistant",
+              phase: "commentary",
+              status: "completed",
+              content: [
+                {
+                  type: "output_text",
+                  annotations: [],
+                  text: "I have checked the evidence and will return the structured result.",
+                },
+              ],
+            },
+            {
               id: `msg_${requests.length}`,
               type: "message",
               role: "assistant",
+              phase: "final_answer",
               status: "completed",
               content: [
                 {
@@ -197,6 +217,12 @@ test("Azure requests use the configured endpoint, deployment names and role reas
     "storage",
   ]);
   assert.ok(events.some((event) => event.type === "source-inspected"));
+  assert.equal(
+    events.filter((event) => event.type === "structured-final-answer-selected")
+      .length,
+    2,
+  );
+  assert.ok(!events.some((event) => event.type === "writer-format-retry"));
   assert.ok(!JSON.stringify(events).includes(azureEnv.OPENAI_API_KEY));
 });
 
@@ -230,6 +256,79 @@ test("live provider failures emit a failure event without a completion or creden
     ["model-run-started", "model-run-failed"],
   );
   assert.ok(!JSON.stringify(events).includes(azureEnv.OPENAI_API_KEY));
+});
+
+test("phase recovery rejects ambiguous, malformed and schema-invalid final answers", async (t) => {
+  const pass = JSON.stringify({
+    verdict: "pass",
+    findings: [],
+    checkedSourceIds: [],
+  });
+  for (const scenario of [
+    "ambiguous",
+    "malformed",
+    "schema-invalid",
+    "unphased",
+    "refusal",
+  ]) {
+    const message = (id: string, phase: string | undefined, text: string) => ({
+      id,
+      type: "message",
+      role: "assistant",
+      status: "completed",
+      phase,
+      content: [{ type: "output_text", text, annotations: [] }],
+    });
+    const commentary: any = message(
+      "msg_commentary",
+      scenario === "unphased" ? undefined : "commentary",
+      "Progress commentary",
+    );
+    if (scenario === "refusal")
+      commentary.content.push({
+        type: "refusal",
+        refusal: "Cannot complete this review",
+      });
+    const output = [
+      { id: "reasoning", type: "reasoning", summary: [] },
+      commentary,
+      ...(scenario === "ambiguous"
+        ? [message("msg_first", "final_answer", pass)]
+        : []),
+      message(
+        "msg_final",
+        "final_answer",
+        scenario === "malformed"
+          ? "{invalid"
+          : scenario === "schema-invalid"
+            ? "{}"
+            : pass,
+      ),
+    ];
+    const mock = t.mock.method(
+      globalThis,
+      "fetch",
+      async () =>
+        new Response(
+          JSON.stringify({
+            id: "resp_invalid_phase",
+            object: "response",
+            created_at: 1,
+            status: "completed",
+            model: azureEnv.LAVIK_REVIEWER_MODEL,
+            output,
+            usage: { input_tokens: 10, output_tokens: 20, total_tokens: 30 },
+          }),
+          { status: 200, headers: { "content-type": "application/json" } },
+        ),
+    );
+    await assert.rejects(
+      createOpenAIRuntime(azureEnv).review(articles()[0], []),
+      /Invalid output type:/,
+      scenario,
+    );
+    mock.mock.restore();
+  }
 });
 
 for (const recover of [true, false]) {

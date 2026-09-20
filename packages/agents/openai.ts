@@ -4,6 +4,7 @@ import {
   OpenAIProvider,
   Runner,
   tool,
+  type ModelResponse,
 } from "@openai/agents";
 import { z } from "zod";
 import {
@@ -56,6 +57,40 @@ type RuntimeEvent = (
   type: string,
   data: Record<string, unknown>,
 ) => Promise<void>;
+
+// SDK 0.18 can concatenate commentary and final_answer around reasoning items.
+// Select only an explicit, valid final answer from the current response; never
+// repair JSON, select an earlier answer, or infer a review verdict.
+function structuredFinalAnswer<T>(
+  responses: ModelResponse[],
+  schema: z.ZodType<T>,
+) {
+  const messages = (responses.at(-1)?.output ?? []).flatMap((item) =>
+    item.type === "message" && item.role === "assistant" ? [item] : [],
+  );
+  const finals = messages.filter((item) => item.phase === "final_answer");
+  if (
+    finals.length !== 1 ||
+    messages.at(-1) !== finals[0] ||
+    !messages.some((item) => item.phase === "commentary") ||
+    messages.some(
+      (item) =>
+        !["commentary", "final_answer"].includes(item.phase ?? "") ||
+        item.content.some((part) => part.type !== "output_text"),
+    )
+  )
+    return;
+  try {
+    const text = finals[0].content
+      .map((part) => (part.type === "output_text" ? part.text : ""))
+      .join("");
+    const parsed = schema.safeParse(JSON.parse(text));
+    if (parsed.success)
+      return { finalOutput: parsed.data, includeInHistory: false };
+  } catch {
+    /* Malformed JSON remains a model failure. */
+  }
+}
 type ErrorCause = {
   name: string;
   message: string;
@@ -214,6 +249,17 @@ export function createOpenAIRuntime(
             }),
             {
               maxTurns: policy.maxTurnsPerAgent,
+              errorHandlers: {
+                invalidFinalOutput: async ({ runData }) => {
+                  const answer = structuredFinalAnswer(
+                    runData.rawResponses,
+                    articleSchema,
+                  );
+                  if (answer)
+                    await observed("structured-final-answer-selected", details);
+                  return answer;
+                },
+              },
               signal: signal
                 ? AbortSignal.any([
                     signal,
@@ -297,6 +343,17 @@ export function createOpenAIRuntime(
           }),
           {
             maxTurns: policy.maxTurnsPerAgent,
+            errorHandlers: {
+              invalidFinalOutput: async ({ runData }) => {
+                const answer = structuredFinalAnswer(
+                  runData.rawResponses,
+                  reviewSchema,
+                );
+                if (answer)
+                  await observed("structured-final-answer-selected", details);
+                return answer;
+              },
+            },
             signal: signal
               ? AbortSignal.any([signal, AbortSignal.timeout(config.timeoutMs)])
               : AbortSignal.timeout(config.timeoutMs),
