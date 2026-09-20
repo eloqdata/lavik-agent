@@ -86,10 +86,45 @@ same-origin JSON requests. Task results never enter the public static export.
 
 ## Run agents without an open laptop
 
-The **Process private admin tasks** GitHub Actions workflow checks for queued work
-on a five-minute cron schedule. GitHub schedules are best effort, so this is not a
-five-minute start-time guarantee. **Run workflow** can request an earlier check.
-An idle check records a heartbeat and skips Docker preparation and model calls.
+Submitting a task, revision, or retry schedules a Cloudflare Durable Object alarm
+before the queue mutation. The alarm directly starts the **Process private admin
+tasks** GitHub workflow, checks for an existing run before dispatching, and persists
+startup status and retries. It monitors active runs and starts the next queued task
+after a worker finishes. This continues with the browser and laptop closed.
+The admin console shows startup failures, the next check, and a GitHub run link.
+
+GitHub's five-minute schedule remains a best-effort backup, not the primary wake-up
+mechanism. Worker setup and GitHub runner availability still affect start time.
+An idle backup check records a heartbeat and skips Docker preparation/model calls.
+
+Connect Cloudflare to GitHub once:
+
+1. Create a [fine-grained GitHub token](https://github.com/settings/personal-access-tokens/new?name=Lavik%20worker%20dispatch&target_name=eloqdata&actions=write).
+   Choose resource owner `eloqdata`, **Only select repositories → lavik-agent**, and
+   repository permission **Actions → Read and write**. Complete organization approval
+   if required. Set an expiry appropriate to your organization and rotate before it.
+2. Install the token with `npx wrangler secret put GITHUB_DISPATCH_TOKEN --env-file /dev/null`.
+   The optional ignored `.env` entry `LAVIK_GITHUB_DISPATCH_TOKEN` is a local setup
+   input; setting it alone does not configure the deployed Worker.
+3. Keep the GitHub execution settings below enabled. New tasks request startup
+   automatically; an existing queue is recovered on its next admin/API request.
+
+The dispatch token stays in Cloudflare and can start/inspect this repository's
+workflows. Dispatch requests contain only the `main` ref, never task content.
+The workflow itself retains read-only repository permissions. A GitHub App with
+short-lived installation tokens is the future replacement for token rotation.
+
+Startup requests are retried after checking GitHub; a lost response waits at least
+two minutes before another dispatch. This is at-least-once delivery, with the queue's
+single-task lease preventing concurrent execution of the same task. A worker whose
+task lease expires is marked failed for inspection, not automatically rerun.
+GitHub/credential failures back off up to five minutes and remain visible.
+
+For an operational check, a trusted runner can send `POST /api/runner/wake` with an
+empty JSON object and its bearer credential. This durably requests a startup probe;
+the next valid worker heartbeat clears it. An empty queue incurs no model calls.
+`GET /api/runner/status` with the same credential reports queue counts, task IDs,
+stages and dispatcher status without briefs, drafts or feedback.
 
 Configure the following repository secrets and variables before enabling it:
 
@@ -100,7 +135,7 @@ Configure the following repository secrets and variables before enabling it:
 | Variables `OPENAI_BASE_URL`, `LAVIK_WRITER_MODEL`, `LAVIK_REVIEWER_MODEL`                  | Explicit endpoint and deployment names                  |
 | Variables `LAVIK_WRITER_REASONING_EFFORT`, `LAVIK_REVIEWER_REASONING_EFFORT`               | Explicit reasoning effort for each role                 |
 | Variables `LAVIK_WRITER_MAX_TOKENS`, `LAVIK_REVIEWER_MAX_TOKENS`, `LAVIK_AGENT_TIMEOUT_MS` | Invocation budgets                                      |
-| Variable `LAVIK_ADMIN_WORKER_ENABLED=true`                                                 | Enable scheduled and manually dispatched execution      |
+| Variable `LAVIK_ADMIN_WORKER_ENABLED=true`                                                 | Enable automatically dispatched and backup execution    |
 
 The workflow has read-only repository permissions and does not publish task briefs,
 drafts, feedback or transcripts as GitHub artifacts. The repository is public;

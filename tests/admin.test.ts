@@ -14,6 +14,11 @@ import { storedReceipt } from "../packages/content/gate.ts";
 import type { AgentRuntime } from "../packages/agents/workflow.ts";
 import type { Task } from "../packages/admin/contracts.ts";
 import workerApp from "../apps/worker/index.ts";
+import { AdminStore } from "../apps/worker/index.ts";
+import {
+  WorkerDispatcher,
+  type AlarmStorage,
+} from "../packages/admin/dispatch.ts";
 
 test("production worker keeps public pages available and fails closed before Access is configured", async () => {
   let storeCalls = 0;
@@ -116,7 +121,7 @@ function harness() {
         ...(body ? { body: JSON.stringify(body) } : {}),
       }),
     );
-  return { db, sqlite, api };
+  return { db, sqlite, api, store };
 }
 const input = () => ({
   requestId: crypto.randomUUID(),
@@ -130,6 +135,282 @@ const worker = {
   reviewerModel: "test-reviewer",
   catalog: [],
 };
+
+function dispatchHarness(http: typeof fetch, configured = true) {
+  const h = harness();
+  let clock = Date.now();
+  let next: number | null = null;
+  const alarms: AlarmStorage = {
+    async getAlarm() {
+      return next;
+    },
+    async setAlarm(at) {
+      next = at;
+    },
+    async deleteAlarm() {
+      next = null;
+    },
+  };
+  const config = configured
+    ? { GITHUB_DISPATCH_TOKEN: "private-test-token" }
+    : {};
+  const recreate = () =>
+    new WorkerDispatcher(h.store, alarms, config, http, () => clock);
+  return {
+    ...h,
+    alarms,
+    config,
+    recreate,
+    get next() {
+      return next;
+    },
+    async tick() {
+      assert.notEqual(next, null);
+      clock = next!;
+      next = null;
+      await recreate().alarm();
+    },
+  };
+}
+
+test("durable alarms dispatch once, recover after restart, monitor startup and hand off queued tasks", async () => {
+  let posts = 0;
+  let active = false;
+  const h = dispatchHarness(async (url, options) => {
+    assert.ok(
+      String(url).startsWith(
+        "https://api.github.com/repos/eloqdata/lavik-agent/actions/",
+      ),
+    );
+    assert.equal(
+      new Headers(options?.headers).get("Authorization"),
+      "Bearer private-test-token",
+    );
+    if (options?.method === "POST") {
+      posts++;
+      assert.deepEqual(JSON.parse(options.body as string), { ref: "main" });
+      active = true;
+      return Response.json({ workflow_run_id: posts });
+    }
+    return Response.json({
+      workflow_runs: active
+        ? [
+            {
+              id: posts,
+              status: "in_progress",
+              created_at: new Date().toISOString(),
+            },
+          ]
+        : [],
+    });
+  });
+  try {
+    await h.api("/api/admin/tasks", input());
+    await h.api("/api/admin/tasks", input());
+    await h.recreate().ensureAlarm();
+    await h.tick();
+    assert.equal(posts, 1);
+    assert.equal(h.store.dispatchStatus().state, "starting");
+    assert.match(h.store.dispatchStatus().runUrl!, /\/runs\/1$/);
+    await Promise.all([h.recreate().ensureAlarm(), h.recreate().ensureAlarm()]);
+    await h.tick();
+    assert.equal(posts, 1, "an active run must not be dispatched again");
+    const claim = await (await h.api("/api/runner/claim", worker, true)).json();
+    await h.tick();
+    assert.equal(h.store.dispatchStatus().state, "running");
+    await h.api(
+      `/api/runner/tasks/${claim.task.id}`,
+      { leaseToken: claim.leaseToken, stage: "failed", error: "Test failure" },
+      true,
+    );
+    active = false;
+    await h.tick();
+    assert.equal(posts, 2, "remaining queue starts without a browser or cron");
+    const next = await (await h.api("/api/runner/claim", worker, true)).json();
+    await h.api(`/api/admin/tasks/${next.task.id}/cancel`, {});
+    await h.tick();
+    assert.equal(h.store.dispatchStatus().state, "idle");
+    assert.equal(h.next, null);
+  } finally {
+    h.sqlite.close();
+  }
+});
+
+test("lost dispatch responses reconcile an existing GitHub run before retrying", async () => {
+  let posts = 0;
+  const h = dispatchHarness(async (_url, options) => {
+    if (options?.method === "POST") {
+      posts++;
+      throw new Error("private-test-token network details must not be saved");
+    }
+    return Response.json({
+      workflow_runs: posts
+        ? [{ id: 42, status: "queued", created_at: new Date().toISOString() }]
+        : [],
+    });
+  });
+  try {
+    await h.api("/api/admin/tasks", input());
+    await h.recreate().ensureAlarm();
+    await h.tick();
+    assert.equal(h.store.dispatchStatus().state, "retrying");
+    assert.doesNotMatch(
+      JSON.stringify(h.store.dispatchStatus()),
+      /private-test-token/,
+    );
+    await h.tick();
+    assert.equal(posts, 1);
+    assert.equal(h.store.dispatchStatus().state, "starting");
+    assert.match(h.store.dispatchStatus().runUrl!, /42$/);
+  } finally {
+    h.sqlite.close();
+  }
+});
+
+test("authenticated startup probe exercises dispatch without creating tasks or invoking a model", async () => {
+  let posts = 0;
+  const h = dispatchHarness(async (_url, options) => {
+    if (options?.method === "POST") {
+      posts++;
+      return Response.json({ workflow_run_id: 99 });
+    }
+    return Response.json({ workflow_runs: [] });
+  });
+  try {
+    assert.equal((await h.api("/api/runner/wake", {})).status, 404);
+    assert.equal(
+      (
+        await h.api(
+          "/api/runner/wake",
+          { brief: "Do not accept task content" },
+          true,
+        )
+      ).status,
+      400,
+    );
+    await h.recreate().ensureAlarm();
+    assert.equal((await h.api("/api/runner/wake", {}, true)).status, 202);
+    await h.tick();
+    assert.equal(posts, 1);
+    assert.equal(h.store.workStatus().queued, 0);
+    assert.equal(h.store.workStatus().probe, true);
+    assert.equal(
+      (await (await h.api("/api/runner/check", worker, true)).json()).ready,
+      false,
+    );
+    await h.tick();
+    assert.equal(h.store.workStatus().probe, false);
+    assert.equal(h.next, null);
+  } finally {
+    h.sqlite.close();
+  }
+});
+
+test("missing or expired dispatch credentials are visible, recoverable, and do not lose tasks", async () => {
+  let calls = 0;
+  const h = dispatchHarness(async () => {
+    calls++;
+    return new Response("private-test-token provider error", { status: 401 });
+  }, false);
+  try {
+    await h.api("/api/admin/tasks", input());
+    await h.recreate().ensureAlarm();
+    await h.tick();
+    assert.equal(calls, 0);
+    assert.equal(h.store.dispatchStatus().state, "unconfigured");
+    const oldAlarm = h.next;
+    h.config.GITHUB_DISPATCH_TOKEN = "private-test-token";
+    await h.recreate().ensureAlarm();
+    assert.ok(h.next! < oldAlarm!);
+    await h.tick();
+    assert.equal(calls, 1);
+    assert.equal(h.store.workStatus().queued, 1);
+    assert.match(h.store.dispatchStatus().message, /401/);
+    assert.doesNotMatch(
+      JSON.stringify(h.store.dispatchStatus()),
+      /private-test-token/,
+    );
+    const firstRetry = h.next;
+    await h.tick();
+    assert.ok(h.next! - firstRetry! >= 120_000, "failures back off durably");
+    assert.equal(
+      (await (await h.api("/api/admin/dashboard")).json()).dispatch.state,
+      "retrying",
+    );
+  } finally {
+    h.sqlite.close();
+  }
+});
+
+test("a cancellation during GitHub lookup prevents a useless worker launch", async () => {
+  let task: Task;
+  let posts = 0;
+  const h = dispatchHarness(async (_url, options) => {
+    if (options?.method === "POST") posts++;
+    await h.api(`/api/admin/tasks/${task.id}/cancel`, {});
+    return Response.json({ workflow_runs: [] });
+  });
+  try {
+    task = await (await h.api("/api/admin/tasks", input())).json();
+    await h.recreate().ensureAlarm();
+    await h.tick();
+    assert.equal(posts, 0);
+    await h.tick();
+    assert.equal(h.next, null);
+  } finally {
+    h.sqlite.close();
+  }
+});
+
+test("queue mutations require a persisted alarm and operational status is authenticated without content", async () => {
+  const h = harness();
+  let fail = true;
+  let alarm: number | null = null;
+  const app = new AdminStore(
+    {
+      storage: {
+        ...h.db,
+        async getAlarm() {
+          return alarm;
+        },
+        async setAlarm(at) {
+          if (fail) throw new Error("Storage unavailable");
+          alarm = at;
+        },
+        async deleteAlarm() {
+          alarm = null;
+        },
+      },
+    },
+    {},
+  );
+  const create = () =>
+    app.fetch(
+      new Request("https://lavik.dev/api/admin/tasks", {
+        method: "POST",
+        headers: { "X-Admin-Actor": "owner@example.test" },
+        body: JSON.stringify(input()),
+      }),
+    );
+  try {
+    await assert.rejects(create(), /Storage unavailable/);
+    assert.equal(h.store.workStatus().queued, 0);
+    fail = false;
+    assert.equal((await create()).status, 201);
+    assert.notEqual(alarm, null);
+    assert.equal((await h.api("/api/runner/status")).status, 404);
+    const response = await h.api("/api/runner/status", undefined, true);
+    const status = await response.json();
+    assert.equal(status.queued, 1);
+    assert.equal(status.tasks.length, 1);
+    assert.doesNotMatch(
+      JSON.stringify(status),
+      /Explain storage|NVMe|owner@example/,
+    );
+  } finally {
+    h.sqlite.close();
+  }
+});
 test("durable queue is idempotent, claims one task, and rejects stale callbacks after cancellation", async () => {
   const { api, sqlite } = harness();
   try {

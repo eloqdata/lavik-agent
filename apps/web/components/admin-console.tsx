@@ -391,9 +391,21 @@ export function AdminConsole() {
             </div>
             <div className="worker-strip">
               <span className={`worker-dot ${recentRunner ? "online" : ""}`} />
-              {recentRunner
-                ? `${data?.counts.running ? "Worker running" : "Worker checked in"} · ${recentRunner.model}`
-                : "Waiting for a worker"}
+              {data?.counts.queued && !data.counts.running
+                ? (data.dispatch?.message ?? "Requesting a worker…")
+                : recentRunner
+                  ? `${data?.counts.running ? "Worker running" : "Worker checked in"} · ${recentRunner.model}`
+                  : "Worker idle"}
+              {data?.dispatch?.runUrl && (
+                <a href={data.dispatch.runUrl} target="_blank" rel="noreferrer">
+                  View worker run ↗
+                </a>
+              )}
+              {!!data?.counts.queued && data.dispatch?.nextAttemptAt && (
+                <span>
+                  Next startup check {when(data.dispatch.nextAttemptAt)}
+                </span>
+              )}
               <span>
                 {data?.runners[0]
                   ? `Last heartbeat ${when(data.runners[0].lastSeenAt)}`
@@ -596,7 +608,19 @@ export function AdminConsole() {
                       </div>
                       <h3>{task.title}</h3>
                       <p>{roles.find((r) => r.id === task.role)?.name}</p>
-                      <small>{task.stage}</small>
+                      <small>
+                        {task.status === "queued"
+                          ? data.counts.running
+                            ? "Queued behind the current task"
+                            : data.dispatch?.state === "starting"
+                              ? "Worker starting"
+                              : data.dispatch?.state === "retrying"
+                                ? "Worker startup will retry"
+                                : data.dispatch?.state === "unconfigured"
+                                  ? "Worker connection required"
+                                  : "Worker startup scheduled"
+                          : task.stage}
+                      </small>
                     </button>
                   ))
                 )}

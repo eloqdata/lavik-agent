@@ -5,19 +5,40 @@ import {
   type AuthConfig,
 } from "../../packages/admin/auth.ts";
 import { TaskStore, json, type Database } from "../../packages/admin/store.ts";
+import {
+  WorkerDispatcher,
+  type AlarmStorage,
+  type DispatchConfig,
+} from "../../packages/admin/dispatch.ts";
 
 type Fetcher = { fetch(request: Request): Promise<Response> };
-type Env = AuthConfig & {
-  ASSETS: Fetcher;
-  ADMIN_STORE: { idFromName(name: string): unknown; get(id: unknown): Fetcher };
-};
+type Env = AuthConfig &
+  DispatchConfig & {
+    ASSETS: Fetcher;
+    ADMIN_STORE: {
+      idFromName(name: string): unknown;
+      get(id: unknown): Fetcher;
+    };
+  };
 export class AdminStore {
   private store: TaskStore;
-  constructor(state: { storage: Database }) {
+  private dispatcher: WorkerDispatcher;
+  constructor(
+    state: { storage: Database & AlarmStorage },
+    env: DispatchConfig,
+  ) {
     this.store = new TaskStore(state.storage);
+    this.dispatcher = new WorkerDispatcher(this.store, state.storage, env);
   }
-  fetch(request: Request) {
+  async fetch(request: Request) {
+    // Also recovers pre-existing queues when deploying the dispatcher.
+    const work = this.store.workStatus();
+    if (request.method === "POST" || work.queued || work.running || work.probe)
+      await this.dispatcher.ensureAlarm();
     return this.store.fetch(request);
+  }
+  alarm() {
+    return this.dispatcher.alarm();
   }
 }
 export default {

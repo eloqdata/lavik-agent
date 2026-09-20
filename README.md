@@ -45,7 +45,7 @@ The private [admin console](https://lavik.dev/admin/) manages user manual writer
 blog writers and their independent reviewers. Assign bilingual tasks, inspect real
 worker status, read drafts and execution evidence, and give feedback for revisions.
 Tasks persist in a Cloudflare SQLite Durable Object. See [admin setup and operations](docs/admin.md)
-for Cloudflare Access and the scheduled GitHub/local worker. Admin results are private
+for Cloudflare Access and the automatically started GitHub/local worker. Admin results are private
 reviewed drafts; connecting them to automatic publication is the next increment.
 
 The existing CLI below already writes, reviews and publishes new bilingual blog campaigns:

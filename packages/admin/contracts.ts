@@ -145,6 +145,15 @@ export type Dashboard = {
   runners: RunnerStatus[];
   counts: Record<TaskStatus, number>;
   email: string;
+  dispatch?: DispatchStatus;
+};
+export type DispatchStatus = {
+  state: "idle" | "starting" | "running" | "retrying" | "unconfigured";
+  message: string;
+  attempts: number;
+  lastAttemptAt?: string;
+  nextAttemptAt?: string;
+  runUrl?: string;
 };
 export type TaskDetail = { task: Task; events: TaskEvent[] };
 export const heartbeatSchema = z

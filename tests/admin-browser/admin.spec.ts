@@ -91,6 +91,9 @@ test("admin persists tasks, displays worker progress, saves feedback and preserv
   ).toHaveLength(1);
   await page.unroute("**/api/admin/tasks");
   await page.reload();
+  await expect(page.locator(".worker-strip")).toContainText(
+    "Automatic worker startup needs its GitHub connection",
+  );
   await page.locator(".task-row").filter({ hasText: title }).click();
   await expect(page.locator(".task-title")).toHaveText(title);
   const claim = await (

@@ -8,6 +8,7 @@ import {
   type Task,
   type TaskEvent,
   type RunnerStatus,
+  type DispatchStatus,
 } from "./contracts.ts";
 
 type Value = string | number | null;
@@ -45,8 +46,67 @@ export class TaskStore {
       CREATE TABLE IF NOT EXISTS events (seq INTEGER PRIMARY KEY AUTOINCREMENT, id TEXT UNIQUE NOT NULL, task_id TEXT NOT NULL, body TEXT NOT NULL);
       CREATE INDEX IF NOT EXISTS task_events ON events(task_id, seq);
       CREATE TABLE IF NOT EXISTS runners (id TEXT PRIMARY KEY, body TEXT NOT NULL);
+      CREATE TABLE IF NOT EXISTS dispatcher (id INTEGER PRIMARY KEY CHECK (id = 1), body TEXT NOT NULL);
+      CREATE TABLE IF NOT EXISTS worker_probe (id INTEGER PRIMARY KEY CHECK (id = 1));
       CREATE INDEX IF NOT EXISTS task_status ON tasks(json_extract(body, '$.status'), created_at, id);
       CREATE INDEX IF NOT EXISTS runner_seen ON runners(json_extract(body, '$.lastSeenAt'));`);
+  }
+  dispatchStatus(): DispatchStatus {
+    const row = this.db.sql
+      .exec<{ body: string }>("SELECT body FROM dispatcher WHERE id = 1")
+      .toArray()[0];
+    return row
+      ? JSON.parse(row.body)
+      : {
+          state: "idle",
+          message: "Worker idle",
+          attempts: 0,
+        };
+  }
+  saveDispatch(status: DispatchStatus) {
+    this.db.sql.exec(
+      "INSERT INTO dispatcher (id,body) VALUES (1,?) ON CONFLICT(id) DO UPDATE SET body=excluded.body",
+      JSON.stringify(status),
+    );
+  }
+  // Operational metadata only: briefs, drafts and feedback stay in the admin API.
+  workStatus() {
+    const tasks = this.db.sql
+      .exec<{
+        id: string;
+        status: Task["status"];
+        stage: string;
+        leaseExpiresAt: string | null;
+        runUrl: string | null;
+      }>(
+        "SELECT id, json_extract(body, '$.status') AS status, json_extract(body, '$.stage') AS stage, json_extract(body, '$.leaseExpiresAt') AS leaseExpiresAt, json_extract(body, '$.runUrl') AS runUrl FROM tasks ORDER BY created_at DESC, rowid DESC LIMIT 100",
+      )
+      .toArray();
+    const queued = this.db.sql
+      .exec<{ total: number }>(
+        "SELECT COUNT(*) AS total FROM tasks WHERE json_extract(body, '$.status') = 'queued'",
+      )
+      .toArray()[0].total;
+    const running = this.list("running", true)[0];
+    return {
+      queued,
+      probe:
+        this.db.sql.exec("SELECT id FROM worker_probe WHERE id = 1").toArray()
+          .length > 0,
+      running: running
+        ? {
+            id: running.id,
+            stage: running.stage,
+            leaseExpiresAt: running.leaseExpiresAt,
+            runUrl: running.runUrl,
+          }
+        : null,
+      tasks,
+      dispatch: this.dispatchStatus(),
+    };
+  }
+  refreshLeases() {
+    this.db.transactionSync(() => this.expireLeases());
   }
   private get(id: string): Task {
     const row = this.db.sql
@@ -226,7 +286,23 @@ export class TaskStore {
         )
         .toArray()
         .map((row) => JSON.parse(row.body) as RunnerStatus);
-      return json({ tasks: summaries, counts, runners, email: actor });
+      return json({
+        tasks: summaries,
+        counts,
+        runners,
+        email: actor,
+        dispatch: this.dispatchStatus(),
+      });
+    }
+    if (path === "/api/runner/status" && request.method === "GET" && runner)
+      return json(this.workStatus());
+    // An authenticated operations probe exercises alarm -> GitHub -> heartbeat.
+    // With an empty task queue the workflow skips Docker and model calls.
+    if (path === "/api/runner/wake" && request.method === "POST" && runner) {
+      if (!body || typeof body !== "object" || Object.keys(body).length)
+        throw new HttpError(400, "Expected an empty JSON object");
+      this.db.sql.exec("INSERT OR IGNORE INTO worker_probe (id) VALUES (1)");
+      return json({ scheduled: true }, 202);
     }
     if (path === "/api/admin/tasks" && request.method === "POST")
       return json(this.create(taskInputSchema.parse(body), actor), 201);
@@ -328,6 +404,7 @@ export class TaskStore {
       runner
     ) {
       const input = heartbeatSchema.parse(body);
+      this.db.sql.exec("DELETE FROM worker_probe");
       const status = { ...input, lastSeenAt: now() };
       this.db.sql.exec(
         "INSERT INTO runners(id,body) VALUES (?,?) ON CONFLICT(id) DO UPDATE SET body=excluded.body",
