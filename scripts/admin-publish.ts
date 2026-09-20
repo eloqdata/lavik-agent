@@ -136,8 +136,13 @@ if (!claim.task) {
       );
       if (allowDifference && failure.code === 1)
         return { code: 1, output: failure.stdout ?? "" };
+      const detail = redact((failure.stderr ?? "") + (failure.stdout ?? ""))
+        .trim()
+        .slice(-1300);
+      // This exception is saved only to authenticated admin storage; workflow
+      // logs print the task ID and outcome, not command output or draft content.
       throw new Error(
-        `Publication step ${commandNumber} (${program}) failed. Inspect the publisher run; private command output was not published.`,
+        `Publication step ${commandNumber} (${program}) failed.${detail ? `\n${detail}` : " Check the publisher connection and permissions."}`,
       );
     }
   }
