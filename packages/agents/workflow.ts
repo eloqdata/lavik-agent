@@ -28,13 +28,14 @@ export interface AgentRuntime {
       feedback: string[];
       previous?: Article;
       kind?: "blog" | "docs";
+      rendererVersion?: 2;
     },
     verify: (id: string) => Promise<Receipt>,
   ): Promise<Article>;
   review(
     article: Article,
     receipts: Receipt[],
-    context?: { feedback: string[] },
+    context?: { feedback: string[]; rendererVersion?: 2 },
   ): Promise<Review>;
   identity: string;
 }

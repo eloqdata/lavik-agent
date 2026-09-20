@@ -135,6 +135,7 @@ export async function executeTask(
               kind: role.kind,
               previous: article,
               feedback,
+              rendererVersion: 2,
             },
             verify,
           ),
@@ -189,6 +190,7 @@ export async function executeTask(
         : reviewSchema.parse(
             await runtime.review(article!, receipts, {
               feedback: [task.brief, ...ownerFeedback],
+              rendererVersion: 2,
             }),
           );
       const cited = article!.blocks.flatMap((b) =>

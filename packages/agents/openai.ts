@@ -29,6 +29,7 @@ import {
 import { estimateCost } from "../content/economics.ts";
 import { policy, type AgentRuntime } from "./workflow.ts";
 import { openAIConfig } from "./config.ts";
+import { publicationRenderingHash } from "../content/publication-context.ts";
 
 const costTool = () =>
   tool({
@@ -93,7 +94,7 @@ const sourceTool = (
       return JSON.stringify(results);
     },
   });
-const context = (article?: Article) => {
+const context = (article?: Article, rendererVersion?: 2) => {
   const usedClaims = article
     ? claims.filter((claim) =>
         article.blocks.some(
@@ -120,9 +121,19 @@ const context = (article?: Article) => {
     ...(article ? { requiredSourceIds: [...required] } : {}),
     recipes,
     blockDefinitions: {
-      renderingHash: renderingHash(),
+      renderingHash:
+        rendererVersion === 2 ? publicationRenderingHash() : renderingHash(),
+      activeRenderer:
+        rendererVersion === 2
+          ? "apps/web/components/content-v2.tsx"
+          : "apps/web/components/content.tsx",
       files: Object.fromEntries(
-        renderingFiles.map((file) => [file, readText(file)]),
+        [
+          ...renderingFiles,
+          ...(rendererVersion === 2
+            ? ["apps/web/components/content-v2.tsx"]
+            : []),
+        ].map((file) => [file, readText(file)]),
       ),
       expectedRecipeHashes: Object.fromEntries(
         recipes.map((recipe) => [recipe.id, recipeHash(recipe.id)]),
@@ -199,7 +210,7 @@ export function createOpenAIRuntime(
                     "The previous response failed article schema validation. Return a complete article object matching the supplied JSON schema, including its exact block types, required fields, identifiers and length limits. Keep all factual verification requirements.",
                   ]
                 : input.feedback,
-              context: context(),
+              context: context(undefined, input.rendererVersion),
             }),
             {
               maxTurns: policy.maxTurnsPerAgent,
@@ -245,7 +256,7 @@ export function createOpenAIRuntime(
     async review(
       article: Article,
       receipts: Receipt[],
-      reviewContext?: { feedback: string[] },
+      reviewContext?: { feedback: string[]; rendererVersion?: 2 },
     ) {
       const details = {
         role: "reviewer",
@@ -281,7 +292,7 @@ export function createOpenAIRuntime(
           JSON.stringify({
             article,
             receipts,
-            context: context(article),
+            context: context(article, reviewContext?.rendererVersion),
             feedback: reviewContext?.feedback ?? [],
           }),
           {

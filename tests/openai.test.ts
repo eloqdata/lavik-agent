@@ -9,6 +9,7 @@ import {
   renderingHash,
 } from "../packages/content/repository.ts";
 import type { Article } from "../packages/content/schema.ts";
+import { publicationRenderingHash } from "../packages/content/publication-context.ts";
 
 const azureEnv = {
   OPENAI_API_KEY: "azure-test-key",
@@ -108,7 +109,7 @@ test("Azure requests use the configured endpoint, deployment names and role reas
     events.push({ type, data });
   });
   const written = await runtime.write(
-    { brief: "A test brief", locale: "en", feedback: [] },
+    { brief: "A test brief", locale: "en", feedback: [], rendererVersion: 2 },
     async () => {
       throw new Error(
         "No verification recipe was requested in this transport test",
@@ -116,7 +117,10 @@ test("Azure requests use the configured endpoint, deployment names and role reas
     },
   );
   assert.deepEqual(written, article);
-  const reviewed = await runtime.review(written, []);
+  const reviewed = await runtime.review(written, [], {
+    feedback: [],
+    rendererVersion: 2,
+  });
   assert.deepEqual(reviewed, {
     verdict: "pass",
     findings: [],
@@ -153,7 +157,18 @@ test("Azure requests use the configured endpoint, deployment names and role reas
     context.sources.map((source: any) => source.id).sort(),
     required,
   );
-  assert.equal(context.blockDefinitions.renderingHash, renderingHash());
+  assert.equal(
+    context.blockDefinitions.renderingHash,
+    publicationRenderingHash(),
+  );
+  assert.equal(
+    context.blockDefinitions.activeRenderer,
+    "apps/web/components/content-v2.tsx",
+  );
+  assert.match(
+    context.blockDefinitions.files["apps/web/components/content-v2.tsx"],
+    /receipt=\{receipts.find/,
+  );
   assert.equal(
     context.blockDefinitions.expectedRecipeHashes["basic-commands"],
     recipeHash("basic-commands"),
@@ -230,6 +245,16 @@ for (const recover of [true, false]) {
         assert.equal(request.url, `${azureEnv.OPENAI_BASE_URL}responses`);
         const body = JSON.parse(await request.text());
         inputs.push(JSON.stringify(body.input));
+        const user = body.input.find((item: any) => item.role === "user");
+        const payload = JSON.parse(
+          typeof user.content === "string"
+            ? user.content
+            : user.content[0].text,
+        );
+        assert.equal(
+          JSON.parse(payload.context).blockDefinitions.renderingHash,
+          renderingHash(),
+        );
         return new Response(
           JSON.stringify({
             id: `resp_format_${inputs.length}`,

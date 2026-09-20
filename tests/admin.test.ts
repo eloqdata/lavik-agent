@@ -950,13 +950,15 @@ test("manual writing checkpoints both languages, passes owner feedback and indep
     checkpoints = 0;
   runtime.write = async (input, verify) => {
     assert.equal(input.kind, "docs");
+    assert.equal(input.rendererVersion, 2);
     assert.ok(input.feedback.includes("State prerequisites."));
     return write(input, verify);
   };
-  runtime.review = async (article, receipts) => {
+  runtime.review = async (article, receipts, context) => {
     reviews++;
     assert.equal(article.kind, "docs");
     assert.equal(receipts[0].status, "passed");
+    assert.equal(context?.rendererVersion, 2);
     return { verdict: "pass", findings: [], checkedSourceIds: ["readme"] };
   };
   const result = await executeTask(
