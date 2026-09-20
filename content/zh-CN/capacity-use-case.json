@@ -1,0 +1,51 @@
+{
+  "id": "capacity-use-case",
+  "locale": "zh-CN",
+  "version": "0.1.0",
+  "kind": "use-case",
+  "slug": "datasets-beyond-memory",
+  "title": "当数据容量超出内存",
+  "summary": "面向大容量键值数据集应用的评估场景。",
+  "updatedAt": "2026-09-19",
+  "blocks": [
+    {
+      "type": "paragraph",
+      "text": "如果将所有值保存在 DRAM 中限制了数据集规模，或使容量扩展变得困难，可以考虑评估 Lavik。这是基于存储架构提出的评估场景，不是客户部署案例。",
+      "sources": [
+        "readme",
+        "storage"
+      ]
+    },
+    {
+      "type": "claim",
+      "claimId": "storage-model"
+    },
+    {
+      "type": "heading",
+      "text": "设计有代表性的试用"
+    },
+    {
+      "type": "paragraph",
+      "text": "使用真实的值大小、键分布、并发量、命令比例和数据集规模，在目标流量下测量尾延迟，并将恢复和复制要求纳入评估。公开基准提供参考负载，不能替代针对自身应用的测试。",
+      "sources": [
+        "benchmark",
+        "readme"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "比较完整成本"
+    },
+    {
+      "type": "paragraph",
+      "text": "成本对比需要明确价格、可用容量、副本数、CPU、内存、存储和运维假设。在把容量单价差异解释为应用成本节约之前，应先匹配所需的延迟和持久性。",
+      "sources": [
+        "benchmark"
+      ]
+    },
+    {
+      "type": "claim",
+      "claimId": "durability"
+    }
+  ]
+}

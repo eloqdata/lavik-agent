@@ -1,0 +1,42 @@
+{
+  "id": "compatibility",
+  "locale": "en",
+  "version": "0.1.0",
+  "kind": "docs",
+  "slug": "compatibility",
+  "title": "Compatibility and boundaries",
+  "summary": "Evaluate the Redis commands and operational behavior your application actually uses.",
+  "updatedAt": "2026-09-19",
+  "blocks": [
+    {
+      "type": "claim",
+      "claimId": "protocol"
+    },
+    {
+      "type": "heading",
+      "text": "Data structures"
+    },
+    {
+      "type": "paragraph",
+      "text": "The release documentation lists Strings, Lists, Hashes, Sets, Sorted Sets, and Streams, alongside pipelining, Pub/Sub, Lua scripts, and Functions. This overview does not certify every command option or every client library.",
+      "sources": [
+        "readme"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "Transactions and cluster routing"
+    },
+    {
+      "type": "paragraph",
+      "text": "Multi-key operations can coordinate across worker partitions within a node. Cluster mode retains Redis Cluster’s same-slot requirement for multi-key commands. Test transactions and scripts with the topology you intend to deploy.",
+      "sources": [
+        "readme"
+      ]
+    },
+    {
+      "type": "claim",
+      "claimId": "durability"
+    }
+  ]
+}

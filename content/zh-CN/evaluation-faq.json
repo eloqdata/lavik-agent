@@ -1,0 +1,55 @@
+{
+  "id": "evaluation-faq",
+  "locale": "zh-CN",
+  "version": "0.1.0",
+  "kind": "faq",
+  "slug": "evaluation",
+  "title": "开始前的常见问题",
+  "summary": "评估 Lavik 0.1.0 时需要了解的实际问题。",
+  "updatedAt": "2026-09-19",
+  "blocks": [
+    {
+      "type": "heading",
+      "text": "可以在自己的项目中使用 Lavik 吗？"
+    },
+    {
+      "type": "claim",
+      "claimId": "license"
+    },
+    {
+      "type": "heading",
+      "text": "可以使用现有的 Redis 客户端吗？"
+    },
+    {
+      "type": "claim",
+      "claimId": "protocol"
+    },
+    {
+      "type": "heading",
+      "text": "可以直接在 macOS 上运行服务器吗？"
+    },
+    {
+      "type": "claim",
+      "claimId": "platform"
+    },
+    {
+      "type": "paragraph",
+      "text": "在 macOS 上，需要使用内核和安全策略允许 io_uring 的 Linux 虚拟机或容器环境。仅有 Linux 环境并不意味着所有必需的系统调用都已获准。",
+      "sources": [
+        "build"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "基准能证明生产成本或可用性吗？"
+    },
+    {
+      "type": "claim",
+      "claimId": "benchmark-scope"
+    },
+    {
+      "type": "claim",
+      "claimId": "durability"
+    }
+  ]
+}

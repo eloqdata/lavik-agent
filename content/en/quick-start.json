@@ -1,0 +1,56 @@
+{
+  "id": "quick-start",
+  "locale": "en",
+  "version": "0.1.0",
+  "kind": "docs",
+  "slug": "quick-start",
+  "title": "Run your first commands",
+  "summary": "Start a private demo instance and verify its replies against the pinned beta package.",
+  "updatedAt": "2026-09-19",
+  "blocks": [
+    {
+      "type": "claim",
+      "claimId": "platform"
+    },
+    {
+      "type": "heading",
+      "text": "Use a versioned package"
+    },
+    {
+      "type": "paragraph",
+      "text": "Download the minimal package for your CPU architecture from the linked release. Verify its SHA-256 checksum before extracting it. Put its directory on PATH so the lavik command resolves to that package. Install redis-cli using your Linux distribution’s package manager.",
+      "sources": [
+        "build",
+        "release"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "The example uses an isolated 512 MiB file and binds only to 127.0.0.1. Keep the server running in the first terminal while executing client commands in a second terminal. Stop it with Ctrl-C when finished. The temporary path is for a disposable example.",
+      "sources": [
+        "readme",
+        "build"
+      ]
+    },
+    {
+      "type": "recipe",
+      "recipeId": "basic-commands"
+    },
+    {
+      "type": "heading",
+      "text": "What this check establishes"
+    },
+    {
+      "type": "paragraph",
+      "text": "The recorded verification runs the displayed startup script and client commands against the exact release package. It also checks that a separate value survives a graceful shutdown and restart. This is a functional smoke test on the recorded Linux environment; it is not a performance measurement or a power-loss test.",
+      "sources": [
+        "build",
+        "storage"
+      ]
+    },
+    {
+      "type": "claim",
+      "claimId": "durability"
+    }
+  ]
+}

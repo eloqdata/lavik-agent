@@ -1,0 +1,49 @@
+{
+  "id": "reading-benchmarks",
+  "locale": "en",
+  "version": "0.1.0",
+  "kind": "blog",
+  "slug": "reading-the-benchmark",
+  "title": "What the NVMe benchmark tells us",
+  "summary": "Read the measured results, their conditions, and the questions they leave open.",
+  "updatedAt": "2026-09-19",
+  "blocks": [
+    {
+      "type": "paragraph",
+      "text": "The September 6 report compares a historical Lavik build with tuned Redis and Valkey using a working set that fits in memory. Its Lavik commit is 29dc8e6b87c40196dc397759690252944f1196f0. The report is preserved with the 0.1.0 documentation as historical evidence.",
+      "sources": [
+        "benchmark"
+      ]
+    },
+    {
+      "type": "claim",
+      "claimId": "benchmark-get"
+    },
+    {
+      "type": "claim",
+      "claimId": "benchmark-set"
+    },
+    {
+      "type": "claim",
+      "claimId": "benchmark-scope"
+    },
+    {
+      "type": "heading",
+      "text": "Look beyond one number"
+    },
+    {
+      "type": "paragraph",
+      "text": "At their selected peaks, reported GET p99 latency was 4.543 ms for Lavik and 4.671 ms for Redis. Lavik’s GET p99.99 was higher. Each point was measured once; the report recommends repeated, interleaved trials. Similar p99 in this experiment does not establish an SLA for another workload.",
+      "sources": [
+        "benchmark"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "The same report also contains a separate one-billion-key storage-tier experiment. It uses a different dataset and measurement window. Keep those results separate from the in-memory comparison.",
+      "sources": [
+        "benchmark"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,51 @@
+{
+  "id": "capacity-use-case",
+  "locale": "en",
+  "version": "0.1.0",
+  "kind": "use-case",
+  "slug": "datasets-beyond-memory",
+  "title": "When your values outgrow memory",
+  "summary": "An evaluation scenario for applications with large key-value datasets.",
+  "updatedAt": "2026-09-19",
+  "blocks": [
+    {
+      "type": "paragraph",
+      "text": "Consider evaluating Lavik when keeping all values in DRAM limits your dataset size or makes capacity expansion difficult. This is a proposed evaluation scenario derived from the storage architecture, not a customer deployment report.",
+      "sources": [
+        "readme",
+        "storage"
+      ]
+    },
+    {
+      "type": "claim",
+      "claimId": "storage-model"
+    },
+    {
+      "type": "heading",
+      "text": "Design a representative trial"
+    },
+    {
+      "type": "paragraph",
+      "text": "Use your real value sizes, key distribution, concurrency, command mix, and dataset size. Measure tail latency at the traffic level you need, and include recovery and replication requirements in the evaluation. The published benchmarks provide reference workloads, not a substitute for this trial.",
+      "sources": [
+        "benchmark",
+        "readme"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "Compare the complete cost"
+    },
+    {
+      "type": "paragraph",
+      "text": "A cost comparison needs explicit prices, usable capacity, replica count, CPU, memory, storage, and operational assumptions. Match the required latency and durability before interpreting a capacity-price difference as application savings.",
+      "sources": [
+        "benchmark"
+      ]
+    },
+    {
+      "type": "claim",
+      "claimId": "durability"
+    }
+  ]
+}

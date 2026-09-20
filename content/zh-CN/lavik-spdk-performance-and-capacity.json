@@ -1,0 +1,140 @@
+{
+  "id": "lavik-spdk-performance-and-capacity",
+  "locale": "zh-CN",
+  "version": "0.1.0",
+  "kind": "blog",
+  "slug": "lavik-spdk-performance-and-capacity",
+  "title": "评估 Lavik Beta：SPDK 吞吐、尾延迟与容量成本",
+  "summary": "解读 9 月 18 日的千万键基准，区分标准包性能实测、minimal 功能验证与成本假设，并给出实际选型路径。",
+  "updatedAt": "2026-09-20",
+  "blocks": [
+    {
+      "type": "paragraph",
+      "text": "2026 年 9 月 18 日的 SPDK 报告测试了下载的 v0.1.0-beta.1 标准 x86_64 包：源码提交 3955b98，GCC/x86-64-v2 构建，未经重编译。它仍是 Beta 预发布版。本文聚焦千万键组，不混用 9 月 6 日的 io_uring 结果。",
+      "sources": [
+        "benchmark-spdk",
+        "release",
+        "readme"
+      ]
+    },
+    {
+      "type": "claim",
+      "claimId": "storage-model"
+    },
+    {
+      "type": "heading",
+      "text": "峰值结果：先对齐测试条件"
+    },
+    {
+      "type": "paragraph",
+      "text": "服务器为 AMD EPYC 9V74，8 个物理核、16 个逻辑 CPU、约 126 GiB RAM；独立客户端为 EPYC 9V45，两端均绑定 CPU 0–15。Lavik 使用 16 个 worker、内核 TCP 和六块专用 NVMe 上的 SPDK，碎片整理开启，Tomb Raider 关闭；数据从空盘加载，未复用 io_uring 数据或检查点。",
+      "sources": [
+        "benchmark-spdk",
+        "benchmark-spdk-data"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "负载为 1,000 万键、每值 1 KiB，均匀随机 GET 或覆盖式 SET。memtier 2.5.1 使用 16 线程、pipeline=1、不限速，扫描 80/160/320/640/1,280 个连接；配置先进行 10 秒 GET 预热，每个测量点仅运行一次、持续 30 秒，客户端保留默认相关随机种子。Redis 和 Valkey 的数据全在内存，AOF 与自动 RDB 快照均关闭。",
+      "sources": [
+        "benchmark-spdk",
+        "benchmark-spdk-data"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "对照不是同期重测：全报告新增 22 个 Lavik SPDK 点，复用同主机较早扫描的 124 个其他产品对照点。产品顺序执行而非交错运行，时间变化也可能影响结果。以下保留 CSV 的 QPS 精度，p99 对应各自吞吐峰值点。",
+      "sources": [
+        "benchmark-spdk",
+        "benchmark-spdk-data"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "GET：Lavik SPDK 为 1,012,179.91 QPS，p99 3.599 ms，640 连接；Redis 8.8.0 为 976,800.89 QPS，p99 4.671 ms，1,280 连接；Valkey 9.1.0 为 965,696.86 QPS，p99 4.543 ms，1,280 连接。两种对照均选择 16 个 I/O 线程；I/O 线程与 Lavik worker 的职责不同。",
+      "sources": [
+        "benchmark-spdk",
+        "benchmark-spdk-data"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "SET：三者峰值均在 1,280 连接。Lavik SPDK 为 930,464.99 QPS，p99 4.799 ms；Redis 为 910,426.33 QPS，p99 4.831 ms，16 个 I/O 线程；Valkey 为 802,519.39 QPS，p99 4.383 ms，8 个 I/O 线程。对照配置从 1/2/4/8/16 个 I/O 线程中按命令选择。",
+      "sources": [
+        "benchmark-spdk",
+        "benchmark-spdk-data"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "这组峰值中 Lavik 吞吐领先，但不代表尾延迟全面更低：SET 峰值 p99 高于 Valkey；GET 增至 1,280 连接后，Lavik 降到 940,713.30 QPS，p99 升至 9.791 ms。评估时应看延迟预算内的吞吐，而不只看最大连接数或峰值排名。",
+      "sources": [
+        "benchmark-spdk-data"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "先验证功能，不把冒烟测试当压测"
+    },
+    {
+      "type": "recipe",
+      "recipeId": "basic-commands"
+    },
+    {
+      "type": "paragraph",
+      "text": "本次实际执行记录来自同版本的 Linux ARM64 minimal 二进制：PING、SET、GET、HSET、HGET 依次返回 PONG、OK、hello from Lavik、1、Ada，正常停机后的重启检查也通过。minimal 使用内核 TCP/io_uring，不含 SPDK；这验证的是示例功能，不是上述 SPDK 性能，也不是断电恢复能力。",
+      "sources": [
+        "build",
+        "storage"
+      ]
+    },
+    {
+      "type": "claim",
+      "claimId": "durability"
+    },
+    {
+      "type": "heading",
+      "text": "20:1 单价假设，为什么不是整机省 95%"
+    },
+    {
+      "type": "paragraph",
+      "text": "以下是计算器假设，不是硬件报价或实测内存比例。按同一币种、同一计费周期，将 SSD 与 DRAM 单价归一化为每 GiB 1 和 20 个成本单位：仅替换值数据的容量介质，这一组件成本降低 95%。默认另计有效数据容量 2% 的索引 RAM，以及双方相同的其他成本——金额为 Redis 值数据内存成本的 10%；假设副本数相同、不压缩、存储放大为 1。",
+      "sources": [
+        "storage"
+      ]
+    },
+    {
+      "type": "calculation",
+      "calculationId": "capacity-economics"
+    },
+    {
+      "type": "paragraph",
+      "text": "以 1 GiB 数据计算，共同成本为 2：Redis 模型成本为 20+2=22，Lavik 为 1+0.02×20+2=3.4。因此 Redis/Lavik 成本比为 6.47:1，模型中 Lavik 低 84.5%，而非 95%。索引和共同开销越大，百分比收益越小。实际 SPDK 测试另有 8 GiB 大页预留，不能用 2% 索引假设代替总内存测量；性能要求还可能改变服务器数量。这不是延迟、持久性或可用性预测。",
+      "sources": [
+        "storage",
+        "benchmark-spdk"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "历史实例估算也要区分服务边界：2026 年 8 月 12 日报告记录的用户估算为 Azure Managed Redis Flex 480 GB/16 vCPU 每月 2,414.28 美元，Lavik 的 Standard_L16s_v3 服务器 VM 每月 1,152.67 美元。两者均不含压测客户端；托管服务与自管 VM 的责任不同，这既不是当前报价，也不是完整总拥有成本。",
+      "sources": [
+        "tiering-cost"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "实际选型：按目标负载和总成本验收"
+    },
+    {
+      "type": "paragraph",
+      "text": "先验证应用关键命令，再用真实值大小、热点分布和读写混合比例做长时间并发扫描，观察后台回收、RSS 与尾延迟。单独验证恢复和复制要求，最后把实际内存、存储余量、CPU、网络及运维费用代入预算。短窗口峰值说明值得继续测试；是否适合你的 SLA、是否真正省钱，仍取决于这些验收结果。",
+      "sources": [
+        "benchmark-spdk",
+        "architecture",
+        "storage",
+        "tiering-cost"
+      ]
+    }
+  ]
+}

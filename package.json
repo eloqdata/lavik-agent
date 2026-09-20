@@ -1,0 +1,41 @@
+{
+  "name": "lavik-agent",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev": "next dev apps/web",
+    "build": "npm run content:check && next build apps/web",
+    "typecheck": "tsc --noEmit",
+    "test": "node --import tsx --test --test-concurrency=1 tests/*.test.ts",
+    "content:check": "node --import tsx scripts/check-content.ts",
+    "verify:prepare": "node --import tsx scripts/prepare-verifier.ts",
+    "verify:examples": "node --import tsx scripts/verify-examples.ts",
+    "agent:write": "node --env-file-if-exists=.env --import tsx scripts/write-content.ts",
+    "agent:publish": "node --import tsx scripts/publish-content.ts",
+    "check": "npm run typecheck && npm test && npm run build",
+    "test:browser": "playwright test",
+    "format": "prettier --write apps packages scripts tests policies docs README.md *.json *.ts .github/workflows",
+    "deploy": "npm run build && wrangler deploy"
+  },
+  "dependencies": {
+    "@openai/agents": "0.18.0",
+    "next": "16.3.5",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.58.2",
+    "@types/node": "^24.10.0",
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0",
+    "prettier": "3.9.8",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3",
+    "wrangler": "4.135.0"
+  }
+}

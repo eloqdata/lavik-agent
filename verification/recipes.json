@@ -1,0 +1,63 @@
+[
+  {
+    "id": "basic-commands",
+    "title": {
+      "en": "Your first keys",
+      "zh-CN": "读写第一组键"
+    },
+    "prerequisites": {
+      "en": "Install the pinned minimal package and redis-cli on compatible Linux. In one terminal, run the startup script below. In another, run these commands against the private demo instance.",
+      "zh-CN": "在兼容的 Linux 上安装锁定版本的 minimal 软件包和 redis-cli。在一个终端运行下方启动脚本，在另一个终端对这个独立演示实例执行命令。"
+    },
+    "steps": [
+      {
+        "argv": [
+          "redis-cli",
+          "--raw",
+          "PING"
+        ],
+        "expected": "PONG"
+      },
+      {
+        "argv": [
+          "redis-cli",
+          "--raw",
+          "SET",
+          "greeting",
+          "hello from Lavik"
+        ],
+        "expected": "OK"
+      },
+      {
+        "argv": [
+          "redis-cli",
+          "--raw",
+          "GET",
+          "greeting"
+        ],
+        "expected": "hello from Lavik"
+      },
+      {
+        "argv": [
+          "redis-cli",
+          "--raw",
+          "HSET",
+          "user:42",
+          "name",
+          "Ada"
+        ],
+        "expected": "1"
+      },
+      {
+        "argv": [
+          "redis-cli",
+          "--raw",
+          "HGET",
+          "user:42",
+          "name"
+        ],
+        "expected": "Ada"
+      }
+    ]
+  }
+]

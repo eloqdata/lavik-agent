@@ -1,0 +1,55 @@
+{
+  "id": "evaluation-faq",
+  "locale": "en",
+  "version": "0.1.0",
+  "kind": "faq",
+  "slug": "evaluation",
+  "title": "Questions before you start",
+  "summary": "Practical answers for evaluating Lavik 0.1.0.",
+  "updatedAt": "2026-09-19",
+  "blocks": [
+    {
+      "type": "heading",
+      "text": "Can I use Lavik in my project?"
+    },
+    {
+      "type": "claim",
+      "claimId": "license"
+    },
+    {
+      "type": "heading",
+      "text": "Can I use my existing Redis client?"
+    },
+    {
+      "type": "claim",
+      "claimId": "protocol"
+    },
+    {
+      "type": "heading",
+      "text": "Can I run the server directly on macOS?"
+    },
+    {
+      "type": "claim",
+      "claimId": "platform"
+    },
+    {
+      "type": "paragraph",
+      "text": "On macOS, use a Linux virtual machine or container environment whose kernel and security policy permit io_uring. A Linux environment alone does not guarantee that every required syscall is allowed.",
+      "sources": [
+        "build"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "Does the benchmark establish production cost or availability?"
+    },
+    {
+      "type": "claim",
+      "claimId": "benchmark-scope"
+    },
+    {
+      "type": "claim",
+      "claimId": "durability"
+    }
+  ]
+}

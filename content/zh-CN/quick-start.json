@@ -1,0 +1,56 @@
+{
+  "id": "quick-start",
+  "locale": "zh-CN",
+  "version": "0.1.0",
+  "kind": "docs",
+  "slug": "quick-start",
+  "title": "运行第一组命令",
+  "summary": "启动独立演示实例，并验证锁定测试版本的命令响应。",
+  "updatedAt": "2026-09-19",
+  "blocks": [
+    {
+      "type": "claim",
+      "claimId": "platform"
+    },
+    {
+      "type": "heading",
+      "text": "使用明确版本的软件包"
+    },
+    {
+      "type": "paragraph",
+      "text": "从下方发布链接下载适合 CPU 架构的 minimal 软件包。解压前验证 SHA-256 校验和，将软件包目录加入 PATH，确保 lavik 命令指向该版本。使用 Linux 发行版的包管理器安装 redis-cli。",
+      "sources": [
+        "build",
+        "release"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "示例使用独立的 512 MiB 文件，并仅绑定 127.0.0.1。在第一个终端保持服务器运行，在第二个终端执行客户端命令。完成后按 Ctrl-C 停止服务。临时路径仅用于可丢弃的演示数据。",
+      "sources": [
+        "readme",
+        "build"
+      ]
+    },
+    {
+      "type": "recipe",
+      "recipeId": "basic-commands"
+    },
+    {
+      "type": "heading",
+      "text": "这些验证能证明什么"
+    },
+    {
+      "type": "paragraph",
+      "text": "验证记录使用确切的发布包运行页面展示的启动脚本和客户端命令，还检查一个额外的值能否在正常关闭并重启后保留。这是记录环境下的功能冒烟测试，不是性能测试或断电测试。",
+      "sources": [
+        "build",
+        "storage"
+      ]
+    },
+    {
+      "type": "claim",
+      "claimId": "durability"
+    }
+  ]
+}

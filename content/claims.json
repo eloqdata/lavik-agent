@@ -1,0 +1,114 @@
+[
+  {
+    "id": "storage-model",
+    "status": "supported",
+    "sources": [
+      "readme",
+      "storage"
+    ],
+    "text": {
+      "en": "Lavik keeps a compact key index in DRAM and stores values on files, raw block devices, or SPDK NVMe namespaces.",
+      "zh-CN": "Lavik 在 DRAM 中保留紧凑的键索引，将值存储在文件、裸块设备或 SPDK NVMe 命名空间中。"
+    },
+    "scope": "Architecture at the pinned 0.1.0 beta release."
+  },
+  {
+    "id": "protocol",
+    "status": "supported",
+    "sources": [
+      "readme",
+      "architecture"
+    ],
+    "text": {
+      "en": "Lavik speaks RESP2 and RESP3 and implements a broad Redis-compatible command surface. Check the commands and operational behavior your application depends on.",
+      "zh-CN": "Lavik 支持 RESP2 和 RESP3，并实现了广泛的 Redis 兼容命令。请验证应用所依赖的具体命令及运维行为。"
+    },
+    "scope": "Compatibility is command- and behavior-specific, not universal."
+  },
+  {
+    "id": "license",
+    "status": "supported",
+    "sources": [
+      "readme",
+      "license"
+    ],
+    "text": {
+      "en": "EloqData-authored Lavik code is available under Apache License 2.0. Third-party components retain their own licenses and notices.",
+      "zh-CN": "EloqData 编写的 Lavik 代码以 Apache License 2.0 开源。第三方组件保留各自的许可证和声明。"
+    },
+    "scope": "Project licensing; license text is authoritative."
+  },
+  {
+    "id": "platform",
+    "status": "supported",
+    "sources": [
+      "build"
+    ],
+    "text": {
+      "en": "The published packages target Linux x86_64 and ARM64. Running Lavik requires Linux 6.1 or newer with io_uring enabled and a compatible glibc; release packages are built on Ubuntu 24.04.",
+      "zh-CN": "官方软件包面向 Linux x86_64 和 ARM64。运行 Lavik 需要 Linux 6.1 或更新版本、可用的 io_uring 以及兼容的 glibc；发布包在 Ubuntu 24.04 上构建。"
+    },
+    "scope": "Linux 6.1 is an API floor, not a tested kernel matrix."
+  },
+  {
+    "id": "durability",
+    "status": "supported",
+    "sources": [
+      "readme",
+      "storage"
+    ],
+    "text": {
+      "en": "A successful write response is not a synchronous fsync fence. Evaluate durability, replication, and recovery requirements for your workload.",
+      "zh-CN": "写入成功的响应并不代表同步 fsync 已完成。请按实际工作负载评估持久性、复制和恢复要求。"
+    },
+    "scope": "Do not infer power-loss durability from a successful SET or graceful restart."
+  },
+  {
+    "id": "benchmark-get",
+    "status": "supported",
+    "sources": [
+      "benchmark"
+    ],
+    "text": {
+      "en": "In the published September 6 experiment, Lavik reached 828,502 GET requests/s, compared with 964,267 for tuned in-memory Redis: 85.9% of Redis throughput.",
+      "zh-CN": "在已发布的 9 月 6 日实验中，Lavik 的 GET 吞吐量为每秒 828,502 次，调优后的内存 Redis 为 964,267 次；Lavik 达到 Redis 吞吐量的 85.9%。"
+    },
+    "scope": "Historical benchmark commit 29dc8e6, not a rerun of the beta binary. 10M keys, 1 KiB values, six raw NVMe devices, io_uring, 1280 connections, pipeline 1."
+  },
+  {
+    "id": "benchmark-set",
+    "status": "supported",
+    "sources": [
+      "benchmark"
+    ],
+    "text": {
+      "en": "In that experiment, Lavik reached 984,452 SET requests/s, compared with 874,879 for tuned in-memory Redis, a 12.5% higher measured peak.",
+      "zh-CN": "在该实验中，Lavik 的 SET 吞吐量为每秒 984,452 次，调优后的内存 Redis 为 874,879 次；实测峰值高出 12.5%。"
+    },
+    "scope": "Same historical experiment and selected peak configurations as benchmark-get."
+  },
+  {
+    "id": "benchmark-scope",
+    "status": "supported",
+    "sources": [
+      "benchmark"
+    ],
+    "text": {
+      "en": "The comparison used an AMD EPYC 9V74 server, 125 GiB RAM, six raw NVMe drives, 10 million 1 KiB values, and 30-second measurement windows. Redis persistence was disabled and Lavik defragmentation was paused. These measurements do not establish equivalent crash durability, production cost, or an application SLA.",
+      "zh-CN": "该对比使用 AMD EPYC 9V74 服务器、125 GiB 内存、六块裸 NVMe 盘、1,000 万个 1 KiB 值以及每个测量点 30 秒的测试窗口。Redis 关闭了持久化，Lavik 暂停了碎片整理。这些数据不能证明相同的崩溃持久性、生产成本或应用 SLA。"
+    },
+    "scope": "Must accompany benchmark numbers in public content."
+  },
+  {
+    "id": "cost-hypothesis",
+    "status": "hypothesis",
+    "sources": [
+      "benchmark"
+    ],
+    "text": {
+      "en": "A 20× cost saving with an unchanged SLA is a hypothesis pending a reproducible cost and workload comparison.",
+      "zh-CN": "在 SLA 不变的条件下节省 20 倍成本，目前仍是需要可复现成本与工作负载对比验证的假设。"
+    },
+    "scope": "Internal only: no validated equal-SLA cost model provided."
+  }
+]

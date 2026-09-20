@@ -1,0 +1,49 @@
+{
+  "id": "reading-benchmarks",
+  "locale": "zh-CN",
+  "version": "0.1.0",
+  "kind": "blog",
+  "slug": "reading-the-benchmark",
+  "title": "NVMe 基准测试说明了什么",
+  "summary": "理解实测结果、测试条件，以及仍待回答的问题。",
+  "updatedAt": "2026-09-19",
+  "blocks": [
+    {
+      "type": "paragraph",
+      "text": "9 月 6 日的报告使用可完全放入内存的数据集，对比历史 Lavik 构建与调优后的 Redis、Valkey。Lavik 测试提交为 29dc8e6b87c40196dc397759690252944f1196f0。该报告作为历史证据随 0.1.0 文档保留。",
+      "sources": [
+        "benchmark"
+      ]
+    },
+    {
+      "type": "claim",
+      "claimId": "benchmark-get"
+    },
+    {
+      "type": "claim",
+      "claimId": "benchmark-set"
+    },
+    {
+      "type": "claim",
+      "claimId": "benchmark-scope"
+    },
+    {
+      "type": "heading",
+      "text": "不只看一个数字"
+    },
+    {
+      "type": "paragraph",
+      "text": "在各自选定的峰值点，报告中的 GET p99 延迟为 Lavik 4.543 ms、Redis 4.671 ms，而 Lavik 的 GET p99.99 更高。每个测量点仅运行一次；报告建议交错重复测试。该实验中相近的 p99 不能确立其他工作负载的 SLA。",
+      "sources": [
+        "benchmark"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "同一报告还包含独立的十亿键存储分层实验，使用不同的数据集和测量窗口。应将这些结果与内存对比实验分别解读。",
+      "sources": [
+        "benchmark"
+      ]
+    }
+  ]
+}

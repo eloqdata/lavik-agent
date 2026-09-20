@@ -1,0 +1,36 @@
+{
+  "id": "storage",
+  "locale": "en",
+  "version": "0.1.0",
+  "kind": "docs",
+  "slug": "storage",
+  "title": "Storage and recovery",
+  "summary": "Understand what lives in memory, what lives on storage, and what an acknowledgement means.",
+  "updatedAt": "2026-09-19",
+  "blocks": [
+    {
+      "type": "claim",
+      "claimId": "storage-model"
+    },
+    {
+      "type": "paragraph",
+      "text": "Worker-owned partitions process requests in parallel. The storage engine appends immutable record versions and rebuilds indexes during startup. An optional clean-shutdown checkpoint accelerates recovery; committed records remain the durable source of truth.",
+      "sources": [
+        "storage",
+        "architecture"
+      ]
+    },
+    {
+      "type": "claim",
+      "claimId": "durability"
+    },
+    {
+      "type": "paragraph",
+      "text": "Linux TCP and io_uring are the default backends. Standard packages also include opt-in DPDK/SPDK support. The upstream architecture describes DPDK networking as an experimental standalone serving profile; do not assume the same validation scope for every backend.",
+      "sources": [
+        "architecture",
+        "build"
+      ]
+    }
+  ]
+}

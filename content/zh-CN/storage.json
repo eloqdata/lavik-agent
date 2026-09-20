@@ -1,0 +1,36 @@
+{
+  "id": "storage",
+  "locale": "zh-CN",
+  "version": "0.1.0",
+  "kind": "docs",
+  "slug": "storage",
+  "title": "存储与恢复",
+  "summary": "了解内存和存储各自保存什么，以及写入确认的含义。",
+  "updatedAt": "2026-09-19",
+  "blocks": [
+    {
+      "type": "claim",
+      "claimId": "storage-model"
+    },
+    {
+      "type": "paragraph",
+      "text": "由工作线程持有的分区并行处理请求。存储引擎追加不可变的记录版本，并在启动时重建索引。可选的正常关闭检查点用于加速恢复；已提交记录仍是持久数据的依据。",
+      "sources": [
+        "storage",
+        "architecture"
+      ]
+    },
+    {
+      "type": "claim",
+      "claimId": "durability"
+    },
+    {
+      "type": "paragraph",
+      "text": "Linux TCP 和 io_uring 是默认后端。标准软件包还包含可显式启用的 DPDK/SPDK 支持。上游架构将 DPDK 网络描述为实验性的独立服务配置；不同后端的验证范围并不相同。",
+      "sources": [
+        "architecture",
+        "build"
+      ]
+    }
+  ]
+}

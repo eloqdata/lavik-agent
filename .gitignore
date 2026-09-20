@@ -27,10 +27,21 @@ yarn-error.log*
 # local env files
 .env*.local
 .env
+.env.s*
 
 # vercel
 .vercel
 
 # typescript
 *.tsbuildinfo
+
+# Workspace builds and local evidence
+**/.next/
+**/out/
+**/*.tsbuildinfo
+.cache/
+.runs/
+test-results/
+playwright-report/
+.npm-cache/
 next-env.d.ts

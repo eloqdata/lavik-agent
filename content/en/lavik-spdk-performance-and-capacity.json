@@ -1,0 +1,125 @@
+{
+  "id": "lavik-spdk-performance-and-capacity",
+  "locale": "en",
+  "version": "0.1.0",
+  "kind": "blog",
+  "slug": "lavik-spdk-performance-and-capacity",
+  "title": "Lavik beta: SPDK performance and capacity economics",
+  "summary": "Understand the September 18 benchmark, verify basic commands, and model capacity savings without mistaking them for deployment-wide savings.",
+  "updatedAt": "2026-09-20",
+  "blocks": [
+    {
+      "type": "paragraph",
+      "text": "The September 18, 2026 SPDK report tested the downloaded standard x86_64 v0.1.0-beta.1 package, revision 3955b98d43b312324aa8d52775df52cfb111c0d0—not a rebuild. This remains a beta prerelease, not a stable release. Here we examine its 10M-key Redis/Valkey comparison.",
+      "sources": [
+        "benchmark-spdk",
+        "build"
+      ]
+    },
+    {
+      "type": "claim",
+      "claimId": "storage-model"
+    },
+    {
+      "type": "heading",
+      "text": "Read the peaks with their conditions"
+    },
+    {
+      "type": "paragraph",
+      "text": "The server had an AMD EPYC 9V74, 8 physical cores/16 logical CPUs, approximately 126 GiB RAM and six NVMe drives. A separate memtier 2.5.1 client used 16 threads, pipeline 1, no rate limit, 10M keys and 1,024-byte values. Uniform random GET and overwriting SET used correlated client seeds, sweeping 80–1,280 connections. Each point ran once for 30 seconds; configurations received 10-second GET warmups.",
+      "sources": [
+        "benchmark-spdk",
+        "benchmark-spdk-data"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "Lavik used fresh SPDK data, kernel TCP, 16 workers, 8 GiB hugepages, completion cap 16, defragmentation enabled and Tomb Raider disabled. Redis/Valkey disabled AOF and automatic snapshots. Selected peer configurations used 16 I/O threads except Valkey SET, which used eight; these are different thread roles.",
+      "sources": [
+        "benchmark-spdk",
+        "benchmark-spdk-data"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "Peer controls were reused from an earlier sweep on the same hosts, not newly measured alongside the beta. Products ran sequentially, not interleaved, so temporal variation limits causal conclusions. These are not the September 6 io_uring results.",
+      "sources": [
+        "benchmark-spdk"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "Peak GET, at CSV precision: Lavik SPDK 1,012,179.91 QPS, p99 3.599 ms, at 640 connections; Redis 8.8.0 976,800.89 QPS, p99 4.671 ms; Valkey 9.1.0 965,696.86 QPS, p99 4.543 ms. Both peers peaked at 1,280 connections.",
+      "sources": [
+        "benchmark-spdk-data"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "Peak SET, all at 1,280 connections: Lavik SPDK 930,464.99 QPS, p99 4.799 ms; Redis 910,426.33 QPS, p99 4.831 ms; Valkey 802,519.39 QPS, p99 4.383 ms.",
+      "sources": [
+        "benchmark-spdk-data"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "Lavik leads these throughput peaks, not every latency comparison. At 1,280 connections, its GET drops to 940,713.30 QPS with 9.791 ms p99. Peak-to-peak latency is not matched-concurrency latency; inspect the full curves before choosing an operating point.",
+      "sources": [
+        "benchmark-spdk-data"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "Verify functionality separately"
+    },
+    {
+      "type": "paragraph",
+      "text": "The execution record below passed on the pinned ARM64 minimal beta package, with actual replies PONG, OK, “hello from Lavik”, 1 and Ada. Its recipe and harness hashes match the supplied canonical pins, e473c28b9da9… and ad785c9b0633…. The registered block includes verification/start.sh and all five commands. Minimal excludes SPDK: this file-backed functional smoke test does not reproduce the published standard-package benchmark.",
+      "sources": [
+        "build",
+        "readme",
+        "benchmark-spdk"
+      ]
+    },
+    {
+      "type": "recipe",
+      "recipeId": "basic-commands"
+    },
+    {
+      "type": "claim",
+      "claimId": "durability"
+    },
+    {
+      "type": "heading",
+      "text": "Model a subtotal, not deployment-wide savings"
+    },
+    {
+      "type": "paragraph",
+      "text": "Assume DRAM costs 20 and SSD 1 currency unit/GiB-month: a hypothetical 20:1 ratio gives 95% savings on payload capacity alone, not a sourced quote. The supplied calculator definition normalizes to 1 GiB, with 2% index RAM, identical shared costs equal to 10% of Redis payload-memory cost, equal replica counts, no compression and storage amplification 1. Its “Lavik memory / payload capacity” slider models index RAM—not total RAM or measured usage.",
+      "sources": [
+        "storage"
+      ]
+    },
+    {
+      "type": "calculation",
+      "calculationId": "capacity-economics"
+    },
+    {
+      "type": "paragraph",
+      "text": "Scaling those assumptions to 1,024 GiB, the checked monthly calculation is Redis: 20,480 + 2,048 = 22,528 units; Lavik: 1,024 + 409.60 + 2,048 = 3,481.60 units. That is an 84.55% saving on the modeled subtotal and a 6.47:1 cost ratio; the supplied renderer rounds savings to 84.5%. Runtime/buffer RAM and SPDK’s separate 8 GiB reservation are unpriced. The shared allowance does not specify CPU or operations coverage. This is not a whole-deployment result.",
+      "sources": [
+        "storage",
+        "benchmark-spdk"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "Larger indexes, storage amplification and shared costs reduce modeled percentage savings. Next, test your command mix, value sizes, matched offered load, sustained maintenance, recovery and failover; then price the same service boundary. Neither the benchmark nor this calculation establishes unchanged latency, durability or availability.",
+      "sources": [
+        "readme",
+        "storage",
+        "benchmark-spdk"
+      ]
+    }
+  ]
+}

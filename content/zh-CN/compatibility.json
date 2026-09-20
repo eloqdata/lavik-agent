@@ -1,0 +1,42 @@
+{
+  "id": "compatibility",
+  "locale": "zh-CN",
+  "version": "0.1.0",
+  "kind": "docs",
+  "slug": "compatibility",
+  "title": "兼容性与边界",
+  "summary": "验证应用实际使用的 Redis 命令和运维行为。",
+  "updatedAt": "2026-09-19",
+  "blocks": [
+    {
+      "type": "claim",
+      "claimId": "protocol"
+    },
+    {
+      "type": "heading",
+      "text": "数据结构"
+    },
+    {
+      "type": "paragraph",
+      "text": "该版本文档列出了字符串、列表、哈希、集合、有序集合和流，以及流水线、Pub/Sub、Lua 脚本和 Functions。本概览并不代表对所有命令选项或客户端库的认证。",
+      "sources": [
+        "readme"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "事务与集群路由"
+    },
+    {
+      "type": "paragraph",
+      "text": "多键操作可在单节点内跨工作线程分区协调。集群模式仍要求多键命令的键位于同一个 Redis Cluster 哈希槽。请在计划部署的拓扑中测试事务和脚本。",
+      "sources": [
+        "readme"
+      ]
+    },
+    {
+      "type": "claim",
+      "claimId": "durability"
+    }
+  ]
+}
