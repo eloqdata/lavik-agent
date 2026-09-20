@@ -59,5 +59,29 @@ npm run deploy
 The scheduled admin worker checks for accepted tasks; it does not plan new campaigns.
 Recurring editorial planning and external social publishing remain separate increments.
 
+## Admin deployment record
+
+The admin Worker and SQLite Durable Object were deployed on September 20, 2026
+at 14:06 UTC, from commit `dbda42e`. Its first Worker version was
+`4911a075-ab52-459d-881b-18ed7f34cb64`.
+
+[Verification and deployment](https://github.com/eloqdata/lavik-agent/actions/runs/35515213885)
+passed 25 automated tests, six browser checks and real x86 Linux command verification.
+The initial deployment needed the account's Workers subdomain initialized; that
+prerequisite is now configured. `workers_dev=false` keeps this application on its
+custom domain.
+
+The shared runner credential and Azure key were configured with the owner's explicit
+authorization. GitHub variables match the local settings: `gpt-6-astra` for both
+roles, writer reasoning `xhigh`, reviewer reasoning `high`. The hosted worker is
+enabled, and its [first production check](https://github.com/eloqdata/lavik-agent/actions/runs/35515536998)
+successfully recorded a heartbeat and skipped execution for an empty queue.
+
+Production checks confirmed public English/Chinese pages and documentation still
+return 200, the root redirects correctly, and missing pages return 404. The admin
+paths fail closed while the Access team domain and AUD are awaiting configuration;
+the runner API rejects requests without its credential. Access setup instructions
+are in [admin.md](admin.md).
+
 Cloudflare API confirmation and production browser output are retained locally in
 `.cache/cloudflare-deployment.json` and `.cache/production-browser-tests.log`.

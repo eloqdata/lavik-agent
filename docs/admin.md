@@ -34,6 +34,10 @@ to publication is the next increment, without adding mandatory per-post approval
 
 ## Cloudflare Access setup
 
+If One-time PIN is absent, first open Zero Trust → Integrations → Identity providers
+→ Add new identity provider → One-time PIN. New organizations may not add it by default;
+see [Cloudflare's PIN setup](https://developers.cloudflare.com/cloudflare-one/integrations/identity-providers/one-time-pin/).
+
 Create one **Self-hosted** application in Cloudflare Zero Trust → Access → Applications.
 Name it **Lavik Admin** and add both public hostnames to the same application:
 
@@ -89,7 +93,7 @@ Configure the following repository secrets and variables before enabling it:
 | Secret `LAVIK_RUNNER_TOKEN`                                                                | Same value as the Worker's `RUNNER_TOKEN`               |
 | Secret `OPENAI_API_KEY`                                                                    | Azure/OpenAI credential used only by the execution step |
 | Variables `OPENAI_BASE_URL`, `LAVIK_WRITER_MODEL`, `LAVIK_REVIEWER_MODEL`                  | Explicit endpoint and deployment names                  |
-| Variables `LAVIK_WRITER_REASONING_EFFORT`, `LAVIK_REVIEWER_REASONING_EFFORT`               | Configured reasoning effort, currently `xhigh`          |
+| Variables `LAVIK_WRITER_REASONING_EFFORT`, `LAVIK_REVIEWER_REASONING_EFFORT`               | Explicit reasoning effort for each role                 |
 | Variables `LAVIK_WRITER_MAX_TOKENS`, `LAVIK_REVIEWER_MAX_TOKENS`, `LAVIK_AGENT_TIMEOUT_MS` | Invocation budgets                                      |
 | Variable `LAVIK_ADMIN_WORKER_ENABLED=true`                                                 | Enable scheduled and manually dispatched execution      |
 
