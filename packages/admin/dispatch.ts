@@ -23,7 +23,9 @@ export class WorkerDispatcher {
     private store: TaskStore,
     private alarms: AlarmStorage,
     private config: DispatchConfig,
-    private http: typeof fetch = fetch,
+    // Workerd requires the native fetch receiver; storing it directly as a
+    // class method binds `this` to the dispatcher and throws Illegal invocation.
+    private http: typeof fetch = (...args) => fetch(...args),
     private time: () => number = Date.now,
   ) {}
 

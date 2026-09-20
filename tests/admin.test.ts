@@ -267,6 +267,34 @@ test("lost dispatch responses reconcile an existing GitHub run before retrying",
   }
 });
 
+test("default dispatch transport preserves Cloudflare's native fetch receiver", async (t) => {
+  let posts = 0;
+  t.mock.method(
+    globalThis,
+    "fetch",
+    function (this: unknown, _url: unknown, options?: RequestInit) {
+      assert.ok(
+        this === undefined || this === globalThis,
+        "native fetch cannot receive the dispatcher as this",
+      );
+      if (options?.method === "POST") {
+        posts++;
+        return Promise.resolve(Response.json({ workflow_run_id: 101 }));
+      }
+      return Promise.resolve(Response.json({ workflow_runs: [] }));
+    },
+  );
+  const h = dispatchHarness(fetch);
+  try {
+    await h.api("/api/admin/tasks", input());
+    await new WorkerDispatcher(h.store, h.alarms, h.config).alarm();
+    assert.equal(posts, 1);
+    assert.equal(h.store.dispatchStatus().state, "starting");
+  } finally {
+    h.sqlite.close();
+  }
+});
+
 test("authenticated startup probe exercises dispatch without creating tasks or invoking a model", async () => {
   let posts = 0;
   const h = dispatchHarness(async (_url, options) => {
