@@ -142,5 +142,6 @@ adapter and orchestration have automated regression coverage. The
 [first live Azure campaign](first-live-campaign.md) completed bilingual writing,
 real command execution, independent review and local publication. One successful
 pilot does not establish long-term autonomous reliability or editorial quality.
-Only the recorded ARM64 environment was exercised locally; CI is configured to run
-the x86_64 release but has not been executed remotely during implementation.
+The recorded ARM64 environment was exercised locally, and GitHub Actions has also
+passed real command verification using the x86_64 release on Ubuntu 24.04.
+Ordinary CI stores its fresh receipts separately from reviewed publication evidence.

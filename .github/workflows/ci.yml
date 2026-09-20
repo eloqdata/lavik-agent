@@ -22,7 +22,8 @@ jobs:
       - name: Enable io_uring on the disposable runner
         run: sudo sysctl -w kernel.io_uring_disabled=0
       - run: npm run verify:prepare
-      - run: npm run verify:examples
+      # CI validates its own platform without changing reviewed publication receipts.
+      - run: npm run verify:examples -- --output-dir .cache/ci-verification
       - run: npm run check
       - run: npx playwright install --with-deps chromium
       - run: npm run test:browser
@@ -30,7 +31,8 @@ jobs:
         if: always()
         with:
           name: verification-evidence
-          path: evidence/verification
+          path: .cache/ci-verification
+          include-hidden-files: true
       - uses: actions/upload-artifact@v6
         with:
           name: website
@@ -69,5 +71,5 @@ jobs:
       - if: steps.current.outputs.deploy == 'true'
         run: npx wrangler deploy
         env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN || secrets.CLOUDFLARE_LAVIK }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
