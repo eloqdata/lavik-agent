@@ -5,9 +5,22 @@
   "kind": "blog",
   "slug": "lavik-spdk-performance-and-capacity",
   "title": "评估 Lavik Beta：SPDK 吞吐、尾延迟与容量成本",
-  "summary": "解读 9 月 18 日的千万键基准，区分标准包性能实测、minimal 功能验证与成本假设，并给出实际选型路径。",
+  "summary": "解读 9 月 18 日的千万键基准，区分标准包 SPDK 性能实测、x86_64 minimal 功能验证与成本假设，并给出实际选型路径。",
   "updatedAt": "2026-09-20",
   "blocks": [
+    {
+      "type": "paragraph",
+      "text": "当键值数据增长、DRAM 预算受限时，你需要判断：能否把容量压力转向 NVMe，同时满足自己的尾延迟、恢复和成本要求？评估 Lavik，应把性能实测、功能验证与容量价格假设分开看。",
+      "sources": [
+        "readme",
+        "storage",
+        "benchmark-spdk"
+      ]
+    },
+    {
+      "type": "claim",
+      "claimId": "storage-model"
+    },
     {
       "type": "paragraph",
       "text": "2026 年 9 月 18 日的 SPDK 报告测试了下载的 v0.1.0-beta.1 标准 x86_64 包：源码提交 3955b98，GCC/x86-64-v2 构建，未经重编译。它仍是 Beta 预发布版。本文聚焦千万键组，不混用 9 月 6 日的 io_uring 结果。",
@@ -16,10 +29,6 @@
         "release",
         "readme"
       ]
-    },
-    {
-      "type": "claim",
-      "claimId": "storage-model"
     },
     {
       "type": "heading",
@@ -67,8 +76,9 @@
     },
     {
       "type": "paragraph",
-      "text": "这组峰值中 Lavik 吞吐领先，但不代表尾延迟全面更低：SET 峰值 p99 高于 Valkey；GET 增至 1,280 连接后，Lavik 降到 940,713.30 QPS，p99 升至 9.791 ms。评估时应看延迟预算内的吞吐，而不只看最大连接数或峰值排名。",
+      "text": "这组峰值中 Lavik 吞吐领先，但不代表尾延迟全面更低：SET 峰值 p99 高于 Valkey；GET 增至 1,280 连接后，Lavik 降到 940,713.30 QPS，p99 升至 9.791 ms。评估时应看延迟预算内的吞吐，而不只看最大连接数或峰值排名。这些短窗口测试也不能证明相同的崩溃持久性或应用 SLA。",
       "sources": [
+        "benchmark-spdk",
         "benchmark-spdk-data"
       ]
     },
@@ -82,7 +92,7 @@
     },
     {
       "type": "paragraph",
-      "text": "本次实际执行记录来自同版本的 Linux ARM64 minimal 二进制：PING、SET、GET、HSET、HGET 依次返回 PONG、OK、hello from Lavik、1、Ada，正常停机后的重启检查也通过。minimal 使用内核 TCP/io_uring，不含 SPDK；这验证的是示例功能，不是上述 SPDK 性能，也不是断电恢复能力。",
+      "text": "上方示例在 2026 年 9 月 20 日的实际执行记录来自同版本的 Linux x86_64 minimal 二进制，平台为 Linux 6.17.0-1022-azure、glibc 2.39。PING、SET、GET、HSET、HGET 依次返回 PONG、OK、hello from Lavik、1、Ada，正常停机后的重启检查也通过。minimal 使用内核 TCP/io_uring，不含 SPDK；这验证的是该 x86_64 环境下的示例功能，不是 ARM64 执行证据，也不是上述 SPDK 性能、断电恢复能力或 SLA 的验证。",
       "sources": [
         "build",
         "storage"
@@ -117,7 +127,7 @@
     },
     {
       "type": "paragraph",
-      "text": "历史实例估算也要区分服务边界：2026 年 8 月 12 日报告记录的用户估算为 Azure Managed Redis Flex 480 GB/16 vCPU 每月 2,414.28 美元，Lavik 的 Standard_L16s_v3 服务器 VM 每月 1,152.67 美元。两者均不含压测客户端；托管服务与自管 VM 的责任不同，这既不是当前报价，也不是完整总拥有成本。",
+      "text": "历史实例估算也要区分服务边界：2026 年 8 月 12 日更新的报告记录了用户提供的估算，Azure Managed Redis Flex 480 GB/16 vCPU 每月 2,414.28 美元，Lavik 的 Standard_L16s_v3 服务器 VM 每月 1,152.67 美元。两者均不含压测客户端；托管服务与自管 VM 的责任不同，这既不是当前报价，也不是完整总拥有成本。",
       "sources": [
         "tiering-cost"
       ]

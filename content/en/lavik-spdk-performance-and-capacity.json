@@ -10,8 +10,9 @@
   "blocks": [
     {
       "type": "paragraph",
-      "text": "The September 18, 2026 SPDK report tested the downloaded standard x86_64 v0.1.0-beta.1 package, revision 3955b98d43b312324aa8d52775df52cfb111c0d0—not a rebuild. This remains a beta prerelease, not a stable release. Here we examine its 10M-key Redis/Valkey comparison.",
+      "text": "If DRAM capacity drives your key-value service budget, evaluate measured throughput and modeled capacity savings separately. The September 18, 2026 SPDK report tested the downloaded standard x86_64 v0.1.0-beta.1 package, revision 3955b98d43b312324aa8d52775df52cfb111c0d0—not a rebuild. This remains a beta prerelease, not a stable release. Here we examine its 10M-key Redis/Valkey comparison.",
       "sources": [
+        "readme",
         "benchmark-spdk",
         "build"
       ]
@@ -74,7 +75,15 @@
     },
     {
       "type": "paragraph",
-      "text": "The execution record below passed on the pinned ARM64 minimal beta package, with actual replies PONG, OK, “hello from Lavik”, 1 and Ada. Its recipe and harness hashes match the supplied canonical pins, e473c28b9da9… and ad785c9b0633…. The registered block includes verification/start.sh and all five commands. Minimal excludes SPDK: this file-backed functional smoke test does not reproduce the published standard-package benchmark.",
+      "text": "The September 20, 2026 execution record below passed on the pinned x86_64 minimal beta package. Its platform is x86_64, and artifact SHA-256 8a3e66f313e7…daa77 matches the pinned x86_64 minimal archive. The release, source revision, recipe hash e473c28b9da9… and harness hash ad785c9b0633… also match the pins. The five actual replies were PONG, OK, “hello from Lavik”, 1 and Ada.",
+      "sources": [
+        "build",
+        "readme"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "The registered recipe block includes verification/start.sh and all five commands. Use it only with a private, disposable instance. Minimal excludes SPDK: this file-backed functional smoke test does not reproduce the published standard-package benchmark.",
       "sources": [
         "build",
         "readme",
@@ -95,7 +104,7 @@
     },
     {
       "type": "paragraph",
-      "text": "Assume DRAM costs 20 and SSD 1 currency unit/GiB-month: a hypothetical 20:1 ratio gives 95% savings on payload capacity alone, not a sourced quote. The supplied calculator definition normalizes to 1 GiB, with 2% index RAM, identical shared costs equal to 10% of Redis payload-memory cost, equal replica counts, no compression and storage amplification 1. Its “Lavik memory / payload capacity” slider models index RAM—not total RAM or measured usage.",
+      "text": "Assume DRAM costs 20 and SSD 1 currency unit/GiB-month: a hypothetical 20:1 ratio gives 95% savings on payload capacity alone, not a sourced quote. The calculator below normalizes to 1 GiB and defaults to 2% index RAM, identical shared costs equal to 10% of Redis payload-memory cost, equal replica counts, no compression and storage amplification 1. Its “Lavik memory / payload capacity” slider models index RAM—not total RAM or measured usage.",
       "sources": [
         "storage"
       ]
@@ -106,7 +115,7 @@
     },
     {
       "type": "paragraph",
-      "text": "Scaling those assumptions to 1,024 GiB, the checked monthly calculation is Redis: 20,480 + 2,048 = 22,528 units; Lavik: 1,024 + 409.60 + 2,048 = 3,481.60 units. That is an 84.55% saving on the modeled subtotal and a 6.47:1 cost ratio; the supplied renderer rounds savings to 84.5%. Runtime/buffer RAM and SPDK’s separate 8 GiB reservation are unpriced. The shared allowance does not specify CPU or operations coverage. This is not a whole-deployment result.",
+      "text": "Scaling those assumptions to 1,024 GiB, the checked monthly calculation is Redis: 20,480 + 2,048 = 22,528 units; Lavik: 1,024 + 409.60 + 2,048 = 3,481.60 units. That is an 84.55% saving on the modeled subtotal and a 6.47:1 cost ratio; the calculator displays savings rounded to 84.5%. Runtime/buffer RAM and SPDK’s separate 8 GiB reservation are unpriced. The shared allowance does not specify CPU or operations coverage. This is not a whole-deployment result.",
       "sources": [
         "storage",
         "benchmark-spdk"
@@ -114,7 +123,7 @@
     },
     {
       "type": "paragraph",
-      "text": "Larger indexes, storage amplification and shared costs reduce modeled percentage savings. Next, test your command mix, value sizes, matched offered load, sustained maintenance, recovery and failover; then price the same service boundary. Neither the benchmark nor this calculation establishes unchanged latency, durability or availability.",
+      "text": "From these defaults, larger indexes, greater storage amplification and higher equal shared costs reduce modeled percentage savings. Next, test your command mix, value sizes, matched offered load, sustained maintenance, recovery and failover; then price the same service boundary. Neither the benchmark nor this calculation establishes unchanged latency, durability or availability.",
       "sources": [
         "readme",
         "storage",

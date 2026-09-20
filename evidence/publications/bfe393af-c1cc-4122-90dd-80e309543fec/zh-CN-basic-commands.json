@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "recipeId": "basic-commands",
+  "recipeHash": "e473c28b9da9c1c775aa084cf0cc013079a50eb8692082d06464248a46455639",
+  "sourceCommit": "3955b98d43b312324aa8d52775df52cfb111c0d0",
+  "release": "0.1.0-beta.1",
+  "artifactSha256": "8a3e66f313e7112a3a9dff7b1a0d67ae34e988dfa51f5c310e860d0b3f2daa77",
+  "imageId": "sha256:0c0edf6b990277fb51ab4442cc927cee33a9b716792bee3721759d35c0326ec2",
+  "harnessHash": "ad785c9b06333df53fb286af1eec00aa29841e2349590807395e2d75257994bf",
+  "status": "passed",
+  "startedAt": "2026-09-20T17:03:21.973Z",
+  "completedAt": "2026-09-20T17:03:24.822Z",
+  "platform": "Linux-6.17.0-1022-azure-x86_64-with-glibc2.39",
+  "output": "{\"recipeId\": \"basic-commands\", \"platform\": \"Linux-6.17.0-1022-azure-x86_64-with-glibc2.39\", \"steps\": [{\"argv\": [\"redis-cli\", \"--raw\", \"PING\"], \"expected\": \"PONG\", \"actual\": \"PONG\"}, {\"argv\": [\"redis-cli\", \"--raw\", \"SET\", \"greeting\", \"hello from Lavik\"], \"expected\": \"OK\", \"actual\": \"OK\"}, {\"argv\": [\"redis-cli\", \"--raw\", \"GET\", \"greeting\"], \"expected\": \"hello from Lavik\", \"actual\": \"hello from Lavik\"}, {\"argv\": [\"redis-cli\", \"--raw\", \"HSET\", \"user:42\", \"name\", \"Ada\"], \"expected\": \"1\", \"actual\": \"1\"}, {\"argv\": [\"redis-cli\", \"--raw\", \"HGET\", \"user:42\", \"name\"], \"expected\": \"Ada\", \"actual\": \"Ada\"}], \"status\": \"passed\", \"binaryVersion\": \"lavik 0.1.0-beta.1\", \"sourceCommit\": \"3955b98d43b312324aa8d52775df52cfb111c0d0\", \"packageVersion\": \"v0.1.0-beta.1\", \"gracefulRestart\": \"passed\"}\n"
+}
