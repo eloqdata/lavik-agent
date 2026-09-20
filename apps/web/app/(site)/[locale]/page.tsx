@@ -35,13 +35,13 @@ export async function generateMetadata({
     title: {
       absolute:
         locale === "en"
-          ? `Lavik — Redis-class speed. ${capacityRatio}× lower capacity cost.`
-          : `Lavik — Redis 级性能，容量成本降至 1/${capacityRatio}。`,
+          ? `Lavik — Faster than Redis. ${capacityRatio}× lower capacity cost.`
+          : `Lavik — 比 Redis 更快，容量成本降至 1/${capacityRatio}。`,
     },
     description:
       locale === "en"
-        ? "Move your Redis/Valkey workload to NVMe with Lavik. A 20:1 DRAM/NVMe price ratio means 95% lower value-capacity cost. Redis-class benchmark performance. Apache 2.0."
-        : "用 Lavik 将 Redis/Valkey 工作负载迁至 NVMe。按 DRAM/NVMe 单价比 20:1，值容量成本降低 95%。Redis 级基准性能，Apache 2.0 开源。",
+        ? "Faster than Redis in the published SPDK GET/SET benchmark. A 20:1 DRAM/NVMe price ratio means 95% lower value-capacity cost. Open source under Apache 2.0."
+        : "在已发布的 SPDK GET/SET 基准测试中比 Redis 更快。按 DRAM/NVMe 单价比 20:1，值容量成本降低 95%。Apache 2.0 开源。",
     alternates: {
       canonical: `/${locale}/`,
       languages: { en: "/en/", "zh-CN": "/zh-CN/" },
@@ -74,13 +74,13 @@ export default async function Home({
             <h1>
               {zh ? (
                 <>
-                  Redis 级性能。
+                  比 Redis 更快。
                   <br />
                   <em>容量成本降至 1/{capacityRatio}。</em>
                 </>
               ) : (
                 <>
-                  Redis-class speed.
+                  Faster than Redis.
                   <br />
                   <em>
                     {capacityRatio}× lower
