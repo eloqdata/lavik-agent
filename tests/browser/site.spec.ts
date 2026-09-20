@@ -41,8 +41,15 @@ test("both languages, benchmark interaction, and real verification output", asyn
       await expect(page.locator(".lavik-bar")).toHaveCount(1);
       if (!section) {
         await expect(page.locator(".large-stat")).toHaveText("1.01M");
-        await expect(page.locator(".benchmark-intro")).toContainText("3.6%");
-        await expect(page.locator(".benchmark-intro")).toContainText("2.2%");
+        await expect(page.locator(".hero h1")).toContainText("20");
+        await expect(page.locator(".capacity-saving")).toContainText("95%");
+        await expect(page.locator(".capacity-assumption")).toContainText(
+          "20:1",
+        );
+        await expect(page.locator(".hero .button.secondary")).toHaveAttribute(
+          "href",
+          `/${locale}/cost/`,
+        );
         await expect(page.locator(".benchmark-context a")).toHaveAttribute(
           "href",
           /lavik-v0\.1\.0-beta\.1-spdk-vs-peers-2026-09-18/,

@@ -11,6 +11,19 @@ import {
   currentBenchmark,
 } from "../../../../../packages/content/benchmarks";
 import { BenchmarkChart } from "../../../components/benchmark";
+import { estimateCost } from "../../../../../packages/content/economics";
+
+// Compare the value-capacity tier; index memory and shared server costs are separate.
+const capacityCost = estimateCost({
+  dramPerGiB: 20,
+  ssdPerGiB: 1,
+  datasetGiB: 1,
+  indexFraction: 0,
+  storageAmplification: 1,
+  sharedCost: 0,
+});
+const capacityRatio = capacityCost.capacityRatio.toFixed(0);
+const capacitySavings = capacityCost.savingsPercent.toFixed(0);
 
 export async function generateMetadata({
   params,
@@ -22,13 +35,13 @@ export async function generateMetadata({
     title: {
       absolute:
         locale === "en"
-          ? "Lavik — Redis-class performance. NVMe-scale capacity."
-          : "Lavik — 接近内存的性能，NVMe 级容量。",
+          ? `Lavik — Redis-class speed. ${capacityRatio}× lower capacity cost.`
+          : `Lavik — Redis 级性能，容量成本降至 1/${capacityRatio}。`,
     },
     description:
       locale === "en"
-        ? "An open-source Redis-compatible key-value store built around NVMe storage. Explore the benchmarks and evaluate Lavik 0.1.0."
-        : "围绕 NVMe 存储构建的开源 Redis 兼容键值数据库。查看基准测试，运行示例，评估 Lavik 0.1.0。",
+        ? "Move your Redis/Valkey workload to NVMe with Lavik. A 20:1 DRAM/NVMe price ratio means 95% lower value-capacity cost. Redis-class benchmark performance. Apache 2.0."
+        : "用 Lavik 将 Redis/Valkey 工作负载迁至 NVMe。按 DRAM/NVMe 单价比 20:1，值容量成本降低 95%。Redis 级基准性能，Apache 2.0 开源。",
     alternates: {
       canonical: `/${locale}/`,
       languages: { en: "/en/", "zh-CN": "/zh-CN/" },
@@ -43,9 +56,7 @@ export default async function Home({
   const locale = localeSchema.parse((await params).locale),
     zh = locale === "zh-CN";
   const rows = benchmarkRows();
-  const [lavik, redis] = rows;
-  const getLead = ((lavik.get / redis.get - 1) * 100).toFixed(1);
-  const setLead = ((lavik.set / redis.set - 1) * 100).toFixed(1);
+  const [lavik] = rows;
   return (
     <main id="main">
       <section className="hero">
@@ -56,42 +67,44 @@ export default async function Home({
               href={`/${locale}/releases/0-1-0-beta-1/`}
             >
               <span className="status-dot" />
-              {zh ? "现在开始探索" : "Ready to explore"} · v{release.release}
+              {zh ? "开源，免费使用" : "Open source. Free to use."} · v
+              {release.release}
               <span>↗</span>
             </Link>
             <h1>
               {zh ? (
                 <>
-                  接近内存的性能。
+                  Redis 级性能。
                   <br />
-                  <em>NVMe 级容量。</em>
+                  <em>容量成本降至 1/{capacityRatio}。</em>
                 </>
               ) : (
                 <>
                   Redis-class speed.
                   <br />
-                  <em>Room to grow.</em>
+                  <em>
+                    {capacityRatio}× lower
+                    <br />
+                    capacity cost.
+                  </em>
                 </>
               )}
             </h1>
             <p className="hero-description">
               {zh
-                ? "将值存储在 NVMe 上，用熟悉的 Redis 接口访问。探索一个围绕现代存储构建的开源键值数据库。"
-                : "Keep your values on NVMe and your familiar Redis interface. Explore an open-source key-value store built around modern storage."}
+                ? "用 NVMe 替代昂贵的 DRAM 来存储值。Lavik 为 Redis / Valkey 工作负载带来全新的成本结构：熟悉的 Redis 接口、实测百万级 QPS，以及随 SSD 扩展的数据容量。"
+                : "Replace expensive DRAM with NVMe for your values. Lavik gives Redis / Valkey workloads a new cost structure: familiar Redis clients, a measured million requests per second, and capacity that grows with SSDs."}
             </p>
             <div className="actions">
               <Link
                 className="button primary"
                 href={`/${locale}/docs/0.1.0/quick-start/`}
               >
-                {zh ? "开始使用" : "Start building"}
+                {zh ? "开始使用 Lavik" : "Start with Lavik"}
                 <span>→</span>
               </Link>
-              <Link
-                className="button secondary"
-                href={`/${locale}/benchmarks/`}
-              >
-                {zh ? "查看基准测试" : "Explore the benchmarks"}
+              <Link className="button secondary" href={`/${locale}/cost/`}>
+                {zh ? "计算你的成本节省" : "Calculate your savings"}
               </Link>
             </div>
             <div className="hero-facts">
@@ -100,54 +113,88 @@ export default async function Home({
               <span>Linux · x86_64 / ARM64</span>
             </div>
           </div>
-          <div
-            className="storage-visual"
-            aria-label={
-              zh
-                ? "键索引保留在 DRAM 中，值存储在 NVMe 上"
-                : "Key index in DRAM, values on NVMe"
-            }
-          >
-            <div className="visual-grid" />
-            <div className="storage-title">CAPACITY, RECONSIDERED</div>
-            <div className="memory-module">
-              <span>DRAM</span>
-              <div className="memory-chips">
-                {[0, 1, 2, 3, 4, 5].map((i) => (
-                  <i key={i} />
-                ))}
-              </div>
-              <small>{zh ? "紧凑的键索引" : "Compact key index"}</small>
+          <aside className="capacity-card" aria-labelledby="capacity-title">
+            <p className="eyebrow">
+              {zh
+                ? "DRAM → NVMe · 改变成本结构"
+                : "DRAM → NVMe · CHANGE THE ECONOMICS"}
+            </p>
+            <div className="capacity-saving">
+              <strong>
+                {capacitySavings}
+                <span>%</span>
+              </strong>
+              <h2 id="capacity-title">
+                {zh ? "更低的值容量成本" : "less spent on value capacity"}
+              </h2>
             </div>
-            <div className="data-path">
-              <span />
-              <span />
-              <span />
-            </div>
-            <div className="disk-stack">
-              {[0, 1, 2].map((i) => (
-                <div className="disk" key={i}>
-                  <span>NVMe</span>
-                  <i />
-                  <i />
-                  <small>{i === 0 ? "01" : i === 1 ? "02" : "03"}</small>
+            <p className="capacity-subtitle">
+              {zh
+                ? "相同的数据量，更低的容量单价。"
+                : "Same amount of data. A different price for capacity."}
+            </p>
+            <div className="capacity-comparison">
+              <div className="capacity-row">
+                <div>
+                  <span>
+                    Redis / Valkey <small>DRAM</small>
+                  </span>
+                  <strong>100%</strong>
                 </div>
-              ))}
+                <div className="capacity-track" aria-hidden="true">
+                  <div className="capacity-dram" />
+                </div>
+              </div>
+              <div className="capacity-row">
+                <div>
+                  <span>
+                    Lavik <small>NVMe</small>
+                  </span>
+                  <strong>
+                    {(100 / capacityCost.capacityRatio).toFixed(0)}%
+                  </strong>
+                </div>
+                <div className="capacity-track" aria-hidden="true">
+                  <div
+                    className="capacity-nvme"
+                    style={{ width: `${100 / capacityCost.capacityRatio}%` }}
+                  />
+                </div>
+              </div>
             </div>
-            <div className="visual-caption">
-              <span className="status-dot" />
-              {zh ? "让存储承载数据容量" : "Let storage carry the capacity"}
+            <div className="capacity-architecture">
+              <span>
+                DRAM <strong>{zh ? "紧凑键索引" : "Compact key index"}</strong>
+              </span>
+              <span>
+                NVMe{" "}
+                <strong>{zh ? "承载值容量" : "Room for your values"}</strong>
+              </span>
             </div>
-          </div>
+            <p className="capacity-assumption">
+              {zh
+                ? `按 DRAM / NVMe 每 GiB 单价比 ${capacityRatio}:1 计算，值容量成本为 1/${capacityRatio}。索引内存、存储放大和服务器等成本另计。`
+                : `At a ${capacityRatio}:1 DRAM / NVMe price per GiB, value capacity costs 1/${capacityRatio} as much. Index memory, storage amplification, and server costs are additional.`}{" "}
+              <Link href={`/${locale}/cost/`}>
+                {zh ? "按你的配置计算" : "Model your deployment"} ↗
+              </Link>
+            </p>
+          </aside>
         </div>
       </section>
       <section className="container section">
         <div className="section-heading">
           <div>
             <p className="eyebrow">
-              {zh ? "数据，附上测试条件" : "Numbers, with the context"}
+              {zh
+                ? "用性能证明 NVMe 的实力"
+                : "The performance behind the savings"}
             </p>
-            <h2>{zh ? "让结果自己说话。" : "Performance you can inspect."}</h2>
+            <h2>
+              {zh
+                ? "数据在 NVMe，性能比肩内存。"
+                : "NVMe storage. In-memory-class performance."}
+            </h2>
           </div>
           <Link className="text-link" href={`/${locale}/benchmarks/`}>
             {zh ? "测试方法与完整结果" : "Methodology & full results"} ↗
@@ -166,8 +213,8 @@ export default async function Home({
             </h3>
             <p>
               {zh
-                ? `在已发布的 1 KiB 实验中，Lavik 0.1.0 SPDK 的 GET 和 SET 峰值吞吐量分别比 Redis 8.8.0 高 ${getLead}% 和 ${setLead}%。`
-                : `In the published 1 KiB experiment, Lavik 0.1.0 SPDK’s peak GET and SET throughput exceeded Redis 8.8.0 by ${getLead}% and ${setLead}%, respectively.`}
+                ? "Lavik 将值存储在 NVMe，Redis 和 Valkey 将数据放在内存。在已发布的 1 KiB 实验中，Lavik SPDK 的 GET / SET 峰值吞吐量均超过两者，p99 延迟处于相近水平。"
+                : "Lavik stores values on NVMe. Redis and Valkey keep them in memory. In the published 1 KiB experiment, Lavik SPDK exceeded both peers’ peak GET and SET throughput, with comparable p99 latency."}
             </p>
             <span className="small-label">
               {zh
@@ -190,13 +237,20 @@ export default async function Home({
         <div className="container">
           <p className="eyebrow">
             {zh
-              ? "熟悉的接口，新的容量空间"
-              : "A familiar interface. A different capacity tier."}
+              ? "为什么用 Lavik 替代 Redis / Valkey？"
+              : "Why switch from Redis / Valkey?"}
           </p>
           <div className="feature-grid">
             <article>
-              <span className="feature-number">01 / CAPACITY</span>
-              <h3>{zh ? "让值走出内存。" : "Give your values more room."}</h3>
+              <span className="feature-number">
+                01 / {zh ? "容量成本" : "LOWER CAPACITY COST"}
+              </span>
+              <h3>{zh ? "扩容，用 SSD 的价格。" : "Grow at SSD prices."}</h3>
+              <p>
+                {zh
+                  ? "新增值容量由 NVMe 承载，减少对昂贵 DRAM 扩容的依赖。"
+                  : "Put growing value capacity on NVMe and reduce the need for expensive DRAM upgrades."}
+              </p>
               <p>
                 {claims.find((c) => c.id === "storage-model")!.text[locale]}
               </p>
@@ -204,14 +258,14 @@ export default async function Home({
             <article>
               <span className="feature-number">02 / INTERFACE</span>
               <h3>
-                {zh ? "从已有的工具出发。" : "Start with the tools you know."}
+                {zh ? "沿用熟悉的 Redis 客户端。" : "Keep your Redis clients."}
               </h3>
               <p>{claims.find((c) => c.id === "protocol")!.text[locale]}</p>
             </article>
             <article>
               <span className="feature-number">03 / OPEN SOURCE</span>
               <h3>
-                {zh ? "自由探索，亲手构建。" : "Explore it. Build with it."}
+                {zh ? "Apache 2.0，免费使用。" : "Apache 2.0. Free to use."}
               </h3>
               <p>{claims.find((c) => c.id === "license")!.text[locale]}</p>
             </article>
@@ -222,10 +276,14 @@ export default async function Home({
         <div className="section-heading">
           <div>
             <p className="eyebrow">
-              {zh ? "从好奇到验证" : "From curious to hands-on"}
+              {zh
+                ? "从你的 Redis / Valkey 工作负载开始"
+                : "Bring your Redis / Valkey workload"}
             </p>
             <h2>
-              {zh ? "从你的工作负载开始。" : "Find out where Lavik fits."}
+              {zh
+                ? "下一次扩容，选择 NVMe。"
+                : "Make your next capacity upgrade NVMe."}
             </h2>
           </div>
         </div>
@@ -241,7 +299,7 @@ export default async function Home({
             ],
             [
               "02",
-              zh ? "理解容量经济性" : "Explore the capacity economics",
+              zh ? "算出你的成本节省" : "Calculate your savings",
               zh
                 ? "调整假设，计算 DRAM 与 SSD 的成本差异。"
                 : "Adjust the assumptions behind a DRAM-to-SSD cost comparison.",
@@ -249,11 +307,11 @@ export default async function Home({
             ],
             [
               "03",
-              zh ? "阅读测试边界" : "Read the benchmark closely",
+              zh ? "检查应用兼容性" : "Check your application’s compatibility",
               zh
-                ? "了解吞吐量、尾延迟与测试配置。"
-                : "Understand throughput, tail latency, and the tested configuration.",
-              "blog/reading-the-benchmark",
+                ? "确认应用使用的命令、持久性和运维需求。"
+                : "Match your commands, durability, and operational requirements.",
+              "docs/0.1.0/compatibility",
             ],
           ].map(([number, title, description, url]) => (
             <Link
@@ -272,20 +330,18 @@ export default async function Home({
       </section>
       <section className="container closing">
         <div>
-          <p className="eyebrow">
-            {zh ? "用真实结果判断" : "Put it to the test"}
-          </p>
+          <p className="eyebrow">{zh ? "现在就开始" : "Start today"}</p>
           <h2>
             {zh
-              ? "你的下一组数据，\n可以有更大的空间。"
-              : "Make room for your next dataset."}
+              ? "把值迁到 NVMe。\n把预算留给增长。"
+              : "Move your values to NVMe.\nPut your budget into growth."}
           </h2>
         </div>
         <Link
           className="button primary"
-          href={`/${locale}/docs/0.1.0/overview/`}
+          href={`/${locale}/docs/0.1.0/quick-start/`}
         >
-          {zh ? "阅读 0.1.0 文档" : "Read the 0.1.0 docs"} →
+          {zh ? "免费试用 Lavik" : "Try Lavik for free"} →
         </Link>
       </section>
     </main>
