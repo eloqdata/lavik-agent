@@ -34,6 +34,11 @@ to publication is the next increment, without adding mandatory per-post approval
 
 ## Cloudflare Access setup
 
+Production sign-in is configured. Open `https://lavik.dev/admin/`, enter the
+configured administrator email, request a code, and enter the PIN from your inbox.
+No further dashboard setup is needed. The instructions below document how to
+recreate the configuration.
+
 If One-time PIN is absent, first open Zero Trust → Integrations → Identity providers
 → Add new identity provider → One-time PIN. New organizations may not add it by default;
 see [Cloudflare's PIN setup](https://developers.cloudflare.com/cloudflare-one/integrations/identity-providers/one-time-pin/).

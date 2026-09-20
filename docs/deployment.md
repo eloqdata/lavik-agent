@@ -78,9 +78,18 @@ enabled, and its [first production check](https://github.com/eloqdata/lavik-agen
 successfully recorded a heartbeat and skipped execution for an empty queue.
 
 Production checks confirmed public English/Chinese pages and documentation still
-return 200, the root redirects correctly, and missing pages return 404. The admin
-paths fail closed while the Access team domain and AUD are awaiting configuration;
-the runner API rejects requests without its credential. Access setup instructions
+return 200, the root redirects correctly, and missing pages return 404.
+
+Cloudflare Access sign-in was configured and verified on September 20, 2026.
+The deployed application matches the private paths and sign-in policy documented
+in [admin.md](admin.md). Account-specific identifiers remain in private configuration.
+
+Cloudflare API read-back confirmed the exact paths, provider and owner policy.
+Anonymous admin requests redirect to Access, and a real browser loaded the Lavik
+Admin email/code form. Public English/Chinese pages and documentation return 200.
+The runner API rejects anonymous requests and accepts its existing credential,
+independently of Access. Entering the owner's emailed PIN remains a user action;
+this verification did not create an authenticated owner session. Setup instructions
 are in [admin.md](admin.md).
 
 Cloudflare API confirmation and production browser output are retained locally in
