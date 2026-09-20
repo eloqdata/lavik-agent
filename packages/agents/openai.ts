@@ -1,4 +1,10 @@
-import { Agent, OpenAIProvider, Runner, tool } from "@openai/agents";
+import {
+  Agent,
+  ModelBehaviorError,
+  OpenAIProvider,
+  Runner,
+  tool,
+} from "@openai/agents";
 import { z } from "zod";
 import {
   articleSchema,
@@ -181,22 +187,54 @@ export function createOpenAIRuntime(
           }),
         ],
       });
-      const result = await runner
-        .run(agent, JSON.stringify({ ...input, context: context() }), {
-          maxTurns: policy.maxTurnsPerAgent,
-          signal: signal
-            ? AbortSignal.any([signal, AbortSignal.timeout(config.timeoutMs)])
-            : AbortSignal.timeout(config.timeoutMs),
-        })
-        .catch(async (error) => {
-          await observed("model-run-failed", {
-            ...details,
-            error: error instanceof Error ? error.message : String(error),
-            cause: errorCause(error),
-            usage: error?.state?.usage,
+      const run = (formatRetry: boolean) =>
+        runner
+          .run(
+            agent,
+            JSON.stringify({
+              ...input,
+              feedback: formatRetry
+                ? [
+                    ...input.feedback,
+                    "The previous response failed article schema validation. Return a complete article object matching the supplied JSON schema, including its exact block types, required fields, identifiers and length limits. Keep all factual verification requirements.",
+                  ]
+                : input.feedback,
+              context: context(),
+            }),
+            {
+              maxTurns: policy.maxTurnsPerAgent,
+              signal: signal
+                ? AbortSignal.any([
+                    signal,
+                    AbortSignal.timeout(config.timeoutMs),
+                  ])
+                : AbortSignal.timeout(config.timeoutMs),
+            },
+          )
+          .catch(async (error) => {
+            await observed("model-run-failed", {
+              ...details,
+              error: error instanceof Error ? error.message : String(error),
+              cause: errorCause(error),
+              usage: error?.state?.usage,
+            });
+            throw error;
           });
+      let result;
+      try {
+        result = await run(false);
+      } catch (error) {
+        // A malformed draft never reaches review or publication. Give the writer
+        // one fresh attempt; authentication, refusal and tool failures still fail.
+        if (
+          !(error instanceof ModelBehaviorError) ||
+          !error.message.startsWith("Invalid output type:")
+        )
           throw error;
-        });
+        signal?.throwIfAborted();
+        await observed("writer-format-retry", details);
+        result = await run(true);
+      }
       await observed("model-run-completed", {
         ...details,
         usage: result.state.usage,

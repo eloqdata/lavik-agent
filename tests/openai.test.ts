@@ -217,6 +217,77 @@ test("live provider failures emit a failure event without a completion or creden
   assert.ok(!JSON.stringify(events).includes(azureEnv.OPENAI_API_KEY));
 });
 
+for (const recover of [true, false]) {
+  test(`writer schema errors ${recover ? "recover through one fresh model response" : "stop after one retry"}`, async (t) => {
+    const article = articles().find((a) => a.locale === "en")!;
+    const events: string[] = [];
+    const inputs: string[] = [];
+    t.mock.method(
+      globalThis,
+      "fetch",
+      async (input: string | URL | Request, init?: RequestInit) => {
+        const request = new Request(input, init);
+        assert.equal(request.url, `${azureEnv.OPENAI_BASE_URL}responses`);
+        const body = JSON.parse(await request.text());
+        inputs.push(JSON.stringify(body.input));
+        return new Response(
+          JSON.stringify({
+            id: `resp_format_${inputs.length}`,
+            object: "response",
+            created_at: 1,
+            status: "completed",
+            model: body.model,
+            output: [
+              {
+                id: `msg_${inputs.length}`,
+                type: "message",
+                role: "assistant",
+                status: "completed",
+                content: [
+                  {
+                    type: "output_text",
+                    annotations: [],
+                    text: JSON.stringify(
+                      recover && inputs.length === 2
+                        ? article
+                        : { title: "Incomplete draft" },
+                    ),
+                  },
+                ],
+              },
+            ],
+            usage: { input_tokens: 10, output_tokens: 20, total_tokens: 30 },
+          }),
+          { status: 200, headers: { "content-type": "application/json" } },
+        );
+      },
+    );
+    const runtime = createOpenAIRuntime(azureEnv, async (type) => {
+      events.push(type);
+    });
+    const pending = runtime.write(
+      {
+        brief: "Fix an article",
+        locale: "en",
+        feedback: ["Keep the existing URL"],
+      },
+      async () => {
+        throw new Error("Unexpected verification");
+      },
+    );
+    if (recover) assert.deepEqual(await pending, article);
+    else await assert.rejects(pending, /Invalid output type:/);
+    assert.equal(inputs.length, 2);
+    assert.match(inputs[1], /Keep the existing URL/);
+    assert.match(inputs[1], /failed article schema validation/);
+    assert.equal(
+      events.filter((type) => type === "writer-format-retry").length,
+      1,
+    );
+    assert.equal(events.includes("model-run-completed"), recover);
+  });
+}
+
 test("invalid endpoints and settings fail before creating a model run", () => {
   for (const endpoint of [
     `${azureEnv.OPENAI_BASE_URL}responses`,
