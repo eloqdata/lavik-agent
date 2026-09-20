@@ -81,9 +81,13 @@ See [Azure v1 configuration](https://learn.microsoft.com/en-us/azure/foundry/ope
 
 ## Automatic deployment and task execution
 
-`wrangler.jsonc` serves the Next.js static export using Cloudflare Workers Static Assets. This first website needs no Next.js runtime adapter.
+`wrangler.jsonc` serves the Next.js static export using Cloudflare Workers Static Assets and declares `lavik.dev` as the Worker's custom domain. The root URL redirects to `/en/`; Chinese content is available at `/zh-CN/`. This first website needs no Next.js runtime adapter.
 
-For CI deployment, configure GitHub secrets `CLOUDFLARE_ACCOUNT_ID` and `CLOUDFLARE_API_TOKEN`, then set repository variable `LAVIK_AUTO_DEPLOY=true`. Attach `lavik.dev` to the resulting Worker in Cloudflare after checking the preview. No domain or account changes have been made by this scaffold.
+The site is live at [lavik.dev](https://lavik.dev). The owning Cloudflare account is pinned in the configuration. See the [deployment record](docs/deployment.md) for the deployed version and production checks.
+
+For a local deployment, sign in with `npx wrangler login`, then run `npm run deploy`. Use the Cloudflare account that owns the active `lavik.dev` zone. Cloudflare manages the custom domain's DNS record and certificate through the [Workers custom domain configuration](https://developers.cloudflare.com/workers/configuration/routing/custom-domains/).
+
+For CI deployment, configure GitHub secrets `CLOUDFLARE_ACCOUNT_ID` and `CLOUDFLARE_API_TOKEN`, then set repository variable `LAVIK_AUTO_DEPLOY=true`. The API token must permit Workers deployment and custom domain management for the target account and zone. Keep it in GitHub Secrets; browser login credentials remain local.
 
 The CI workflow reruns real Linux verification, checks content, tests the application, builds the site, and tests it in Chromium before deployment. Model credentials are not needed for website CI. The separate **Write and publish a bilingual campaign** workflow accepts a brief and campaign ID, and additionally needs `OPENAI_API_KEY` plus the two model-name variables. It commits passing bilingual content and can deploy directly; it does not depend on a token-authored push triggering another workflow. Branch rules must permit the configured bot to write content, or that commit step will fail explicitly. Store `.runs` durably for a future hosted worker; GitHub run artifacts are retained for 30 days and workflow reruns do not automatically restore them.
 

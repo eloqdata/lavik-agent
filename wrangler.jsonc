@@ -1,10 +1,13 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "lavik-dev",
+  "account_id": "50aa9d595550cc016bfbe6f23a757cca",
   "compatibility_date": "2026-09-20",
+  "workers_dev": false,
+  "routes": [{ "pattern": "lavik.dev", "custom_domain": true }],
   "assets": {
     "directory": "./apps/web/out",
     "html_handling": "force-trailing-slash",
-    "not_found_handling": "404-page"
-  }
+    "not_found_handling": "404-page",
+  },
 }

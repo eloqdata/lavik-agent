@@ -86,5 +86,6 @@ all twelve benchmark figures, the execution record, calculator changes and absen
 of horizontal overflow or browser errors were checked. Screenshots are saved in
 `.cache/screenshots/campaign-*-desktop.png` and `campaign-*-mobile.png`.
 
-Production Cloudflare deployment, recurring campaigns, the private operations
-console and external social publishing remain subsequent increments.
+The [Cloudflare website deployment](deployment.md) was completed afterward.
+Recurring campaigns, the private operations console and external social publishing
+remain subsequent increments.
