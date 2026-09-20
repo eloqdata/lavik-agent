@@ -26,7 +26,23 @@ const labels: Record<string, string> = {
   cancelled: "Cancelled",
 };
 const when = (date?: string) => (date ? new Date(date).toLocaleString() : "—");
+const pendingMutations = new Map<string, string>();
 async function request<T>(path: string, body?: unknown): Promise<T> {
+  // A server may commit before its response is lost. Preserve the request identity
+  // when the owner retries unchanged inputs, including feedback that queues a revision.
+  const identified =
+    body && typeof body === "object" && "requestId" in body
+      ? (body as Record<string, unknown>)
+      : undefined;
+  const retryKey = identified
+    ? `${path}:${JSON.stringify({ ...identified, requestId: undefined })}`
+    : undefined;
+  if (identified && retryKey) {
+    const requestId =
+      pendingMutations.get(retryKey) ?? String(identified.requestId);
+    pendingMutations.set(retryKey, requestId);
+    body = { ...identified, requestId };
+  }
   const response = await fetch(`/api/admin/${path}`, {
     credentials: "same-origin",
     cache: "no-store",
@@ -44,7 +60,9 @@ async function request<T>(path: string, body?: unknown): Promise<T> {
     }));
     throw new Error(data.error ?? `Request failed (${response.status})`);
   }
-  return response.json();
+  const result = await response.json();
+  if (retryKey) pendingMutations.delete(retryKey);
+  return result;
 }
 function Preview({
   edition,

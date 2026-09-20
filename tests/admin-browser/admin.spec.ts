@@ -67,8 +67,29 @@ test("admin persists tasks, displays worker progress, saves feedback and preserv
   await page
     .getByLabel("Brief", { exact: true })
     .fill("Review the prerequisites and explain the first verified commands.");
+  let lostResponse = false;
+  await page.route("**/api/admin/tasks", async (route) => {
+    const response = await route.fetch();
+    if (!lostResponse) {
+      lostResponse = true;
+      await route.fulfill({
+        status: 503,
+        contentType: "application/json",
+        body: JSON.stringify({ error: "Test: response lost after commit" }),
+      });
+    } else await route.fulfill({ response });
+  });
+  await page.getByRole("button", { name: "Queue task →" }).click();
+  await expect(page.locator(".admin-alert")).toContainText(
+    "response lost after commit",
+  );
   await page.getByRole("button", { name: "Queue task →" }).click();
   await expect(page.getByRole("status")).toContainText("Task queued");
+  const afterRetry = await (await request.get("/api/admin/dashboard")).json();
+  expect(
+    afterRetry.tasks.filter((task: { title: string }) => task.title === title),
+  ).toHaveLength(1);
+  await page.unroute("**/api/admin/tasks");
   await page.reload();
   await page.locator(".task-row").filter({ hasText: title }).click();
   await expect(page.locator(".task-title")).toHaveText(title);
