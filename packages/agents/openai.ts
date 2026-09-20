@@ -133,6 +133,7 @@ const context = (article?: Article) => {
 export function createOpenAIRuntime(
   env: Record<string, string | undefined> = process.env,
   observed: RuntimeEvent = async () => undefined,
+  signal?: AbortSignal,
 ): AgentRuntime {
   const { apiKey, ...config } = openAIConfig(env);
   const runner = new Runner({
@@ -147,6 +148,7 @@ export function createOpenAIRuntime(
   return {
     identity: `openai-agents:${config.writer.model}:${config.reviewer.model}:v2:${hash(JSON.stringify(config))}`,
     async write(input, verify) {
+      const kind = input.kind ?? "blog";
       const details = {
         role: "writer",
         locale: input.locale,
@@ -155,9 +157,13 @@ export function createOpenAIRuntime(
       await observed("model-run-started", details);
       const inspected = new Set<string>();
       const agent = new Agent({
-        name: "Lavik writer",
+        name:
+          kind === "docs" ? "Lavik user manual writer" : "Lavik blog writer",
         model: config.writer.model,
-        instructions: readText("policies/writer.md"),
+        instructions:
+          readText("policies/writer.md") +
+          "\n" +
+          readText(`policies/${kind === "docs" ? "manual" : "blog"}-writer.md`),
         outputType: articleSchema,
         modelSettings: config.writer.modelSettings,
         tools: [
@@ -178,7 +184,9 @@ export function createOpenAIRuntime(
       const result = await runner
         .run(agent, JSON.stringify({ ...input, context: context() }), {
           maxTurns: policy.maxTurnsPerAgent,
-          signal: AbortSignal.timeout(config.timeoutMs),
+          signal: signal
+            ? AbortSignal.any([signal, AbortSignal.timeout(config.timeoutMs)])
+            : AbortSignal.timeout(config.timeoutMs),
         })
         .catch(async (error) => {
           await observed("model-run-failed", {
@@ -196,7 +204,11 @@ export function createOpenAIRuntime(
       });
       return articleSchema.parse(result.finalOutput);
     },
-    async review(article: Article, receipts: Receipt[]) {
+    async review(
+      article: Article,
+      receipts: Receipt[],
+      reviewContext?: { feedback: string[] },
+    ) {
       const details = {
         role: "reviewer",
         locale: article.locale,
@@ -205,9 +217,17 @@ export function createOpenAIRuntime(
       await observed("model-run-started", details);
       const inspected = new Set<string>();
       const reviewer = new Agent({
-        name: "Lavik independent technical editor",
+        name:
+          article.kind === "docs"
+            ? "Lavik user manual reviewer"
+            : "Lavik blog reviewer",
         model: config.reviewer.model,
-        instructions: readText("policies/reviewer.md"),
+        instructions:
+          readText("policies/reviewer.md") +
+          "\n" +
+          readText(
+            `policies/${article.kind === "docs" ? "manual" : "blog"}-reviewer.md`,
+          ),
         outputType: reviewSchema,
         modelSettings: config.reviewer.modelSettings,
         tools: [
@@ -220,10 +240,17 @@ export function createOpenAIRuntime(
       const result = await runner
         .run(
           reviewer,
-          JSON.stringify({ article, receipts, context: context(article) }),
+          JSON.stringify({
+            article,
+            receipts,
+            context: context(article),
+            feedback: reviewContext?.feedback ?? [],
+          }),
           {
             maxTurns: policy.maxTurnsPerAgent,
-            signal: AbortSignal.timeout(config.timeoutMs),
+            signal: signal
+              ? AbortSignal.any([signal, AbortSignal.timeout(config.timeoutMs)])
+              : AbortSignal.timeout(config.timeoutMs),
           },
         )
         .catch(async (error) => {

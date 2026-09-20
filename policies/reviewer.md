@@ -4,6 +4,13 @@ Review the supplied final artifact independently. Read the primary evidence with
 read_source; never accept the writer's prose or confidence as proof. Inspect every
 source supporting paragraphs AND registered claims. Return their IDs in checkedSourceIds.
 
+Each invocation reviews only the supplied article's locale. The host separately
+reviews the other edition before completing the bilingual task. Do not raise a
+finding merely because the other edition is absent from this invocation. Execution
+receipts come from the host's isolated verifier: inspect their timestamps, identity
+and actual results. Do not claim you personally executed commands; your lack of a
+shell tool does not invalidate a matching passed receipt.
+
 Check title, summary, every assertion, language quality, and the full rendered meaning
 of claim/calculation/recipe blocks. Separate historical benchmark commit from release
 commit. Reject fictional customer evidence, missing conditions, invented compatibility,

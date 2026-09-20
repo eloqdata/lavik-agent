@@ -28,7 +28,7 @@ flowchart LR
   Build --> Site[Cloudflare static website]
 ```
 
-The web application never runs an agent in a request or exposes operational state.
+The public web application never runs an agent in a request or exposes operational state.
 It renders escaped, structured blocks. Generated content cannot introduce MDX
 execution, HTML, scripts, tool permissions, or unverified shell snippets.
 
@@ -56,7 +56,43 @@ CI deployments and campaign publication share a production concurrency group.
 Ordinary CI skips deployment if its commit has been superseded on `main`; a campaign
 must successfully push its content before deploying. GitHub Actions concurrency is
 not a durable task queue: a newer pending run can replace an older pending run.
-The future hosted scheduler must persist accepted tasks independently of CI.
+The admin queue now persists accepted tasks independently of CI.
+
+## Private admin increment
+
+```mermaid
+flowchart LR
+  Owner[Owner via Cloudflare Access] --> Console[Private Next.js admin UI]
+  Console --> API[Worker: JWT and same-origin checks]
+  API --> Store[SQLite Durable Object: tasks, drafts, feedback, leases]
+  Wake[GitHub schedule or local process] --> Runner[Separate Node.js worker]
+  Runner <-->|authenticated claim and heartbeat| Store
+  Runner --> Roles[Manual/blog writers and reviewers]
+  Roles --> Linux[Real isolated Linux command verification]
+  Roles --> Draft[Checkpointed bilingual result and review]
+  Draft --> Store
+```
+
+`/admin/` and `/api/admin/*` require an Access JWT with the configured issuer,
+audience and owner email. The runner API has a separate credential. Models and
+Docker never execute in an HTTP request. No private task records enter the static
+export or public GitHub artifacts.
+
+The Durable Object serializes task transitions in SQLite transactions. Stable
+request IDs deduplicate submission; a two-minute lease permits only one active task.
+Heartbeats renew the lease, cancellation invalidates it, and late updates are rejected.
+A lost worker leaves a failed task and saved draft rather than silently duplicating
+model work. Revisions preserve their predecessors and accumulated owner feedback.
+Role policies specialize documentation versus blog work; every writing task includes
+fresh independent review of both locales. Review-only tasks inspect an existing article.
+
+This updates the initial PostgreSQL/Workflows proposal for the v0.1 single-owner
+project: SQLite Durable Objects provide durable state and atomic claims with the
+existing Cloudflare deployment. The runner uses the existing Linux toolchain;
+GitHub schedules only wake it. Portable task/evidence schemas preserve a migration
+path to R2 artifacts, relational reporting and a persistent execution service.
+Admin results currently stop at reviewed drafts; the CLI blog publisher remains
+the connected automatic publication path. See [operations](admin.md).
 
 ## Evidence model
 
@@ -108,13 +144,12 @@ it cannot be inferred from a single saturation-throughput comparison.
 
 ## Evolution path
 
-1. Move campaign records, revisions, source dependencies and action records into
-   PostgreSQL; keep artifacts and transcripts in R2. Retain portable JSON schemas.
-2. Add Cloudflare Workflows for scheduling, durable waits, bounded retries and
-   callbacks from a separate Linux verifier. Its engine owns workflow execution;
-   PostgreSQL owns business records and a transactional publication outbox.
-3. Add a private console protected by authentication/authorization, showing briefs,
-   actual previews, execution evidence, run status, exceptions and outcomes.
+1. Connect private reviewed drafts to versioned website publication with immutable
+   article-scoped receipts, conflict detection and a transactional publication outbox.
+2. Move large artifacts/transcripts to R2 as volume grows. Add PostgreSQL for reporting
+   if needed while retaining portable schemas and explicit state ownership.
+3. Replace GitHub wake-ups with Cloudflare Workflows or a persistent Linux service
+   when scheduling requirements justify it. Preserve bounded retries and leases.
 4. Implement channel adapters reporting their actual account capabilities. Keep
    API publication, import/export handoff, editing, deletion and metrics explicit.
 5. Monitor releases and source changes. Create refresh campaigns from changed
@@ -135,9 +170,11 @@ channel failures independent and route only unresolved exceptions to the owner.
 
 ## Current limits
 
-The local workflow, public website, real verifier, and publication gate are implemented.
-No private web console, PostgreSQL, R2, Cloudflare Workflow deployment, recurring
-planner, external channel connection, or adoption analytics is provisioned. The model
+The local workflow, public website, private admin console, durable queue, real verifier,
+and CLI publication gate are implemented. Access and hosted execution need their
+account settings described in [admin.md](admin.md). PostgreSQL, R2, Cloudflare Workflows,
+a recurring editorial planner, external channel connections and adoption analytics
+remain future increments. The model
 adapter and orchestration have automated regression coverage. The
 [first live Azure campaign](first-live-campaign.md) completed bilingual writing,
 real command execution, independent review and local publication. One successful

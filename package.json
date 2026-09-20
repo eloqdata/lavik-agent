@@ -16,6 +16,9 @@
     "verify:examples": "node --import tsx scripts/verify-examples.ts",
     "agent:write": "node --env-file-if-exists=.env --import tsx scripts/write-content.ts",
     "agent:publish": "node --import tsx scripts/publish-content.ts",
+    "admin:worker": "node --env-file-if-exists=.env --import tsx scripts/admin-worker.ts",
+    "admin:dev": "wrangler dev --local --port 4174 --local-upstream 127.0.0.1:4174 --upstream-protocol http --env-file /dev/null --var ADMIN_LOCAL:true",
+    "test:admin": "playwright test --config playwright.admin.config.ts",
     "check": "npm run typecheck && npm test && npm run build",
     "test:browser": "playwright test",
     "format": "prettier --write apps packages scripts tests policies docs README.md *.json *.ts .github/workflows",
@@ -23,6 +26,7 @@
   },
   "dependencies": {
     "@openai/agents": "0.18.0",
+    "jose": "6.2.12",
     "next": "16.3.5",
     "react": "19.3.0",
     "react-dom": "19.3.0",

@@ -13,6 +13,11 @@ Production deployment follows validated CI when the Cloudflare connection is con
 There is no mandatory per-post human approval. The only initial destination is the
 owned website; social channels require their own actual account integrations.
 
+Admin-assigned manual/blog work currently produces private drafts and independent
+reviews. Its publication adapter is not connected yet; this technical boundary adds
+no per-post approval requirement to the agreed automatic publishing policy. Feedback
+guides a linked revision, and does not silently change global policy or tool access.
+
 Writer and reviewer outputs are untrusted. The application creates review/evidence
 bindings, derives destination paths, and checks the final artifact before writing.
 The reviewer must actually retrieve every cited source through its read tool; a

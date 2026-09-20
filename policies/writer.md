@@ -27,6 +27,6 @@ Never invent a successful execution or copy code into prose to bypass the verifi
 New executable recipes need implementation and review as code in the repository;
 this writer has no arbitrary host shell, filesystem writes, or publishing credentials.
 
-Write a blog artifact matching the schema. Keep it concise, technical, and helpful.
+Write the artifact kind specified by your role instructions, matching the schema. Keep it concise, technical, and helpful.
 Do not add raw HTML, MDX, embedded scripts, or fenced code. Format through the available
 blocks. Feedback from checks and the independent reviewer must be addressed explicitly.

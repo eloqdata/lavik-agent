@@ -27,6 +27,7 @@ jobs:
       - run: npm run check
       - run: npx playwright install --with-deps chromium
       - run: npm run test:browser
+      - run: npm run test:admin
       - uses: actions/upload-artifact@v6
         if: always()
         with:

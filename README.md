@@ -1,6 +1,6 @@
 # Lavik Agent · 0.1.0
 
-The bilingual website and evidence-driven content worker for [Lavik](https://github.com/eloqdata/lavik), targeting **lavik.dev**.
+The bilingual website, private agent console and evidence-driven content worker for [Lavik](https://github.com/eloqdata/lavik), at **lavik.dev**.
 
 Accuracy is the first priority. The writer can inspect pinned product sources, execute registered examples against a real Lavik binary, reason about cost scenarios, receive an independent review, revise, and publish both language editions when checks pass. No per-article human approval is required by the default operating policy.
 
@@ -40,6 +40,15 @@ The documentation family is **0.1.0**. Its precise upstream release is **v0.1.0-
 Tests use a disposable file on container temporary storage. They establish functional behavior for the recorded environment, not NVMe throughput, power-loss durability, replication availability, or an application SLA. The harness needs io_uring, which Docker's default seccomp profile blocks. It runs repository-owned code with that profile disabled, but with no network, host filesystem mounts, devices, capabilities, or secrets, as an unprivileged user, and with resource/time limits. **It is not an arbitrary-code sandbox.** New recipes are reviewed code changes.
 
 ## Assign a writing task
+
+The private [admin console](https://lavik.dev/admin/) manages user manual writers,
+blog writers and their independent reviewers. Assign bilingual tasks, inspect real
+worker status, read drafts and execution evidence, and give feedback for revisions.
+Tasks persist in a Cloudflare SQLite Durable Object. See [admin setup and operations](docs/admin.md)
+for Cloudflare Access and the scheduled GitHub/local worker. Admin results are private
+reviewed drafts; connecting them to automatic publication is the next increment.
+
+The existing CLI below already writes, reviews and publishes new bilingual blog campaigns:
 
 ```sh
 cp .env.example .env
@@ -81,7 +90,7 @@ See [Azure v1 configuration](https://learn.microsoft.com/en-us/azure/foundry/ope
 
 ## Automatic deployment and task execution
 
-`wrangler.jsonc` serves the Next.js static export using Cloudflare Workers Static Assets and declares `lavik.dev` as the Worker's custom domain. The root URL redirects to `/en/`; Chinese content is available at `/zh-CN/`. This first website needs no Next.js runtime adapter.
+`wrangler.jsonc` serves the Next.js static export using Cloudflare Workers Static Assets and declares `lavik.dev` as the Worker's custom domain. A small Worker authenticates `/admin/` and its API and stores agent tasks in a SQLite Durable Object. Model calls and Linux verification run separately. The root URL redirects to `/en/`; Chinese content is available at `/zh-CN/`. The website needs no Next.js runtime adapter.
 
 The site is live at [lavik.dev](https://lavik.dev). The owning Cloudflare account is pinned in the configuration. See the [deployment record](docs/deployment.md) for the initial deployment and production checks.
 
@@ -104,16 +113,22 @@ The release lock, source hashes, claim registry, article revisions, independent 
 | Path                    | Purpose                                                          |
 | ----------------------- | ---------------------------------------------------------------- |
 | `apps/web`              | English/Chinese Next.js site and static export                   |
+| `apps/worker`           | Authenticated admin API and Durable Object binding               |
 | `content`               | Structured articles, claims, release/artifact lock               |
 | `packages/content`      | Schemas, sources, benchmark calculations, publication checks     |
 | `packages/verification` | Real Linux command execution                                     |
 | `packages/agents`       | Writer/reviewer runtime, resumable workflow, publication service |
+| `packages/admin`        | Task contracts, Access validation, durable queue and execution   |
 | `verification`          | Audited startup script, recipes, container harness               |
 | `evidence`              | Pinned source snapshots, independent reviews, execution records  |
 | `policies`              | Operating rules and versioned writer/reviewer instructions       |
 | `docs`                  | Architecture, operating policy, remaining deployment work        |
 
-See [architecture](docs/architecture.md) and [operating policy](docs/operating-policy.md). The private operations console, managed campaign state, schedules, analytics ingestion, and external social connectors are subsequent increments, described there rather than represented as working integrations.
+See [architecture](docs/architecture.md), [operating policy](docs/operating-policy.md)
+and the [next increments](docs/roadmap.md). The remaining priorities are publishing
+admin drafts, platform-specific marketing adapters, release-driven refresh tasks,
+measurement and evaluated policy improvements. The console's Publishing view shows
+actual connection status; external social adapters are not yet connected.
 
 ## License
 

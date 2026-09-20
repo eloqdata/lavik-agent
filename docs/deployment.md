@@ -14,8 +14,10 @@ The public website was deployed and verified on September 20, 2026.
 | Initial production verification | 2026-09-20 10:11 UTC                        |
 
 `wrangler.jsonc` pins the owning account and domain. The Worker serves the static
-export from `apps/web/out`. Its production bindings are empty; the marketing agent
-and model credentials are not part of this website deployment.
+export from `apps/web/out`. The admin increment adds a small authenticated Worker
+and SQLite Durable Object binding `ADMIN_STORE`. Model credentials and Linux execution
+remain on the separate runner. Configure Access and the runner credential using the
+[admin deployment instructions](admin.md); private routes fail closed until configured.
 
 The root URL returns an HTTP 302 redirect to `/en/`. The configuration preserves
 trailing slashes and returns a real 404 for missing pages. English and Chinese
@@ -54,7 +56,8 @@ specified in `wrangler.jsonc`, then run:
 npm run deploy
 ```
 
-Recurring marketing tasks and external social publishing remain separate increments.
+The scheduled admin worker checks for accepted tasks; it does not plan new campaigns.
+Recurring editorial planning and external social publishing remain separate increments.
 
 Cloudflare API confirmation and production browser output are retained locally in
 `.cache/cloudflare-deployment.json` and `.cache/production-browser-tests.log`.

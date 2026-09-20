@@ -27,10 +27,15 @@ export interface AgentRuntime {
       locale: Locale;
       feedback: string[];
       previous?: Article;
+      kind?: "blog" | "docs";
     },
     verify: (id: string) => Promise<Receipt>,
   ): Promise<Article>;
-  review(article: Article, receipts: Receipt[]): Promise<Review>;
+  review(
+    article: Article,
+    receipts: Receipt[],
+    context?: { feedback: string[] },
+  ): Promise<Review>;
   identity: string;
 }
 export type Edition = {
@@ -68,6 +73,8 @@ export const workflowFingerprint = () =>
       recipes: readText("verification/recipes.json"),
       writer: readText("policies/writer.md"),
       reviewer: readText("policies/reviewer.md"),
+      writerRole: readText("policies/blog-writer.md"),
+      reviewerRole: readText("policies/blog-reviewer.md"),
     }),
   );
 export function campaignPath(id: string) {

@@ -1,0 +1,52 @@
+name: Process private admin tasks
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "*/5 * * * *"
+permissions:
+  contents: read
+concurrency:
+  group: lavik-admin-worker
+  cancel-in-progress: false
+jobs:
+  worker:
+    if: vars.LAVIK_ADMIN_WORKER_ENABLED == 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - name: Check for queued work
+        id: queue
+        run: node --import tsx scripts/admin-worker-ready.ts
+        env:
+          LAVIK_RUNNER_TOKEN: ${{ secrets.LAVIK_RUNNER_TOKEN }}
+          LAVIK_WRITER_MODEL: ${{ vars.LAVIK_WRITER_MODEL }}
+          LAVIK_REVIEWER_MODEL: ${{ vars.LAVIK_REVIEWER_MODEL }}
+      - if: steps.queue.outputs.ready == 'true'
+        run: sudo sysctl -w kernel.io_uring_disabled=0
+      - if: steps.queue.outputs.ready == 'true'
+        run: npm run verify:prepare
+      - name: Claim one durable task, write or review, and save private results
+        if: steps.queue.outputs.ready == 'true'
+        run: npm run admin:worker -- --once
+        env:
+          LAVIK_ADMIN_URL: https://lavik.dev
+          LAVIK_RUNNER_TOKEN: ${{ secrets.LAVIK_RUNNER_TOKEN }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          OPENAI_BASE_URL: ${{ vars.OPENAI_BASE_URL }}
+          LAVIK_WRITER_MODEL: ${{ vars.LAVIK_WRITER_MODEL }}
+          LAVIK_REVIEWER_MODEL: ${{ vars.LAVIK_REVIEWER_MODEL }}
+          LAVIK_WRITER_REASONING_EFFORT: ${{ vars.LAVIK_WRITER_REASONING_EFFORT }}
+          LAVIK_REVIEWER_REASONING_EFFORT: ${{ vars.LAVIK_REVIEWER_REASONING_EFFORT }}
+          LAVIK_WRITER_MAX_TOKENS: ${{ vars.LAVIK_WRITER_MAX_TOKENS }}
+          LAVIK_REVIEWER_MAX_TOKENS: ${{ vars.LAVIK_REVIEWER_MAX_TOKENS }}
+          LAVIK_AGENT_TIMEOUT_MS: ${{ vars.LAVIK_AGENT_TIMEOUT_MS }}
+      # Task briefs, drafts, feedback, and transcripts belong in authenticated storage.
+      # Do not upload .runs/admin as public-repository workflow artifacts.

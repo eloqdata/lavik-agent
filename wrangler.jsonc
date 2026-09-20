@@ -1,11 +1,21 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "lavik-dev",
+  "main": "apps/worker/index.ts",
   "account_id": "50aa9d595550cc016bfbe6f23a757cca",
   "compatibility_date": "2026-09-20",
   "workers_dev": false,
   "routes": [{ "pattern": "lavik.dev", "custom_domain": true }],
+  "vars": {
+    "ADMIN_EMAIL": "Zhanghuan929@gmail.com",
+  },
+  "durable_objects": {
+    "bindings": [{ "name": "ADMIN_STORE", "class_name": "AdminStore" }],
+  },
+  "migrations": [{ "tag": "admin-v1", "new_sqlite_classes": ["AdminStore"] }],
   "assets": {
+    "binding": "ASSETS",
+    "run_worker_first": ["/admin", "/admin/*", "/api/admin/*", "/api/runner/*"],
     "directory": "./apps/web/out",
     "html_handling": "force-trailing-slash",
     "not_found_handling": "404-page",
