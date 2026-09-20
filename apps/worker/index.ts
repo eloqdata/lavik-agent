@@ -33,7 +33,13 @@ export class AdminStore {
   async fetch(request: Request) {
     // Also recovers pre-existing queues when deploying the dispatcher.
     const work = this.store.workStatus();
-    if (request.method === "POST" || work.queued || work.running || work.probe)
+    if (
+      request.method === "POST" ||
+      work.queued ||
+      work.running ||
+      work.probe ||
+      work.publications
+    )
       await this.dispatcher.ensureAlarm();
     return this.store.fetch(request);
   }
@@ -49,11 +55,16 @@ export default {
       path.startsWith("/admin/") ||
       path.startsWith("/api/admin/");
     const runner = path.startsWith("/api/runner/");
-    if (!admin && !runner) return env.ASSETS.fetch(request);
+    const publisher = path.startsWith("/api/publisher/");
+    if (!admin && !runner && !publisher) return env.ASSETS.fetch(request);
     if (Number(request.headers.get("content-length") ?? 0) > 1_000_000)
       return json({ error: "Request too large" }, 413);
     const headers = new Headers({ "Content-Type": "application/json" });
-    if (runner) {
+    if (publisher) {
+      if (!(await verifyRunner(request, { RUNNER_TOKEN: env.PUBLISHER_TOKEN })))
+        return json({ error: "Publisher authentication required" }, 401);
+      headers.set("X-Publisher-Authorized", "true");
+    } else if (runner) {
       if (!(await verifyRunner(request, env)))
         return json({ error: "Worker authentication required" }, 401);
       headers.set("X-Runner-Authorized", "true");

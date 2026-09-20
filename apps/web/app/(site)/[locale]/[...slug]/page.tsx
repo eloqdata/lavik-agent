@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import {
   articles,
   articlePath,
+  contentHash,
   claims,
   release,
   sources,
@@ -14,6 +15,11 @@ import {
   currentBenchmark,
 } from "../../../../../../packages/content/benchmarks";
 import { ArticleBody } from "../../../../components/content";
+import { ArticleBody as VerifiedArticleBody } from "../../../../components/content-v2";
+import {
+  articleReview,
+  articleReceipts,
+} from "../../../../../../packages/content/gate";
 import { BenchmarkChart } from "../../../../components/benchmark";
 import { CostCalculator } from "../../../../components/cost-calculator";
 
@@ -74,7 +80,11 @@ export default async function Page({
   const article = pages.find((a) => articlePath(a) === `/${locale}/${route}/`);
   if (article)
     return (
-      <main id="main" className="container document-layout">
+      <main
+        id="main"
+        className="container document-layout"
+        data-content-hash={contentHash(article)}
+      >
         <aside className="document-nav">
           <span className="eyebrow">LAVIK 0.1.0</span>
           <span className="doc-version">v{release.release}</span>
@@ -125,7 +135,14 @@ export default async function Page({
               </p>
             </div>
           ) : null}
-          <ArticleBody article={article} />
+          {articleReview(article).rendererVersion === 2 ? (
+            <VerifiedArticleBody
+              article={article}
+              receipts={articleReceipts(article)}
+            />
+          ) : (
+            <ArticleBody article={article} />
+          )}
         </article>
       </main>
     );

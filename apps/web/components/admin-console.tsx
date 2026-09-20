@@ -24,6 +24,10 @@ const labels: Record<string, string> = {
   needs_revision: "Changes requested",
   failed: "Failed",
   cancelled: "Cancelled",
+  publishing: "Publishing",
+  deploying: "Deploying",
+  published: "Published",
+  publication_failed: "Publication failed",
 };
 const when = (date?: string) => (date ? new Date(date).toLocaleString() : "—");
 const pendingMutations = new Map<string, string>();
@@ -361,12 +365,13 @@ export function AdminConsole() {
               ))}
             </div>
             <div className="next-step">
-              <h2>Next: connect reviewed drafts to publication</h2>
+              <h2>Review passed → Published on lavik.dev</h2>
               <p>
-                Start with versioned website publication, then add
-                channel-specific drafts, account connections, duplicate
-                prevention, publication receipts, and performance tracking. Each
-                platform needs its own integration and publishing rules.
+                The website publisher checks the reviewed article and its
+                evidence, publishes both language editions, deploys to
+                Cloudflare, and verifies the live pages before marking the task
+                Published. Next: connect platform accounts and add
+                channel-specific publishing adapters.
               </p>
             </div>
           </section>
@@ -535,8 +540,8 @@ export function AdminConsole() {
                 <div className="form-footer">
                   <p>
                     English + 简体中文 · Version 0.1.0 · Writers verify examples
-                    and receive independent review. Results remain private
-                    drafts.
+                    and receive independent review. Passing drafts publish
+                    automatically to lavik.dev.
                   </p>
                   <button
                     className="admin-button primary"
@@ -642,6 +647,80 @@ export function AdminConsole() {
                       </span>
                       <h2 className="task-title">{detail.task.title}</h2>
                       <p className="task-brief">{detail.task.brief}</p>
+                      {detail.task.publication && (
+                        <div className="publication-status">
+                          <h3>Website publication</h3>
+                          <p>{detail.task.stage}</p>
+                          {detail.task.publication.error && (
+                            <p role="alert">{detail.task.publication.error}</p>
+                          )}
+                          {detail.task.publication.status === "queued" && (
+                            <p>
+                              Publication is queued automatically. You can close
+                              this page.
+                            </p>
+                          )}
+                          {detail.task.publication.runUrl && (
+                            <p>
+                              <a
+                                href={detail.task.publication.runUrl}
+                                target="_blank"
+                                rel="noreferrer"
+                              >
+                                Publisher run ↗
+                              </a>
+                            </p>
+                          )}
+                          {detail.task.publication.publishedAt && (
+                            <p>
+                              Published{" "}
+                              {when(detail.task.publication.publishedAt)}
+                            </p>
+                          )}
+                          {detail.task.publication.urls && (
+                            <p className="publication-links">
+                              <a
+                                href={detail.task.publication.urls.en}
+                                target="_blank"
+                                rel="noreferrer"
+                              >
+                                Open English article ↗
+                              </a>
+                              {" · "}
+                              <a
+                                href={detail.task.publication.urls["zh-CN"]}
+                                target="_blank"
+                                rel="noreferrer"
+                              >
+                                打开中文文章 ↗
+                              </a>
+                            </p>
+                          )}
+                          {detail.task.publication.status === "failed" && (
+                            <button
+                              className="admin-button"
+                              disabled={busy}
+                              onClick={async () => {
+                                setBusy(true);
+                                try {
+                                  await request(
+                                    `tasks/${detail.task.id}/retry-publication`,
+                                    {},
+                                  );
+                                  await load();
+                                  await loadDetail();
+                                } catch (error) {
+                                  setError((error as Error).message);
+                                } finally {
+                                  setBusy(false);
+                                }
+                              }}
+                            >
+                              Retry publication
+                            </button>
+                          )}
+                        </div>
+                      )}
                       <div className="task-meta">
                         <span>
                           {roles.find((r) => r.id === detail.task.role)?.name}

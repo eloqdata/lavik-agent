@@ -6,6 +6,7 @@ export type AuthConfig = {
   ADMIN_EMAIL?: string;
   ADMIN_LOCAL?: string;
   RUNNER_TOKEN?: string;
+  PUBLISHER_TOKEN?: string;
 };
 const keys = new Map<string, JWTVerifyGetKey>();
 export async function verifyAdmin(

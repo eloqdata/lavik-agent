@@ -53,6 +53,10 @@ export const statusSchema = z.enum([
   "needs_revision",
   "failed",
   "cancelled",
+  "publishing",
+  "deploying",
+  "published",
+  "publication_failed",
 ]);
 export type TaskStatus = z.infer<typeof statusSchema>;
 export const taskInputSchema = z
@@ -92,6 +96,16 @@ export const resultSchema = z
     knowledgeHash: z.string(),
     sourceCommit: z.string(),
     completedAt: z.string().datetime(),
+    publicationContext: z
+      .object({
+        rendererVersion: z.literal(2),
+        policyHash: z.string().regex(/^[a-f0-9]{64}$/),
+        baseContentHashes: z
+          .object({ en: z.string().nullable(), "zh-CN": z.string().nullable() })
+          .strict(),
+      })
+      .strict()
+      .optional(),
   })
   .strict();
 export type TaskResult = z.infer<typeof resultSchema>;
@@ -116,7 +130,60 @@ export type Task = {
   runUrl?: string;
   error?: string;
   result?: TaskResult;
+  publication?: Publication;
 };
+export type Publication = {
+  taskId: string;
+  artifactHash: string;
+  status:
+    | "queued"
+    | "publishing"
+    | "deploying"
+    | "published"
+    | "failed"
+    | "cancelled";
+  attempts: number;
+  createdAt: string;
+  updatedAt: string;
+  leaseExpiresAt?: string;
+  nextAttemptAt?: string;
+  runUrl?: string;
+  commit?: string;
+  deploymentId?: string;
+  publishedAt?: string;
+  urls?: { en: string; "zh-CN": string };
+  error?: string;
+};
+export const publicationClaimSchema = z
+  .object({
+    runnerId: z.string().min(1).max(120),
+    runUrl: z
+      .string()
+      .regex(
+        /^https:\/\/github\.com\/eloqdata\/lavik-agent\/actions\/runs\/\d+$/,
+      ),
+  })
+  .strict();
+export const publicationReviewSchema = z
+  .object({
+    requestId: z.string().uuid(),
+    articleId: z.string().regex(/^[a-z0-9][a-z0-9-]{0,80}$/),
+  })
+  .strict();
+export const publicationUpdateSchema = z
+  .object({
+    leaseToken: z.string().uuid(),
+    artifactHash: z.string().regex(/^[a-f0-9]{64}$/),
+    stage: z.enum(["heartbeat", "deploying", "published", "failed"]),
+    commit: z
+      .string()
+      .regex(/^[a-f0-9]{40}$/)
+      .optional(),
+    deploymentId: z.string().uuid().optional(),
+    error: z.string().max(2000).optional(),
+    retryable: z.boolean().optional(),
+  })
+  .strict();
 export type TaskEvent = {
   id: string;
   taskId: string;
@@ -200,14 +267,14 @@ export const updateSchema = z
   })
   .strict();
 export const terminal = (status: TaskStatus) =>
-  !["queued", "running"].includes(status);
+  !["queued", "running", "publishing", "deploying"].includes(status);
 
 export const channels = [
   {
     name: "lavik.dev",
-    state: "Existing website pipeline",
+    state: "Automatic publication",
     detail:
-      "The CLI/GitHub campaign workflow publishes verified blog pairs. Admin outputs are reviewed drafts; connecting them to this publisher is the next step.",
+      "Passing English and Chinese drafts are published automatically, deployed to Cloudflare, and checked live. Publication status and links appear on each task.",
   },
   ...["X", "Reddit", "WeChat", "Medium", "Rednote / 小红书"].map((name) => ({
     name,

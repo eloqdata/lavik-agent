@@ -100,7 +100,7 @@ export class WorkerDispatcher {
       );
       return;
     }
-    if (!work.queued && !work.probe) {
+    if (!work.queued && !work.probe && !work.publications) {
       this.store.saveDispatch({
         state: "idle",
         message: "Worker idle",
@@ -176,7 +176,11 @@ export class WorkerDispatcher {
       }
       // Re-read after network I/O: a runner may have claimed the work meanwhile.
       const current = this.store.workStatus();
-      if (current.running || (!current.queued && !current.probe)) return;
+      if (
+        current.running ||
+        (!current.queued && !current.probe && !current.publications)
+      )
+        return;
       const intent: DispatchStatus = {
         state: "starting",
         message: "Requesting a GitHub worker",

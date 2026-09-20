@@ -9,7 +9,13 @@ import {
   type TaskEvent,
   type RunnerStatus,
   type DispatchStatus,
+  type Publication,
+  publicationClaimSchema,
+  publicationUpdateSchema,
+  publicationReviewSchema,
+  resultSchema,
 } from "./contracts.ts";
+import { artifactHash } from "./artifact-id.ts";
 
 type Value = string | number | null;
 export interface Database {
@@ -48,6 +54,7 @@ export class TaskStore {
       CREATE TABLE IF NOT EXISTS runners (id TEXT PRIMARY KEY, body TEXT NOT NULL);
       CREATE TABLE IF NOT EXISTS dispatcher (id INTEGER PRIMARY KEY CHECK (id = 1), body TEXT NOT NULL);
       CREATE TABLE IF NOT EXISTS worker_probe (id INTEGER PRIMARY KEY CHECK (id = 1));
+      CREATE TABLE IF NOT EXISTS publications (task_id TEXT PRIMARY KEY, body TEXT NOT NULL, lease_token TEXT);
       CREATE INDEX IF NOT EXISTS task_status ON tasks(json_extract(body, '$.status'), created_at, id);
       CREATE INDEX IF NOT EXISTS runner_seen ON runners(json_extract(body, '$.lastSeenAt'));`);
   }
@@ -90,6 +97,9 @@ export class TaskStore {
     const running = this.list("running", true)[0];
     return {
       queued,
+      publications: this.publications().filter((p) =>
+        ["queued", "publishing", "deploying"].includes(p.status),
+      ).length,
       probe:
         this.db.sql.exec("SELECT id FROM worker_probe WHERE id = 1").toArray()
           .length > 0,
@@ -106,7 +116,73 @@ export class TaskStore {
     };
   }
   refreshLeases() {
-    this.db.transactionSync(() => this.expireLeases());
+    this.db.transactionSync(() => {
+      this.expireLeases();
+      this.expirePublications();
+    });
+  }
+  private publications(): Publication[] {
+    return this.db.sql
+      .exec<{ body: string }>(
+        "SELECT body FROM publications ORDER BY rowid ASC",
+      )
+      .toArray()
+      .map((r) => JSON.parse(r.body));
+  }
+  private savePublication(task: Task, publication: Publication) {
+    publication.updatedAt = now();
+    task.publication = publication;
+    this.db.sql.exec(
+      "INSERT INTO publications(task_id,body) VALUES (?,?) ON CONFLICT(task_id) DO UPDATE SET body=excluded.body",
+      task.id,
+      JSON.stringify(publication),
+    );
+    this.save(task);
+  }
+  private enqueuePublication(task: Task, digest: string) {
+    if (task.publication) return;
+    this.savePublication(task, {
+      taskId: task.id,
+      artifactHash: digest,
+      status: "queued",
+      attempts: 0,
+      createdAt: now(),
+      updatedAt: now(),
+    });
+    this.addEvent(
+      task.id,
+      "publication-queued",
+      "Review passed; website publication queued",
+      "publisher",
+    );
+  }
+  private expirePublications() {
+    for (const publication of this.publications()) {
+      if (
+        !["publishing", "deploying"].includes(publication.status) ||
+        !publication.leaseExpiresAt ||
+        publication.leaseExpiresAt >= now()
+      )
+        continue;
+      const task = this.get(publication.taskId);
+      publication.status = publication.attempts < 3 ? "queued" : "failed";
+      publication.error =
+        "Publisher heartbeat expired. Deployment will be reconciled before retrying.";
+      publication.nextAttemptAt = new Date(Date.now() + 60_000).toISOString();
+      task.status =
+        publication.status === "queued" ? "approved" : "publication_failed";
+      task.stage =
+        publication.status === "queued"
+          ? "Publication retry scheduled"
+          : "Publication needs attention";
+      this.savePublication(task, publication);
+      this.addEvent(
+        task.id,
+        "publication-interrupted",
+        publication.error,
+        "publisher",
+      );
+    }
   }
   private get(id: string): Task {
     const row = this.db.sql
@@ -241,7 +317,22 @@ export class TaskStore {
   async fetch(request: Request): Promise<Response> {
     try {
       const body = request.method === "GET" ? undefined : await request.json();
-      return this.db.transactionSync(() => this.route(request, body));
+      const digest =
+        body?.stage === "complete" && body.result
+          ? await artifactHash(resultSchema.parse(body.result))
+          : undefined;
+      // Existing reviewed tasks are recovered after upgrading to the publisher.
+      if (request.headers.get("X-Publisher-Authorized") === "true") {
+        for (const snapshot of this.list("approved")) {
+          if (snapshot.publication || !snapshot.result) continue;
+          const hash = await artifactHash(snapshot.result);
+          this.db.transactionSync(() => {
+            const task = this.get(snapshot.id);
+            if (task.status === "approved") this.enqueuePublication(task, hash);
+          });
+        }
+      }
+      return this.db.transactionSync(() => this.route(request, body, digest));
     } catch (error) {
       if (error instanceof HttpError)
         return json({ error: error.message }, error.status);
@@ -254,11 +345,13 @@ export class TaskStore {
       return json({ error: "Unable to process this request" }, 500);
     }
   }
-  private route(request: Request, body: unknown): Response {
+  private route(request: Request, body: unknown, digest?: string): Response {
     this.expireLeases();
+    this.expirePublications();
     const path = new URL(request.url).pathname.replace(/\/$/, "");
     const actor = request.headers.get("X-Admin-Actor") ?? "runner";
     const runner = request.headers.get("X-Runner-Authorized") === "true";
+    const publisher = request.headers.get("X-Publisher-Authorized") === "true";
     if (path === "/api/admin/dashboard" && request.method === "GET") {
       const counts = {
         queued: 0,
@@ -267,6 +360,10 @@ export class TaskStore {
         needs_revision: 0,
         failed: 0,
         cancelled: 0,
+        publishing: 0,
+        deploying: 0,
+        published: 0,
+        publication_failed: 0,
       };
       for (const row of this.db.sql
         .exec<{ status: keyof typeof counts; total: number }>(
@@ -307,7 +404,7 @@ export class TaskStore {
     if (path === "/api/admin/tasks" && request.method === "POST")
       return json(this.create(taskInputSchema.parse(body), actor), 201);
     const taskPath = path.match(
-      /^\/api\/admin\/tasks\/([a-f0-9-]{36})(?:\/(feedback|cancel|export))?$/,
+      /^\/api\/admin\/tasks\/([a-f0-9-]{36})(?:\/(feedback|cancel|export|retry-publication))?$/,
     );
     if (taskPath) {
       const task = this.get(taskPath[1]),
@@ -324,6 +421,20 @@ export class TaskStore {
         return json({ task, events });
       }
       if (request.method === "POST" && action === "cancel") {
+        if (["publishing", "deploying"].includes(task.status))
+          throw new HttpError(
+            409,
+            "Publication is in progress; wait for its deployment result before revising.",
+          );
+        if (task.publication?.status === "queued") {
+          task.status = "cancelled";
+          task.stage = "Publication cancelled by owner";
+          this.savePublication(task, {
+            ...task.publication,
+            status: "cancelled",
+          });
+          this.addEvent(task.id, "publication-cancelled", task.stage, actor);
+        }
         if (!terminal(task.status)) {
           task.status = "cancelled";
           task.stage = "Cancelled by owner";
@@ -331,6 +442,19 @@ export class TaskStore {
           this.save(task);
           this.addEvent(task.id, "cancelled", task.stage, actor);
         }
+        return json(task);
+      }
+      if (request.method === "POST" && action === "retry-publication") {
+        if (task.publication?.status !== "failed") return json(task);
+        task.status = "approved";
+        task.stage = "Publication retry queued";
+        this.savePublication(task, {
+          ...task.publication,
+          status: "queued",
+          attempts: 0,
+          nextAttemptAt: undefined,
+        });
+        this.addEvent(task.id, "publication-retry", task.stage, actor);
         return json(task);
       }
       if (request.method === "POST" && action === "feedback") {
@@ -369,6 +493,14 @@ export class TaskStore {
           );
         let next: Task | undefined;
         if (input.action !== "comment") {
+          if (task.publication?.status === "queued") {
+            task.status = "cancelled";
+            task.stage = "Publication replaced by a revision";
+            this.savePublication(task, {
+              ...task.publication,
+              status: "cancelled",
+            });
+          }
           const role =
             input.action === "revise"
               ? roles.find((r) => r.id === task.role)!.kind === "docs"
@@ -381,7 +513,11 @@ export class TaskStore {
               role,
               title: task.title,
               brief: task.brief,
-              articleId: task.articleId,
+              articleId:
+                task.articleId ??
+                (task.publication?.status === "published"
+                  ? task.result?.editions[0].article.id
+                  : undefined),
             },
             actor,
             task.id,
@@ -419,6 +555,9 @@ export class TaskStore {
         return json({
           ready:
             !this.list("running", true).length &&
+            !this.publications().some((p) =>
+              ["queued", "publishing", "deploying"].includes(p.status),
+            ) &&
             Boolean(this.list("queued", true).length),
         });
       if (this.list("running", true).length) return json({ task: null });
@@ -510,6 +649,14 @@ export class TaskStore {
             ? "Independent review passed"
             : "Changes requested";
         task.finishedAt = now();
+        if (task.status === "approved") {
+          if (!digest)
+            throw new HttpError(
+              400,
+              "Completing review requires the full reviewed result",
+            );
+          this.enqueuePublication(task, digest);
+        }
       }
       this.save(task);
       if (input.event)
@@ -536,6 +683,180 @@ export class TaskStore {
             task.runnerId,
           );
       }
+      return json({ status: task.status });
+    }
+    if (
+      path === "/api/publisher/review" &&
+      request.method === "POST" &&
+      publisher
+    ) {
+      const input = publicationReviewSchema.parse(body);
+      const row = this.db.sql
+        .exec<{ body: string }>(
+          "SELECT body FROM runners ORDER BY json_extract(body, '$.lastSeenAt') DESC LIMIT 1",
+        )
+        .toArray()[0];
+      const article =
+        row &&
+        (JSON.parse(row.body) as RunnerStatus).catalog.find(
+          (a) => a.id === input.articleId,
+        );
+      if (!article)
+        throw new HttpError(
+          400,
+          "Select an existing article from the worker catalog for publication review.",
+        );
+      return json(
+        this.create(
+          taskInputSchema.parse({
+            requestId: input.requestId,
+            articleId: article.id,
+            role: article.kind === "docs" ? "manual-reviewer" : "blog-reviewer",
+            title: "Website publication review",
+            brief:
+              "Independently review this existing website article against the current pinned sources, claims, audited command results, rendering and publication policy. Preserve the article. Report any factual, scope, or execution issues; publish only if both language editions pass all checks.",
+          }),
+          "publisher",
+        ),
+        201,
+      );
+    }
+    if (
+      path === "/api/publisher/claim" &&
+      request.method === "POST" &&
+      publisher
+    ) {
+      const input = publicationClaimSchema.parse(body);
+      const active = this.publications().find((p) =>
+        ["publishing", "deploying"].includes(p.status),
+      );
+      const publication =
+        active ??
+        this.publications().find(
+          (p) =>
+            p.status === "queued" &&
+            (!p.nextAttemptAt || p.nextAttemptAt <= now()),
+        );
+      if (!publication || (active && active.runUrl !== input.runUrl))
+        return json({ task: null });
+      const task = this.get(publication.taskId);
+      let leaseToken = this.db.sql
+        .exec<{ lease_token: string | null }>(
+          "SELECT lease_token FROM publications WHERE task_id=?",
+          task.id,
+        )
+        .toArray()[0].lease_token;
+      if (!active) {
+        publication.status = "publishing";
+        publication.attempts++;
+        publication.runUrl = input.runUrl;
+        leaseToken = crypto.randomUUID();
+        this.db.sql.exec(
+          "UPDATE publications SET lease_token=? WHERE task_id=?",
+          leaseToken,
+          task.id,
+        );
+        task.status = "publishing";
+        task.stage = "Validating reviewed article and publication evidence";
+        this.addEvent(task.id, "publishing", task.stage, "publisher");
+      }
+      publication.leaseExpiresAt = new Date(Date.now() + 120_000).toISOString();
+      this.savePublication(task, publication);
+      return json({
+        task: {
+          id: task.id,
+          role: task.role,
+          articleId: task.articleId,
+          result: task.result,
+        },
+        publication,
+        leaseToken,
+      });
+    }
+    const publicationPath = path.match(
+      /^\/api\/publisher\/tasks\/([a-f0-9-]{36})$/,
+    );
+    if (publicationPath && request.method === "POST" && publisher) {
+      const input = publicationUpdateSchema.parse(body),
+        task = this.get(publicationPath[1]);
+      const publication = task.publication;
+      const row = this.db.sql
+        .exec<{ lease_token: string | null }>(
+          "SELECT lease_token FROM publications WHERE task_id=?",
+          task.id,
+        )
+        .toArray()[0];
+      if (
+        !publication ||
+        row?.lease_token !== input.leaseToken ||
+        publication.artifactHash !== input.artifactHash
+      )
+        throw new HttpError(409, "Publication lease or artifact changed");
+      if (
+        publication.status === "published" &&
+        input.stage === "published" &&
+        input.commit === publication.commit &&
+        input.deploymentId === publication.deploymentId
+      )
+        return json({ status: task.status });
+      if (!["publishing", "deploying"].includes(publication.status))
+        throw new HttpError(409, "Publication lease is no longer active");
+      publication.leaseExpiresAt = new Date(Date.now() + 120_000).toISOString();
+      if (input.stage === "deploying") {
+        if (!input.commit)
+          throw new HttpError(400, "Deployment requires the content commit");
+        publication.commit = input.commit;
+        publication.status = "deploying";
+        task.status = "deploying";
+        task.stage = "Deploying to Cloudflare and checking live pages";
+      }
+      if (input.stage === "published") {
+        if (
+          publication.status !== "deploying" ||
+          !input.commit ||
+          input.commit !== publication.commit ||
+          !input.deploymentId
+        )
+          throw new HttpError(
+            400,
+            "A verified deployment of the content commit is required",
+          );
+        publication.status = "published";
+        publication.deploymentId = input.deploymentId;
+        publication.publishedAt = now();
+        publication.error = undefined;
+        publication.urls = Object.fromEntries(
+          task.result!.editions.map(({ article }) => [
+            article.locale,
+            `https://lavik.dev/${article.locale}/${article.kind === "docs" ? `docs/${article.version}` : "blog"}/${article.slug}/`,
+          ]),
+        ) as Publication["urls"];
+        task.status = "published";
+        task.stage = "Published on lavik.dev";
+      }
+      if (input.stage === "failed") {
+        publication.error =
+          input.error ?? "Publication failed; inspect the publisher run.";
+        publication.status =
+          input.retryable && publication.attempts < 3 ? "queued" : "failed";
+        publication.nextAttemptAt = new Date(
+          Date.now() + 60_000 * publication.attempts,
+        ).toISOString();
+        task.status =
+          publication.status === "queued" ? "approved" : "publication_failed";
+        task.stage =
+          publication.status === "queued"
+            ? "Publication retry scheduled"
+            : "Publication needs attention";
+      }
+      this.savePublication(task, publication);
+      if (input.stage !== "heartbeat")
+        this.addEvent(
+          task.id,
+          `publication-${input.stage}`,
+          publication.error ?? task.stage,
+          "publisher",
+        );
       return json({ status: task.status });
     }
     throw new HttpError(404, "Endpoint not found");

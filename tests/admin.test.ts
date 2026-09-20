@@ -3,6 +3,9 @@ import assert from "node:assert/strict";
 import { DatabaseSync } from "node:sqlite";
 import { generateKeyPair, exportJWK, SignJWT, createLocalJWKSet } from "jose";
 import { TaskStore, type Database } from "../packages/admin/store.ts";
+import { artifactHash } from "../packages/admin/artifact-id.ts";
+import { publicationResult } from "./publication-fixture.ts";
+import { sources } from "../packages/content/repository.ts";
 import {
   verifyAdmin,
   verifyRunner,
@@ -82,6 +85,35 @@ test("production worker keeps public pages available and fails closed before Acc
     401,
   );
   assert.equal(storeCalls, 0);
+  const runnerToken = "runner-token-with-at-least-32-characters";
+  const publisherToken = "publisher-token-with-at-least-32-characters";
+  assert.equal(
+    (
+      await workerApp.fetch(
+        new Request("https://lavik.dev/api/publisher/claim", {
+          method: "POST",
+          headers: { Authorization: `Bearer ${runnerToken}` },
+          body: "{}",
+        }),
+        { ...env, RUNNER_TOKEN: runnerToken, PUBLISHER_TOKEN: publisherToken },
+      )
+    ).status,
+    401,
+  );
+  assert.equal(storeCalls, 0);
+  assert.equal(
+    (
+      await workerApp.fetch(
+        new Request("https://lavik.dev/api/publisher/claim", {
+          method: "POST",
+          headers: { Authorization: `Bearer ${publisherToken}` },
+          body: "{}",
+        }),
+        { ...env, RUNNER_TOKEN: runnerToken, PUBLISHER_TOKEN: publisherToken },
+      )
+    ).status,
+    200,
+  );
 });
 
 function harness() {
@@ -110,13 +142,19 @@ function harness() {
     },
   };
   const store = new TaskStore(db);
-  const api = async (path: string, body?: unknown, runner = false) =>
+  const api = async (
+    path: string,
+    body?: unknown,
+    runner = false,
+    publisher = false,
+  ) =>
     store.fetch(
       new Request(`https://lavik.dev${path}`, {
         method: body ? "POST" : "GET",
         headers: {
           "X-Admin-Actor": "owner@example.test",
           ...(runner ? { "X-Runner-Authorized": "true" } : {}),
+          ...(publisher ? { "X-Publisher-Authorized": "true" } : {}),
         },
         ...(body ? { body: JSON.stringify(body) } : {}),
       }),
@@ -135,6 +173,230 @@ const worker = {
   reviewerModel: "test-reviewer",
   catalog: [],
 };
+const publisherWorker = {
+  runnerId: "publisher-test",
+  runUrl: "https://github.com/eloqdata/lavik-agent/actions/runs/123",
+};
+async function reviewedTask(h: ReturnType<typeof harness>, pass = true) {
+  const task = (await (
+    await h.api("/api/admin/tasks", { ...input(), role: "manual-writer" })
+  ).json()) as Task;
+  const claim = await (await h.api("/api/runner/claim", worker, true)).json();
+  const result = publicationResult(task.id);
+  if (!pass)
+    result.editions[1].review = {
+      verdict: "revise",
+      findings: ["Fix the scope"],
+      checkedSourceIds: [],
+    };
+  assert.equal(
+    (
+      await h.api(
+        `/api/runner/tasks/${task.id}`,
+        { leaseToken: claim.leaseToken, stage: "complete", result },
+        true,
+      )
+    ).status,
+    200,
+  );
+  return { task, result };
+}
+
+test("passing review queues exactly one publication and only a publisher can report its verified deployment", async () => {
+  const h = harness();
+  try {
+    const { task, result } = await reviewedTask(h);
+    assert.equal(h.store.workStatus().publications, 1);
+    const original = await (await h.api(`/api/admin/tasks/${task.id}`)).json();
+    assert.equal(original.task.status, "approved");
+    assert.equal(
+      original.task.publication.artifactHash,
+      await artifactHash(result),
+    );
+    assert.equal(
+      (await h.api("/api/publisher/claim", publisherWorker, true)).status,
+      404,
+    );
+    const claim = await (
+      await h.api("/api/publisher/claim", publisherWorker, false, true)
+    ).json();
+    const repeated = await (
+      await h.api("/api/publisher/claim", publisherWorker, false, true)
+    ).json();
+    assert.equal(repeated.leaseToken, claim.leaseToken);
+    assert.equal(
+      (
+        await (
+          await h.api(
+            "/api/publisher/claim",
+            { ...publisherWorker, runUrl: publisherWorker.runUrl + "4" },
+            false,
+            true,
+          )
+        ).json()
+      ).task,
+      null,
+    );
+    const body = {
+      leaseToken: claim.leaseToken,
+      artifactHash: claim.publication.artifactHash,
+      commit: "a".repeat(40),
+      deploymentId: crypto.randomUUID(),
+    };
+    const update = (data: object) =>
+      h.api(
+        `/api/publisher/tasks/${task.id}`,
+        { ...body, ...data },
+        false,
+        true,
+      );
+    assert.equal((await update({ stage: "published" })).status, 400);
+    assert.equal(
+      (await update({ stage: "deploying", artifactHash: "b".repeat(64) }))
+        .status,
+      409,
+    );
+    assert.equal((await update({ stage: "deploying" })).status, 200);
+    assert.equal((await update({ stage: "published" })).status, 200);
+    assert.equal((await update({ stage: "published" })).status, 200);
+    assert.equal(
+      (await update({ stage: "failed", error: "Late callback" })).status,
+      409,
+    );
+    const published = (
+      await (await h.api(`/api/admin/tasks/${task.id}`)).json()
+    ).task;
+    assert.equal(published.status, "published");
+    assert.equal(
+      published.publication.urls.en,
+      `https://lavik.dev/en/docs/0.1.0/${result.editions[0].article.slug}/`,
+    );
+    assert.equal(h.store.workStatus().publications, 0);
+  } finally {
+    h.sqlite.close();
+  }
+});
+
+test("review findings and an approved feedback comment cannot publish; a revision cancels queued publication", async () => {
+  const h = harness();
+  try {
+    const { task } = await reviewedTask(h, false);
+    await h.api(`/api/admin/tasks/${task.id}/feedback`, {
+      requestId: crypto.randomUUID(),
+      message: "approved",
+      action: "comment",
+    });
+    assert.equal(
+      (
+        await (
+          await h.api("/api/publisher/claim", publisherWorker, false, true)
+        ).json()
+      ).task,
+      null,
+    );
+    const passed = await reviewedTask(h);
+    await h.api(`/api/admin/tasks/${passed.task.id}/feedback`, {
+      requestId: crypto.randomUUID(),
+      message: "Clarify the scope before publishing.",
+      action: "revise",
+    });
+    assert.equal(
+      (
+        await (
+          await h.api("/api/publisher/claim", publisherWorker, false, true)
+        ).json()
+      ).task,
+      null,
+    );
+    assert.equal(
+      (await (await h.api(`/api/admin/tasks/${passed.task.id}`)).json()).task
+        .publication.status,
+      "cancelled",
+    );
+  } finally {
+    h.sqlite.close();
+  }
+});
+
+test("interrupted publication recovers its immutable artifact and rejects the old lease", async () => {
+  const h = harness();
+  try {
+    const { task } = await reviewedTask(h);
+    const claim = await (
+      await h.api("/api/publisher/claim", publisherWorker, false, true)
+    ).json();
+    const expired = {
+      ...claim.publication,
+      leaseExpiresAt: new Date(Date.now() - 1000).toISOString(),
+    };
+    h.db.sql.exec(
+      "UPDATE publications SET body=? WHERE task_id=?",
+      JSON.stringify(expired),
+      task.id,
+    );
+    h.store.refreshLeases();
+    const queued = (await (await h.api(`/api/admin/tasks/${task.id}`)).json())
+      .task.publication;
+    assert.equal(queued.status, "queued");
+    assert.equal(queued.artifactHash, claim.publication.artifactHash);
+    queued.nextAttemptAt = new Date(Date.now() - 1000).toISOString();
+    h.db.sql.exec(
+      "UPDATE publications SET body=? WHERE task_id=?",
+      JSON.stringify(queued),
+      task.id,
+    );
+    const retry = await (
+      await h.api("/api/publisher/claim", publisherWorker, false, true)
+    ).json();
+    assert.notEqual(retry.leaseToken, claim.leaseToken);
+    assert.equal(retry.publication.attempts, 2);
+    assert.equal(
+      (
+        await h.api(
+          `/api/publisher/tasks/${task.id}`,
+          {
+            leaseToken: claim.leaseToken,
+            artifactHash: claim.publication.artifactHash,
+            stage: "heartbeat",
+          },
+          false,
+          true,
+        )
+      ).status,
+      409,
+    );
+    await h.api(
+      `/api/publisher/tasks/${task.id}`,
+      {
+        leaseToken: retry.leaseToken,
+        artifactHash: retry.publication.artifactHash,
+        stage: "failed",
+        error: "Stale evidence",
+        retryable: false,
+      },
+      false,
+      true,
+    );
+    assert.equal(
+      (await (await h.api(`/api/admin/tasks/${task.id}`)).json()).task.status,
+      "publication_failed",
+    );
+    assert.equal(
+      (await h.api(`/api/admin/tasks/${task.id}/retry-publication`, {})).status,
+      200,
+    );
+    assert.equal(
+      (
+        await (
+          await h.api("/api/publisher/claim", publisherWorker, false, true)
+        ).json()
+      ).publication.artifactHash,
+      claim.publication.artifactHash,
+    );
+  } finally {
+    h.sqlite.close();
+  }
+});
 
 function dispatchHarness(http: typeof fetch, configured = true) {
   const h = harness();
@@ -734,4 +996,62 @@ test("review-only tasks never call a writer and failed execution cannot pass rev
   );
   assert.equal(calls, 0);
   assert.ok(result.editions.every((e) => e.review.verdict === "blocked"));
+});
+
+test("a revision carries previous review findings and preserves an existing public URL", async () => {
+  const id = crypto.randomUUID();
+  const task: Task = {
+    ...input(),
+    id,
+    role: "blog-writer",
+    articleId: "reading-benchmarks",
+    status: "running",
+    stage: "Starting",
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    createdBy: "owner@example.test",
+  };
+  const previous = publicationResult(id);
+  previous.editions = (["en", "zh-CN"] as const).map((locale) => ({
+    ...previous.editions.find((e) => e.article.locale === locale)!,
+    article: articles().find(
+      (article) =>
+        article.id === "reading-benchmarks" && article.locale === locale,
+    )!,
+    review: {
+      verdict: "revise",
+      findings: ["Carry this reviewer finding into the revision."],
+      checkedSourceIds: [],
+    },
+  }));
+  const result = await executeTask(
+    task,
+    {
+      identity: "test-independent-reviewer",
+      async write(input) {
+        assert.ok(
+          input.feedback.includes(
+            "Carry this reviewer finding into the revision.",
+          ),
+        );
+        return { ...input.previous!, slug: "a-model-suggested-new-url" };
+      },
+      async review(article) {
+        assert.equal(article.id, "reading-benchmarks");
+        assert.equal(article.slug, "reading-the-benchmark");
+        return {
+          verdict: "pass",
+          findings: [],
+          checkedSourceIds: sources.map((s) => s.id),
+        };
+      },
+    },
+    async () => {
+      throw new Error("This article has no commands.");
+    },
+    async () => {},
+    previous,
+  );
+  assert.equal(result.editions.length, 2);
+  assert.equal(result.editions[1].article.slug, "reading-the-benchmark");
 });

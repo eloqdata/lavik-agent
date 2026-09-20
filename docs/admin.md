@@ -27,10 +27,26 @@ GitHub workflow delays. The dashboard displays the latest 100 tasks. Status is r
 queue/worker state, refreshed every five seconds; these are roles executed on demand,
 not four continuously running processes.
 
-**Review passed means a private draft passed its checks.** Admin drafts are not yet
-connected to website publication. The existing CLI campaign publisher still publishes
-paired blog campaigns under its configured automatic policy. Connecting admin drafts
-to publication is the next increment, without adding mandatory per-post approval.
+**Review passed queues automatic website publication.** Both language editions must
+pass independent review and command verification. A separate publisher validates the
+exact reviewed artifact, commits the bilingual content and immutable evidence,
+deploys to Cloudflare, and checks both live pages before setting **Published**.
+The task then shows its English and Chinese URLs. This applies to blog articles and
+versioned user manuals, including updates to an existing article.
+
+**Changes requested** remains a draft. Enter feedback and choose **Request revision**;
+the previous review findings are carried into the new writer attempt automatically.
+Typing "approved" is a comment, not a review override or publication command.
+**Publication failed** preserves the reviewed draft. Correct the reported problem
+and choose **Retry publication**, or request a revision if the evidence is stale.
+Transient publication failures retry up to three attempts without rewriting or
+calling a model again. An in-progress publication must finish before revision;
+a revision requested while publication is queued cancels that pending publication.
+
+Every publication freezes per-article command receipts and their checksums. New
+publications use renderer v2 to display those receipts; the original renderer stays
+available for older reviews so a feature deployment does not silently change what
+was reviewed. Concurrent changes to an article prevent overwriting a newer version.
 
 ## Cloudflare Access setup
 
@@ -111,7 +127,7 @@ Connect Cloudflare to GitHub once:
 
 The dispatch token stays in Cloudflare and can start/inspect this repository's
 workflows. Dispatch requests contain only the `main` ref, never task content.
-The workflow itself retains read-only repository permissions. A GitHub App with
+The writing job retains read-only repository permissions. A GitHub App with
 short-lived installation tokens is the future replacement for token rotation.
 
 Startup requests are retried after checking GitHub; a lost response waits at least
@@ -128,20 +144,42 @@ stages and dispatcher status without briefs, drafts or feedback.
 
 Configure the following repository secrets and variables before enabling it:
 
-| GitHub setting                                                                             | Purpose                                                 |
-| ------------------------------------------------------------------------------------------ | ------------------------------------------------------- |
-| Secret `LAVIK_RUNNER_TOKEN`                                                                | Same value as the Worker's `RUNNER_TOKEN`               |
-| Secret `OPENAI_API_KEY`                                                                    | Azure/OpenAI credential used only by the execution step |
-| Variables `OPENAI_BASE_URL`, `LAVIK_WRITER_MODEL`, `LAVIK_REVIEWER_MODEL`                  | Explicit endpoint and deployment names                  |
-| Variables `LAVIK_WRITER_REASONING_EFFORT`, `LAVIK_REVIEWER_REASONING_EFFORT`               | Explicit reasoning effort for each role                 |
-| Variables `LAVIK_WRITER_MAX_TOKENS`, `LAVIK_REVIEWER_MAX_TOKENS`, `LAVIK_AGENT_TIMEOUT_MS` | Invocation budgets                                      |
-| Variable `LAVIK_ADMIN_WORKER_ENABLED=true`                                                 | Enable automatically dispatched and backup execution    |
+| GitHub setting                                                                             | Purpose                                                              |
+| ------------------------------------------------------------------------------------------ | -------------------------------------------------------------------- |
+| Secret `LAVIK_RUNNER_TOKEN`                                                                | Same value as the Worker's `RUNNER_TOKEN`                            |
+| Secret `OPENAI_API_KEY`                                                                    | Azure/OpenAI credential used only by the execution step              |
+| Secret `LAVIK_PUBLISHER_TOKEN`                                                             | Separate publisher credential, matching Cloudflare `PUBLISHER_TOKEN` |
+| Variables `OPENAI_BASE_URL`, `LAVIK_WRITER_MODEL`, `LAVIK_REVIEWER_MODEL`                  | Explicit endpoint and deployment names                               |
+| Variables `LAVIK_WRITER_REASONING_EFFORT`, `LAVIK_REVIEWER_REASONING_EFFORT`               | Explicit reasoning effort for each role                              |
+| Variables `LAVIK_WRITER_MAX_TOKENS`, `LAVIK_REVIEWER_MAX_TOKENS`, `LAVIK_AGENT_TIMEOUT_MS` | Invocation budgets                                                   |
+| Variable `LAVIK_ADMIN_WORKER_ENABLED=true`                                                 | Enable automatically dispatched and backup execution                 |
 
-The workflow has read-only repository permissions and does not publish task briefs,
-drafts, feedback or transcripts as GitHub artifacts. The repository is public;
+The writer job has read-only repository permissions. A separate publisher job has
+repository write and Cloudflare deployment credentials, and receives no model key.
+Neither job uploads private drafts, briefs, feedback or transcripts as GitHub artifacts. The repository is public;
 workflow logs report only operational status and task IDs. Detailed model events
 and results go to authenticated Cloudflare storage. Anyone able to change trusted
 workflows can potentially use their credentials, so repository write access matters.
+
+Set the publisher token once in GitHub Actions as `LAVIK_PUBLISHER_TOKEN` and in
+Cloudflare using `npx wrangler secret put PUBLISHER_TOKEN --env-file /dev/null`.
+Use a separate random credential of at least 32 characters. Publishing also uses
+the existing Cloudflare deployment token and `LAVIK_AUTO_DEPLOY=true` setting.
+The writing and publication jobs run from trusted `main` only. Publication and
+ordinary website deployments share a concurrency group with queued delivery.
+
+`scripts/admin-publish.ts` reads the durable publication outbox. Only the reviewed
+article, sanitized review provenance, immutable execution receipts and manifest go
+into the public repository. Briefs, feedback, model endpoint details and transcripts
+stay private. A successful Git push is not a Published result: the publisher also
+requires a Cloudflare version ID, the deployed `/publication-manifest.json`, and
+the correct content hash on both live pages. A lost callback can safely retry using
+the same artifact without making a duplicate commit.
+
+The authenticated `/api/publisher/review` endpoint accepts a request UUID and an
+existing catalog `articleId` to queue a fresh independent publication review. It
+does not accept a review verdict or new content. This supports testing the full
+pipeline and renewing evidence for existing website articles.
 
 To use a local worker with the production console instead, set `LAVIK_ADMIN_URL`
 and `LAVIK_RUNNER_TOKEN` in the ignored `.env` alongside the model settings:

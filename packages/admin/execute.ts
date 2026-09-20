@@ -12,12 +12,15 @@ import {
   contentHash,
   knowledgeHash,
   release,
-  renderingHash,
   sources,
 } from "../content/repository.ts";
 import { validateArticle } from "../content/gate.ts";
 import { policy, type AgentRuntime } from "../agents/workflow.ts";
 import { roles, type Role, type Task, type TaskResult } from "./contracts.ts";
+import {
+  publicationPolicyHash,
+  publicationRenderingHash,
+} from "../content/publication-context.ts";
 
 type Progress = {
   stage: string;
@@ -38,6 +41,11 @@ export async function executeTask(
   const reviewerRole: Role =
     role.kind === "docs" ? "manual-reviewer" : "blog-reviewer";
   const result: TaskResult = {
+    publicationContext: {
+      rendererVersion: 2,
+      policyHash: publicationPolicyHash(),
+      baseContentHashes: { en: null, "zh-CN": null },
+    },
     references: {
       claims: Object.fromEntries(claims.map((claim) => [claim.id, claim.text])),
       sources: Object.fromEntries(
@@ -50,6 +58,11 @@ export async function executeTask(
     sourceCommit: release.commit,
     completedAt: new Date().toISOString(),
   };
+  const snapshot = articles();
+  let identity = task.articleId ?? previous?.editions[0]?.article.id;
+  let destinationSlug = task.articleId
+    ? snapshot.find((page) => page.id === task.articleId)?.slug
+    : previous?.editions[0]?.article.slug;
   for (const locale of ["en", "zh-CN"] as const) {
     signal?.throwIfAborted();
     let article = previous?.editions.find(
@@ -72,7 +85,11 @@ export async function executeTask(
       throw new Error(
         "Review tasks require an existing article or a saved draft",
       );
-    let feedback = [...ownerFeedback];
+    let feedback = [
+      ...ownerFeedback,
+      ...(previous?.editions.find((e) => e.article.locale === locale)?.review
+        .findings ?? []),
+    ];
     for (
       let attempt = 0;
       attempt <= (role.work === "writer" ? policy.maxRevisionAttempts : 0);
@@ -124,9 +141,21 @@ export async function executeTask(
         );
         if (article.locale !== locale || article.kind !== role.kind)
           throw new Error("Writer returned the wrong language or article kind");
-        article.id = task.articleId ?? `admin-${task.id}`;
-        article.slug = article.id;
+        if (!identity) {
+          identity = article.slug.slice(0, 70);
+          if (snapshot.some((page) => page.id === identity))
+            identity += `-${task.id.slice(0, 8)}`;
+        }
+        article.id = identity;
+        destinationSlug ??= article.id;
+        article.slug = destinationSlug;
       }
+      const original = snapshot.find(
+        (page) => page.id === article!.id && page.locale === locale,
+      );
+      result.publicationContext!.baseContentHashes[locale] = original
+        ? contentHash(original)
+        : null;
       for (const block of article!.blocks)
         if (block.type === "recipe") await verify(block.recipeId);
       const receipts = [...captured.values()];
@@ -134,7 +163,7 @@ export async function executeTask(
         article: article!,
         receipts,
         contentHash: contentHash(article!),
-        renderingHash: renderingHash(),
+        renderingHash: publicationRenderingHash(),
         review: {
           verdict: "revise" as const,
           findings: ["Independent review pending"],

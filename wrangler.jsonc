@@ -15,7 +15,13 @@
   "migrations": [{ "tag": "admin-v1", "new_sqlite_classes": ["AdminStore"] }],
   "assets": {
     "binding": "ASSETS",
-    "run_worker_first": ["/admin", "/admin/*", "/api/admin/*", "/api/runner/*"],
+    "run_worker_first": [
+      "/admin",
+      "/admin/*",
+      "/api/admin/*",
+      "/api/runner/*",
+      "/api/publisher/*",
+    ],
     "directory": "./apps/web/out",
     "html_handling": "force-trailing-slash",
     "not_found_handling": "404-page",

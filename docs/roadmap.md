@@ -12,18 +12,16 @@ ownership, Bash/runtime prerequisites and startup troubleshooting. Keep the pinn
 0.1.0-beta.1 release identity. Re-run the commands and review each corrected edition.
 Review calls must judge their supplied locale; the host coordinates bilingual coverage.
 
-Connect reviewed admin drafts to the website publisher for both new blog posts and
-versioned documentation updates. Add optimistic revision checks so a saved draft
-cannot overwrite newer repository content. Store immutable execution receipts by
-article revision: the current shared receipt files must not let a new publication
-change the environment displayed by an older reviewed article. Revalidate any shared
-renderer changes against existing reviews. Commit both editions and their exact
-evidence together, then use the existing CI/deployment gate.
+The website publication connection is implemented for blog posts and versioned
+manual updates. It includes optimistic destination checks, immutable per-article
+receipts, a versioned renderer, atomic bilingual Git commits, deployment checks,
+and Published status with live URLs. Apply it to the documentation corrections
+above and expand the audited command recipes when new guides require them.
 
 Acceptance: assigning a task yields either a correctly published bilingual revision
 or a precise persisted exception, with no routine human approval step.
 
-## 2. Add the publishing agent and platform adapters
+## 2. Extend the publishing agent to platform adapters
 
 Keep publication separate from writing. The publisher accepts a reviewed immutable
 revision, destination account and configured rules. A channel editor adapts length,
@@ -38,14 +36,14 @@ scheduled delivery, per-channel pacing, correction records and a pause switch.
 
 | Destination           | Next work                                                                                                                                        |
 | --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
-| lavik.dev             | Connect admin results to the existing website publisher first                                                                                    |
+| lavik.dev             | Connected: automatic bilingual publication, deployment checks and live URLs                                                                      |
 | X                     | Verify account/app posting access; implement publishing, read-back and metrics supported by that access                                          |
 | Reddit                | Verify API access and each target community's rules; create useful context-specific posts and avoid repeated promotional submissions             |
 | WeChat                | Check the official account's draft/publish capabilities and media handling; preserve Chinese typography                                          |
 | Medium                | Provide a reviewed export/import handoff first unless the account has a supported integration                                                    |
 | Rednote / Xiaohongshu | Verify supported account integrations; prepare reviewed Chinese copy and media, with an explicit handoff where direct publication is unavailable |
 
-These are planned integrations, not connected channels. Medium's own
+The external channels are planned integrations. Medium's own
 [archived API documentation](https://github.com/Medium/medium-api-docs/blob/master/README.md)
 states that the API is unsupported; do not promise a new generic API integration.
 Account capabilities must be established for every platform before selecting a

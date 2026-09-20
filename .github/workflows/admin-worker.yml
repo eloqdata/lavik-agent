@@ -9,9 +9,10 @@ permissions:
 concurrency:
   group: lavik-admin-worker
   cancel-in-progress: false
+  queue: max
 jobs:
   worker:
-    if: vars.LAVIK_ADMIN_WORKER_ENABLED == 'true'
+    if: github.ref == 'refs/heads/main' && vars.LAVIK_ADMIN_WORKER_ENABLED == 'true'
     runs-on: ubuntu-24.04
     timeout-minutes: 60
     steps:
@@ -51,3 +52,32 @@ jobs:
           LAVIK_AGENT_TIMEOUT_MS: ${{ vars.LAVIK_AGENT_TIMEOUT_MS }}
       # Task briefs, drafts, feedback, and transcripts belong in authenticated storage.
       # Do not upload .runs/admin as public-repository workflow artifacts.
+  publish:
+    needs: worker
+    if: always() && !cancelled() && github.ref == 'refs/heads/main' && vars.LAVIK_ADMIN_WORKER_ENABLED == 'true'
+    permissions:
+      contents: write
+    concurrency:
+      group: lavik-production-publication
+      cancel-in-progress: false
+      queue: max
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: main
+          persist-credentials: true
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - name: Publish reviewed content, deploy, and verify both live pages
+        run: node --import tsx scripts/admin-publish.ts
+        env:
+          LAVIK_PUBLISHER_TOKEN: ${{ secrets.LAVIK_PUBLISHER_TOKEN }}
+          LAVIK_AUTO_DEPLOY: ${{ vars.LAVIK_AUTO_DEPLOY }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN || secrets.CLOUDFLARE_LAVIK }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      # No model credentials and no private result/log artifacts in this job.

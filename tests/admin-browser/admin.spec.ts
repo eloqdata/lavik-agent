@@ -160,6 +160,52 @@ test("admin persists tasks, displays worker progress, saves feedback and preserv
   await expect(page.locator(".task-detail > .task-status")).toHaveText(
     "Review passed",
   );
+  await expect(page.locator(".publication-status")).toContainText(
+    "Publication is queued automatically",
+  );
+  const publisherHeaders = {
+    Authorization:
+      "Bearer local-test-publisher-token-with-at-least-32-characters",
+  };
+  const publication = await (
+    await request.post("/api/publisher/claim", {
+      headers: publisherHeaders,
+      data: {
+        runnerId: "browser-publisher",
+        runUrl: "https://github.com/eloqdata/lavik-agent/actions/runs/123",
+      },
+    })
+  ).json();
+  expect(publication.task.id).toBe(claim.task.id);
+  const publishUpdate = {
+    leaseToken: publication.leaseToken,
+    artifactHash: publication.publication.artifactHash,
+    commit: "a".repeat(40),
+  };
+  await request.post(`/api/publisher/tasks/${claim.task.id}`, {
+    headers: publisherHeaders,
+    data: { ...publishUpdate, stage: "deploying" },
+  });
+  await expect(page.locator(".task-detail > .task-status")).toHaveText(
+    "Deploying",
+  );
+  await request.post(`/api/publisher/tasks/${claim.task.id}`, {
+    headers: publisherHeaders,
+    data: {
+      ...publishUpdate,
+      stage: "published",
+      deploymentId: "11111111-1111-4111-8111-111111111111",
+    },
+  });
+  await expect(page.locator(".task-detail > .task-status")).toHaveText(
+    "Published",
+  );
+  await expect(
+    page.getByRole("link", { name: "Open English article" }),
+  ).toHaveAttribute("href", "https://lavik.dev/en/docs/0.1.0/quick-start/");
+  await expect(
+    page.getByRole("link", { name: "打开中文文章" }),
+  ).toHaveAttribute("href", "https://lavik.dev/zh-CN/docs/0.1.0/quick-start/");
   await expect(page.locator(".draft-preview")).toContainText(
     "A browser test draft.",
   );

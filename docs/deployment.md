@@ -56,7 +56,10 @@ specified in `wrangler.jsonc`, then run:
 npm run deploy
 ```
 
-The scheduled admin worker checks for accepted tasks; it does not plan new campaigns.
+The admin worker starts from durable Cloudflare dispatch, with GitHub cron as backup.
+A separate publication job deploys reviewed admin content and reports verified live
+URLs. The publisher and normal CI deployments share a queued concurrency group.
+These workers process accepted tasks; they do not plan new campaigns.
 Recurring editorial planning and external social publishing remain separate increments.
 
 ## Admin deployment record

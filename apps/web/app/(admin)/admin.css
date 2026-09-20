@@ -222,6 +222,33 @@ p {
   margin: 27px 0 20px;
   flex-wrap: wrap;
 }
+.publication-status {
+  margin: 20px 0;
+  padding: 18px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #f4f7f2;
+}
+.publication-status h3 {
+  margin-top: 0;
+}
+.publication-status a {
+  color: #2c6040;
+  text-decoration: underline;
+}
+.task-status.published {
+  background: #e0eedf;
+  color: #285735;
+}
+.task-status.publishing,
+.task-status.deploying {
+  background: #e8ecf7;
+  color: #3b527c;
+}
+.task-status.publication_failed {
+  background: #f6e4df;
+  color: #973f36;
+}
 .worker-strip > span:last-child {
   margin-left: auto;
   font-size: 10px;

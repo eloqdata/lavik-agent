@@ -10,6 +10,7 @@ import {
   claims,
   contentHash,
   harnessHash,
+  hash,
   knowledgeHash,
   readJson,
   recipes,
@@ -20,6 +21,7 @@ import {
   sourceText,
   sources,
 } from "./repository.ts";
+import { publicationRenderingHash } from "./publication-context.ts";
 
 export function checkReceipt(receipt: Receipt, recipeId: string): string[] {
   const failures: string[] = [];
@@ -165,7 +167,9 @@ export function storedReceipt(id: string): Receipt {
   return receiptSchema.parse(readJson(`evidence/verification/${id}.json`));
 }
 export function publicationErrors(article: Article): string[] {
-  const failures = validateArticle(article, storedReceipt);
+  const failures = validateArticle(article, (id) =>
+    articleReceipt(article, id),
+  );
   const reviewPath = path.join(
     root,
     "evidence/reviews",
@@ -174,6 +178,46 @@ export function publicationErrors(article: Article): string[] {
   if (!fs.existsSync(reviewPath))
     return [...failures, "No independent review record"];
   const review = JSON.parse(fs.readFileSync(reviewPath, "utf8"));
+  if (review.rendererVersion === 2) {
+    try {
+      if (!/^[a-f0-9-]{36}$/.test(review.publicationId ?? ""))
+        throw new Error("Invalid publication identity");
+      const manifest = readJson(
+        `evidence/publications/${review.publicationId}/manifest.json`,
+      ) as {
+        taskId: string;
+        artifactHash: string;
+        editions: {
+          locale: string;
+          id: string;
+          contentHash: string;
+          receiptHashes: Record<string, string>;
+        }[];
+      };
+      const edition = manifest.editions.find(
+        (e) => e.locale === article.locale && e.id === article.id,
+      );
+      if (
+        manifest.taskId !== review.publicationId ||
+        manifest.artifactHash !== review.artifactHash ||
+        edition?.contentHash !== contentHash(article)
+      )
+        failures.push(
+          "Publication manifest does not match the reviewed article",
+        );
+      for (const [id, expected] of Object.entries(
+        edition?.receiptHashes ?? {},
+      )) {
+        if (hash(JSON.stringify(articleReceipt(article, id))) !== expected)
+          failures.push(`Reviewed execution record changed: ${id}`);
+      }
+      for (const block of article.blocks)
+        if (block.type === "recipe" && !edition?.receiptHashes[block.recipeId])
+          failures.push(`No immutable execution record: ${block.recipeId}`);
+    } catch {
+      failures.push("Missing or invalid immutable publication evidence");
+    }
+  }
   if (review.contentHash !== contentHash(article) || review.verdict !== "pass")
     failures.push("Review missing, failed, or invalidated by a content change");
   if (review.releaseCommit !== release.commit)
@@ -182,7 +226,10 @@ export function publicationErrors(article: Article): string[] {
     failures.push("Review invalidated by changed claims or evidence registry");
   if (
     review.method === "agent-review" &&
-    review.renderingHash !== renderingHash()
+    review.renderingHash !==
+      (review.rendererVersion === 2
+        ? publicationRenderingHash()
+        : renderingHash())
   )
     failures.push(
       "Review invalidated by changed content rendering or calculator logic",
@@ -197,4 +244,32 @@ export function publicationErrors(article: Article): string[] {
       failures.push(`Review evidence changed: ${source.id}`);
   }
   return failures;
+}
+
+export function articleReview(article: Article) {
+  return readJson(`evidence/reviews/${article.locale}-${article.id}.json`) as {
+    rendererVersion?: number;
+    publicationId?: string;
+    contentHash: string;
+    artifactHash?: string;
+  };
+}
+export function articleReceipt(article: Article, id: string): Receipt {
+  const review = articleReview(article);
+  if (review.rendererVersion !== 2) return storedReceipt(id);
+  if (
+    !/^[a-f0-9-]{36}$/.test(review.publicationId ?? "") ||
+    !/^[a-z0-9-]+$/.test(id)
+  )
+    throw new Error("Invalid publication evidence identity");
+  return receiptSchema.parse(
+    readJson(
+      `evidence/publications/${review.publicationId}/${article.locale}-${id}.json`,
+    ),
+  );
+}
+export function articleReceipts(article: Article) {
+  return article.blocks.flatMap((block) =>
+    block.type === "recipe" ? [articleReceipt(article, block.recipeId)] : [],
+  );
 }

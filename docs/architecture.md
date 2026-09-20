@@ -89,10 +89,14 @@ fresh independent review of both locales. Review-only tasks inspect an existing 
 This updates the initial PostgreSQL/Workflows proposal for the v0.1 single-owner
 project: SQLite Durable Objects provide durable state and atomic claims with the
 existing Cloudflare deployment. The runner uses the existing Linux toolchain;
-GitHub schedules only wake it. Portable task/evidence schemas preserve a migration
+Cloudflare alarms dispatch it directly, with a GitHub schedule as backup. Portable task/evidence schemas preserve a migration
 path to R2 artifacts, relational reporting and a persistent execution service.
-Admin results currently stop at reviewed drafts; the CLI blog publisher remains
-the connected automatic publication path. See [operations](admin.md).
+Passing admin results enter a durable publication outbox in the same transaction.
+A separate job validates their hashes, policy, source context and execution evidence,
+commits the bilingual article, and deploys under the shared production concurrency
+group. Publication is recorded only after its manifest and both content hashes are
+verified on lavik.dev. Publisher leases, retries and immutable artifact identities
+recover interrupted jobs without repeating model work. See [operations](admin.md).
 
 ## Evidence model
 
