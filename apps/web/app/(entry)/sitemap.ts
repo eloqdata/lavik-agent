@@ -4,9 +4,17 @@ import { manualRoutes } from "../../../../packages/manual/repository";
 export const dynamic = "force-static";
 export default function sitemap(): MetadataRoute.Sitemap {
   const paths = ["en", "zh-CN"].flatMap((locale) =>
-    ["", "benchmarks/", "cost/", "use-cases/", "blog/", "releases/"].map(
-      (route) => `/${locale}/${route}`,
-    ),
+    [
+      "",
+      "benchmarks/",
+      "cost/",
+      "use-cases/",
+      "blog/",
+      "releases/",
+      "download/",
+      "community/",
+      "docs/0.1.0/",
+    ].map((route) => `/${locale}/${route}`),
   );
   return [
     ...["en", "zh-CN"].flatMap((locale) =>

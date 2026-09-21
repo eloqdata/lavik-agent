@@ -92,9 +92,17 @@ test("all public pages and internal links resolve", async ({ request }) => {
   const routes = [
     ...articles().map(articlePath),
     ...["en", "zh-CN"].flatMap((locale) =>
-      ["", "benchmarks/", "cost/", "blog/", "releases/", "use-cases/"].map(
-        (section) => `/${locale}/${section}`,
-      ),
+      [
+        "",
+        "benchmarks/",
+        "cost/",
+        "blog/",
+        "releases/",
+        "use-cases/",
+        "download/",
+        "community/",
+        "docs/0.1.0/",
+      ].map((section) => `/${locale}/${section}`),
     ),
   ];
   const links = new Set<string>();

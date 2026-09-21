@@ -3,6 +3,7 @@ import path from "node:path";
 import { createHash } from "node:crypto";
 import { isDeepStrictEqual } from "node:util";
 import { release } from "../content/repository";
+import { downloadEvidenceErrors } from "../content/downloads";
 import {
   manualCatalog,
   manualCases,
@@ -289,6 +290,18 @@ export const manualReviewedPaths = () =>
     "packages/manual/gate.ts",
     "apps/web/components/manual.tsx",
     "apps/web/components/manual.css",
+    "apps/web/components/docs-home.tsx",
+    "apps/web/components/docs-sidebar.tsx",
+    "apps/web/components/docs-navigation.tsx",
+    "apps/web/components/download-page.tsx",
+    "apps/web/components/copy-code.tsx",
+    "apps/web/components/community-page.tsx",
+    "packages/content/downloads.ts",
+    "content/downloads/0.1.0.json",
+    "scripts/verify-downloads.ts",
+    "verification/downloads/Dockerfile",
+    "evidence/downloads/0.1.0/README.md",
+    "evidence/downloads/0.1.0/verification.json",
     "apps/web/components/command-search.tsx",
     "packages/local/codex.ts",
     "scripts/local-codex.ts",
@@ -374,6 +387,7 @@ export function manualPublicationErrors({ requireReview = true } = {}) {
       clients: manualClients(),
       clientResults: clients,
     });
+    errors.push(...downloadEvidenceErrors());
     if (
       inventory.commit !== release.commit ||
       inventory.sourceSha256 !==

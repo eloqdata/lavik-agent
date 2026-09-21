@@ -1,0 +1,57 @@
+{
+  "assets": [
+    {
+      "browser_download_url": "https://github.com/eloqdata/lavik/releases/download/v0.1.0-beta.1/lavik-v0.1.0-beta.1-linux-aarch64-minimal.tar.gz",
+      "digest": "sha256:819df5f9f6c534f0fa988d1a9ec3531f1e6b0651527591a54e7235688bf8d984",
+      "name": "lavik-v0.1.0-beta.1-linux-aarch64-minimal.tar.gz",
+      "size": 12510428
+    },
+    {
+      "browser_download_url": "https://github.com/eloqdata/lavik/releases/download/v0.1.0-beta.1/lavik-v0.1.0-beta.1-linux-aarch64-minimal.tar.gz.sha256",
+      "digest": "sha256:38726fa0980d378580c0e4c83064467ff24f8e4e12402bbb60c0f78d0b799987",
+      "name": "lavik-v0.1.0-beta.1-linux-aarch64-minimal.tar.gz.sha256",
+      "size": 115
+    },
+    {
+      "browser_download_url": "https://github.com/eloqdata/lavik/releases/download/v0.1.0-beta.1/lavik-v0.1.0-beta.1-linux-aarch64.tar.gz",
+      "digest": "sha256:ef18c718ab681cc7543a5aadfc2fdc040327f423facdeade484a46a928c7e277",
+      "name": "lavik-v0.1.0-beta.1-linux-aarch64.tar.gz",
+      "size": 16714247
+    },
+    {
+      "browser_download_url": "https://github.com/eloqdata/lavik/releases/download/v0.1.0-beta.1/lavik-v0.1.0-beta.1-linux-aarch64.tar.gz.sha256",
+      "digest": "sha256:881dba9713e78badf2126aa893686f40aeccc1a96ec574a8499fe600937c3110",
+      "name": "lavik-v0.1.0-beta.1-linux-aarch64.tar.gz.sha256",
+      "size": 107
+    },
+    {
+      "browser_download_url": "https://github.com/eloqdata/lavik/releases/download/v0.1.0-beta.1/lavik-v0.1.0-beta.1-linux-x86_64-minimal.tar.gz",
+      "digest": "sha256:8a3e66f313e7112a3a9dff7b1a0d67ae34e988dfa51f5c310e860d0b3f2daa77",
+      "name": "lavik-v0.1.0-beta.1-linux-x86_64-minimal.tar.gz",
+      "size": 13585695
+    },
+    {
+      "browser_download_url": "https://github.com/eloqdata/lavik/releases/download/v0.1.0-beta.1/lavik-v0.1.0-beta.1-linux-x86_64-minimal.tar.gz.sha256",
+      "digest": "sha256:b70efd45a73eb8ecb5e03b8022c9b4dbc1205039e915370fedc1bbeb7ce4eeaf",
+      "name": "lavik-v0.1.0-beta.1-linux-x86_64-minimal.tar.gz.sha256",
+      "size": 114
+    },
+    {
+      "browser_download_url": "https://github.com/eloqdata/lavik/releases/download/v0.1.0-beta.1/lavik-v0.1.0-beta.1-linux-x86_64.tar.gz",
+      "digest": "sha256:09ed898a3b4483ffffa0211ebeb56c7aad8218fbedb4680805dbf085fbada0b0",
+      "name": "lavik-v0.1.0-beta.1-linux-x86_64.tar.gz",
+      "size": 18955848
+    },
+    {
+      "browser_download_url": "https://github.com/eloqdata/lavik/releases/download/v0.1.0-beta.1/lavik-v0.1.0-beta.1-linux-x86_64.tar.gz.sha256",
+      "digest": "sha256:1bd3f28a7dfe6c760cbf5db6cce9da897e0d14d0866e56f8c4643d1927cc9058",
+      "name": "lavik-v0.1.0-beta.1-linux-x86_64.tar.gz.sha256",
+      "size": 106
+    }
+  ],
+  "body": "Ubuntu 24.04 / GCC 13 release build.\n\nAll packages include lavik, lavik-meta, lavik-ctl, LICENSE and notices.\n- Standard: DPDK/SPDK included; x86-64-v2 or ARMv8-A+CRC32 required.\n- Minimal: kernel TCP/io_uring only; compiler-default CPU target.\n\nBoth variants require Linux 6.1+ with io_uring enabled for lavik and\nlavik-meta, including DPDK/SPDK deployments, and Ubuntu 24.04-compatible glibc.\n\nSource: [3955b98d43b312324aa8d52775df52cfb111c0d0](https://github.com/eloqdata/lavik/commit/3955b98d43b312324aa8d52775df52cfb111c0d0)\n\n[Hardware and platform requirements](https://github.com/eloqdata/lavik/blob/3955b98d43b312324aa8d52775df52cfb111c0d0/README.md#release-hardware-and-platform-requirements)\n\n\n## What's Changed\n* feat(cluster): recover populations with always-on failover by @liunyl in https://github.com/eloqdata/lavik/pull/66\n* docs: restore benchmark reports with English defaults by @thweetkomputer in https://github.com/eloqdata/lavik/pull/69\n* feat(onboarding): add startup tools and benchmark comparisons by @liunyl in https://github.com/eloqdata/lavik/pull/71\n* docs(benchmarks): emphasize measured throughput advantages by @liunyl in https://github.com/eloqdata/lavik/pull/73\n* ci: publish standard and minimal nightly packages for x86_64 and ARM64 by @thweetkomputer in https://github.com/eloqdata/lavik/pull/75\n* build: share Ubuntu dependency setup and fix nightly SPDK builds by @thweetkomputer in https://github.com/eloqdata/lavik/pull/76\n* Add native AMD64/ARM64 CI and fix full-suite failures by @thweetkomputer in https://github.com/eloqdata/lavik/pull/62\n* chore: finish Lavik naming cleanup and update Bycorf by @thweetkomputer in https://github.com/eloqdata/lavik/pull/78\n* perf(cluster): avoid read admission allocation and borrow MOVED hosts by @thweetkomputer in https://github.com/eloqdata/lavik/pull/80\n* perf(cluster): use cached authority snapshots for request admission by @thweetkomputer in https://github.com/eloqdata/lavik/pull/79\n* docs: discourage blocking mutexes shared across workers by @thweetkomputer in https://github.com/eloqdata/lavik/pull/81\n* ci: publish versioned packages from release tags by @thweetkomputer in https://github.com/eloqdata/lavik/pull/82\n* feat(replication): add bounded candidate recovery and partial reparent by @liunyl in https://github.com/eloqdata/lavik/pull/70\n\n\n**Full Changelog**: https://github.com/eloqdata/lavik/commits/v0.1.0-beta.1",
+  "html_url": "https://github.com/eloqdata/lavik/releases/tag/v0.1.0-beta.1",
+  "prerelease": true,
+  "published_at": "2026-09-18T15:43:15Z",
+  "tag_name": "v0.1.0-beta.1"
+}

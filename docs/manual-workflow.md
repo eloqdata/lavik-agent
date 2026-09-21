@@ -98,6 +98,15 @@ checks before review so the reviewer sees final bytes. Then run:
 npm run manual:review
 ```
 
+For a separate new task that changes the manual, use its own task directory:
+
+```
+npm run manual:review -- --task-directory=.runs/local/site-expansion-20260921
+```
+
+Keep all retries for that task in the same directory so the per-task call
+budget remains effective. A new directory is for new work, not extra retries.
+
 The independent review checks the complete public bundle in a fresh local
 Codex session. A pass writes `evidence/manual/0.1.0/publication.json`, binding
 source, content, test code, receipts, renderer and client configuration to

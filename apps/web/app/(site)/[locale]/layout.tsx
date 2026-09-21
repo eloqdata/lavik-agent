@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { Header, Footer } from "../../../components/site";
 import { localeSchema } from "../../../../../packages/content/schema";
 import "../../styles.css";
+import "../../../components/resources.css";
 
 export const dynamicParams = false;
 export function generateStaticParams() {
@@ -11,11 +12,11 @@ export function generateStaticParams() {
 export const metadata: Metadata = {
   metadataBase: new URL("https://lavik.dev"),
   title: {
-    default: "Lavik — Redis-class performance. NVMe-scale capacity.",
+    default: "Lavik — Faster than Redis. Capacity on NVMe SSD.",
     template: "%s · Lavik",
   },
   description:
-    "An open-source Redis-compatible key-value store built around NVMe storage. Explore the benchmarks and evaluate Lavik 0.1.0.",
+    "An open-source Redis-compatible key-value store built around NVMe SSD storage. Explore the benchmarks and evaluate Lavik 0.1.0.",
   icons: { icon: "/icon.svg" },
 };
 export default async function Layout({

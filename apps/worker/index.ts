@@ -10,6 +10,7 @@ import {
   type AlarmStorage,
   type DispatchConfig,
 } from "../../packages/admin/dispatch.ts";
+import { communityRedirect } from "../../packages/community/links.ts";
 
 type Fetcher = { fetch(request: Request): Promise<Response> };
 const disabled = () =>
@@ -60,6 +61,8 @@ export class AdminStore {
 }
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
+    const community = communityRedirect(request);
+    if (community) return community;
     const path = new URL(request.url).pathname;
     const admin =
       path === "/admin" ||

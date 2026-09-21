@@ -22,13 +22,28 @@ import {
 } from "../../../../../../packages/content/gate";
 import { BenchmarkChart } from "../../../../components/benchmark";
 import { CostCalculator } from "../../../../components/cost-calculator";
-import { ManualLinks, ManualPage } from "../../../../components/manual";
+import { ManualPage } from "../../../../components/manual";
 import {
   manualRoutes,
   manualTitle,
 } from "../../../../../../packages/manual/repository";
 
-const indexRoutes = ["benchmarks", "cost", "use-cases", "blog", "releases"];
+import { DownloadPage } from "../../../../components/download-page";
+import { CommunityPage } from "../../../../components/community-page";
+import { DocsHome } from "../../../../components/docs-home";
+import { DocsSidebar } from "../../../../components/docs-sidebar";
+
+const indexRoutes = [
+  "benchmarks",
+  "cost",
+  "use-cases",
+  "blog",
+  "releases",
+  "download",
+  "community",
+  "docs",
+  "docs/0.1.0",
+];
 export const dynamicParams = false;
 export function generateStaticParams({
   params,
@@ -41,7 +56,7 @@ export function generateStaticParams({
       .map((a) => ({
         slug: articlePath(a).split("/").filter(Boolean).slice(1),
       })),
-    ...indexRoutes.map((route) => ({ slug: [route] })),
+    ...indexRoutes.map((route) => ({ slug: route.split("/") })),
     ...manualRoutes().map((route) => ({ slug: route.split("/") })),
   ];
 }
@@ -58,7 +73,10 @@ export async function generateMetadata({
     benchmarks: ["Benchmarks", "基准测试"],
     cost: ["Capacity economics", "容量经济性"],
     "use-cases": ["Use cases", "使用场景"],
-    blog: ["Journal", "博客"],
+    blog: ["Blog", "博客"],
+    download: ["Download", "下载"],
+    community: ["Community", "社区"],
+    docs: ["Documentation", "文档"],
     releases: ["Releases", "版本说明"],
   };
   return {
@@ -66,9 +84,19 @@ export async function generateMetadata({
       article?.title ??
       manualTitle(slug.join("/"), localeSchema.parse(locale)) ??
       titles[slug[0]]?.[locale === "en" ? 0 : 1],
-    description: article?.summary,
+    description:
+      article?.summary ??
+      (slug[0] === "download"
+        ? locale === "en"
+          ? "Download Lavik 0.1.0 beta for Linux x86-64 and ARM64. Standard and Minimal packages, requirements, and SHA-256 checksums."
+          : "下载适用于 Linux x86-64 和 ARM64 的 Lavik 0.1.0 beta，查看 Standard / Minimal 发布包、系统要求和 SHA-256 校验和。"
+        : slug[0] === "community"
+          ? locale === "en"
+            ? "Join Lavik Community on Slack, Discord, and GitHub. Get involved in an Apache 2.0 open-source key-value store."
+            : "加入 Slack、Discord 和 GitHub 上的 Lavik Community，一起构建 Apache 2.0 开源键值存储。"
+          : undefined),
     alternates: {
-      canonical: `/${locale}/${slug.join("/")}/`,
+      canonical: `/${locale}/${slug.join("/") === "docs" ? "docs/0.1.0" : slug.join("/")}/`,
       languages: {
         en: `/en/${slug.join("/")}/`,
         "zh-CN": `/zh-CN/${slug.join("/")}/`,
@@ -85,6 +113,10 @@ export default async function Page({
     locale = localeSchema.parse(resolved.locale),
     zh = locale === "zh-CN";
   const route = resolved.slug.join("/");
+  if (route === "download") return <DownloadPage locale={locale} />;
+  if (route === "community") return <CommunityPage locale={locale} />;
+  if (route === "docs" || route === "docs/0.1.0")
+    return <DocsHome locale={locale} />;
   if (manualTitle(route, locale))
     return <ManualPage route={route} locale={locale} />;
   const pages = articles().filter((a) => a.locale === locale);
@@ -96,33 +128,7 @@ export default async function Page({
         className="container document-layout"
         data-content-hash={contentHash(article)}
       >
-        <aside className="document-nav">
-          <span className="eyebrow">LAVIK 0.1.0</span>
-          <span className="doc-version">v{release.release}</span>
-          <nav aria-label={zh ? "文档导航" : "Documentation navigation"}>
-            {pages
-              .filter((a) => a.kind === "docs")
-              .map((a) => (
-                <Link
-                  key={a.id}
-                  href={articlePath(a)}
-                  aria-current={a.id === article.id ? "page" : undefined}
-                >
-                  {a.title}
-                </Link>
-              ))}
-            <ManualLinks locale={locale} />
-            <Link href={`/${locale}/releases/`}>
-              {zh ? "版本说明" : "Release notes"}
-            </Link>
-            <Link href={`/${locale}/faq/evaluation/`}>FAQ</Link>
-          </nav>
-          <p>
-            {zh
-              ? "固定版本的文档，与源码保持关联。"
-              : "Versioned documentation, connected to the source."}
-          </p>
-        </aside>
+        <DocsSidebar locale={locale} route={route} />
         <article className="document">
           <div className="breadcrumb">
             <Link href={`/${locale}/`}>Lavik</Link>
@@ -210,8 +216,8 @@ export default async function Page({
         </h1>
         <p className="page-lead">
           {zh
-            ? "NVMe 上接近内存的实测性能，为降低容量成本提供了依据。节约多少，可以根据明确的假设计算。"
-            : "Measured near-memory performance on NVMe makes a lower-cost capacity tier worth evaluating. The saving can be calculated from explicit assumptions."}
+            ? "NVMe SSD 上接近内存的实测性能，为降低容量成本提供了依据。节约多少，可以根据明确的假设计算。"
+            : "Measured near-memory performance on NVMe SSD makes a lower-cost capacity tier worth evaluating. The saving can be calculated from explicit assumptions."}
         </p>
         <div className="prose">
           <h2>
@@ -263,7 +269,7 @@ export default async function Page({
   if (!kind) notFound();
   const titles = {
     "use-case": zh ? "从你的应用出发。" : "Start with your application.",
-    blog: zh ? "关于存储的笔记。" : "Notes on building with storage.",
+    blog: zh ? "Lavik 博客" : "Lavik Blog",
     release: zh ? "每个版本，都有依据。" : "Every version, accounted for.",
   };
   return (

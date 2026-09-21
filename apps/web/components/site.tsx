@@ -26,16 +26,18 @@ export function Header({ locale }: { locale: Locale }) {
           lavik<span className="version-pill">0.1.0 beta</span>
         </Link>
         <nav aria-label={zh ? "主导航" : "Main navigation"}>
-          <Link href={`/${locale}/docs/0.1.0/overview/`}>
-            {zh ? "文档" : "Docs"}
-          </Link>
+          <Link href={`/${locale}/download/`}>{zh ? "下载" : "Download"}</Link>
+          <Link href={`/${locale}/docs/0.1.0/`}>{zh ? "文档" : "Docs"}</Link>
           <Link href={`/${locale}/benchmarks/`}>
             {zh ? "基准测试" : "Benchmarks"}
           </Link>
           <Link href={`/${locale}/use-cases/`}>
             {zh ? "使用场景" : "Use cases"}
           </Link>
-          <Link href={`/${locale}/blog/`}>{zh ? "博客" : "Journal"}</Link>
+          <Link href={`/${locale}/blog/`}>{zh ? "博客" : "Blog"}</Link>
+          <Link href={`/${locale}/community/`}>
+            {zh ? "社区" : "Community"}
+          </Link>
           <LanguageSwitch locale={locale} />
           <a className="github-link" href="https://github.com/eloqdata/lavik">
             GitHub <span aria-hidden="true">↗</span>
@@ -58,6 +60,10 @@ export function Footer({ locale }: { locale: Locale }) {
           <p>{zh ? "让容量随存储扩展。" : "Let capacity grow with storage."}</p>
         </div>
         <nav aria-label={zh ? "页脚导航" : "Footer navigation"}>
+          <Link href={`/${locale}/download/`}>{zh ? "下载" : "Download"}</Link>
+          <Link href={`/${locale}/community/`}>
+            {zh ? "社区" : "Community"}
+          </Link>
           <Link href={`/${locale}/releases/`}>
             {zh ? "版本说明" : "Releases"}
           </Link>

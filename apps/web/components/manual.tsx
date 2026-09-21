@@ -17,6 +17,7 @@ import {
 import { CommandSearch } from "./command-search";
 import { requireReviewedManual } from "../../../packages/manual/gate";
 import "./manual.css";
+import { DocsSidebar } from "./docs-sidebar";
 
 export function ManualLinks({ locale }: { locale: Locale }) {
   return (
@@ -165,32 +166,10 @@ export function ManualPage({
       className="container document-layout manual-page"
       data-manual-hash={publication.bundleHash}
     >
-      <aside className="document-nav">
-        <span className="eyebrow">LAVIK 0.1.0</span>
-        <span className="doc-version">{release.tag}</span>
-        <nav aria-label={zh ? "文档导航" : "Documentation navigation"}>
-          <Link href={`${root}/overview/`}>{zh ? "概览" : "Overview"}</Link>
-          <Link href={`${root}/quick-start/`}>
-            {zh ? "快速开始" : "Quick start"}
-          </Link>
-          <ManualLinks locale={locale} />
-          <Link href={`${root}/compatibility/`}>
-            {zh ? "兼容性概览" : "Compatibility overview"}
-          </Link>
-          <Link href={`${root}/storage/`}>{zh ? "存储" : "Storage"}</Link>
-          <Link href={`/${locale}/releases/`}>
-            {zh ? "版本说明" : "Release notes"}
-          </Link>
-        </nav>
-        <p>
-          {zh
-            ? "逐条测试的示例，明确的版本与范围。"
-            : "Tested examples, with an explicit version and scope."}
-        </p>
-      </aside>
+      <DocsSidebar locale={locale} route={route} />
       <article className="document">
         <div className="breadcrumb">
-          <Link href={root + "/overview/"}>{zh ? "文档" : "Docs"}</Link>
+          <Link href={root + "/"}>{zh ? "文档" : "Docs"}</Link>
           <span>/</span>
           <span>0.1.0</span>
           {command ? (

@@ -40,8 +40,8 @@ export async function generateMetadata({
     },
     description:
       locale === "en"
-        ? "Faster than Redis in the published SPDK GET/SET benchmark. A 20:1 DRAM/NVMe price ratio means 95% lower value-capacity cost. Open source under Apache 2.0."
-        : "在已发布的 SPDK GET/SET 基准测试中比 Redis 更快。按 DRAM/NVMe 单价比 20:1，值容量成本降低 95%。Apache 2.0 开源。",
+        ? "Faster than Redis in the published SPDK GET/SET benchmark. A 20:1 DRAM/NVMe SSD price ratio means 95% lower value-capacity cost. Open source under Apache 2.0."
+        : "在已发布的 SPDK GET/SET 基准测试中比 Redis 更快。按 DRAM/NVMe SSD 单价比 20:1，值容量成本降低 95%。Apache 2.0 开源。",
     alternates: {
       canonical: `/${locale}/`,
       languages: { en: "/en/", "zh-CN": "/zh-CN/" },
@@ -92,8 +92,8 @@ export default async function Home({
             </h1>
             <p className="hero-description">
               {zh
-                ? "用 NVMe 替代昂贵的 DRAM 来存储值。Lavik 为 Redis / Valkey 工作负载带来全新的成本结构：熟悉的 Redis 接口、实测百万级 QPS，以及随 SSD 扩展的数据容量。"
-                : "Replace expensive DRAM with NVMe for your values. Lavik gives Redis / Valkey workloads a new cost structure: familiar Redis clients, a measured million requests per second, and capacity that grows with SSDs."}
+                ? "用 NVMe SSD 替代昂贵的 DRAM 来存储值。Lavik 为 Redis / Valkey 工作负载带来全新的成本结构：熟悉的 Redis 接口、实测百万级 QPS，以及随 SSD 扩展的数据容量。"
+                : "Replace expensive DRAM with NVMe SSD for your values. Lavik gives Redis / Valkey workloads a new cost structure: familiar Redis clients, a measured million requests per second, and capacity that grows with SSDs."}
             </p>
             <div className="actions">
               <Link
@@ -116,8 +116,8 @@ export default async function Home({
           <aside className="capacity-card" aria-labelledby="capacity-title">
             <p className="eyebrow">
               {zh
-                ? "DRAM → NVMe · 改变成本结构"
-                : "DRAM → NVMe · CHANGE THE ECONOMICS"}
+                ? "DRAM → NVMe SSD · 改变成本结构"
+                : "DRAM → NVMe SSD · CHANGE THE ECONOMICS"}
             </p>
             <div className="capacity-saving">
               <strong>
@@ -148,7 +148,7 @@ export default async function Home({
               <div className="capacity-row">
                 <div>
                   <span>
-                    Lavik <small>NVMe</small>
+                    Lavik <small>NVMe SSD</small>
                   </span>
                   <strong>
                     {(100 / capacityCost.capacityRatio).toFixed(0)}%
@@ -167,14 +167,14 @@ export default async function Home({
                 DRAM <strong>{zh ? "紧凑键索引" : "Compact key index"}</strong>
               </span>
               <span>
-                NVMe{" "}
+                NVMe SSD{" "}
                 <strong>{zh ? "承载值容量" : "Room for your values"}</strong>
               </span>
             </div>
             <p className="capacity-assumption">
               {zh
-                ? `按 DRAM / NVMe 每 GiB 单价比 ${capacityRatio}:1 计算，值容量成本为 1/${capacityRatio}。索引内存、存储放大和服务器等成本另计。`
-                : `At a ${capacityRatio}:1 DRAM / NVMe price per GiB, value capacity costs 1/${capacityRatio} as much. Index memory, storage amplification, and server costs are additional.`}{" "}
+                ? `按 DRAM / NVMe SSD 每 GiB 单价比 ${capacityRatio}:1 计算，值容量成本为 1/${capacityRatio}。索引内存、存储放大和服务器等成本另计。`
+                : `At a ${capacityRatio}:1 DRAM / NVMe SSD price per GiB, value capacity costs 1/${capacityRatio} as much. Index memory, storage amplification, and server costs are additional.`}{" "}
               <Link href={`/${locale}/cost/`}>
                 {zh ? "按你的配置计算" : "Model your deployment"} ↗
               </Link>
@@ -187,13 +187,13 @@ export default async function Home({
           <div>
             <p className="eyebrow">
               {zh
-                ? "用性能证明 NVMe 的实力"
+                ? "用性能证明 NVMe SSD 的实力"
                 : "The performance behind the savings"}
             </p>
             <h2>
               {zh
-                ? "数据在 NVMe，性能比肩内存。"
-                : "NVMe storage. In-memory-class performance."}
+                ? "数据在 NVMe SSD，性能比肩内存。"
+                : "NVMe SSD storage. In-memory-class performance."}
             </h2>
           </div>
           <Link className="text-link" href={`/${locale}/benchmarks/`}>
@@ -213,8 +213,8 @@ export default async function Home({
             </h3>
             <p>
               {zh
-                ? "Lavik 将值存储在 NVMe，Redis 和 Valkey 将数据放在内存。在已发布的 1 KiB 实验中，Lavik SPDK 的 GET / SET 峰值吞吐量均超过两者，p99 延迟处于相近水平。"
-                : "Lavik stores values on NVMe. Redis and Valkey keep them in memory. In the published 1 KiB experiment, Lavik SPDK exceeded both peers’ peak GET and SET throughput, with comparable p99 latency."}
+                ? "Lavik 将值存储在 NVMe SSD，Redis 和 Valkey 将数据放在内存。在已发布的 1 KiB 实验中，Lavik SPDK 的 GET / SET 峰值吞吐量均超过两者，p99 延迟处于相近水平。"
+                : "Lavik stores values on NVMe SSD. Redis and Valkey keep them in memory. In the published 1 KiB experiment, Lavik SPDK exceeded both peers’ peak GET and SET throughput, with comparable p99 latency."}
             </p>
             <span className="small-label">
               {zh
@@ -248,11 +248,17 @@ export default async function Home({
               <h3>{zh ? "扩容，用 SSD 的价格。" : "Grow at SSD prices."}</h3>
               <p>
                 {zh
-                  ? "新增值容量由 NVMe 承载，减少对昂贵 DRAM 扩容的依赖。"
-                  : "Put growing value capacity on NVMe and reduce the need for expensive DRAM upgrades."}
+                  ? "新增值容量由 NVMe SSD 承载，减少对昂贵 DRAM 扩容的依赖。"
+                  : "Put growing value capacity on NVMe SSD and reduce the need for expensive DRAM upgrades."}
               </p>
               <p>
-                {claims.find((c) => c.id === "storage-model")!.text[locale]}
+                {claims
+                  .find((c) => c.id === "storage-model")!
+                  .text[locale].replace(
+                    "SPDK NVMe namespaces",
+                    "SPDK namespaces on NVMe SSDs",
+                  )
+                  .replace("SPDK NVMe 命名空间", "NVMe SSD 上的 SPDK 命名空间")}
               </p>
             </article>
             <article>
@@ -282,8 +288,8 @@ export default async function Home({
             </p>
             <h2>
               {zh
-                ? "下一次扩容，选择 NVMe。"
-                : "Make your next capacity upgrade NVMe."}
+                ? "下一次扩容，选择 NVMe SSD。"
+                : "Make your next capacity upgrade NVMe SSD."}
             </h2>
           </div>
         </div>
@@ -333,8 +339,8 @@ export default async function Home({
           <p className="eyebrow">{zh ? "现在就开始" : "Start today"}</p>
           <h2>
             {zh
-              ? "把值迁到 NVMe。\n把预算留给增长。"
-              : "Move your values to NVMe.\nPut your budget into growth."}
+              ? "把值迁到 NVMe SSD。\n把预算留给增长。"
+              : "Move your values to NVMe SSD.\nPut your budget into growth."}
           </h2>
         </div>
         <Link
