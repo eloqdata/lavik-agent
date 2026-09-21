@@ -12,6 +12,13 @@ import {
 } from "../../packages/admin/dispatch.ts";
 
 type Fetcher = { fetch(request: Request): Promise<Response> };
+const disabled = () =>
+  json(
+    {
+      error: "Lavik Admin is disabled. Content work is moving to local Codex.",
+    },
+    410,
+  );
 type Env = AuthConfig &
   DispatchConfig & {
     ASSETS: Fetcher;
@@ -25,12 +32,16 @@ export class AdminStore {
   private dispatcher: WorkerDispatcher;
   constructor(
     state: { storage: Database & AlarmStorage },
-    env: DispatchConfig,
+    private env: DispatchConfig,
   ) {
     this.store = new TaskStore(state.storage);
     this.dispatcher = new WorkerDispatcher(this.store, state.storage, env);
   }
   async fetch(request: Request) {
+    if (this.env.ADMIN_ENABLED !== "true") {
+      await this.dispatcher.ensureAlarm();
+      return disabled();
+    }
     // Also recovers pre-existing queues when deploying the dispatcher.
     const work = this.store.workStatus();
     if (
@@ -57,6 +68,7 @@ export default {
     const runner = path.startsWith("/api/runner/");
     const publisher = path.startsWith("/api/publisher/");
     if (!admin && !runner && !publisher) return env.ASSETS.fetch(request);
+    if (env.ADMIN_ENABLED !== "true") return disabled();
     if (Number(request.headers.get("content-length") ?? 0) > 1_000_000)
       return json({ error: "Request too large" }, 413);
     const headers = new Headers({ "Content-Type": "application/json" });

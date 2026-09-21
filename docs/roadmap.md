@@ -1,5 +1,11 @@
 # Next increments
 
+**Current priority:** migrate content work to the [local Codex team](local-agent-team.md).
+Hosted Admin and API-backed writing workflows are disabled to control model
+spending. The public site and ordinary GitHub deployment remain active. Complete
+the subscription-only local runner and verified website publication before adding
+more marketing channels or unattended scheduling.
+
 The website, real command verifier, bilingual blog campaign pipeline and private
 four-role admin console are implemented. The console's Access application and
 hosted runner require account configuration described in [admin.md](admin.md).

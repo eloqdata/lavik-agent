@@ -18,7 +18,7 @@
     "agent:publish": "node --import tsx scripts/publish-content.ts",
     "admin:worker": "node --env-file-if-exists=.env --import tsx scripts/admin-worker.ts",
     "admin:publish": "node --import tsx scripts/admin-publish.ts",
-    "admin:dev": "wrangler dev --local --port 4174 --local-upstream 127.0.0.1:4174 --upstream-protocol http --env-file /dev/null --var ADMIN_LOCAL:true",
+    "admin:dev": "wrangler dev --local --port 4174 --local-upstream 127.0.0.1:4174 --upstream-protocol http --env-file /dev/null --var ADMIN_ENABLED:true --var ADMIN_LOCAL:true",
     "test:admin": "playwright test --config playwright.admin.config.ts",
     "check": "npm run typecheck && npm test && npm run build",
     "test:browser": "playwright test",

@@ -1,5 +1,14 @@
 # Private agent console
 
+**Disabled in production as of September 21, 2026.** `ADMIN_ENABLED=false` blocks
+the hosted console, runner and publisher APIs and stops Durable Object alarms.
+Stored task history is retained. Both GitHub model workflows are disabled and
+`LAVIK_ADMIN_WORKER_ENABLED=false`; the scheduled trigger has been removed.
+Public website deployment remains enabled. See [the local Codex team design](local-agent-team.md)
+for the planned replacement. The operations below describe the retained system,
+not an invitation to restart hosted API usage. Explicit local development/test
+commands set `ADMIN_ENABLED=true` only for their local Worker process.
+
 The console is at `https://lavik.dev/admin/`. It manages user manual writers,
 blog writers, user manual reviewers and blog reviewers. Every task covers English
 and Simplified Chinese. Writers send their drafts through independent review;

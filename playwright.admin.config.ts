@@ -11,7 +11,7 @@ export default defineConfig({
   },
   webServer: {
     command:
-      "npx wrangler dev --local --port 4174 --local-upstream 127.0.0.1:4174 --upstream-protocol http --env-file /dev/null --var ADMIN_LOCAL:true --var RUNNER_TOKEN:local-test-runner-token-with-at-least-32-characters --var PUBLISHER_TOKEN:local-test-publisher-token-with-at-least-32-characters --persist-to .cache/admin-browser-state",
+      "npx wrangler dev --local --port 4174 --local-upstream 127.0.0.1:4174 --upstream-protocol http --env-file /dev/null --var ADMIN_ENABLED:true --var ADMIN_LOCAL:true --var RUNNER_TOKEN:local-test-runner-token-with-at-least-32-characters --var PUBLISHER_TOKEN:local-test-publisher-token-with-at-least-32-characters --persist-to .cache/admin-browser-state",
     url: "http://127.0.0.1:4174/admin/",
     timeout: 60000,
     reuseExistingServer: false,

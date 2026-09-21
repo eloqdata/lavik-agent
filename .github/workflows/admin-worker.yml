@@ -1,9 +1,7 @@
 name: Process private admin tasks
 on:
   workflow_dispatch:
-  schedule:
-    # Backup only. The Cloudflare queue dispatches workers directly.
-    - cron: "2-59/5 * * * *"
+  # Hosted model workers are disabled. No periodic API-backed writing.
 permissions:
   contents: read
 concurrency:

@@ -6,7 +6,10 @@ export interface AlarmStorage {
   setAlarm(at: number): Promise<void>;
   deleteAlarm(): Promise<void>;
 }
-export type DispatchConfig = { GITHUB_DISPATCH_TOKEN?: string };
+export type DispatchConfig = {
+  GITHUB_DISPATCH_TOKEN?: string;
+  ADMIN_ENABLED?: string;
+};
 const repository = "eloqdata/lavik-agent";
 const workflow = "admin-worker.yml";
 const api = `https://api.github.com/repos/${repository}/actions`;
@@ -32,6 +35,7 @@ export class WorkerDispatcher {
   // Schedule before queue mutations, so a crash after saving a task cannot lose
   // its wake-up. Concurrent requests share this operation and cannot postpone it.
   ensureAlarm(): Promise<void> {
+    if (this.config.ADMIN_ENABLED !== "true") return this.alarms.deleteAlarm();
     if (!this.scheduling) {
       this.scheduling = (async () => {
         const alarm = await this.alarms.getAlarm();
@@ -82,6 +86,10 @@ export class WorkerDispatcher {
   }
 
   async alarm() {
+    if (this.config.ADMIN_ENABLED !== "true") {
+      await this.alarms.deleteAlarm();
+      return;
+    }
     // Persist recovery before network I/O. It survives process restarts and
     // supplements the platform's bounded retries if an alarm handler fails.
     await this.alarms.setAlarm(this.time() + minute);

@@ -4,6 +4,12 @@ The bilingual website, private agent console and evidence-driven content worker 
 
 Accuracy is the first priority. The writer can inspect pinned product sources, execute registered examples against a real Lavik binary, reason about cost scenarios, receive an independent review, revise, and publish both language editions when checks pass. No per-article human approval is required by the default operating policy.
 
+**September 21, 2026:** hosted Admin and both API-backed GitHub writing workflows
+are disabled to stop hosted model usage. The public website and normal deployment
+remain active. The replacement is designed in [Local Codex content team](docs/local-agent-team.md):
+ChatGPT-authenticated Codex on the owner's Mac, independent review, local task
+storage, and a publisher that makes no model calls. That local runner is not yet implemented.
+
 ## Run the website
 
 Requires Node.js 22 or newer.
@@ -40,6 +46,10 @@ The documentation family is **0.1.0**. Its precise upstream release is **v0.1.0-
 Tests use a disposable file on container temporary storage. They establish functional behavior for the recorded environment, not NVMe throughput, power-loss durability, replication availability, or an application SLA. The harness needs io_uring, which Docker's default seccomp profile blocks. It runs repository-owned code with that profile disabled, but with no network, host filesystem mounts, devices, capabilities, or secrets, as an unprivileged user, and with resource/time limits. **It is not an arbitrary-code sandbox.** New recipes are reviewed code changes.
 
 ## Assign a writing task
+
+The hosted console described below is currently disabled. These instructions
+document the retained implementation. The API-backed CLI still incurs API usage
+when invoked manually; it is not the proposed subscription-based local runner.
 
 The private [admin console](https://lavik.dev/admin/) manages user manual writers,
 blog writers and their independent reviewers. Assign bilingual tasks, inspect real

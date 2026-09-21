@@ -26,6 +26,7 @@ import {
 test("production worker keeps public pages available and fails closed before Access is configured", async () => {
   let storeCalls = 0;
   const env = {
+    ADMIN_ENABLED: "true",
     ADMIN_EMAIL: "owner@example.test",
     ASSETS: {
       async fetch() {
@@ -161,6 +162,61 @@ function harness() {
     );
   return { db, sqlite, api, store };
 }
+
+test("disabled Admin rejects every hosted agent surface before authentication or storage", async () => {
+  for (const ADMIN_ENABLED of [undefined, "false"]) {
+    const env = {
+      ADMIN_ENABLED,
+      ADMIN_LOCAL: "true",
+      RUNNER_TOKEN: "valid-runner-token-with-at-least-32-characters",
+      PUBLISHER_TOKEN: "valid-publisher-token-with-at-least-32-characters",
+      ASSETS: {
+        async fetch() {
+          return new Response("Public website");
+        },
+      },
+      ADMIN_STORE: {
+        idFromName() {
+          throw new Error("Disabled Admin must not open storage");
+        },
+        get() {
+          throw new Error("Disabled Admin must not open storage");
+        },
+      },
+    };
+    for (const path of [
+      "/admin",
+      "/admin/",
+      "/api/admin/tasks",
+      "/api/runner/wake",
+      "/api/runner/claim",
+      "/api/publisher/claim",
+    ]) {
+      for (const method of ["GET", "POST"]) {
+        const response = await workerApp.fetch(
+          new Request(`http://localhost${path}`, {
+            method,
+            headers: {
+              Authorization: `Bearer ${path.includes("publisher") ? env.PUBLISHER_TOKEN : env.RUNNER_TOKEN}`,
+              "X-Admin-Actor": "owner@example.test",
+            },
+            ...(method === "POST" ? { body: "{}" } : {}),
+          }),
+          env,
+        );
+        assert.equal(response.status, 410, path);
+        assert.match((await response.json()).error, /disabled/);
+        assert.equal(response.headers.get("Cache-Control"), "no-store");
+      }
+    }
+    assert.equal(
+      await (
+        await workerApp.fetch(new Request("https://lavik.dev/en/"), env)
+      ).text(),
+      "Public website",
+    );
+  }
+});
 const input = () => ({
   requestId: crypto.randomUUID(),
   role: "blog-writer",
@@ -413,9 +469,10 @@ function dispatchHarness(http: typeof fetch, configured = true) {
       next = null;
     },
   };
-  const config = configured
-    ? { GITHUB_DISPATCH_TOKEN: "private-test-token" }
-    : {};
+  const config = {
+    ADMIN_ENABLED: "true",
+    ...(configured ? { GITHUB_DISPATCH_TOKEN: "private-test-token" } : {}),
+  };
   const recreate = () =>
     new WorkerDispatcher(h.store, alarms, config, http, () => clock);
   return {
@@ -434,6 +491,51 @@ function dispatchHarness(http: typeof fetch, configured = true) {
     },
   };
 }
+
+test("disabling Admin removes persisted wake-ups and preserves queued history without GitHub calls", async () => {
+  for (const ADMIN_ENABLED of [undefined, "false"]) {
+    const h = dispatchHarness(async () => {
+      throw new Error("Disabled dispatcher must not call GitHub");
+    });
+    try {
+      const task = await (await h.api("/api/admin/tasks", input())).json();
+      await h.recreate().ensureAlarm();
+      assert.notEqual(h.next, null);
+      const config = {
+        ADMIN_ENABLED,
+        GITHUB_DISPATCH_TOKEN: h.config.GITHUB_DISPATCH_TOKEN,
+      };
+      const disabledDispatcher = new WorkerDispatcher(
+        h.store,
+        h.alarms,
+        config,
+      );
+      await disabledDispatcher.alarm();
+      assert.equal(h.next, null);
+      await disabledDispatcher.ensureAlarm();
+      assert.equal(h.next, null);
+      const app = new AdminStore({ storage: { ...h.db, ...h.alarms } }, config);
+      assert.equal(
+        (
+          await app.fetch(
+            new Request("https://lavik.dev/api/admin/tasks", {
+              method: "POST",
+              body: JSON.stringify(input()),
+            }),
+          )
+        ).status,
+        410,
+      );
+      assert.equal(h.store.workStatus().queued, 1);
+      assert.equal(
+        (await (await h.api(`/api/admin/tasks/${task.id}`)).json()).task.id,
+        task.id,
+      );
+    } finally {
+      h.sqlite.close();
+    }
+  }
+});
 
 test("durable alarms dispatch once, recover after restart, monitor startup and hand off queued tasks", async () => {
   let posts = 0;
@@ -677,7 +779,7 @@ test("queue mutations require a persisted alarm and operational status is authen
         },
       },
     },
-    {},
+    { ADMIN_ENABLED: "true" },
   );
   const create = () =>
     app.fetch(

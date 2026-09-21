@@ -13,7 +13,7 @@ permissions:
 jobs:
   campaign:
     # Only trusted main-branch code receives model and repository credentials.
-    if: github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/main' && vars.LAVIK_ADMIN_WORKER_ENABLED == 'true'
     concurrency:
       group: lavik-production-publication
       cancel-in-progress: false
