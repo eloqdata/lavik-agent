@@ -1,0 +1,9 @@
+{
+  "checkedAt": "2026-09-21",
+  "purpose": "Primary-source notes for architecture comparisons; not a new performance test.",
+  "sources": [
+    {"id":"dragonfly-tiering","url":"https://www.dragonflydb.io/docs/managing-dragonfly/tiering","quote":"Data tiering is currently supported for string values and, experimentally, for list nodes and mutable hash commands.","notes":"The September 16 documentation lists a primary in-memory index, configurable offloading/promotion thresholds, and metrics for RAM hits, disk reads and pending I/O. Experimental list/hash support has additional conditions. The documentation reports sub-millisecond average latency in its own context; that does not specify an application's p99 budget."},
+    {"id":"dragonfly-ga","url":"https://www.dragonflydb.io/blog/ssd-data-tiering-is-generally-available","quote":"Dragonfly uses the Linux io_uring interface (kernel 5.19+) for all disk operations.","notes":"The GA announcement describes asynchronous I/O, batched writes and O_DIRECT. Do not describe current Dragonfly tiering as blocking disk I/O or as universally unable to satisfy latency targets. The Lavik benchmark's recorded configuration and version are separate from current defaults."},
+    {"id":"kvrocks-architecture","url":"https://kvrocks.apache.org/blog/how-we-use-rocksdb-in-kvrocks/","quote":"Kvrocks is an open-source key-value database that is based on rocksdb and compatible with Redis protocol.","notes":"This 2021 architecture article describes Redis data structures encoded into RocksDB column families, block/row caches, and optional BlobDB key-value separation. Read amplification, cache sizing and compaction are workload/tuning considerations, not proof that every current Kvrocks deployment misses its SLO. Kvrocks is a distinct Redis-compatible database."}
+  ]
+}

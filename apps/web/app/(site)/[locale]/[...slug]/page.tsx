@@ -32,6 +32,8 @@ import { DownloadPage } from "../../../../components/download-page";
 import { CommunityPage } from "../../../../components/community-page";
 import { DocsHome } from "../../../../components/docs-home";
 import { DocsSidebar } from "../../../../components/docs-sidebar";
+import { UseCasePage, UseCasesHome } from "../../../../components/use-cases";
+import { useCases } from "../../../../../../packages/use-cases/content";
 
 const indexRoutes = [
   "benchmarks",
@@ -58,6 +60,7 @@ export function generateStaticParams({
       })),
     ...indexRoutes.map((route) => ({ slug: route.split("/") })),
     ...manualRoutes().map((route) => ({ slug: route.split("/") })),
+    ...useCases.map((entry) => ({ slug: ["use-cases", entry.slug] })),
   ];
 }
 export async function generateMetadata({
@@ -66,6 +69,11 @@ export async function generateMetadata({
   params: Promise<{ locale: string; slug: string[] }>;
 }): Promise<Metadata> {
   const { locale, slug } = await params;
+  const useCase =
+    slug[0] === "use-cases"
+      ? useCases.find((entry) => entry.slug === slug[1])
+      : undefined;
+  const parsedLocale = localeSchema.parse(locale);
   const article = articles().find(
     (a) => articlePath(a) === `/${locale}/${slug.join("/")}/`,
   );
@@ -81,10 +89,12 @@ export async function generateMetadata({
   };
   return {
     title:
+      useCase?.title[parsedLocale] ??
       article?.title ??
       manualTitle(slug.join("/"), localeSchema.parse(locale)) ??
       titles[slug[0]]?.[locale === "en" ? 0 : 1],
     description:
+      useCase?.summary[parsedLocale] ??
       article?.summary ??
       (slug[0] === "download"
         ? locale === "en"
@@ -113,6 +123,9 @@ export default async function Page({
     locale = localeSchema.parse(resolved.locale),
     zh = locale === "zh-CN";
   const route = resolved.slug.join("/");
+  if (route === "use-cases") return <UseCasesHome locale={locale} />;
+  const useCase = useCases.find((entry) => route === `use-cases/${entry.slug}`);
+  if (useCase) return <UseCasePage locale={locale} entry={useCase} />;
   if (route === "download") return <DownloadPage locale={locale} />;
   if (route === "community") return <CommunityPage locale={locale} />;
   if (route === "docs" || route === "docs/0.1.0")

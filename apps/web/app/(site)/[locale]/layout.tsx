@@ -4,6 +4,7 @@ import { Header, Footer } from "../../../components/site";
 import { localeSchema } from "../../../../../packages/content/schema";
 import "../../styles.css";
 import "../../../components/resources.css";
+import "../../../components/use-cases.css";
 
 export const dynamicParams = false;
 export function generateStaticParams() {

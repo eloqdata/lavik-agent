@@ -5,6 +5,11 @@ import { isDeepStrictEqual } from "node:util";
 import { release } from "../content/repository";
 import { downloadEvidenceErrors } from "../content/downloads";
 import {
+  useCaseEvidenceErrors,
+  useCaseEvidenceFiles,
+  scenarioFiles,
+} from "../use-cases/repository";
+import {
   manualCatalog,
   manualCases,
   manualClients,
@@ -273,6 +278,16 @@ export function manualEvidenceErrors(bundle: {
 export const manualReviewedPaths = () =>
   [
     "package.json",
+    "package-lock.json",
+    "tsconfig.json",
+    "apps/web/next.config.ts",
+    "packages/content/repository.ts",
+    "packages/content/schema.ts",
+    "evidence/sources.json",
+    "content/claims.json",
+    "verification/recipes.json",
+    "tests/manual.test.ts",
+    "tests/use-cases.test.ts",
     "scripts/check-content.ts",
     ".github/workflows/ci.yml",
     "apps/web/app/(site)/[locale]/[...slug]/page.tsx",
@@ -296,6 +311,23 @@ export const manualReviewedPaths = () =>
     "apps/web/components/download-page.tsx",
     "apps/web/components/copy-code.tsx",
     "apps/web/components/community-page.tsx",
+    "apps/web/components/site.tsx",
+    "apps/web/components/use-cases-menu.tsx",
+    "apps/web/components/use-cases.tsx",
+    "apps/web/components/latency-explorer.tsx",
+    "packages/use-cases/content.ts",
+    "packages/use-cases/repository.ts",
+    "packages/use-cases/measurements.ts",
+    "evidence/use-cases/0.1.0/sources.json",
+    "evidence/use-cases/0.1.0/scenarios.json",
+    ...useCaseEvidenceFiles,
+    ...scenarioFiles.filter(
+      (f) =>
+        ![
+          "verification/manual/run.py",
+          "verification/manual/cases.py",
+        ].includes(f),
+    ),
     "packages/content/downloads.ts",
     "content/downloads/0.1.0.json",
     "scripts/verify-downloads.ts",
@@ -388,6 +420,7 @@ export function manualPublicationErrors({ requireReview = true } = {}) {
       clientResults: clients,
     });
     errors.push(...downloadEvidenceErrors());
+    errors.push(...useCaseEvidenceErrors());
     if (
       inventory.commit !== release.commit ||
       inventory.sourceSha256 !==

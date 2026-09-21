@@ -1,0 +1,259 @@
+[
+  {
+    "name": "large-application-caches",
+    "scope": "functional-example",
+    "steps": [
+      {
+        "argv": [
+          "SET",
+          "catalog:v3:sku42",
+          "{\"name\":\"Trail shoe\",\"version\":3}",
+          "EX",
+          "300"
+        ],
+        "expect": { "equals": "OK" }
+      },
+      {
+        "argv": ["GET", "catalog:v3:sku42"],
+        "expect": { "equals": "{\"name\":\"Trail shoe\",\"version\":3}" }
+      },
+      {
+        "argv": ["MGET", "catalog:v3:sku42", "catalog:v3:missing"],
+        "expect": {
+          "equals": ["{\"name\":\"Trail shoe\",\"version\":3}", null]
+        }
+      },
+      { "argv": ["DEL", "catalog:v3:sku42"], "expect": { "equals": 1 } },
+      { "argv": ["GET", "catalog:v3:sku42"], "expect": { "equals": null } }
+    ]
+  },
+  {
+    "name": "online-feature-serving",
+    "scope": "functional-example",
+    "steps": [
+      {
+        "argv": [
+          "HSET",
+          "features:model7:user42",
+          "schema",
+          "7",
+          "as_of",
+          "2026-09-21T00:00:00Z",
+          "visits_7d",
+          "12"
+        ],
+        "expect": { "equals": 3 }
+      },
+      {
+        "argv": [
+          "HMGET",
+          "features:model7:user42",
+          "schema",
+          "visits_7d",
+          "missing_feature"
+        ],
+        "expect": { "equals": ["7", "12", null] }
+      },
+      {
+        "argv": ["HGET", "features:model7:user42", "as_of"],
+        "expect": { "equals": "2026-09-21T00:00:00Z" }
+      },
+      {
+        "argv": ["EXPIRE", "features:model7:user42", "600"],
+        "expect": { "equals": 1 }
+      }
+    ]
+  },
+  {
+    "name": "sessions-user-profiles",
+    "scope": "functional-example",
+    "steps": [
+      {
+        "argv": [
+          "SET",
+          "context:tenant1:session42",
+          "{\"user\":\"demo42\",\"theme\":\"dark\"}",
+          "EX",
+          "900"
+        ],
+        "expect": { "equals": "OK" }
+      },
+      {
+        "argv": ["GET", "context:tenant1:session42"],
+        "expect": { "equals": "{\"user\":\"demo42\",\"theme\":\"dark\"}" }
+      },
+      {
+        "argv": ["TTL", "context:tenant1:session42"],
+        "expect": { "integerRange": [1, 900] }
+      },
+      {
+        "argv": ["DEL", "context:tenant1:session42"],
+        "expect": { "equals": 1 }
+      },
+      {
+        "argv": ["GET", "context:tenant1:session42"],
+        "expect": { "equals": null }
+      }
+    ]
+  },
+  {
+    "name": "real-time-leaderboards",
+    "scope": "functional-example",
+    "steps": [
+      {
+        "argv": [
+          "ZADD",
+          "board:season7:eu",
+          "100",
+          "alice",
+          "120",
+          "bob",
+          "90",
+          "carol"
+        ],
+        "expect": { "equals": 3 }
+      },
+      {
+        "argv": ["ZINCRBY", "board:season7:eu", "30", "alice"],
+        "expect": { "equals": "130" }
+      },
+      {
+        "argv": ["ZREVRANGE", "board:season7:eu", "0", "1", "WITHSCORES"],
+        "expect": { "equals": ["alice", "130", "bob", "120"] }
+      },
+      {
+        "argv": ["ZREVRANK", "board:season7:eu", "alice"],
+        "expect": { "equals": 0 }
+      },
+      {
+        "argv": ["EXPIRE", "board:season7:eu", "3600"],
+        "expect": { "equals": 1 }
+      }
+    ]
+  },
+  {
+    "name": "ecommerce-marketplaces",
+    "scope": "functional-example",
+    "steps": [
+      {
+        "argv": [
+          "SET",
+          "offer:t1:eu:sku42:v5",
+          "{\"currency\":\"EUR\",\"display_price\":9900,\"version\":5}",
+          "EX",
+          "300"
+        ],
+        "expect": { "equals": "OK" }
+      },
+      {
+        "argv": [
+          "SET",
+          "offer:t1:eu:sku43:v5",
+          "{\"currency\":\"EUR\",\"display_price\":7900,\"version\":5}",
+          "EX",
+          "300"
+        ],
+        "expect": { "equals": "OK" }
+      },
+      {
+        "argv": [
+          "MGET",
+          "offer:t1:eu:sku42:v5",
+          "offer:t1:eu:sku43:v5",
+          "offer:t1:eu:missing:v5"
+        ],
+        "expect": {
+          "equals": [
+            "{\"currency\":\"EUR\",\"display_price\":9900,\"version\":5}",
+            "{\"currency\":\"EUR\",\"display_price\":7900,\"version\":5}",
+            null
+          ]
+        }
+      },
+      { "argv": ["DEL", "offer:t1:eu:sku42:v5"], "expect": { "equals": 1 } }
+    ]
+  },
+  {
+    "name": "adtech-personalization",
+    "scope": "functional-example",
+    "steps": [
+      {
+        "argv": [
+          "SET",
+          "audience:v2:demo42",
+          "{\"segments\":[\"outdoor\"],\"version\":2}",
+          "EX",
+          "120"
+        ],
+        "expect": { "equals": "OK" }
+      },
+      {
+        "argv": [
+          "SET",
+          "campaign:v4:demo7",
+          "{\"creative\":\"banner7\",\"version\":4}",
+          "EX",
+          "120"
+        ],
+        "expect": { "equals": "OK" }
+      },
+      {
+        "argv": ["MGET", "audience:v2:demo42", "campaign:v4:demo7"],
+        "expect": {
+          "equals": [
+            "{\"segments\":[\"outdoor\"],\"version\":2}",
+            "{\"creative\":\"banner7\",\"version\":4}"
+          ]
+        }
+      },
+      { "argv": ["DEL", "audience:v2:demo42"], "expect": { "equals": 1 } },
+      {
+        "argv": ["MGET", "audience:v2:demo42", "audience:v2:missing"],
+        "expect": { "equals": [null, null] }
+      }
+    ]
+  },
+  {
+    "name": "gaming-live-services",
+    "scope": "functional-example",
+    "steps": [
+      {
+        "argv": [
+          "HSET",
+          "profile:game1:eu:demo42",
+          "avatar",
+          "ranger",
+          "source_version",
+          "18",
+          "region",
+          "eu"
+        ],
+        "expect": { "equals": 3 }
+      },
+      {
+        "argv": [
+          "HMGET",
+          "profile:game1:eu:demo42",
+          "avatar",
+          "source_version",
+          "missing_field"
+        ],
+        "expect": { "equals": ["ranger", "18", null] }
+      },
+      {
+        "argv": ["EXPIRE", "profile:game1:eu:demo42", "1800"],
+        "expect": { "equals": 1 }
+      },
+      { "argv": ["DEL", "profile:game1:eu:demo42"], "expect": { "equals": 1 } },
+      {
+        "argv": [
+          "HMGET",
+          "profile:game1:eu:demo42",
+          "avatar",
+          "source_version"
+        ],
+        "expect": { "equals": [null, null] }
+      }
+    ]
+  }
+]

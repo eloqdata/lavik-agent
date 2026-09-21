@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { LanguageSwitch } from "./language-switch";
 import type { Locale } from "../../../packages/content/schema";
+import { UseCasesMenu } from "./use-cases-menu";
+import { useCases } from "../../../packages/use-cases/content";
 
 export function Mark() {
   return (
@@ -31,9 +33,15 @@ export function Header({ locale }: { locale: Locale }) {
           <Link href={`/${locale}/benchmarks/`}>
             {zh ? "基准测试" : "Benchmarks"}
           </Link>
-          <Link href={`/${locale}/use-cases/`}>
-            {zh ? "使用场景" : "Use cases"}
-          </Link>
+          <UseCasesMenu
+            locale={locale}
+            entries={useCases.map((entry) => ({
+              slug: entry.slug,
+              group: entry.group,
+              title: entry.title[locale],
+              summary: entry.navSummary[locale],
+            }))}
+          />
           <Link href={`/${locale}/blog/`}>{zh ? "博客" : "Blog"}</Link>
           <Link href={`/${locale}/community/`}>
             {zh ? "社区" : "Community"}

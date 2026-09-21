@@ -1,0 +1,608 @@
+{
+  "status": "passed",
+  "startedAt": "2026-09-21T13:37:53Z",
+  "platform": "Linux-7.0.12-linuxkit-aarch64-with-glibc2.39",
+  "architecture": "aarch64",
+  "scenarios": [
+    {
+      "name": "large-application-caches",
+      "scope": "functional-example",
+      "steps": [
+        {
+          "argv": [
+            "SET",
+            "catalog:v3:sku42",
+            "{\"name\":\"Trail shoe\",\"version\":3}",
+            "EX",
+            "300"
+          ],
+          "expect": {
+            "equals": "OK"
+          },
+          "actual": "OK",
+          "passed": true
+        },
+        {
+          "argv": [
+            "GET",
+            "catalog:v3:sku42"
+          ],
+          "expect": {
+            "equals": "{\"name\":\"Trail shoe\",\"version\":3}"
+          },
+          "actual": "{\"name\":\"Trail shoe\",\"version\":3}",
+          "passed": true
+        },
+        {
+          "argv": [
+            "MGET",
+            "catalog:v3:sku42",
+            "catalog:v3:missing"
+          ],
+          "expect": {
+            "equals": [
+              "{\"name\":\"Trail shoe\",\"version\":3}",
+              null
+            ]
+          },
+          "actual": [
+            "{\"name\":\"Trail shoe\",\"version\":3}",
+            null
+          ],
+          "passed": true
+        },
+        {
+          "argv": [
+            "DEL",
+            "catalog:v3:sku42"
+          ],
+          "expect": {
+            "equals": 1
+          },
+          "actual": 1,
+          "passed": true
+        },
+        {
+          "argv": [
+            "GET",
+            "catalog:v3:sku42"
+          ],
+          "expect": {
+            "equals": null
+          },
+          "actual": null,
+          "passed": true
+        }
+      ],
+      "status": "passed"
+    },
+    {
+      "name": "online-feature-serving",
+      "scope": "functional-example",
+      "steps": [
+        {
+          "argv": [
+            "HSET",
+            "features:model7:user42",
+            "schema",
+            "7",
+            "as_of",
+            "2026-09-21T00:00:00Z",
+            "visits_7d",
+            "12"
+          ],
+          "expect": {
+            "equals": 3
+          },
+          "actual": 3,
+          "passed": true
+        },
+        {
+          "argv": [
+            "HMGET",
+            "features:model7:user42",
+            "schema",
+            "visits_7d",
+            "missing_feature"
+          ],
+          "expect": {
+            "equals": [
+              "7",
+              "12",
+              null
+            ]
+          },
+          "actual": [
+            "7",
+            "12",
+            null
+          ],
+          "passed": true
+        },
+        {
+          "argv": [
+            "HGET",
+            "features:model7:user42",
+            "as_of"
+          ],
+          "expect": {
+            "equals": "2026-09-21T00:00:00Z"
+          },
+          "actual": "2026-09-21T00:00:00Z",
+          "passed": true
+        },
+        {
+          "argv": [
+            "EXPIRE",
+            "features:model7:user42",
+            "600"
+          ],
+          "expect": {
+            "equals": 1
+          },
+          "actual": 1,
+          "passed": true
+        }
+      ],
+      "status": "passed"
+    },
+    {
+      "name": "sessions-user-profiles",
+      "scope": "functional-example",
+      "steps": [
+        {
+          "argv": [
+            "SET",
+            "context:tenant1:session42",
+            "{\"user\":\"demo42\",\"theme\":\"dark\"}",
+            "EX",
+            "900"
+          ],
+          "expect": {
+            "equals": "OK"
+          },
+          "actual": "OK",
+          "passed": true
+        },
+        {
+          "argv": [
+            "GET",
+            "context:tenant1:session42"
+          ],
+          "expect": {
+            "equals": "{\"user\":\"demo42\",\"theme\":\"dark\"}"
+          },
+          "actual": "{\"user\":\"demo42\",\"theme\":\"dark\"}",
+          "passed": true
+        },
+        {
+          "argv": [
+            "TTL",
+            "context:tenant1:session42"
+          ],
+          "expect": {
+            "integerRange": [
+              1,
+              900
+            ]
+          },
+          "actual": 900,
+          "passed": true
+        },
+        {
+          "argv": [
+            "DEL",
+            "context:tenant1:session42"
+          ],
+          "expect": {
+            "equals": 1
+          },
+          "actual": 1,
+          "passed": true
+        },
+        {
+          "argv": [
+            "GET",
+            "context:tenant1:session42"
+          ],
+          "expect": {
+            "equals": null
+          },
+          "actual": null,
+          "passed": true
+        }
+      ],
+      "status": "passed"
+    },
+    {
+      "name": "real-time-leaderboards",
+      "scope": "functional-example",
+      "steps": [
+        {
+          "argv": [
+            "ZADD",
+            "board:season7:eu",
+            "100",
+            "alice",
+            "120",
+            "bob",
+            "90",
+            "carol"
+          ],
+          "expect": {
+            "equals": 3
+          },
+          "actual": 3,
+          "passed": true
+        },
+        {
+          "argv": [
+            "ZINCRBY",
+            "board:season7:eu",
+            "30",
+            "alice"
+          ],
+          "expect": {
+            "equals": "130"
+          },
+          "actual": "130",
+          "passed": true
+        },
+        {
+          "argv": [
+            "ZREVRANGE",
+            "board:season7:eu",
+            "0",
+            "1",
+            "WITHSCORES"
+          ],
+          "expect": {
+            "equals": [
+              "alice",
+              "130",
+              "bob",
+              "120"
+            ]
+          },
+          "actual": [
+            "alice",
+            "130",
+            "bob",
+            "120"
+          ],
+          "passed": true
+        },
+        {
+          "argv": [
+            "ZREVRANK",
+            "board:season7:eu",
+            "alice"
+          ],
+          "expect": {
+            "equals": 0
+          },
+          "actual": 0,
+          "passed": true
+        },
+        {
+          "argv": [
+            "EXPIRE",
+            "board:season7:eu",
+            "3600"
+          ],
+          "expect": {
+            "equals": 1
+          },
+          "actual": 1,
+          "passed": true
+        }
+      ],
+      "status": "passed"
+    },
+    {
+      "name": "ecommerce-marketplaces",
+      "scope": "functional-example",
+      "steps": [
+        {
+          "argv": [
+            "SET",
+            "offer:t1:eu:sku42:v5",
+            "{\"currency\":\"EUR\",\"display_price\":9900,\"version\":5}",
+            "EX",
+            "300"
+          ],
+          "expect": {
+            "equals": "OK"
+          },
+          "actual": "OK",
+          "passed": true
+        },
+        {
+          "argv": [
+            "SET",
+            "offer:t1:eu:sku43:v5",
+            "{\"currency\":\"EUR\",\"display_price\":7900,\"version\":5}",
+            "EX",
+            "300"
+          ],
+          "expect": {
+            "equals": "OK"
+          },
+          "actual": "OK",
+          "passed": true
+        },
+        {
+          "argv": [
+            "MGET",
+            "offer:t1:eu:sku42:v5",
+            "offer:t1:eu:sku43:v5",
+            "offer:t1:eu:missing:v5"
+          ],
+          "expect": {
+            "equals": [
+              "{\"currency\":\"EUR\",\"display_price\":9900,\"version\":5}",
+              "{\"currency\":\"EUR\",\"display_price\":7900,\"version\":5}",
+              null
+            ]
+          },
+          "actual": [
+            "{\"currency\":\"EUR\",\"display_price\":9900,\"version\":5}",
+            "{\"currency\":\"EUR\",\"display_price\":7900,\"version\":5}",
+            null
+          ],
+          "passed": true
+        },
+        {
+          "argv": [
+            "DEL",
+            "offer:t1:eu:sku42:v5"
+          ],
+          "expect": {
+            "equals": 1
+          },
+          "actual": 1,
+          "passed": true
+        }
+      ],
+      "status": "passed"
+    },
+    {
+      "name": "adtech-personalization",
+      "scope": "functional-example",
+      "steps": [
+        {
+          "argv": [
+            "SET",
+            "audience:v2:demo42",
+            "{\"segments\":[\"outdoor\"],\"version\":2}",
+            "EX",
+            "120"
+          ],
+          "expect": {
+            "equals": "OK"
+          },
+          "actual": "OK",
+          "passed": true
+        },
+        {
+          "argv": [
+            "SET",
+            "campaign:v4:demo7",
+            "{\"creative\":\"banner7\",\"version\":4}",
+            "EX",
+            "120"
+          ],
+          "expect": {
+            "equals": "OK"
+          },
+          "actual": "OK",
+          "passed": true
+        },
+        {
+          "argv": [
+            "MGET",
+            "audience:v2:demo42",
+            "campaign:v4:demo7"
+          ],
+          "expect": {
+            "equals": [
+              "{\"segments\":[\"outdoor\"],\"version\":2}",
+              "{\"creative\":\"banner7\",\"version\":4}"
+            ]
+          },
+          "actual": [
+            "{\"segments\":[\"outdoor\"],\"version\":2}",
+            "{\"creative\":\"banner7\",\"version\":4}"
+          ],
+          "passed": true
+        },
+        {
+          "argv": [
+            "DEL",
+            "audience:v2:demo42"
+          ],
+          "expect": {
+            "equals": 1
+          },
+          "actual": 1,
+          "passed": true
+        },
+        {
+          "argv": [
+            "MGET",
+            "audience:v2:demo42",
+            "audience:v2:missing"
+          ],
+          "expect": {
+            "equals": [
+              null,
+              null
+            ]
+          },
+          "actual": [
+            null,
+            null
+          ],
+          "passed": true
+        }
+      ],
+      "status": "passed"
+    },
+    {
+      "name": "gaming-live-services",
+      "scope": "functional-example",
+      "steps": [
+        {
+          "argv": [
+            "HSET",
+            "profile:game1:eu:demo42",
+            "avatar",
+            "ranger",
+            "source_version",
+            "18",
+            "region",
+            "eu"
+          ],
+          "expect": {
+            "equals": 3
+          },
+          "actual": 3,
+          "passed": true
+        },
+        {
+          "argv": [
+            "HMGET",
+            "profile:game1:eu:demo42",
+            "avatar",
+            "source_version",
+            "missing_field"
+          ],
+          "expect": {
+            "equals": [
+              "ranger",
+              "18",
+              null
+            ]
+          },
+          "actual": [
+            "ranger",
+            "18",
+            null
+          ],
+          "passed": true
+        },
+        {
+          "argv": [
+            "EXPIRE",
+            "profile:game1:eu:demo42",
+            "1800"
+          ],
+          "expect": {
+            "equals": 1
+          },
+          "actual": 1,
+          "passed": true
+        },
+        {
+          "argv": [
+            "DEL",
+            "profile:game1:eu:demo42"
+          ],
+          "expect": {
+            "equals": 1
+          },
+          "actual": 1,
+          "passed": true
+        },
+        {
+          "argv": [
+            "HMGET",
+            "profile:game1:eu:demo42",
+            "avatar",
+            "source_version"
+          ],
+          "expect": {
+            "equals": [
+              null,
+              null
+            ]
+          },
+          "actual": [
+            null,
+            null
+          ],
+          "passed": true
+        }
+      ],
+      "status": "passed"
+    }
+  ],
+  "sourceCommit": "3955b98d43b312324aa8d52775df52cfb111c0d0",
+  "binaryVersion": "lavik 0.1.0-beta.1",
+  "binarySha256": "8306b37ddf05023f85166a6aa2192b7084757e8defd342b602e6470244aca887",
+  "serverArgv": [
+    "lavik",
+    "--bind",
+    "127.0.0.1",
+    "--port",
+    "6379",
+    "--requirepass",
+    "manual-test-only",
+    "--metrics-port",
+    "0",
+    "--threads",
+    "2",
+    "--no-pin-workers",
+    "--registered-buffer-mb-per-worker",
+    "64",
+    "--shutdown-checkpoint",
+    "--data-file",
+    "/tmp/manual-db/data",
+    "--log-dir",
+    "/tmp/manual-db/logs",
+    "--rdb-dir",
+    "/tmp/manual-db"
+  ],
+  "finishedAt": "2026-09-21T13:37:54Z",
+  "imageId": "sha256:af0cfb11b78f184cb6cc49a774a49dc97a8e43a0bd3f4d63d83c8c9ef3282d6e",
+  "harnessFiles": {
+    "scripts/verify-use-cases.py": "4a5835215d24005749ea3dc2e5edd603dce1440dbd3db97ca2d6ea6569a77904",
+    "verification/use-cases/run.py": "260d13db1ee26e27d42b3d157846601e20662522fe4ae4b1477a01017e843faf",
+    "verification/use-cases/scenarios.json": "f01d45961c241d495c5d2ad9905c8c2e9d1612971db7b1f0ac94ef441a988122",
+    "verification/manual/run.py": "802cf5cf1218860d1aabf4b863c3cdba588766f117b0560c4bd3f733b9ae17d6",
+    "verification/manual/cases.py": "6c0c78cd0f8b1a1003e637c585905c4148ec3aefa5f9aa7e6f36fe9800fc7040"
+  },
+  "dockerArgv": [
+    "docker",
+    "run",
+    "--rm",
+    "--name",
+    "lavik-use-cases-25d7ca55ed23",
+    "--network=none",
+    "--read-only",
+    "--cap-drop=ALL",
+    "--security-opt=no-new-privileges",
+    "--security-opt=seccomp=unconfined",
+    "--memory=2g",
+    "--cpus=2",
+    "--pids-limit=128",
+    "--ulimit",
+    "memlock=268435456:268435456",
+    "--tmpfs",
+    "/tmp:rw,nosuid,size=1073741824",
+    "-e",
+    "PYTHONDONTWRITEBYTECODE=1",
+    "-e",
+    "EXPECTED_COMMIT=3955b98d43b312324aa8d52775df52cfb111c0d0",
+    "-e",
+    "EXPECTED_RELEASE=0.1.0-beta.1",
+    "--mount",
+    "type=bind,src=<repository>/verification/manual,dst=/manual,readonly",
+    "--mount",
+    "type=bind,src=<repository>/verification/use-cases,dst=/scenarios,readonly",
+    "--entrypoint",
+    "python3",
+    "sha256:af0cfb11b78f184cb6cc49a774a49dc97a8e43a0bd3f4d63d83c8c9ef3282d6e",
+    "/scenarios/run.py"
+  ]
+}

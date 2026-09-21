@@ -11,8 +11,52 @@ import {
 import {
   manualEvidenceErrors,
   manualPublicationErrors,
+  manualFileHashes,
   requireReviewedManual,
 } from "../packages/manual/gate";
+
+test("changes to evidence-reading dependencies invalidate the direct Next export guard", (t) => {
+  assert.deepEqual(manualPublicationErrors(), []);
+  const reviewed = manualFileHashes();
+  const original = fs.readFileSync.bind(fs);
+  let changed = "";
+  t.mock.method(fs, "readFileSync", ((
+    file: fs.PathOrFileDescriptor,
+    ...args: unknown[]
+  ) => {
+    const result = Reflect.apply(original, fs, [file, ...args]);
+    if (changed && String(file).endsWith(changed))
+      return Buffer.isBuffer(result)
+        ? Buffer.concat([result, Buffer.from("\n ")])
+        : result + "\n ";
+    return result;
+  }) as typeof fs.readFileSync);
+  for (const file of [
+    "packages/content/repository.ts",
+    "packages/content/schema.ts",
+    "evidence/sources.json",
+    "content/claims.json",
+    "verification/recipes.json",
+    "package-lock.json",
+    "tsconfig.json",
+    "apps/web/next.config.ts",
+  ]) {
+    changed = file;
+    assert.notEqual(manualFileHashes()[file], reviewed[file], file);
+    assert.ok(
+      manualPublicationErrors().includes(
+        "Manual changed after independent review",
+      ),
+      file,
+    );
+    // The page renderers and manifest invoke this same guard directly, even
+    // when npm's content:check step is skipped with `next build apps/web`.
+    assert.throws(
+      () => requireReviewedManual(),
+      /Manual changed after independent review/,
+    );
+  }
+});
 
 test("the export guard refuses a failed review even if called outside the npm build script", (t) => {
   const original = fs.readFileSync.bind(fs);
