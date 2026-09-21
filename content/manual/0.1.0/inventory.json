@@ -1,0 +1,1318 @@
+{
+  "version": "0.1.0",
+  "release": "0.1.0-beta.1",
+  "commit": "3955b98d43b312324aa8d52775df52cfb111c0d0",
+  "source": "https://github.com/eloqdata/lavik/blob/3955b98d43b312324aa8d52775df52cfb111c0d0/src/redis/command_table.cpp",
+  "sourceSha256": "4e533a45cca5b6d1d9abc216df3ce15f948ff16c9b76ee755b066a1d0fb9675a",
+  "commands": [
+    {
+      "name": "PING",
+      "minimumArguments": 1,
+      "maximumArguments": 2,
+      "flags": "kCmdNoKeys"
+    },
+    {
+      "name": "ECHO",
+      "minimumArguments": 2,
+      "maximumArguments": 2,
+      "flags": "kCmdNoKeys"
+    },
+    {
+      "name": "PUBLISH",
+      "minimumArguments": 3,
+      "maximumArguments": 3,
+      "flags": "kCmdNoKeys | kCmdMayReplicate"
+    },
+    {
+      "name": "PUBSUB",
+      "minimumArguments": 2,
+      "maximumArguments": 0,
+      "flags": "kCmdReadOnly | kCmdNoKeys"
+    },
+    {
+      "name": "PSUBSCRIBE",
+      "minimumArguments": 2,
+      "maximumArguments": 0,
+      "flags": "kCmdNoKeys"
+    },
+    {
+      "name": "PUNSUBSCRIBE",
+      "minimumArguments": 1,
+      "maximumArguments": 0,
+      "flags": "kCmdNoKeys"
+    },
+    {
+      "name": "SUBSCRIBE",
+      "minimumArguments": 2,
+      "maximumArguments": 0,
+      "flags": "kCmdNoKeys"
+    },
+    {
+      "name": "UNSUBSCRIBE",
+      "minimumArguments": 1,
+      "maximumArguments": 0,
+      "flags": "kCmdNoKeys"
+    },
+    {
+      "name": "QUIT",
+      "minimumArguments": 1,
+      "maximumArguments": 1,
+      "flags": "kCmdNoKeys"
+    },
+    {
+      "name": "RESET",
+      "minimumArguments": 1,
+      "maximumArguments": 1,
+      "flags": "kCmdNoKeys"
+    },
+    {
+      "name": "AUTH",
+      "minimumArguments": 2,
+      "maximumArguments": 3,
+      "flags": "kCmdNoKeys"
+    },
+    {
+      "name": "HELLO",
+      "minimumArguments": 1,
+      "maximumArguments": 7,
+      "flags": "kCmdNoKeys"
+    },
+    {
+      "name": "SELECT",
+      "minimumArguments": 2,
+      "maximumArguments": 2,
+      "flags": "kCmdNoKeys"
+    },
+    {
+      "name": "EVAL",
+      "minimumArguments": 3,
+      "maximumArguments": 0,
+      "flags": "kCmdDynamicWrite | kCmdUsesDbGate | kCmdMultiShard | kCmdMovableKeys | kCmdKeyViewComplete"
+    },
+    {
+      "name": "EVALSHA",
+      "minimumArguments": 3,
+      "maximumArguments": 0,
+      "flags": "kCmdDynamicWrite | kCmdUsesDbGate | kCmdMultiShard | kCmdMovableKeys | kCmdKeyViewComplete"
+    },
+    {
+      "name": "EVAL_RO",
+      "minimumArguments": 3,
+      "maximumArguments": 0,
+      "flags": "kCmdReadOnly | kCmdUsesDbGate | kCmdMultiShard | kCmdMovableKeys"
+    },
+    {
+      "name": "EVALSHA_RO",
+      "minimumArguments": 3,
+      "maximumArguments": 0,
+      "flags": "kCmdReadOnly | kCmdUsesDbGate | kCmdMultiShard | kCmdMovableKeys"
+    },
+    {
+      "name": "SCRIPT",
+      "minimumArguments": 2,
+      "maximumArguments": 0,
+      "flags": "kCmdNoKeys"
+    },
+    {
+      "name": "FCALL",
+      "minimumArguments": 3,
+      "maximumArguments": 0,
+      "flags": "kCmdDynamicWrite | kCmdUsesDbGate | kCmdMultiShard | kCmdMovableKeys | kCmdKeyViewComplete"
+    },
+    {
+      "name": "FCALL_RO",
+      "minimumArguments": 3,
+      "maximumArguments": 0,
+      "flags": "kCmdReadOnly | kCmdUsesDbGate | kCmdMultiShard | kCmdMovableKeys"
+    },
+    {
+      "name": "FUNCTION",
+      "minimumArguments": 2,
+      "maximumArguments": 0,
+      "flags": "kCmdDynamicWrite | kCmdUsesDbGate | kCmdMultiShard | kCmdNoKeys"
+    },
+    {
+      "name": "DBSIZE",
+      "minimumArguments": 1,
+      "maximumArguments": 1,
+      "flags": "kCmdReadOnly | kCmdGlobal | kCmdUsesDbGate | kCmdNoKeys"
+    },
+    {
+      "name": "SCAN",
+      "minimumArguments": 2,
+      "maximumArguments": 0,
+      "flags": "kCmdReadOnly | kCmdGlobal | kCmdUsesDbGate | kCmdNoKeys"
+    },
+    {
+      "name": "TYPE",
+      "minimumArguments": 2,
+      "maximumArguments": 2,
+      "flags": "kKeyedRead"
+    },
+    {
+      "name": "DUMP",
+      "minimumArguments": 2,
+      "maximumArguments": 2,
+      "flags": "kKeyedRead"
+    },
+    {
+      "name": "RESTORE",
+      "minimumArguments": 4,
+      "maximumArguments": 0,
+      "flags": "kKeyedWrite"
+    },
+    {
+      "name": "SORT",
+      "minimumArguments": 2,
+      "maximumArguments": 0,
+      "flags": "kCmdWrite | kCmdUsesDbGate | kCmdMultiShard | kCmdMovableKeys"
+    },
+    {
+      "name": "SORT_RO",
+      "minimumArguments": 2,
+      "maximumArguments": 0,
+      "flags": "kKeyedRead"
+    },
+    {
+      "name": "RANDOMKEY",
+      "minimumArguments": 1,
+      "maximumArguments": 1,
+      "flags": "kCmdReadOnly | kCmdUsesDbGate | kCmdNoKeys"
+    },
+    {
+      "name": "FLUSHDB",
+      "minimumArguments": 1,
+      "maximumArguments": 0,
+      "flags": "kCmdWrite | kCmdGlobal | kCmdNoKeys"
+    },
+    {
+      "name": "FLUSHALL",
+      "minimumArguments": 1,
+      "maximumArguments": 0,
+      "flags": "kCmdWrite | kCmdGlobal | kCmdNoKeys"
+    },
+    {
+      "name": "GET",
+      "minimumArguments": 2,
+      "maximumArguments": 2,
+      "flags": "kKeyedRead"
+    },
+    {
+      "name": "GETDEL",
+      "minimumArguments": 2,
+      "maximumArguments": 2,
+      "flags": "kKeyedWrite"
+    },
+    {
+      "name": "GETEX",
+      "minimumArguments": 2,
+      "maximumArguments": 0,
+      "flags": "kKeyedWrite"
+    },
+    {
+      "name": "GETRANGE",
+      "minimumArguments": 4,
+      "maximumArguments": 4,
+      "flags": "kKeyedRead"
+    },
+    {
+      "name": "GETSET",
+      "minimumArguments": 3,
+      "maximumArguments": 3,
+      "flags": "kKeyedWrite"
+    },
+    {
+      "name": "APPEND",
+      "minimumArguments": 3,
+      "maximumArguments": 3,
+      "flags": "kKeyedWrite"
+    },
+    {
+      "name": "GETBIT",
+      "minimumArguments": 3,
+      "maximumArguments": 3,
+      "flags": "kKeyedRead"
+    },
+    {
+      "name": "SETBIT",
+      "minimumArguments": 4,
+      "maximumArguments": 4,
+      "flags": "kKeyedWrite"
+    },
+    {
+      "name": "BITCOUNT",
+      "minimumArguments": 2,
+      "maximumArguments": 0,
+      "flags": "kKeyedRead"
+    },
+    {
+      "name": "BITPOS",
+      "minimumArguments": 3,
+      "maximumArguments": 0,
+      "flags": "kKeyedRead"
+    },
+    {
+      "name": "BITFIELD",
+      "minimumArguments": 2,
+      "maximumArguments": 0,
+      "flags": "kKeyedWrite"
+    },
+    {
+      "name": "BITFIELD_RO",
+      "minimumArguments": 2,
+      "maximumArguments": 0,
+      "flags": "kKeyedRead"
+    },
+    {
+      "name": "BITOP",
+      "minimumArguments": 4,
+      "maximumArguments": 0,
+      "flags": "kCmdWrite | kCmdUsesDbGate | kCmdMultiShard | kCmdKeyViewComplete"
+    },
+    {
+      "name": "SET",
+      "minimumArguments": 3,
+      "maximumArguments": 0,
+      "flags": "kKeyedWrite"
+    },
+    {
+      "name": "SETEX",
+      "minimumArguments": 4,
+      "maximumArguments": 4,
+      "flags": "kKeyedWrite"
+    },
+    {
+      "name": "PSETEX",
+      "minimumArguments": 4,
+      "maximumArguments": 4,
+      "flags": "kKeyedWrite"
+    },
+    {
+      "name": "SETNX",
+      "minimumArguments": 3,
+      "maximumArguments": 3,
+      "flags": "kKeyedWrite"
+    },
+    {
+      "name": "SETRANGE",
+      "minimumArguments": 4,
+      "maximumArguments": 4,
+      "flags": "kKeyedWrite"
+    },
+    {
+      "name": "SUBSTR",
+      "minimumArguments": 4,
+      "maximumArguments": 4,
+      "flags": "kKeyedRead"
+    },
+    {
+      "name": "LCS",
+      "minimumArguments": 3,
+      "maximumArguments": 0,
+      "flags": "kKeyedRead | kCmdMultiShard"
+    },
+    {
+      "name": "LPUSH",
+      "minimumArguments": 3,
+      "maximumArguments": 0,
+      "flags": "kKeyedWrite"
+    },
+    {
+      "name": "LPUSHX",
+      "minimumArguments": 3,
+      "maximumArguments": 0,
+      "flags": "kKeyedWrite"
+    },
+    {
+      "name": "RPUSH",
+      "minimumArguments": 3,
+      "maximumArguments": 0,
+      "flags": "kKeyedWrite"
+    },
+    {
+      "name": "RPUSHX",
+      "minimumArguments": 3,
+      "maximumArguments": 0,
+      "flags": "kKeyedWrite"
+    },
+    {
+      "name": "LPOP",
+      "minimumArguments": 2,
+      "maximumArguments": 3,
+      "flags": "kKeyedWrite"
+    },
+    {
+      "name": "RPOP",
+      "minimumArguments": 2,
+      "maximumArguments": 3,
+      "flags": "kKeyedWrite"
+    },
+    {
+      "name": "LLEN",
+      "minimumArguments": 2,
+      "maximumArguments": 2,
+      "flags": "kKeyedRead"
+    },
+    {
+      "name": "LINDEX",
+      "minimumArguments": 3,
+      "maximumArguments": 3,
+      "flags": "kKeyedRead"
+    },
+    {
+      "name": "LRANGE",
+      "minimumArguments": 4,
+      "maximumArguments": 4,
+      "flags": "kKeyedRead"
+    },
+    {
+      "name": "LSET",
+      "minimumArguments": 4,
+      "maximumArguments": 4,
+      "flags": "kKeyedWrite"
+    },
+    {
+      "name": "LINSERT",
+      "minimumArguments": 5,
+      "maximumArguments": 5,
+      "flags": "kKeyedWrite"
+    },
+    {
+      "name": "LREM",
+      "minimumArguments": 4,
+      "maximumArguments": 4,
+      "flags": "kKeyedWrite"
+    },
+    {
+      "name": "LTRIM",
+      "minimumArguments": 4,
+      "maximumArguments": 4,
+      "flags": "kKeyedWrite"
+    },
+    {
+      "name": "LPOS",
+      "minimumArguments": 3,
+      "maximumArguments": 0,
+      "flags": "kKeyedRead"
+    },
+    {
+      "name": "LMOVE",
+      "minimumArguments": 5,
+      "maximumArguments": 5,
+      "flags": "kKeyedWrite | kCmdMultiShard | kCmdKeyViewComplete"
+    },
+    {
+      "name": "RPOPLPUSH",
+      "minimumArguments": 3,
+      "maximumArguments": 3,
+      "flags": "kKeyedWrite | kCmdMultiShard | kCmdKeyViewComplete"
+    },
+    {
+      "name": "LMPOP",
+      "minimumArguments": 4,
+      "maximumArguments": 0,
+      "flags": "kCmdWrite | kCmdUsesDbGate | kCmdMultiShard | kCmdMovableKeys | kCmdKeyViewComplete"
+    },
+    {
+      "name": "BLPOP",
+      "minimumArguments": 3,
+      "maximumArguments": 0,
+      "flags": "kKeyedWrite | kCmdMultiShard | kCmdMayBlock"
+    },
+    {
+      "name": "BRPOP",
+      "minimumArguments": 3,
+      "maximumArguments": 0,
+      "flags": "kKeyedWrite | kCmdMultiShard | kCmdMayBlock"
+    },
+    {
+      "name": "BLMOVE",
+      "minimumArguments": 6,
+      "maximumArguments": 6,
+      "flags": "kKeyedWrite | kCmdMultiShard | kCmdMayBlock"
+    },
+    {
+      "name": "BRPOPLPUSH",
+      "minimumArguments": 4,
+      "maximumArguments": 4,
+      "flags": "kKeyedWrite | kCmdMultiShard | kCmdMayBlock"
+    },
+    {
+      "name": "BLMPOP",
+      "minimumArguments": 5,
+      "maximumArguments": 0,
+      "flags": "kCmdWrite | kCmdUsesDbGate | kCmdMultiShard | kCmdMovableKeys | kCmdMayBlock"
+    },
+    {
+      "name": "HSET",
+      "minimumArguments": 4,
+      "maximumArguments": 0,
+      "flags": "kKeyedWrite"
+    },
+    {
+      "name": "HMSET",
+      "minimumArguments": 4,
+      "maximumArguments": 0,
+      "flags": "kKeyedWrite"
+    },
+    {
+      "name": "LAVIK.HREPLACE",
+      "minimumArguments": 4,
+      "maximumArguments": 0,
+      "flags": "kKeyedWrite"
+    },
+    {
+      "name": "HSETNX",
+      "minimumArguments": 4,
+      "maximumArguments": 4,
+      "flags": "kKeyedWrite"
+    },
+    {
+      "name": "HGET",
+      "minimumArguments": 3,
+      "maximumArguments": 3,
+      "flags": "kKeyedRead"
+    },
+    {
+      "name": "HMGET",
+      "minimumArguments": 3,
+      "maximumArguments": 0,
+      "flags": "kKeyedRead"
+    },
+    {
+      "name": "HDEL",
+      "minimumArguments": 3,
+      "maximumArguments": 0,
+      "flags": "kKeyedWrite"
+    },
+    {
+      "name": "HLEN",
+      "minimumArguments": 2,
+      "maximumArguments": 2,
+      "flags": "kKeyedRead"
+    },
+    {
+      "name": "HEXISTS",
+      "minimumArguments": 3,
+      "maximumArguments": 3,
+      "flags": "kKeyedRead"
+    },
+    {
+      "name": "HGETALL",
+      "minimumArguments": 2,
+      "maximumArguments": 2,
+      "flags": "kKeyedRead"
+    },
+    {
+      "name": "HKEYS",
+      "minimumArguments": 2,
+      "maximumArguments": 2,
+      "flags": "kKeyedRead"
+    },
+    {
+      "name": "HVALS",
+      "minimumArguments": 2,
+      "maximumArguments": 2,
+      "flags": "kKeyedRead"
+    },
+    {
+      "name": "HSTRLEN",
+      "minimumArguments": 3,
+      "maximumArguments": 3,
+      "flags": "kKeyedRead"
+    },
+    {
+      "name": "HINCRBY",
+      "minimumArguments": 4,
+      "maximumArguments": 4,
+      "flags": "kKeyedWrite"
+    },
+    {
+      "name": "HINCRBYFLOAT",
+      "minimumArguments": 4,
+      "maximumArguments": 4,
+      "flags": "kKeyedWrite"
+    },
+    {
+      "name": "HRANDFIELD",
+      "minimumArguments": 2,
+      "maximumArguments": 4,
+      "flags": "kKeyedRead"
+    },
+    {
+      "name": "HSCAN",
+      "minimumArguments": 3,
+      "maximumArguments": 0,
+      "flags": "kKeyedRead"
+    },
+    {
+      "name": "SADD",
+      "minimumArguments": 3,
+      "maximumArguments": 0,
+      "flags": "kKeyedWrite"
+    },
+    {
+      "name": "SCARD",
+      "minimumArguments": 2,
+      "maximumArguments": 2,
+      "flags": "kKeyedRead"
+    },
+    {
+      "name": "SDIFF",
+      "minimumArguments": 2,
+      "maximumArguments": 0,
+      "flags": "kKeyedRead | kCmdMultiShard"
+    },
+    {
+      "name": "SDIFFSTORE",
+      "minimumArguments": 3,
+      "maximumArguments": 0,
+      "flags": "kKeyedWrite | kCmdMultiShard | kCmdKeyViewComplete"
+    },
+    {
+      "name": "SINTER",
+      "minimumArguments": 2,
+      "maximumArguments": 0,
+      "flags": "kKeyedRead | kCmdMultiShard"
+    },
+    {
+      "name": "SINTERCARD",
+      "minimumArguments": 3,
+      "maximumArguments": 0,
+      "flags": "kKeyedRead | kCmdMultiShard | kCmdMovableKeys"
+    },
+    {
+      "name": "SINTERSTORE",
+      "minimumArguments": 3,
+      "maximumArguments": 0,
+      "flags": "kKeyedWrite | kCmdMultiShard | kCmdKeyViewComplete"
+    },
+    {
+      "name": "SISMEMBER",
+      "minimumArguments": 3,
+      "maximumArguments": 3,
+      "flags": "kKeyedRead"
+    },
+    {
+      "name": "SMEMBERS",
+      "minimumArguments": 2,
+      "maximumArguments": 2,
+      "flags": "kKeyedRead"
+    },
+    {
+      "name": "SMISMEMBER",
+      "minimumArguments": 3,
+      "maximumArguments": 0,
+      "flags": "kKeyedRead"
+    },
+    {
+      "name": "SMOVE",
+      "minimumArguments": 4,
+      "maximumArguments": 4,
+      "flags": "kKeyedWrite | kCmdMultiShard | kCmdKeyViewComplete"
+    },
+    {
+      "name": "SPOP",
+      "minimumArguments": 2,
+      "maximumArguments": 3,
+      "flags": "kKeyedWrite"
+    },
+    {
+      "name": "SRANDMEMBER",
+      "minimumArguments": 2,
+      "maximumArguments": 3,
+      "flags": "kKeyedRead"
+    },
+    {
+      "name": "SREM",
+      "minimumArguments": 3,
+      "maximumArguments": 0,
+      "flags": "kKeyedWrite"
+    },
+    {
+      "name": "SSCAN",
+      "minimumArguments": 3,
+      "maximumArguments": 0,
+      "flags": "kKeyedRead"
+    },
+    {
+      "name": "SUNION",
+      "minimumArguments": 2,
+      "maximumArguments": 0,
+      "flags": "kKeyedRead | kCmdMultiShard"
+    },
+    {
+      "name": "SUNIONSTORE",
+      "minimumArguments": 3,
+      "maximumArguments": 0,
+      "flags": "kKeyedWrite | kCmdMultiShard | kCmdKeyViewComplete"
+    },
+    {
+      "name": "BZMPOP",
+      "minimumArguments": 5,
+      "maximumArguments": 0,
+      "flags": "kCmdWrite | kCmdUsesDbGate | kCmdMultiShard | kCmdMovableKeys | kCmdMayBlock"
+    },
+    {
+      "name": "BZPOPMAX",
+      "minimumArguments": 3,
+      "maximumArguments": 0,
+      "flags": "kCmdWrite | kCmdUsesDbGate | kCmdMultiShard | kCmdMayBlock"
+    },
+    {
+      "name": "BZPOPMIN",
+      "minimumArguments": 3,
+      "maximumArguments": 0,
+      "flags": "kCmdWrite | kCmdUsesDbGate | kCmdMultiShard | kCmdMayBlock"
+    },
+    {
+      "name": "ZADD",
+      "minimumArguments": 4,
+      "maximumArguments": 0,
+      "flags": "kKeyedWrite"
+    },
+    {
+      "name": "ZCARD",
+      "minimumArguments": 2,
+      "maximumArguments": 2,
+      "flags": "kKeyedRead"
+    },
+    {
+      "name": "ZCOUNT",
+      "minimumArguments": 4,
+      "maximumArguments": 4,
+      "flags": "kKeyedRead"
+    },
+    {
+      "name": "ZINCRBY",
+      "minimumArguments": 4,
+      "maximumArguments": 4,
+      "flags": "kKeyedWrite"
+    },
+    {
+      "name": "ZLEXCOUNT",
+      "minimumArguments": 4,
+      "maximumArguments": 4,
+      "flags": "kKeyedRead"
+    },
+    {
+      "name": "ZMPOP",
+      "minimumArguments": 4,
+      "maximumArguments": 0,
+      "flags": "kCmdWrite | kCmdUsesDbGate | kCmdMultiShard | kCmdMovableKeys | kCmdKeyViewComplete"
+    },
+    {
+      "name": "ZMSCORE",
+      "minimumArguments": 3,
+      "maximumArguments": 0,
+      "flags": "kKeyedRead"
+    },
+    {
+      "name": "ZPOPMAX",
+      "minimumArguments": 2,
+      "maximumArguments": 3,
+      "flags": "kKeyedWrite"
+    },
+    {
+      "name": "ZPOPMIN",
+      "minimumArguments": 2,
+      "maximumArguments": 3,
+      "flags": "kKeyedWrite"
+    },
+    {
+      "name": "ZRANDMEMBER",
+      "minimumArguments": 2,
+      "maximumArguments": 4,
+      "flags": "kKeyedRead"
+    },
+    {
+      "name": "ZRANGE",
+      "minimumArguments": 4,
+      "maximumArguments": 0,
+      "flags": "kKeyedRead"
+    },
+    {
+      "name": "ZRANGESTORE",
+      "minimumArguments": 5,
+      "maximumArguments": 0,
+      "flags": "kCmdWrite | kCmdUsesDbGate | kCmdMultiShard | kCmdKeyViewComplete"
+    },
+    {
+      "name": "ZRANGEBYLEX",
+      "minimumArguments": 4,
+      "maximumArguments": 0,
+      "flags": "kKeyedRead"
+    },
+    {
+      "name": "ZRANGEBYSCORE",
+      "minimumArguments": 4,
+      "maximumArguments": 0,
+      "flags": "kKeyedRead"
+    },
+    {
+      "name": "ZRANK",
+      "minimumArguments": 3,
+      "maximumArguments": 0,
+      "flags": "kKeyedRead"
+    },
+    {
+      "name": "ZREM",
+      "minimumArguments": 3,
+      "maximumArguments": 0,
+      "flags": "kKeyedWrite"
+    },
+    {
+      "name": "ZREMRANGEBYLEX",
+      "minimumArguments": 4,
+      "maximumArguments": 4,
+      "flags": "kKeyedWrite"
+    },
+    {
+      "name": "ZREMRANGEBYRANK",
+      "minimumArguments": 4,
+      "maximumArguments": 4,
+      "flags": "kKeyedWrite"
+    },
+    {
+      "name": "ZREMRANGEBYSCORE",
+      "minimumArguments": 4,
+      "maximumArguments": 4,
+      "flags": "kKeyedWrite"
+    },
+    {
+      "name": "ZREVRANGE",
+      "minimumArguments": 4,
+      "maximumArguments": 0,
+      "flags": "kKeyedRead"
+    },
+    {
+      "name": "ZREVRANGEBYLEX",
+      "minimumArguments": 4,
+      "maximumArguments": 0,
+      "flags": "kKeyedRead"
+    },
+    {
+      "name": "ZREVRANGEBYSCORE",
+      "minimumArguments": 4,
+      "maximumArguments": 0,
+      "flags": "kKeyedRead"
+    },
+    {
+      "name": "ZREVRANK",
+      "minimumArguments": 3,
+      "maximumArguments": 0,
+      "flags": "kKeyedRead"
+    },
+    {
+      "name": "ZSCAN",
+      "minimumArguments": 3,
+      "maximumArguments": 0,
+      "flags": "kKeyedRead"
+    },
+    {
+      "name": "ZSCORE",
+      "minimumArguments": 3,
+      "maximumArguments": 3,
+      "flags": "kKeyedRead"
+    },
+    {
+      "name": "ZDIFF",
+      "minimumArguments": 3,
+      "maximumArguments": 0,
+      "flags": "kCmdReadOnly | kCmdUsesDbGate | kCmdMultiShard | kCmdMovableKeys"
+    },
+    {
+      "name": "ZDIFFSTORE",
+      "minimumArguments": 4,
+      "maximumArguments": 0,
+      "flags": "kCmdWrite | kCmdUsesDbGate | kCmdMultiShard | kCmdMovableKeys"
+    },
+    {
+      "name": "ZINTER",
+      "minimumArguments": 3,
+      "maximumArguments": 0,
+      "flags": "kCmdReadOnly | kCmdUsesDbGate | kCmdMultiShard | kCmdMovableKeys"
+    },
+    {
+      "name": "ZINTERCARD",
+      "minimumArguments": 3,
+      "maximumArguments": 0,
+      "flags": "kCmdReadOnly | kCmdUsesDbGate | kCmdMultiShard | kCmdMovableKeys"
+    },
+    {
+      "name": "ZINTERSTORE",
+      "minimumArguments": 4,
+      "maximumArguments": 0,
+      "flags": "kCmdWrite | kCmdUsesDbGate | kCmdMultiShard | kCmdMovableKeys"
+    },
+    {
+      "name": "ZUNION",
+      "minimumArguments": 3,
+      "maximumArguments": 0,
+      "flags": "kCmdReadOnly | kCmdUsesDbGate | kCmdMultiShard | kCmdMovableKeys"
+    },
+    {
+      "name": "ZUNIONSTORE",
+      "minimumArguments": 4,
+      "maximumArguments": 0,
+      "flags": "kCmdWrite | kCmdUsesDbGate | kCmdMultiShard | kCmdMovableKeys"
+    },
+    {
+      "name": "GEOADD",
+      "minimumArguments": 5,
+      "maximumArguments": 0,
+      "flags": "kKeyedWrite"
+    },
+    {
+      "name": "GEODIST",
+      "minimumArguments": 4,
+      "maximumArguments": 5,
+      "flags": "kKeyedRead"
+    },
+    {
+      "name": "GEOHASH",
+      "minimumArguments": 2,
+      "maximumArguments": 0,
+      "flags": "kKeyedRead"
+    },
+    {
+      "name": "GEOPOS",
+      "minimumArguments": 2,
+      "maximumArguments": 0,
+      "flags": "kKeyedRead"
+    },
+    {
+      "name": "GEORADIUS",
+      "minimumArguments": 6,
+      "maximumArguments": 0,
+      "flags": "kCmdWrite | kCmdUsesDbGate | kCmdMultiShard | kCmdMovableKeys"
+    },
+    {
+      "name": "GEORADIUS_RO",
+      "minimumArguments": 6,
+      "maximumArguments": 0,
+      "flags": "kKeyedRead"
+    },
+    {
+      "name": "GEORADIUSBYMEMBER",
+      "minimumArguments": 5,
+      "maximumArguments": 0,
+      "flags": "kCmdWrite | kCmdUsesDbGate | kCmdMultiShard | kCmdMovableKeys"
+    },
+    {
+      "name": "GEORADIUSBYMEMBER_RO",
+      "minimumArguments": 5,
+      "maximumArguments": 0,
+      "flags": "kKeyedRead"
+    },
+    {
+      "name": "GEOSEARCH",
+      "minimumArguments": 7,
+      "maximumArguments": 0,
+      "flags": "kKeyedRead"
+    },
+    {
+      "name": "GEOSEARCHSTORE",
+      "minimumArguments": 8,
+      "maximumArguments": 0,
+      "flags": "kCmdWrite | kCmdUsesDbGate | kCmdMultiShard | kCmdKeyViewComplete"
+    },
+    {
+      "name": "XADD",
+      "minimumArguments": 5,
+      "maximumArguments": 0,
+      "flags": "kKeyedWrite"
+    },
+    {
+      "name": "XDEL",
+      "minimumArguments": 3,
+      "maximumArguments": 0,
+      "flags": "kKeyedWrite"
+    },
+    {
+      "name": "XLEN",
+      "minimumArguments": 2,
+      "maximumArguments": 2,
+      "flags": "kKeyedRead"
+    },
+    {
+      "name": "XRANGE",
+      "minimumArguments": 4,
+      "maximumArguments": 6,
+      "flags": "kKeyedRead"
+    },
+    {
+      "name": "XREVRANGE",
+      "minimumArguments": 4,
+      "maximumArguments": 6,
+      "flags": "kKeyedRead"
+    },
+    {
+      "name": "XTRIM",
+      "minimumArguments": 4,
+      "maximumArguments": 7,
+      "flags": "kKeyedWrite"
+    },
+    {
+      "name": "XSETID",
+      "minimumArguments": 3,
+      "maximumArguments": 7,
+      "flags": "kKeyedWrite"
+    },
+    {
+      "name": "XGROUP",
+      "minimumArguments": 2,
+      "maximumArguments": 8,
+      "flags": "kKeyedWrite | kCmdMovableKeys"
+    },
+    {
+      "name": "XACK",
+      "minimumArguments": 4,
+      "maximumArguments": 0,
+      "flags": "kKeyedWrite"
+    },
+    {
+      "name": "XPENDING",
+      "minimumArguments": 3,
+      "maximumArguments": 9,
+      "flags": "kKeyedRead"
+    },
+    {
+      "name": "XCLAIM",
+      "minimumArguments": 6,
+      "maximumArguments": 0,
+      "flags": "kKeyedWrite"
+    },
+    {
+      "name": "XAUTOCLAIM",
+      "minimumArguments": 6,
+      "maximumArguments": 9,
+      "flags": "kKeyedWrite"
+    },
+    {
+      "name": "XINFO",
+      "minimumArguments": 2,
+      "maximumArguments": 6,
+      "flags": "kKeyedRead | kCmdMovableKeys"
+    },
+    {
+      "name": "XREAD",
+      "minimumArguments": 4,
+      "maximumArguments": 0,
+      "flags": "kCmdReadOnly | kCmdUsesDbGate | kCmdMultiShard | kCmdMovableKeys | kCmdMayBlock"
+    },
+    {
+      "name": "XREADGROUP",
+      "minimumArguments": 7,
+      "maximumArguments": 0,
+      "flags": "kCmdWrite | kCmdUsesDbGate | kCmdMultiShard | kCmdMovableKeys | kCmdMayBlock"
+    },
+    {
+      "name": "STRLEN",
+      "minimumArguments": 2,
+      "maximumArguments": 2,
+      "flags": "kKeyedRead"
+    },
+    {
+      "name": "INCR",
+      "minimumArguments": 2,
+      "maximumArguments": 2,
+      "flags": "kKeyedWrite"
+    },
+    {
+      "name": "INCRBY",
+      "minimumArguments": 3,
+      "maximumArguments": 3,
+      "flags": "kKeyedWrite"
+    },
+    {
+      "name": "INCRBYFLOAT",
+      "minimumArguments": 3,
+      "maximumArguments": 3,
+      "flags": "kKeyedWrite"
+    },
+    {
+      "name": "DECR",
+      "minimumArguments": 2,
+      "maximumArguments": 2,
+      "flags": "kKeyedWrite"
+    },
+    {
+      "name": "DECRBY",
+      "minimumArguments": 3,
+      "maximumArguments": 3,
+      "flags": "kKeyedWrite"
+    },
+    {
+      "name": "EXPIRE",
+      "minimumArguments": 3,
+      "maximumArguments": 4,
+      "flags": "kKeyedWrite"
+    },
+    {
+      "name": "PEXPIRE",
+      "minimumArguments": 3,
+      "maximumArguments": 4,
+      "flags": "kKeyedWrite"
+    },
+    {
+      "name": "EXPIREAT",
+      "minimumArguments": 3,
+      "maximumArguments": 4,
+      "flags": "kKeyedWrite"
+    },
+    {
+      "name": "PEXPIREAT",
+      "minimumArguments": 3,
+      "maximumArguments": 4,
+      "flags": "kKeyedWrite"
+    },
+    {
+      "name": "PERSIST",
+      "minimumArguments": 2,
+      "maximumArguments": 2,
+      "flags": "kKeyedWrite"
+    },
+    {
+      "name": "TTL",
+      "minimumArguments": 2,
+      "maximumArguments": 2,
+      "flags": "kKeyedRead"
+    },
+    {
+      "name": "PTTL",
+      "minimumArguments": 2,
+      "maximumArguments": 2,
+      "flags": "kKeyedRead"
+    },
+    {
+      "name": "EXPIRETIME",
+      "minimumArguments": 2,
+      "maximumArguments": 2,
+      "flags": "kKeyedRead"
+    },
+    {
+      "name": "PEXPIRETIME",
+      "minimumArguments": 2,
+      "maximumArguments": 2,
+      "flags": "kKeyedRead"
+    },
+    {
+      "name": "DEL",
+      "minimumArguments": 2,
+      "maximumArguments": 0,
+      "flags": "kKeyedWrite | kCmdMultiShard | kCmdKeyViewComplete"
+    },
+    {
+      "name": "UNLINK",
+      "minimumArguments": 2,
+      "maximumArguments": 0,
+      "flags": "kKeyedWrite | kCmdMultiShard | kCmdKeyViewComplete"
+    },
+    {
+      "name": "RENAME",
+      "minimumArguments": 3,
+      "maximumArguments": 3,
+      "flags": "kKeyedWrite | kCmdMultiShard | kCmdKeyViewComplete"
+    },
+    {
+      "name": "RENAMENX",
+      "minimumArguments": 3,
+      "maximumArguments": 3,
+      "flags": "kKeyedWrite | kCmdMultiShard | kCmdKeyViewComplete"
+    },
+    {
+      "name": "COPY",
+      "minimumArguments": 3,
+      "maximumArguments": 0,
+      "flags": "kCmdWrite | kCmdUsesDbGate | kCmdMultiShard | kCmdKeyViewComplete"
+    },
+    {
+      "name": "EXISTS",
+      "minimumArguments": 2,
+      "maximumArguments": 0,
+      "flags": "kKeyedRead | kCmdMultiShard"
+    },
+    {
+      "name": "TOUCH",
+      "minimumArguments": 2,
+      "maximumArguments": 0,
+      "flags": "kKeyedRead | kCmdMultiShard"
+    },
+    {
+      "name": "MSET",
+      "minimumArguments": 3,
+      "maximumArguments": 0,
+      "flags": "kKeyedWrite | kCmdMultiShard | kCmdKeyViewComplete"
+    },
+    {
+      "name": "MSETNX",
+      "minimumArguments": 3,
+      "maximumArguments": 0,
+      "flags": "kKeyedWrite | kCmdMultiShard | kCmdKeyViewComplete"
+    },
+    {
+      "name": "MGET",
+      "minimumArguments": 2,
+      "maximumArguments": 0,
+      "flags": "kKeyedRead | kCmdMultiShard"
+    },
+    {
+      "name": "MULTI",
+      "minimumArguments": 1,
+      "maximumArguments": 1,
+      "flags": "kCmdNoKeys"
+    },
+    {
+      "name": "EXEC",
+      "minimumArguments": 1,
+      "maximumArguments": 1,
+      "flags": "kCmdNoKeys"
+    },
+    {
+      "name": "DISCARD",
+      "minimumArguments": 1,
+      "maximumArguments": 1,
+      "flags": "kCmdNoKeys"
+    },
+    {
+      "name": "WATCH",
+      "minimumArguments": 2,
+      "maximumArguments": 0,
+      "flags": "kCmdReadOnly | kCmdUsesDbGate"
+    },
+    {
+      "name": "UNWATCH",
+      "minimumArguments": 1,
+      "maximumArguments": 1,
+      "flags": "kCmdNoKeys"
+    },
+    {
+      "name": "CLIENT",
+      "minimumArguments": 2,
+      "maximumArguments": 0,
+      "flags": "kCmdNoKeys | kCmdReadOnly | kCmdGlobal"
+    },
+    {
+      "name": "REPLICAOF",
+      "minimumArguments": 3,
+      "maximumArguments": 3,
+      "flags": "kCmdNoKeys | kCmdGlobal | kCmdAdmin"
+    },
+    {
+      "name": "SLAVEOF",
+      "minimumArguments": 3,
+      "maximumArguments": 3,
+      "flags": "kCmdNoKeys | kCmdGlobal | kCmdAdmin"
+    },
+    {
+      "name": "ADDREPLICAOF",
+      "minimumArguments": 3,
+      "maximumArguments": 3,
+      "flags": "kCmdNoKeys | kCmdGlobal | kCmdAdmin"
+    },
+    {
+      "name": "CONFIG",
+      "minimumArguments": 2,
+      "maximumArguments": 4,
+      "flags": "kCmdNoKeys | kCmdGlobal | kCmdAdmin"
+    },
+    {
+      "name": "INFO",
+      "minimumArguments": 1,
+      "maximumArguments": 2,
+      "flags": "kCmdNoKeys | kCmdReadOnly"
+    },
+    {
+      "name": "ROLE",
+      "minimumArguments": 1,
+      "maximumArguments": 1,
+      "flags": "kCmdNoKeys | kCmdReadOnly"
+    },
+    {
+      "name": "WAIT",
+      "minimumArguments": 3,
+      "maximumArguments": 3,
+      "flags": "kCmdNoKeys | kCmdReadOnly | kCmdMayBlock"
+    },
+    {
+      "name": "CLUSTER",
+      "minimumArguments": 2,
+      "maximumArguments": 0,
+      "flags": "kCmdNoKeys | kCmdReadOnly | kCmdGlobal"
+    },
+    {
+      "name": "COMMAND",
+      "minimumArguments": 1,
+      "maximumArguments": 0,
+      "flags": "kCmdNoKeys | kCmdReadOnly | kCmdGlobal"
+    },
+    {
+      "name": "READONLY",
+      "minimumArguments": 1,
+      "maximumArguments": 1,
+      "flags": "kCmdNoKeys | kCmdReadOnly | kCmdGlobal"
+    },
+    {
+      "name": "READWRITE",
+      "minimumArguments": 1,
+      "maximumArguments": 1,
+      "flags": "kCmdNoKeys | kCmdReadOnly | kCmdGlobal"
+    },
+    {
+      "name": "KEYS",
+      "minimumArguments": 2,
+      "maximumArguments": 2,
+      "flags": "kCmdNoKeys | kCmdReadOnly | kCmdGlobal"
+    },
+    {
+      "name": "SAVE",
+      "minimumArguments": 1,
+      "maximumArguments": 1,
+      "flags": "kCmdNoKeys | kCmdGlobal | kCmdAdmin"
+    },
+    {
+      "name": "BGSAVE",
+      "minimumArguments": 1,
+      "maximumArguments": 1,
+      "flags": "kCmdNoKeys | kCmdGlobal | kCmdAdmin"
+    },
+    {
+      "name": "LASTSAVE",
+      "minimumArguments": 1,
+      "maximumArguments": 1,
+      "flags": "kCmdNoKeys | kCmdReadOnly | kCmdGlobal"
+    },
+    {
+      "name": "MONITOR",
+      "minimumArguments": 1,
+      "maximumArguments": 1,
+      "flags": "kCmdNoKeys | kCmdAdmin | kCmdSkipMonitor"
+    },
+    {
+      "name": "SLOWLOG",
+      "minimumArguments": 2,
+      "maximumArguments": 3,
+      "flags": "kCmdNoKeys | kCmdGlobal | kCmdAdmin"
+    },
+    {
+      "name": "TOMBRAIDER",
+      "minimumArguments": 2,
+      "maximumArguments": 3,
+      "flags": "kCmdNoKeys | kCmdGlobal | kCmdAdmin"
+    },
+    {
+      "name": "DEFRAG",
+      "minimumArguments": 2,
+      "maximumArguments": 3,
+      "flags": "kCmdNoKeys | kCmdGlobal | kCmdAdmin"
+    }
+  ],
+  "additionalSources": [
+    {
+      "file": "evidence/manual/0.1.0/request-serving.md",
+      "url": "https://github.com/eloqdata/lavik/blob/3955b98d43b312324aa8d52775df52cfb111c0d0/docs/architecture/02-request-serving.md",
+      "sha256": "1e26fd51cad9016d1c1a2fdb83ef2fb21deedd0f89578368621c16f6455b5c45"
+    }
+  ]
+}

@@ -22,6 +22,11 @@ import {
 } from "../../../../../../packages/content/gate";
 import { BenchmarkChart } from "../../../../components/benchmark";
 import { CostCalculator } from "../../../../components/cost-calculator";
+import { ManualLinks, ManualPage } from "../../../../components/manual";
+import {
+  manualRoutes,
+  manualTitle,
+} from "../../../../../../packages/manual/repository";
 
 const indexRoutes = ["benchmarks", "cost", "use-cases", "blog", "releases"];
 export const dynamicParams = false;
@@ -37,6 +42,7 @@ export function generateStaticParams({
         slug: articlePath(a).split("/").filter(Boolean).slice(1),
       })),
     ...indexRoutes.map((route) => ({ slug: [route] })),
+    ...manualRoutes().map((route) => ({ slug: route.split("/") })),
   ];
 }
 export async function generateMetadata({
@@ -56,7 +62,10 @@ export async function generateMetadata({
     releases: ["Releases", "版本说明"],
   };
   return {
-    title: article?.title ?? titles[slug[0]]?.[locale === "en" ? 0 : 1],
+    title:
+      article?.title ??
+      manualTitle(slug.join("/"), localeSchema.parse(locale)) ??
+      titles[slug[0]]?.[locale === "en" ? 0 : 1],
     description: article?.summary,
     alternates: {
       canonical: `/${locale}/${slug.join("/")}/`,
@@ -76,6 +85,8 @@ export default async function Page({
     locale = localeSchema.parse(resolved.locale),
     zh = locale === "zh-CN";
   const route = resolved.slug.join("/");
+  if (manualTitle(route, locale))
+    return <ManualPage route={route} locale={locale} />;
   const pages = articles().filter((a) => a.locale === locale);
   const article = pages.find((a) => articlePath(a) === `/${locale}/${route}/`);
   if (article)
@@ -100,6 +111,7 @@ export default async function Page({
                   {a.title}
                 </Link>
               ))}
+            <ManualLinks locale={locale} />
             <Link href={`/${locale}/releases/`}>
               {zh ? "版本说明" : "Release notes"}
             </Link>

@@ -1,0 +1,285 @@
+[
+  {
+    "id": "redis-py-resp2",
+    "name": "redis-py",
+    "language": "Python",
+    "version": "8.1.0",
+    "protocol": "RESP2",
+    "argv": [
+      "/opt/python/bin/python",
+      "/clients/python-client.py",
+      "redis",
+      "2"
+    ],
+    "file": "python-client.py",
+    "source": "https://github.com/redis/redis-py",
+    "settings": "protocol=2"
+  },
+  {
+    "id": "redis-py-resp3",
+    "name": "redis-py",
+    "language": "Python",
+    "version": "8.1.0",
+    "protocol": "RESP3",
+    "argv": [
+      "/opt/python/bin/python",
+      "/clients/python-client.py",
+      "redis",
+      "3"
+    ],
+    "file": "python-client.py",
+    "source": "https://github.com/redis/redis-py",
+    "settings": "protocol=3"
+  },
+  {
+    "id": "valkey-py-resp2",
+    "name": "valkey-py",
+    "language": "Python",
+    "version": "6.1.1",
+    "protocol": "RESP2",
+    "argv": [
+      "/opt/python/bin/python",
+      "/clients/python-client.py",
+      "valkey",
+      "2"
+    ],
+    "file": "python-client.py",
+    "source": "https://github.com/valkey-io/valkey-py",
+    "settings": "protocol=2"
+  },
+  {
+    "id": "valkey-py-resp3",
+    "name": "valkey-py",
+    "language": "Python",
+    "version": "6.1.1",
+    "protocol": "RESP3",
+    "argv": [
+      "/opt/python/bin/python",
+      "/clients/python-client.py",
+      "valkey",
+      "3"
+    ],
+    "file": "python-client.py",
+    "source": "https://github.com/valkey-io/valkey-py",
+    "settings": "protocol=3"
+  },
+  {
+    "id": "glide-python",
+    "name": "Valkey GLIDE Python",
+    "language": "Python",
+    "version": "2.5.2",
+    "protocol": "RESP3",
+    "argv": [
+      "/opt/python/bin/python",
+      "/clients/python-client.py",
+      "glide",
+      "3"
+    ],
+    "file": "python-client.py",
+    "source": "https://github.com/valkey-io/valkey-glide",
+    "settings": "ProtocolVersion.RESP3"
+  },
+  {
+    "id": "node-redis-resp2",
+    "name": "node-redis",
+    "language": "Node.js",
+    "version": "6.2.1",
+    "protocol": "RESP2",
+    "argv": [
+      "node",
+      "/clients/node-client.mjs",
+      "redis",
+      "2"
+    ],
+    "file": "node-client.mjs",
+    "source": "https://github.com/redis/node-redis",
+    "settings": "RESP: 2"
+  },
+  {
+    "id": "node-redis-resp3",
+    "name": "node-redis",
+    "language": "Node.js",
+    "version": "6.2.1",
+    "protocol": "RESP3",
+    "argv": [
+      "node",
+      "/clients/node-client.mjs",
+      "redis",
+      "3"
+    ],
+    "file": "node-client.mjs",
+    "source": "https://github.com/redis/node-redis",
+    "settings": "RESP: 3"
+  },
+  {
+    "id": "ioredis",
+    "name": "ioredis",
+    "language": "Node.js",
+    "version": "6.0.0",
+    "protocol": "RESP2",
+    "argv": [
+      "node",
+      "/clients/node-client.mjs",
+      "ioredis",
+      "2"
+    ],
+    "file": "node-client.mjs",
+    "source": "https://github.com/redis/ioredis",
+    "settings": "protocol: 2; disconnect()"
+  },
+  {
+    "id": "iovalkey",
+    "name": "iovalkey",
+    "language": "Node.js",
+    "version": "0.4.0",
+    "protocol": "RESP2",
+    "argv": [
+      "node",
+      "/clients/node-client.mjs",
+      "iovalkey",
+      "2"
+    ],
+    "file": "node-client.mjs",
+    "source": "https://github.com/valkey-io/iovalkey",
+    "settings": "protocol: 2; disconnect()"
+  },
+  {
+    "id": "glide-node",
+    "name": "Valkey GLIDE Node.js",
+    "language": "Node.js",
+    "version": "2.5.2",
+    "protocol": "RESP3",
+    "argv": [
+      "node",
+      "/clients/node-client.mjs",
+      "glide",
+      "3"
+    ],
+    "file": "node-client.mjs",
+    "source": "https://github.com/valkey-io/valkey-glide",
+    "settings": "ProtocolVersion.RESP3"
+  },
+  {
+    "id": "go-redis",
+    "name": "go-redis",
+    "language": "Go",
+    "version": "v9.22.0",
+    "protocol": "RESP3",
+    "argv": [
+      "/clients/go-client",
+      "redis"
+    ],
+    "file": "go-client.go",
+    "source": "https://github.com/redis/go-redis",
+    "settings": "Protocol: 3"
+  },
+  {
+    "id": "valkey-go",
+    "name": "valkey-go",
+    "language": "Go",
+    "version": "v1.0.78",
+    "protocol": "RESP3",
+    "argv": [
+      "/clients/go-client",
+      "valkey"
+    ],
+    "file": "go-client.go",
+    "source": "https://github.com/valkey-io/valkey-go",
+    "settings": "DisableCache: true"
+  },
+  {
+    "id": "jedis",
+    "name": "Jedis",
+    "language": "Java",
+    "version": "7.0.0",
+    "protocol": "RESP2",
+    "argv": [
+      "java",
+      "-cp",
+      "/clients:/clients/jars/*",
+      "Clients",
+      "jedis"
+    ],
+    "file": "Clients.java",
+    "source": "https://github.com/redis/jedis",
+    "settings": "Jedis standalone connection"
+  },
+  {
+    "id": "valkey-java",
+    "name": "valkey-java",
+    "language": "Java",
+    "version": "5.5.0",
+    "protocol": "RESP2",
+    "argv": [
+      "java",
+      "-cp",
+      "/clients:/clients/jars/*",
+      "Clients",
+      "valkey"
+    ],
+    "file": "Clients.java",
+    "source": "https://github.com/valkey-io/valkey-java",
+    "settings": "io.valkey.Jedis standalone connection"
+  },
+  {
+    "id": "lettuce",
+    "name": "Lettuce",
+    "language": "Java",
+    "version": "7.7.0.RELEASE",
+    "protocol": "Default negotiation",
+    "argv": [
+      "java",
+      "-cp",
+      "/clients:/clients/jars/*",
+      "Clients",
+      "lettuce"
+    ],
+    "file": "Clients.java",
+    "source": "https://github.com/redis/lettuce",
+    "settings": "RedisClient standalone connection"
+  },
+  {
+    "id": "predis",
+    "name": "Predis",
+    "language": "PHP",
+    "version": "v3.6.1",
+    "protocol": "RESP2",
+    "argv": [
+      "php",
+      "/clients/php-client.php",
+      "predis"
+    ],
+    "file": "php-client.php",
+    "source": "https://github.com/predis/predis",
+    "settings": "Predis standalone connection"
+  },
+  {
+    "id": "phpredis",
+    "name": "phpredis",
+    "language": "PHP",
+    "version": "5.3.7",
+    "protocol": "RESP2",
+    "argv": [
+      "php",
+      "/clients/php-client.php",
+      "phpredis"
+    ],
+    "file": "php-client.php",
+    "source": "https://github.com/phpredis/phpredis",
+    "settings": "Ubuntu 24.04 PHP extension"
+  },
+  {
+    "id": "ruby-redis",
+    "name": "redis-rb",
+    "language": "Ruby",
+    "version": "5.4.1",
+    "protocol": "Default negotiation",
+    "argv": [
+      "ruby",
+      "/clients/ruby-client.rb"
+    ],
+    "file": "ruby-client.rb",
+    "source": "https://github.com/redis/redis-rb",
+    "settings": "Redis standalone connection"
+  }
+]

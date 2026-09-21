@@ -119,6 +119,13 @@ Human-maintained reports are authoritative for their recorded measurements. Webs
 
 The release lock, source hashes, claim registry, article revisions, independent reviews, recipe hashes, actual transcripts, and verifier image identity form the publication evidence. Model input includes the block renderers, calculator code, startup script, harness and expected hashes. Agent reviews bind the renderer/calculator hash as well as the article, so changes to rendered meaning invalidate their approval. Schemas and pattern checks cannot establish all semantic truth; independent source review, maintained evaluation cases, and occasional human audits remain necessary.
 
+## Local command and client manual
+
+The versioned command reference covers all 217 registered Lavik 0.1.0 command names.
+The client matrix tests 15 libraries through 18 connection profiles in local Docker.
+See [the reproducible local manual workflow](docs/manual-workflow.md) for the
+ChatGPT-only Codex writer/reviewer, verification commands, evidence gate and publication.
+
 ## Repository map
 
 | Path                    | Purpose                                                          |

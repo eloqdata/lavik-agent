@@ -6,8 +6,10 @@ import {
   sourceText,
 } from "../packages/content/repository.ts";
 import { publicationErrors } from "../packages/content/gate.ts";
+import { manualPublicationErrors } from "../packages/manual/gate.ts";
 
 const failures: string[] = [];
+failures.push(...manualPublicationErrors());
 const pages = articles();
 const routes = new Set<string>();
 for (const source of sources) sourceText(source.id);

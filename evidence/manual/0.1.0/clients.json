@@ -1,0 +1,605 @@
+{
+  "schemaVersion": 1,
+  "startedAt": "2026-09-21T11:15:00Z",
+  "platform": "Linux-7.0.12-linuxkit-aarch64-with-glibc2.39",
+  "architecture": "aarch64",
+  "status": "passed",
+  "clients": [
+    {
+      "id": "redis-py-resp2",
+      "status": "passed",
+      "argv": [
+        "/opt/python/bin/python",
+        "/clients/python-client.py",
+        "redis",
+        "2"
+      ],
+      "exitCode": 0,
+      "stderr": "",
+      "library": "redis",
+      "version": "8.1.0",
+      "protocol": 2,
+      "checks": [
+        "authenticated PING",
+        "SET",
+        "Unicode GET",
+        "missing GET",
+        "binary round trip",
+        "HSET",
+        "HGETALL",
+        "LRANGE",
+        "pipeline",
+        "MULTI/EXEC",
+        "Lua EVAL",
+        "PX/PTTL",
+        "reconnect"
+      ]
+    },
+    {
+      "id": "redis-py-resp3",
+      "status": "passed",
+      "argv": [
+        "/opt/python/bin/python",
+        "/clients/python-client.py",
+        "redis",
+        "3"
+      ],
+      "exitCode": 0,
+      "stderr": "",
+      "library": "redis",
+      "version": "8.1.0",
+      "protocol": 3,
+      "checks": [
+        "authenticated PING",
+        "SET",
+        "Unicode GET",
+        "missing GET",
+        "binary round trip",
+        "HSET",
+        "HGETALL",
+        "LRANGE",
+        "pipeline",
+        "MULTI/EXEC",
+        "Lua EVAL",
+        "PX/PTTL",
+        "reconnect"
+      ]
+    },
+    {
+      "id": "valkey-py-resp2",
+      "status": "passed",
+      "argv": [
+        "/opt/python/bin/python",
+        "/clients/python-client.py",
+        "valkey",
+        "2"
+      ],
+      "exitCode": 0,
+      "stderr": "",
+      "library": "valkey",
+      "version": "6.1.1",
+      "protocol": 2,
+      "checks": [
+        "authenticated PING",
+        "SET",
+        "Unicode GET",
+        "missing GET",
+        "binary round trip",
+        "HSET",
+        "HGETALL",
+        "LRANGE",
+        "pipeline",
+        "MULTI/EXEC",
+        "Lua EVAL",
+        "PX/PTTL",
+        "reconnect"
+      ]
+    },
+    {
+      "id": "valkey-py-resp3",
+      "status": "passed",
+      "argv": [
+        "/opt/python/bin/python",
+        "/clients/python-client.py",
+        "valkey",
+        "3"
+      ],
+      "exitCode": 0,
+      "stderr": "",
+      "library": "valkey",
+      "version": "6.1.1",
+      "protocol": 3,
+      "checks": [
+        "authenticated PING",
+        "SET",
+        "Unicode GET",
+        "missing GET",
+        "binary round trip",
+        "HSET",
+        "HGETALL",
+        "LRANGE",
+        "pipeline",
+        "MULTI/EXEC",
+        "Lua EVAL",
+        "PX/PTTL",
+        "reconnect"
+      ]
+    },
+    {
+      "id": "glide-python",
+      "status": "passed",
+      "argv": [
+        "/opt/python/bin/python",
+        "/clients/python-client.py",
+        "glide",
+        "3"
+      ],
+      "exitCode": 0,
+      "stderr": "",
+      "library": "valkey-glide",
+      "version": "2.5.2",
+      "protocol": 3,
+      "checks": [
+        "authenticated PING",
+        "SET",
+        "Unicode GET",
+        "missing GET",
+        "binary round trip",
+        "HGET",
+        "Lua EVAL (raw API)"
+      ]
+    },
+    {
+      "id": "node-redis-resp2",
+      "status": "passed",
+      "argv": [
+        "node",
+        "/clients/node-client.mjs",
+        "redis",
+        "2"
+      ],
+      "exitCode": 0,
+      "stderr": "redis: authenticated PING passed\nredis: SET passed\nredis: Unicode GET passed\nredis: missing GET passed\nredis: HSET (raw API) passed\nredis: HGET (raw API) passed\nredis: LRANGE (raw API) passed\nredis: MULTI/EXEC passed\nredis: concurrent requests passed\nredis: Lua EVAL (raw API) passed\nredis: PX/PTTL (raw API) passed\nredis: cleanup completed\n",
+      "library": "redis",
+      "version": "6.2.1",
+      "protocol": 2,
+      "checks": [
+        "authenticated PING",
+        "SET",
+        "Unicode GET",
+        "missing GET",
+        "HSET (raw API)",
+        "HGET (raw API)",
+        "LRANGE (raw API)",
+        "MULTI/EXEC",
+        "concurrent requests",
+        "Lua EVAL (raw API)",
+        "PX/PTTL (raw API)"
+      ]
+    },
+    {
+      "id": "node-redis-resp3",
+      "status": "passed",
+      "argv": [
+        "node",
+        "/clients/node-client.mjs",
+        "redis",
+        "3"
+      ],
+      "exitCode": 0,
+      "stderr": "redis: authenticated PING passed\nredis: SET passed\nredis: Unicode GET passed\nredis: missing GET passed\nredis: HSET (raw API) passed\nredis: HGET (raw API) passed\nredis: LRANGE (raw API) passed\nredis: MULTI/EXEC passed\nredis: concurrent requests passed\nredis: Lua EVAL (raw API) passed\nredis: PX/PTTL (raw API) passed\nredis: cleanup completed\n",
+      "library": "redis",
+      "version": "6.2.1",
+      "protocol": 3,
+      "checks": [
+        "authenticated PING",
+        "SET",
+        "Unicode GET",
+        "missing GET",
+        "HSET (raw API)",
+        "HGET (raw API)",
+        "LRANGE (raw API)",
+        "MULTI/EXEC",
+        "concurrent requests",
+        "Lua EVAL (raw API)",
+        "PX/PTTL (raw API)"
+      ]
+    },
+    {
+      "id": "ioredis",
+      "status": "passed",
+      "argv": [
+        "node",
+        "/clients/node-client.mjs",
+        "ioredis",
+        "2"
+      ],
+      "exitCode": 0,
+      "stderr": "ioredis: authenticated PING passed\nioredis: SET passed\nioredis: Unicode GET passed\nioredis: missing GET passed\nioredis: HSET (raw API) passed\nioredis: HGET (raw API) passed\nioredis: LRANGE (raw API) passed\nioredis: MULTI/EXEC passed\nioredis: concurrent requests passed\nioredis: Lua EVAL (raw API) passed\nioredis: PX/PTTL (raw API) passed\nioredis: cleanup completed\n",
+      "library": "ioredis",
+      "version": "6.0.0",
+      "protocol": 2,
+      "checks": [
+        "authenticated PING",
+        "SET",
+        "Unicode GET",
+        "missing GET",
+        "HSET (raw API)",
+        "HGET (raw API)",
+        "LRANGE (raw API)",
+        "MULTI/EXEC",
+        "concurrent requests",
+        "Lua EVAL (raw API)",
+        "PX/PTTL (raw API)"
+      ]
+    },
+    {
+      "id": "iovalkey",
+      "status": "passed",
+      "argv": [
+        "node",
+        "/clients/node-client.mjs",
+        "iovalkey",
+        "2"
+      ],
+      "exitCode": 0,
+      "stderr": "iovalkey: authenticated PING passed\niovalkey: SET passed\niovalkey: Unicode GET passed\niovalkey: missing GET passed\niovalkey: HSET (raw API) passed\niovalkey: HGET (raw API) passed\niovalkey: LRANGE (raw API) passed\niovalkey: MULTI/EXEC passed\niovalkey: concurrent requests passed\niovalkey: Lua EVAL (raw API) passed\niovalkey: PX/PTTL (raw API) passed\niovalkey: cleanup completed\n",
+      "library": "iovalkey",
+      "version": "0.4.0",
+      "protocol": 2,
+      "checks": [
+        "authenticated PING",
+        "SET",
+        "Unicode GET",
+        "missing GET",
+        "HSET (raw API)",
+        "HGET (raw API)",
+        "LRANGE (raw API)",
+        "MULTI/EXEC",
+        "concurrent requests",
+        "Lua EVAL (raw API)",
+        "PX/PTTL (raw API)"
+      ]
+    },
+    {
+      "id": "glide-node",
+      "status": "passed",
+      "argv": [
+        "node",
+        "/clients/node-client.mjs",
+        "glide",
+        "3"
+      ],
+      "exitCode": 0,
+      "stderr": "glide: authenticated PING passed\nglide: SET passed\nglide: Unicode GET passed\nglide: missing GET passed\nglide: HGET passed\nglide: Lua EVAL (raw API) passed\n",
+      "library": "@valkey/valkey-glide",
+      "version": "2.5.2",
+      "protocol": 3,
+      "checks": [
+        "authenticated PING",
+        "SET",
+        "Unicode GET",
+        "missing GET",
+        "HGET",
+        "Lua EVAL (raw API)"
+      ]
+    },
+    {
+      "id": "go-redis",
+      "status": "passed",
+      "argv": [
+        "/clients/go-client",
+        "redis"
+      ],
+      "exitCode": 0,
+      "stderr": "",
+      "checks": [
+        "authenticated PING",
+        "SET",
+        "Unicode GET",
+        "missing GET",
+        "binary round trip",
+        "HGET",
+        "pipeline",
+        "MULTI/EXEC",
+        "Lua EVAL",
+        "SET expiry/PTTL"
+      ],
+      "library": "github.com/redis/go-redis/v9",
+      "protocol": 3,
+      "version": "v9.22.0"
+    },
+    {
+      "id": "valkey-go",
+      "status": "passed",
+      "argv": [
+        "/clients/go-client",
+        "valkey"
+      ],
+      "exitCode": 0,
+      "stderr": "",
+      "checks": [
+        "authenticated PING",
+        "SET",
+        "Unicode GET",
+        "missing GET",
+        "HSET",
+        "HGET",
+        "pipeline SET",
+        "pipeline INCR",
+        "pipeline GET",
+        "Lua EVAL"
+      ],
+      "library": "github.com/valkey-io/valkey-go",
+      "protocol": 3,
+      "version": "v1.0.78"
+    },
+    {
+      "id": "jedis",
+      "status": "passed",
+      "argv": [
+        "java",
+        "-cp",
+        "/clients:/clients/jars/*",
+        "Clients",
+        "jedis"
+      ],
+      "exitCode": 0,
+      "stderr": "",
+      "library": "jedis",
+      "version": "7.0.0",
+      "checks": [
+        "authenticated PING",
+        "SET",
+        "Unicode GET",
+        "missing GET",
+        "HGET",
+        "pipeline",
+        "MULTI/EXEC",
+        "Lua EVAL",
+        "PSETEX/PTTL"
+      ]
+    },
+    {
+      "id": "valkey-java",
+      "status": "passed",
+      "argv": [
+        "java",
+        "-cp",
+        "/clients:/clients/jars/*",
+        "Clients",
+        "valkey"
+      ],
+      "exitCode": 0,
+      "stderr": "",
+      "library": "valkey",
+      "version": "5.5.0",
+      "checks": [
+        "authenticated PING",
+        "SET",
+        "Unicode GET",
+        "missing GET",
+        "HGET",
+        "pipeline",
+        "MULTI/EXEC",
+        "Lua EVAL"
+      ]
+    },
+    {
+      "id": "lettuce",
+      "status": "passed",
+      "argv": [
+        "java",
+        "-cp",
+        "/clients:/clients/jars/*",
+        "Clients",
+        "lettuce"
+      ],
+      "exitCode": 0,
+      "stderr": "SLF4J: Failed to load class \"org.slf4j.impl.StaticLoggerBinder\".\nSLF4J: Defaulting to no-operation (NOP) logger implementation\nSLF4J: See http://www.slf4j.org/codes.html#StaticLoggerBinder for further details.\nSep 21, 2026 11:15:02 AM io.netty.util.internal.MacAddressUtil defaultMachineId\nWARNING: Failed to find a usable hardware address from the network interfaces; using random bytes: bb:61:64:cc:d4:1a:dd:35\n",
+      "library": "lettuce",
+      "version": "7.7.0.RELEASE",
+      "checks": [
+        "authenticated PING",
+        "SET",
+        "Unicode GET",
+        "missing GET",
+        "HGET",
+        "MULTI/EXEC count",
+        "MULTI/EXEC value",
+        "Lua EVAL"
+      ]
+    },
+    {
+      "id": "predis",
+      "status": "passed",
+      "argv": [
+        "php",
+        "/clients/php-client.php",
+        "predis"
+      ],
+      "exitCode": 0,
+      "stderr": "",
+      "library": "predis",
+      "version": "v3.6.1",
+      "checks": [
+        "authenticated PING",
+        "SET",
+        "Unicode GET",
+        "missing GET",
+        "binary round trip",
+        "HGET",
+        "MULTI/EXEC",
+        "Lua EVAL"
+      ]
+    },
+    {
+      "id": "phpredis",
+      "status": "passed",
+      "argv": [
+        "php",
+        "/clients/php-client.php",
+        "phpredis"
+      ],
+      "exitCode": 0,
+      "stderr": "",
+      "library": "phpredis",
+      "version": "5.3.7",
+      "checks": [
+        "authenticated PING",
+        "SET",
+        "Unicode GET",
+        "missing GET",
+        "binary round trip",
+        "HGET",
+        "MULTI/EXEC",
+        "Lua EVAL"
+      ]
+    },
+    {
+      "id": "ruby-redis",
+      "status": "passed",
+      "argv": [
+        "ruby",
+        "/clients/ruby-client.rb"
+      ],
+      "exitCode": 0,
+      "stderr": "",
+      "library": "redis",
+      "version": "5.4.1",
+      "checks": [
+        "authenticated PING",
+        "SET",
+        "Unicode GET",
+        "missing GET",
+        "binary round trip",
+        "HGET",
+        "pipeline",
+        "MULTI/EXEC",
+        "Lua EVAL"
+      ]
+    }
+  ],
+  "sourceCommit": "3955b98d43b312324aa8d52775df52cfb111c0d0",
+  "binaryVersion": "lavik 0.1.0-beta.1",
+  "binarySha256": "8306b37ddf05023f85166a6aa2192b7084757e8defd342b602e6470244aca887",
+  "clientSourceFiles": {
+    "python-client.py": "ee73befcae965bd59162f45b2236754805e59c99f426582b9d18fe56d52dacd6",
+    "node-client.mjs": "501fcc6682aed021bf3538ca7230045d93deb5e8bd99588135584ba2ca704f33",
+    "go-client.go": "60dfc3ef512378a78c2b744154a38a52368da1140b1ff1b17124a95f2c756291",
+    "Clients.java": "8d1aa4a169378ade35836892db0d87045378515412484ad698be8c5cea0b88c6",
+    "php-client.php": "59136c94863dca3522e795e349b8061aac3145f59cf62d94d55596d89ec85e66",
+    "ruby-client.rb": "634b3c709f89d4e026126d27d6cd112f19a07eadc6c299639c3a68f9caa10a32"
+  },
+  "runtimes": {
+    "python": "Python 3.12.3",
+    "node": "v22.20.0",
+    "go": "go version go1.25.1 linux/arm64",
+    "java": "openjdk version \"21.0.12\" 2026-07-21",
+    "php": "PHP 8.3.6 (cli) (built: Sep  2 2026 12:56:02) (NTS)",
+    "ruby": "ruby 3.2.3 (2024-01-18 revision 52bb2ac0a6) [aarch64-linux-gnu]"
+  },
+  "serverArgv": [
+    "lavik",
+    "--bind",
+    "127.0.0.1",
+    "--port",
+    "6379",
+    "--requirepass",
+    "manual-test-only",
+    "--metrics-port",
+    "0",
+    "--threads",
+    "2",
+    "--no-pin-workers",
+    "--registered-buffer-mb-per-worker",
+    "64",
+    "--shutdown-checkpoint",
+    "--data-file",
+    "/tmp/manual-db/data",
+    "--log-dir",
+    "/tmp/manual-db/logs",
+    "--rdb-dir",
+    "/tmp/manual-db"
+  ],
+  "shutdownProbes": [
+    {
+      "id": "ioredis",
+      "argv": [
+        "node",
+        "/clients/node-client.mjs",
+        "ioredis",
+        "2",
+        "--quit-probe"
+      ],
+      "timeoutSeconds": 12,
+      "outcome": "timeout",
+      "stdout": "{\"library\":\"ioredis\",\"version\":\"6.0.0\",\"protocol\":2,\"checks\":[\"authenticated PING\",\"SET\",\"Unicode GET\",\"missing GET\",\"HSET (raw API)\",\"HGET (raw API)\",\"LRANGE (raw API)\",\"MULTI/EXEC\",\"concurrent requests\",\"Lua EVAL (raw API)\",\"PX/PTTL (raw API)\"],\"status\":\"passed\"}\n",
+      "stderr": "ioredis: authenticated PING passed\nioredis: SET passed\nioredis: Unicode GET passed\nioredis: missing GET passed\nioredis: HSET (raw API) passed\nioredis: HGET (raw API) passed\nioredis: LRANGE (raw API) passed\nioredis: MULTI/EXEC passed\nioredis: concurrent requests passed\nioredis: Lua EVAL (raw API) passed\nioredis: PX/PTTL (raw API) passed\nioredis: cleanup completed\n"
+    },
+    {
+      "id": "iovalkey",
+      "argv": [
+        "node",
+        "/clients/node-client.mjs",
+        "iovalkey",
+        "2",
+        "--quit-probe"
+      ],
+      "timeoutSeconds": 12,
+      "outcome": "timeout",
+      "stdout": "{\"library\":\"iovalkey\",\"version\":\"0.4.0\",\"protocol\":2,\"checks\":[\"authenticated PING\",\"SET\",\"Unicode GET\",\"missing GET\",\"HSET (raw API)\",\"HGET (raw API)\",\"LRANGE (raw API)\",\"MULTI/EXEC\",\"concurrent requests\",\"Lua EVAL (raw API)\",\"PX/PTTL (raw API)\"],\"status\":\"passed\"}\n",
+      "stderr": "iovalkey: authenticated PING passed\niovalkey: SET passed\niovalkey: Unicode GET passed\niovalkey: missing GET passed\niovalkey: HSET (raw API) passed\niovalkey: HGET (raw API) passed\niovalkey: LRANGE (raw API) passed\niovalkey: MULTI/EXEC passed\niovalkey: concurrent requests passed\niovalkey: Lua EVAL (raw API) passed\niovalkey: PX/PTTL (raw API) passed\niovalkey: cleanup completed\n"
+    }
+  ],
+  "finishedAt": "2026-09-21T11:15:27Z",
+  "imageId": "sha256:fd13690a1931b8abb31b1866baa2a08c7c38e6df93aa78883321d1d3c1cddd00",
+  "harnessFiles": {
+    "verification/manual/cases.py": "6c0c78cd0f8b1a1003e637c585905c4148ec3aefa5f9aa7e6f36fe9800fc7040",
+    "verification/manual/client-run.py": "b6e8f982d56409f6d1468fa22b278a183489384222adc2858e543a0fa291d10b",
+    "verification/manual/clients/Clients.java": "8d1aa4a169378ade35836892db0d87045378515412484ad698be8c5cea0b88c6",
+    "verification/manual/clients/Dockerfile": "e15fda8446f5908400367d93f9fb3debc4553533630ac2ac57f03fbf6a448282",
+    "verification/manual/clients/catalog.json": "95ab6ea1862efb5a88943b3c8de4d394d877ac8daf41cd61665141a42c7791c4",
+    "verification/manual/clients/composer.json": "6b8f198638c86b202da9194da210f66ff08d233a60a15e3f80565ac521c7b2f0",
+    "verification/manual/clients/go-client.go": "60dfc3ef512378a78c2b744154a38a52368da1140b1ff1b17124a95f2c756291",
+    "verification/manual/clients/go.mod": "7addda75117f2331de4984d640ac3c23ffe6e8fb83dfa773653006ceea517359",
+    "verification/manual/clients/node-client.mjs": "501fcc6682aed021bf3538ca7230045d93deb5e8bd99588135584ba2ca704f33",
+    "verification/manual/clients/package.json": "09f85872e56f3d6461454656645682fa7a4d1b1da6030f5b2e5c93c510f5aa06",
+    "verification/manual/clients/php-client.php": "59136c94863dca3522e795e349b8061aac3145f59cf62d94d55596d89ec85e66",
+    "verification/manual/clients/pom.xml": "af5b0edb09fbd171d9b958d37d621d94a75c92cf0e79b42370f5223c195af3b9",
+    "verification/manual/clients/python-client.py": "ee73befcae965bd59162f45b2236754805e59c99f426582b9d18fe56d52dacd6",
+    "verification/manual/clients/ruby-client.rb": "634b3c709f89d4e026126d27d6cd112f19a07eadc6c299639c3a68f9caa10a32",
+    "verification/manual/run.py": "802cf5cf1218860d1aabf4b863c3cdba588766f117b0560c4bd3f733b9ae17d6"
+  },
+  "dockerArgv": [
+    "docker",
+    "run",
+    "--rm",
+    "--name",
+    "lavik-manual-38e3ded3f0f1",
+    "--network=none",
+    "--read-only",
+    "--cap-drop=ALL",
+    "--security-opt=no-new-privileges",
+    "--security-opt=seccomp=unconfined",
+    "--memory=2g",
+    "--cpus=2",
+    "--pids-limit=128",
+    "--ulimit",
+    "memlock=268435456:268435456",
+    "--tmpfs",
+    "/tmp:rw,nosuid,size=1073741824",
+    "-e",
+    "PYTHONDONTWRITEBYTECODE=1",
+    "-e",
+    "EXPECTED_COMMIT=3955b98d43b312324aa8d52775df52cfb111c0d0",
+    "-e",
+    "EXPECTED_RELEASE=0.1.0-beta.1",
+    "--mount",
+    "type=bind,src=<repository>/verification/manual,dst=/manual,readonly",
+    "--entrypoint",
+    "python3",
+    "sha256:fd13690a1931b8abb31b1866baa2a08c7c38e6df93aa78883321d1d3c1cddd00",
+    "/manual/client-run.py"
+  ]
+}

@@ -1,0 +1,2612 @@
+{
+  "commands": [
+    {
+      "name": "PING",
+      "syntax": "PING",
+      "summary": {
+        "en": "Checks whether the connection can receive a server response.",
+        "zh-CN": "检查连接能否收到服务器响应。"
+      },
+      "notes": {
+        "en": "The bare command is also verified after switching to RESP3 with HELLO.",
+        "zh-CN": "通过 HELLO 切换到 RESP3 后，也验证了不带参数的调用。"
+      }
+    },
+    {
+      "name": "ECHO",
+      "syntax": "ECHO message",
+      "summary": {
+        "en": "Returns the supplied message.",
+        "zh-CN": "返回传入的消息。"
+      },
+      "notes": {
+        "en": "Use it to check a simple request-and-response exchange without accessing keys.",
+        "zh-CN": "可用于检查简单的请求与响应交互，无需访问键。"
+      }
+    },
+    {
+      "name": "PUBLISH",
+      "syntax": "PUBLISH channel message",
+      "summary": {
+        "en": "Sends a message to matching channel and pattern subscriptions.",
+        "zh-CN": "向匹配的频道订阅和模式订阅发送消息。"
+      },
+      "notes": {
+        "en": "Delivery was verified on a separate subscriber connection for both subscription forms; the result counts matching live subscriptions.",
+        "zh-CN": "两种订阅形式均通过独立订阅连接验证了消息接收；返回值统计匹配的活跃订阅。"
+      }
+    },
+    {
+      "name": "PUBSUB",
+      "syntax": "PUBSUB NUMSUB channel",
+      "summary": {
+        "en": "Reports the number of channel subscribers.",
+        "zh-CN": "查询频道的订阅者数量。"
+      },
+      "notes": {
+        "en": "NUMSUB was checked while a separate connection held an active SUBSCRIBE subscription.",
+        "zh-CN": "NUMSUB 在另一连接保持 SUBSCRIBE 订阅时进行了验证。"
+      }
+    },
+    {
+      "name": "PSUBSCRIBE",
+      "syntax": "PSUBSCRIBE pattern",
+      "summary": {
+        "en": "Subscribes the connection to channels matching a pattern.",
+        "zh-CN": "让当前连接订阅匹配指定模式的频道。"
+      },
+      "notes": {
+        "en": "A wildcard pattern matched a published channel; delivery identified both the pattern and the actual channel.",
+        "zh-CN": "通配符模式成功匹配了发布消息的频道；接收内容同时标识模式与实际频道。"
+      }
+    },
+    {
+      "name": "PUNSUBSCRIBE",
+      "syntax": "PUNSUBSCRIBE pattern",
+      "summary": {
+        "en": "Removes a pattern subscription from the connection.",
+        "zh-CN": "移除当前连接的指定模式订阅。"
+      },
+      "notes": {
+        "en": "Removing the sole tested pattern left the connection with no subscriptions.",
+        "zh-CN": "移除测试中唯一的模式订阅后，连接的订阅数归零。"
+      }
+    },
+    {
+      "name": "SUBSCRIBE",
+      "syntax": "SUBSCRIBE channel",
+      "summary": {
+        "en": "Subscribes the connection to messages on a channel.",
+        "zh-CN": "让当前连接订阅指定频道的消息。"
+      },
+      "notes": {
+        "en": "Use a connection that can process asynchronous messages; the case publishes from a separate connection.",
+        "zh-CN": "应使用能够处理异步消息的连接；测试通过另一连接发布消息。"
+      }
+    },
+    {
+      "name": "UNSUBSCRIBE",
+      "syntax": "UNSUBSCRIBE channel",
+      "summary": {
+        "en": "Removes a channel subscription from the connection.",
+        "zh-CN": "移除当前连接的指定频道订阅。"
+      },
+      "notes": {
+        "en": "The case unsubscribes after receiving a publication and confirms that no subscriptions remain.",
+        "zh-CN": "测试在收到发布消息后取消订阅，并确认订阅数归零。"
+      }
+    },
+    {
+      "name": "QUIT",
+      "syntax": "QUIT",
+      "summary": {
+        "en": "Requests the end of the client connection.",
+        "zh-CN": "请求结束客户端连接。"
+      },
+      "notes": {
+        "en": "The receipt verifies the server's acknowledgement of the request.",
+        "zh-CN": "回执验证了服务器对退出请求的确认。"
+      }
+    },
+    {
+      "name": "RESET",
+      "syntax": "RESET",
+      "summary": {
+        "en": "Resets the connection's session state.",
+        "zh-CN": "重置连接的会话状态。"
+      },
+      "notes": {
+        "en": "The architecture specifies a return to RESP2 and clearing of authentication, database selection, name, transaction and WATCH state; authenticate again when required.",
+        "zh-CN": "架构说明该命令会恢复 RESP2，并清除认证、数据库选择、名称、事务及 WATCH 状态；需要认证时应重新认证。"
+      }
+    },
+    {
+      "name": "AUTH",
+      "syntax": "AUTH password",
+      "summary": {
+        "en": "Authenticates the connection using the configured password.",
+        "zh-CN": "使用配置的密码认证当前连接。"
+      },
+      "notes": {
+        "en": "The case uses a throwaway password configured with --requirepass; unauthenticated access and an incorrect password are rejected. General ACL user authentication is not established.",
+        "zh-CN": "测试使用通过 --requirepass 配置的临时密码；未认证访问和错误密码均被拒绝。这不代表已验证通用 ACL 用户认证。"
+      }
+    },
+    {
+      "name": "HELLO",
+      "syntax": "HELLO 2 | HELLO 3",
+      "summary": {
+        "en": "Selects RESP2 or RESP3 and reports connection and server information.",
+        "zh-CN": "选择 RESP2 或 RESP3，并返回连接及服务器信息。"
+      },
+      "notes": {
+        "en": "The case switches to RESP3, successfully issues PING, then switches back to RESP2; clients must decode the negotiated reply format.",
+        "zh-CN": "测试先切换到 RESP3，成功执行 PING，再切回 RESP2；客户端需要按协商后的格式解析响应。"
+      }
+    },
+    {
+      "name": "SELECT",
+      "syntax": "SELECT database",
+      "summary": {
+        "en": "Requests a logical database for the connection.",
+        "zh-CN": "请求为当前连接选择逻辑数据库。"
+      },
+      "notes": {
+        "en": "Only database 0 was exercised; this does not establish other database modes or cross-database behavior.",
+        "zh-CN": "仅验证了数据库 0；这不能证明其他数据库模式或跨数据库行为。"
+      }
+    },
+    {
+      "name": "EVAL",
+      "syntax": "EVAL script numkeys key",
+      "summary": {
+        "en": "Executes a supplied Lua script with declared keys.",
+        "zh-CN": "执行 Lua 脚本，并显式声明所访问的键。"
+      },
+      "notes": {
+        "en": "The example reads one declared key through redis.call; the architecture rejects access to undeclared keys.",
+        "zh-CN": "示例通过 redis.call 读取一个已声明的键；架构规定拒绝访问未声明的键。"
+      }
+    },
+    {
+      "name": "EVALSHA",
+      "syntax": "EVALSHA sha numkeys key",
+      "summary": {
+        "en": "Executes a cached Lua script identified by its SHA digest.",
+        "zh-CN": "通过 SHA 摘要执行已缓存的 Lua 脚本。"
+      },
+      "notes": {
+        "en": "Load the script with SCRIPT LOAD first; the case then reads one declared key using the returned digest.",
+        "zh-CN": "先通过 SCRIPT LOAD 加载脚本；测试随后使用返回的摘要读取一个已声明的键。"
+      }
+    },
+    {
+      "name": "EVAL_RO",
+      "syntax": "EVAL_RO script numkeys key",
+      "summary": {
+        "en": "Executes a Lua script through the read-only invocation path.",
+        "zh-CN": "通过只读调用路径执行 Lua 脚本。"
+      },
+      "notes": {
+        "en": "The example reads one declared key with GET through a read-only Lua invocation.",
+        "zh-CN": "示例通过只读 Lua 调用，使用 GET 读取一个已声明的键。"
+      }
+    },
+    {
+      "name": "EVALSHA_RO",
+      "syntax": "EVALSHA_RO sha numkeys key",
+      "summary": {
+        "en": "Executes a cached Lua script through the read-only invocation path.",
+        "zh-CN": "通过只读调用路径执行已缓存的 Lua 脚本。"
+      },
+      "notes": {
+        "en": "The script is loaded with SCRIPT LOAD before invoking its digest to read a declared key.",
+        "zh-CN": "先通过 SCRIPT LOAD 加载脚本，再使用摘要调用并读取已声明的键。"
+      }
+    },
+    {
+      "name": "SCRIPT",
+      "syntax": "SCRIPT LOAD script | SCRIPT EXISTS sha | SCRIPT FLUSH",
+      "summary": {
+        "en": "Loads scripts, checks their presence, or clears the script cache.",
+        "zh-CN": "加载脚本、检查脚本是否存在，或清空脚本缓存。"
+      },
+      "notes": {
+        "en": "EXISTS confirms the loaded digest is present and becomes absent after FLUSH; cached invocations therefore depend on cache lifecycle.",
+        "zh-CN": "EXISTS 确认加载后的摘要存在，并在 FLUSH 后变为不存在；按摘要调用依赖脚本缓存的生命周期。"
+      }
+    },
+    {
+      "name": "FCALL",
+      "syntax": "FCALL function numkeys key",
+      "summary": {
+        "en": "Invokes a function registered in a loaded library.",
+        "zh-CN": "调用已加载库中注册的函数。"
+      },
+      "notes": {
+        "en": "The case loads a Lua function marked no-writes and reads one declared key; it does not exercise a writing function.",
+        "zh-CN": "测试加载了标记为 no-writes 的 Lua 函数，并读取一个已声明的键；未执行写入型函数。"
+      }
+    },
+    {
+      "name": "FCALL_RO",
+      "syntax": "FCALL_RO function numkeys key",
+      "summary": {
+        "en": "Invokes a registered function through the read-only path.",
+        "zh-CN": "通过只读路径调用已注册的函数。"
+      },
+      "notes": {
+        "en": "Load the library first; the verified function declares no-writes and uses GET on its supplied key.",
+        "zh-CN": "应先加载函数库；已验证的函数声明 no-writes，并对传入的键执行 GET。"
+      }
+    },
+    {
+      "name": "FUNCTION",
+      "syntax": "FUNCTION LOAD library-source | FUNCTION LIST | FUNCTION DUMP | FUNCTION RESTORE payload | FUNCTION DELETE library-name | FUNCTION FLUSH",
+      "summary": {
+        "en": "Manages registered function libraries and their serialized representation.",
+        "zh-CN": "管理已注册的函数库及其序列化表示。"
+      },
+      "notes": {
+        "en": "The case lists a loaded library, dumps it, flushes the catalog, restores the payload, and successfully calls the function before deleting its library.",
+        "zh-CN": "测试列出已加载的库，导出后清空目录，再还原载荷；随后成功调用函数，最后删除其所属库。"
+      }
+    },
+    {
+      "name": "DBSIZE",
+      "syntax": "DBSIZE",
+      "summary": {
+        "en": "Counts keys in the selected database.",
+        "zh-CN": "统计所选数据库中的键数。"
+      },
+      "notes": {
+        "en": "The cases check a populated database and verify a zero count after FLUSHDB and FLUSHALL.",
+        "zh-CN": "测试检查了含数据的数据库，并确认 FLUSHDB 和 FLUSHALL 执行后键数为零。"
+      }
+    },
+    {
+      "name": "SCAN",
+      "syntax": "SCAN cursor MATCH pattern COUNT count",
+      "summary": {
+        "en": "Iterates over keys using a cursor and a pattern filter.",
+        "zh-CN": "通过游标和模式过滤条件遍历键。"
+      },
+      "notes": {
+        "en": "Start at cursor 0 and keep following returned cursors, including through empty batches, until the cursor returns to 0. The verified traversal required 64 iterations despite a large COUNT value.",
+        "zh-CN": "从游标 0 开始，持续使用返回的游标，即使批次为空也要继续，直到游标再次为 0。已验证的遍历即使使用较大的 COUNT 值，也进行了 64 次迭代。"
+      }
+    },
+    {
+      "name": "TYPE",
+      "syntax": "TYPE key",
+      "summary": {
+        "en": "Reports the value type stored at a key.",
+        "zh-CN": "查询键所存储值的类型。"
+      },
+      "notes": {
+        "en": "A key created with SET is identified as a string.",
+        "zh-CN": "通过 SET 创建的键被识别为字符串类型。"
+      }
+    },
+    {
+      "name": "DUMP",
+      "syntax": "DUMP key",
+      "summary": {
+        "en": "Serializes a key's value for transfer to RESTORE.",
+        "zh-CN": "将键值序列化，以供 RESTORE 使用。"
+      },
+      "notes": {
+        "en": "The case passes the captured payload to RESTORE under a new key and checks the recovered string with GET.",
+        "zh-CN": "测试将捕获的载荷传给 RESTORE，在新键下还原，并用 GET 检查还原后的字符串。"
+      }
+    },
+    {
+      "name": "RESTORE",
+      "syntax": "RESTORE key ttl serialized-value",
+      "summary": {
+        "en": "Creates a key from a serialized value.",
+        "zh-CN": "根据序列化的值创建键。"
+      },
+      "notes": {
+        "en": "The verified round trip uses a DUMP payload and ttl 0, meaning no expiry; GET confirms the restored string.",
+        "zh-CN": "已验证的往返操作使用 DUMP 载荷和表示不过期的 ttl 0，并通过 GET 确认还原后的字符串。"
+      }
+    },
+    {
+      "name": "SORT",
+      "syntax": "SORT key",
+      "summary": {
+        "en": "Returns the elements of a collection in sorted order.",
+        "zh-CN": "返回集合类数据排序后的元素。"
+      },
+      "notes": {
+        "en": "The case sorts a list of numeric strings into ascending numeric order without storing a destination.",
+        "zh-CN": "测试将数字字符串列表按数值升序排列，未使用结果存储选项。"
+      }
+    },
+    {
+      "name": "SORT_RO",
+      "syntax": "SORT_RO key",
+      "summary": {
+        "en": "Returns sorted collection elements through the read-only command.",
+        "zh-CN": "通过只读命令返回排序后的集合元素。"
+      },
+      "notes": {
+        "en": "The verified input is a list of numeric strings, returned in ascending numeric order.",
+        "zh-CN": "已验证的输入为数字字符串列表，结果按数值升序返回。"
+      }
+    },
+    {
+      "name": "RANDOMKEY",
+      "syntax": "RANDOMKEY",
+      "summary": {
+        "en": "Returns a randomly selected key from the database.",
+        "zh-CN": "从数据库中随机返回一个键。"
+      },
+      "notes": {
+        "en": "The case contains one key, so it verifies key selection without assessing randomness across multiple keys.",
+        "zh-CN": "测试中只有一个键，因此验证了键的选取，但未评估多个键之间的随机分布。"
+      }
+    },
+    {
+      "name": "FLUSHDB",
+      "syntax": "FLUSHDB",
+      "summary": {
+        "en": "Removes keys from the selected database.",
+        "zh-CN": "清空所选数据库中的键。"
+      },
+      "notes": {
+        "en": "DBSIZE confirms the tested database is empty afterward; no optional execution mode is exercised.",
+        "zh-CN": "随后通过 DBSIZE 确认测试数据库为空；未使用可选执行模式。"
+      }
+    },
+    {
+      "name": "FLUSHALL",
+      "syntax": "FLUSHALL",
+      "summary": {
+        "en": "Requests removal of all database contents.",
+        "zh-CN": "请求清空所有数据库内容。"
+      },
+      "notes": {
+        "en": "The case verifies that the populated standalone database becomes empty; it does not establish behavior across multiple databases.",
+        "zh-CN": "测试确认已写入数据的单机数据库被清空；未验证多个数据库之间的行为。"
+      }
+    },
+    {
+      "name": "GET",
+      "syntax": "GET key",
+      "summary": {
+        "en": "Retrieves the string value stored at a key.",
+        "zh-CN": "读取键中存储的字符串值。"
+      },
+      "notes": {
+        "en": "The cases verify stored values and null results for absent keys, including after GETDEL.",
+        "zh-CN": "测试验证了已存储值，以及不存在的键返回空值，包括 GETDEL 删除后的情况。"
+      }
+    },
+    {
+      "name": "GETDEL",
+      "syntax": "GETDEL key",
+      "summary": {
+        "en": "Returns a string value and removes its key.",
+        "zh-CN": "返回字符串值并删除对应键。"
+      },
+      "notes": {
+        "en": "A subsequent GET confirms that the key is absent.",
+        "zh-CN": "后续 GET 确认该键已不存在。"
+      }
+    },
+    {
+      "name": "GETEX",
+      "syntax": "GETEX key EX seconds",
+      "summary": {
+        "en": "Retrieves a string while setting its expiry in seconds.",
+        "zh-CN": "读取字符串，同时设置以秒为单位的过期时间。"
+      },
+      "notes": {
+        "en": "The EX form returns the existing value, and PTTL verifies that a positive key lifetime was installed.",
+        "zh-CN": "EX 形式返回原有值，随后通过 PTTL 确认键已具有正的剩余生存时间。"
+      }
+    },
+    {
+      "name": "GETRANGE",
+      "syntax": "GETRANGE key start end",
+      "summary": {
+        "en": "Returns a byte range from a string.",
+        "zh-CN": "返回字符串中的指定字节范围。"
+      },
+      "notes": {
+        "en": "Offsets are zero-based and the end position is included in the tested range.",
+        "zh-CN": "偏移量从零开始，测试范围包含结束位置。"
+      }
+    },
+    {
+      "name": "GETSET",
+      "syntax": "GETSET key value",
+      "summary": {
+        "en": "Replaces a string value and returns its previous value.",
+        "zh-CN": "替换字符串值并返回旧值。"
+      },
+      "notes": {
+        "en": "The case begins with an existing string and confirms that the reply contains the value from before replacement.",
+        "zh-CN": "测试从已有字符串开始，确认响应包含替换前的值。"
+      }
+    },
+    {
+      "name": "APPEND",
+      "syntax": "APPEND key value",
+      "summary": {
+        "en": "Appends bytes to a string value.",
+        "zh-CN": "在字符串值末尾追加字节。"
+      },
+      "notes": {
+        "en": "The returned length includes both the existing string and the appended content.",
+        "zh-CN": "返回的长度包含原字符串及追加的内容。"
+      }
+    },
+    {
+      "name": "GETBIT",
+      "syntax": "GETBIT key offset",
+      "summary": {
+        "en": "Reads the bit at a string's specified bit offset.",
+        "zh-CN": "读取字符串在指定比特偏移处的值。"
+      },
+      "notes": {
+        "en": "The case reads a bit previously enabled with SETBIT.",
+        "zh-CN": "测试读取了先前通过 SETBIT 置位的比特。"
+      }
+    },
+    {
+      "name": "SETBIT",
+      "syntax": "SETBIT key offset bit",
+      "summary": {
+        "en": "Changes one bit in a string and returns its previous value.",
+        "zh-CN": "修改字符串中的一个比特并返回原值。"
+      },
+      "notes": {
+        "en": "Both setting a bit to 1 and clearing it to 0 are exercised at the same offset.",
+        "zh-CN": "测试在同一偏移处执行了置 1 和清 0 两种操作。"
+      }
+    },
+    {
+      "name": "BITCOUNT",
+      "syntax": "BITCOUNT key",
+      "summary": {
+        "en": "Counts set bits in a string value.",
+        "zh-CN": "统计字符串值中为 1 的比特数。"
+      },
+      "notes": {
+        "en": "The whole-value form is verified after enabling one bit with SETBIT.",
+        "zh-CN": "通过 SETBIT 设置一个比特后，验证了对整个值进行计数的形式。"
+      }
+    },
+    {
+      "name": "BITPOS",
+      "syntax": "BITPOS key bit",
+      "summary": {
+        "en": "Finds the position of the first matching bit.",
+        "zh-CN": "查找第一个匹配比特的位置。"
+      },
+      "notes": {
+        "en": "The case searches for bit 1 across the value and finds the offset previously set by SETBIT.",
+        "zh-CN": "测试在整个值中查找比特 1，找到了先前通过 SETBIT 设置的偏移位置。"
+      }
+    },
+    {
+      "name": "BITFIELD",
+      "syntax": "BITFIELD key INCRBY u4 offset increment GET u4 offset",
+      "summary": {
+        "en": "Updates and reads an integer encoded in a string's bits.",
+        "zh-CN": "更新并读取编码在字符串比特中的整数。"
+      },
+      "notes": {
+        "en": "The tested field is an unsigned four-bit integer; GET in the same command observes the preceding increment.",
+        "zh-CN": "测试字段为四位无符号整数；同一命令中的 GET 读取到前一步递增后的值。"
+      }
+    },
+    {
+      "name": "BITFIELD_RO",
+      "syntax": "BITFIELD_RO key GET u4 offset",
+      "summary": {
+        "en": "Reads an integer bit field without modifying the string.",
+        "zh-CN": "读取整数字段的比特值而不修改字符串。"
+      },
+      "notes": {
+        "en": "The verified encoding is u4, an unsigned four-bit field populated through SETBIT.",
+        "zh-CN": "已验证的编码为 u4，即通过 SETBIT 设置内容的四位无符号字段。"
+      }
+    },
+    {
+      "name": "BITOP",
+      "syntax": "BITOP OR destination source1 source2",
+      "summary": {
+        "en": "Stores the bitwise OR of source strings in a destination key.",
+        "zh-CN": "将源字符串的按位或结果存入目标键。"
+      },
+      "notes": {
+        "en": "The case combines two equal-length strings and verifies the stored result with GET.",
+        "zh-CN": "测试合并两个等长字符串，并通过 GET 验证存储结果。"
+      }
+    },
+    {
+      "name": "SET",
+      "syntax": "SET key value | SET key value EX seconds | SET key value NX [EX seconds] | SET key value XX GET",
+      "summary": {
+        "en": "Stores a string, optionally with tested existence conditions or expiry.",
+        "zh-CN": "存储字符串，并可使用已验证的存在条件或过期设置。"
+      },
+      "notes": {
+        "en": "NX skips an existing key and creates a missing one; NX with EX is also accepted. XX GET replaces an existing value while returning its previous value.",
+        "zh-CN": "NX 跳过已存在的键并创建不存在的键；也验证了 NX 与 EX 的组合。XX GET 替换已存在的值，同时返回旧值。"
+      }
+    },
+    {
+      "name": "SETEX",
+      "syntax": "SETEX key seconds value",
+      "summary": {
+        "en": "Stores a string with an expiry measured in seconds.",
+        "zh-CN": "存储字符串，并设置以秒为单位的过期时间。"
+      },
+      "notes": {
+        "en": "The case overwrites an existing string and checks the resulting positive lifetime with PTTL.",
+        "zh-CN": "测试覆盖已有字符串，并通过 PTTL 检查产生的正剩余生存时间。"
+      }
+    },
+    {
+      "name": "PSETEX",
+      "syntax": "PSETEX key milliseconds value",
+      "summary": {
+        "en": "Stores a string with an expiry measured in milliseconds.",
+        "zh-CN": "存储字符串，并设置以毫秒为单位的过期时间。"
+      },
+      "notes": {
+        "en": "PTTL verifies that the replacement string has a remaining lifetime within the requested duration.",
+        "zh-CN": "通过 PTTL 验证替换后的字符串具有不超过指定时长的剩余生存时间。"
+      }
+    },
+    {
+      "name": "SETNX",
+      "syntax": "SETNX key value",
+      "summary": {
+        "en": "Stores a string only when its key does not exist.",
+        "zh-CN": "仅在键不存在时存储字符串。"
+      },
+      "notes": {
+        "en": "The cases exercise rejection for an existing key and successful creation of a missing key, followed by GET.",
+        "zh-CN": "测试覆盖已有键不被写入，以及缺失键成功创建后通过 GET 读取的情况。"
+      }
+    },
+    {
+      "name": "SETRANGE",
+      "syntax": "SETRANGE key offset value",
+      "summary": {
+        "en": "Overwrites string bytes starting at an offset.",
+        "zh-CN": "从指定偏移处覆盖字符串字节。"
+      },
+      "notes": {
+        "en": "The case replaces the first byte within an existing string and reports the unchanged total length.",
+        "zh-CN": "测试替换已有字符串的首字节，并返回未改变的总长度。"
+      }
+    },
+    {
+      "name": "SUBSTR",
+      "syntax": "SUBSTR key start end",
+      "summary": {
+        "en": "Returns a substring selected by byte offsets.",
+        "zh-CN": "返回按字节偏移选取的子串。"
+      },
+      "notes": {
+        "en": "The tested range uses zero-based offsets and includes both endpoints, matching the GETRANGE example.",
+        "zh-CN": "测试使用从零开始的偏移，并包含两端位置，与 GETRANGE 示例一致。"
+      }
+    },
+    {
+      "name": "LCS",
+      "syntax": "LCS key1 key2",
+      "summary": {
+        "en": "Returns a longest common subsequence of two string values.",
+        "zh-CN": "返回两个字符串值的一个最长公共子序列。"
+      },
+      "notes": {
+        "en": "Both arguments are key names containing strings; the case uses the plain form without length or index options.",
+        "zh-CN": "两个参数都是存储字符串的键名；测试使用基本形式，未使用长度或索引选项。"
+      }
+    },
+    {
+      "name": "LPUSH",
+      "syntax": "LPUSH key element",
+      "summary": {
+        "en": "Prepends an element to a list.",
+        "zh-CN": "向列表左端添加元素。"
+      },
+      "notes": {
+        "en": "The case adds one element to an existing list and reports its new length.",
+        "zh-CN": "测试向已有列表添加一个元素，并返回新的列表长度。"
+      }
+    },
+    {
+      "name": "LPUSHX",
+      "syntax": "LPUSHX key element",
+      "summary": {
+        "en": "Prepends an element only to an existing list.",
+        "zh-CN": "仅向已存在的列表左端添加元素。"
+      },
+      "notes": {
+        "en": "The verified path starts with a populated list and increases its length by one.",
+        "zh-CN": "已验证的路径从非空列表开始，操作后长度增加一。"
+      }
+    },
+    {
+      "name": "RPUSH",
+      "syntax": "RPUSH key element [element ...]",
+      "summary": {
+        "en": "Appends elements to a list.",
+        "zh-CN": "向列表右端追加元素。"
+      },
+      "notes": {
+        "en": "The cases create a list with several elements and append another element; later list reads establish insertion order.",
+        "zh-CN": "测试先用多个元素创建列表，再追加一个元素；后续列表读取验证了插入顺序。"
+      }
+    },
+    {
+      "name": "RPUSHX",
+      "syntax": "RPUSHX key element",
+      "summary": {
+        "en": "Appends an element only to an existing list.",
+        "zh-CN": "仅向已存在的列表右端追加元素。"
+      },
+      "notes": {
+        "en": "The case operates on a populated list and reports the increased length.",
+        "zh-CN": "测试对非空列表执行操作，并返回增加后的长度。"
+      }
+    },
+    {
+      "name": "LPOP",
+      "syntax": "LPOP key",
+      "summary": {
+        "en": "Removes and returns the leftmost list element.",
+        "zh-CN": "移除并返回列表最左端的元素。"
+      },
+      "notes": {
+        "en": "The bare form retrieves one element from the beginning of the prepared list.",
+        "zh-CN": "基本形式从预先准备的列表开头取出一个元素。"
+      }
+    },
+    {
+      "name": "RPOP",
+      "syntax": "RPOP key",
+      "summary": {
+        "en": "Removes and returns the rightmost list element.",
+        "zh-CN": "移除并返回列表最右端的元素。"
+      },
+      "notes": {
+        "en": "The bare form retrieves the last element of the prepared list.",
+        "zh-CN": "基本形式取出预先准备的列表中的最后一个元素。"
+      }
+    },
+    {
+      "name": "LLEN",
+      "syntax": "LLEN key",
+      "summary": {
+        "en": "Returns the number of elements in a list.",
+        "zh-CN": "返回列表中的元素数量。"
+      },
+      "notes": {
+        "en": "The case checks the length after RPUSH inserts several elements.",
+        "zh-CN": "测试在 RPUSH 插入多个元素后检查列表长度。"
+      }
+    },
+    {
+      "name": "LINDEX",
+      "syntax": "LINDEX key index",
+      "summary": {
+        "en": "Returns the list element at a specified index.",
+        "zh-CN": "返回列表中指定索引位置的元素。"
+      },
+      "notes": {
+        "en": "The tested index is zero-based, so index 1 selects the second element.",
+        "zh-CN": "测试使用从零开始的索引，因此索引 1 选中第二个元素。"
+      }
+    },
+    {
+      "name": "LRANGE",
+      "syntax": "LRANGE key start stop",
+      "summary": {
+        "en": "Returns a range of list elements.",
+        "zh-CN": "返回列表中指定范围的元素。"
+      },
+      "notes": {
+        "en": "The tested bounds 0 and -1 return the full list in insertion order.",
+        "zh-CN": "已测试的边界 0 和 -1 按插入顺序返回整个列表。"
+      }
+    },
+    {
+      "name": "LSET",
+      "syntax": "LSET key index element",
+      "summary": {
+        "en": "Replaces the list element at an index.",
+        "zh-CN": "替换列表中指定索引位置的元素。"
+      },
+      "notes": {
+        "en": "The case targets an existing position in a populated list using a zero-based index.",
+        "zh-CN": "测试使用从零开始的索引，定位非空列表中已有的位置。"
+      }
+    },
+    {
+      "name": "LINSERT",
+      "syntax": "LINSERT key BEFORE pivot element",
+      "summary": {
+        "en": "Inserts an element before a matching list pivot.",
+        "zh-CN": "在列表中匹配的基准元素之前插入元素。"
+      },
+      "notes": {
+        "en": "The BEFORE case uses an existing pivot and returns the increased list length.",
+        "zh-CN": "BEFORE 测试使用已存在的基准元素，并返回增加后的列表长度。"
+      }
+    },
+    {
+      "name": "LREM",
+      "syntax": "LREM key count element",
+      "summary": {
+        "en": "Removes matching elements from a list.",
+        "zh-CN": "从列表中移除匹配的元素。"
+      },
+      "notes": {
+        "en": "The case uses a positive count of one and removes one matching element.",
+        "zh-CN": "测试使用正数计数一，移除了一个匹配元素。"
+      }
+    },
+    {
+      "name": "LTRIM",
+      "syntax": "LTRIM key start stop",
+      "summary": {
+        "en": "Keeps a specified list range and removes elements outside it.",
+        "zh-CN": "保留列表的指定范围，并移除范围外的元素。"
+      },
+      "notes": {
+        "en": "The tested range selects the first two positions of a populated list.",
+        "zh-CN": "测试范围选取了非空列表的前两个位置。"
+      }
+    },
+    {
+      "name": "LPOS",
+      "syntax": "LPOS key element",
+      "summary": {
+        "en": "Finds the position of a matching list element.",
+        "zh-CN": "查找列表中匹配元素的位置。"
+      },
+      "notes": {
+        "en": "The plain form reports a zero-based position for an element present once in the list.",
+        "zh-CN": "基本形式对列表中仅出现一次的元素返回从零开始的位置。"
+      }
+    },
+    {
+      "name": "LMOVE",
+      "syntax": "LMOVE source destination LEFT RIGHT",
+      "summary": {
+        "en": "Moves the source list's leftmost element to the destination's right end.",
+        "zh-CN": "将源列表最左端的元素移动到目标列表右端。"
+      },
+      "notes": {
+        "en": "The verified LEFT RIGHT form returns the element selected from the source's head.",
+        "zh-CN": "已验证的 LEFT RIGHT 形式返回从源列表头部选取的元素。"
+      }
+    },
+    {
+      "name": "RPOPLPUSH",
+      "syntax": "RPOPLPUSH source destination",
+      "summary": {
+        "en": "Moves the source list's rightmost element to the destination's left end.",
+        "zh-CN": "将源列表最右端的元素移动到目标列表左端。"
+      },
+      "notes": {
+        "en": "The case uses a populated source and returns its last element.",
+        "zh-CN": "测试使用非空源列表，并返回其最后一个元素。"
+      }
+    },
+    {
+      "name": "LMPOP",
+      "syntax": "LMPOP numkeys key LEFT COUNT count",
+      "summary": {
+        "en": "Removes a requested batch from the left end of a list.",
+        "zh-CN": "从列表左端批量移除指定数量的元素。"
+      },
+      "notes": {
+        "en": "The case supplies one key and removes two elements in list order, with the source key identified in the result.",
+        "zh-CN": "测试提供一个键，按列表顺序移除两个元素，结果中同时标识源键。"
+      }
+    },
+    {
+      "name": "BLPOP",
+      "syntax": "BLPOP key timeout-seconds",
+      "summary": {
+        "en": "Removes a list's leftmost element, waiting up to a timeout when necessary.",
+        "zh-CN": "移除列表最左端元素，必要时等待至超时。"
+      },
+      "notes": {
+        "en": "The cases verify an immediate pop and a null result when a missing list remains unavailable through a fractional-second timeout.",
+        "zh-CN": "测试验证了立即弹出，以及缺失列表在小数秒超时内仍不可用时返回空值。"
+      }
+    },
+    {
+      "name": "BRPOP",
+      "syntax": "BRPOP key timeout-seconds",
+      "summary": {
+        "en": "Removes a list's rightmost element, waiting up to a timeout when necessary.",
+        "zh-CN": "移除列表最右端元素，必要时等待至超时。"
+      },
+      "notes": {
+        "en": "A populated list returns its tail immediately; a missing list produces null after the tested timeout.",
+        "zh-CN": "非空列表立即返回尾部元素；缺失列表在测试的等待时间结束后返回空值。"
+      }
+    },
+    {
+      "name": "BLMOVE",
+      "syntax": "BLMOVE source destination LEFT RIGHT timeout-seconds",
+      "summary": {
+        "en": "Moves an element from the source's left end to the destination's right end, with a waiting timeout.",
+        "zh-CN": "将源列表左端元素移到目标列表右端，并允许等待至超时。"
+      },
+      "notes": {
+        "en": "The case verifies immediate movement from a populated source and null on timeout for a missing source.",
+        "zh-CN": "测试验证了从非空源列表立即移动，以及源列表缺失时超时返回空值。"
+      }
+    },
+    {
+      "name": "BRPOPLPUSH",
+      "syntax": "BRPOPLPUSH source destination timeout-seconds",
+      "summary": {
+        "en": "Moves the source's rightmost element to the destination's left end, waiting when necessary.",
+        "zh-CN": "将源列表最右端元素移到目标列表左端，必要时等待。"
+      },
+      "notes": {
+        "en": "The tested timeout accepts fractional seconds; a missing source results in null when the wait expires.",
+        "zh-CN": "已测试的超时参数接受小数秒；源列表缺失时，等待结束后返回空值。"
+      }
+    },
+    {
+      "name": "BLMPOP",
+      "syntax": "BLMPOP timeout-seconds numkeys key LEFT COUNT count",
+      "summary": {
+        "en": "Pops a batch from a list's left end with a waiting timeout.",
+        "zh-CN": "从列表左端批量弹出元素，并允许等待至超时。"
+      },
+      "notes": {
+        "en": "The case uses one key and COUNT to retrieve two elements; a missing list times out with null.",
+        "zh-CN": "测试使用一个键和 COUNT 取出两个元素；缺失列表超时后返回空值。"
+      }
+    },
+    {
+      "name": "HSET",
+      "syntax": "HSET key field value [field value ...]",
+      "summary": {
+        "en": "Adds or updates fields in a hash.",
+        "zh-CN": "添加或更新哈希中的字段。"
+      },
+      "notes": {
+        "en": "Updating one existing field while adding another counts only the new field; fields are merged rather than replacing the entire hash.",
+        "zh-CN": "同时更新一个已有字段并新增另一个字段时，只统计新增字段；该操作合并字段而非替换整个哈希。"
+      }
+    },
+    {
+      "name": "HMSET",
+      "syntax": "HMSET key field value",
+      "summary": {
+        "en": "Sets hash fields using merge semantics.",
+        "zh-CN": "以合并方式设置哈希字段。"
+      },
+      "notes": {
+        "en": "The case overwrites an existing field; unlike LAVIK.HREPLACE, this command does not replace the entire field set.",
+        "zh-CN": "测试覆盖了已有字段；与 LAVIK.HREPLACE 不同，此命令不替换整个字段集合。"
+      }
+    },
+    {
+      "name": "LAVIK.HREPLACE",
+      "syntax": "LAVIK.HREPLACE key field value [field value ...]",
+      "summary": {
+        "en": "Atomically replaces all fields of an existing hash while preserving its key expiry.",
+        "zh-CN": "原子替换已有哈希的全部字段，同时保留键的过期时间。"
+      },
+      "notes": {
+        "en": "Omitted fields are removed; a missing key returns null, and a live non-hash key raises WRONGTYPE. The absolute expiry is preserved, and Redis SDKs can invoke this Lavik extension through a raw command API.",
+        "zh-CN": "未提供的字段会被删除；键不存在时返回空值，存在但不是哈希时返回 WRONGTYPE。绝对过期时间保持不变，Redis SDK 可通过原始命令接口调用此 Lavik 扩展。"
+      }
+    },
+    {
+      "name": "HSETNX",
+      "syntax": "HSETNX key field value",
+      "summary": {
+        "en": "Sets a hash field only if that field does not exist.",
+        "zh-CN": "仅在哈希字段不存在时设置其值。"
+      },
+      "notes": {
+        "en": "The case adds a new field to a hash that already contains another field.",
+        "zh-CN": "测试向已包含其他字段的哈希中添加了一个新字段。"
+      }
+    },
+    {
+      "name": "HGET",
+      "syntax": "HGET key field",
+      "summary": {
+        "en": "Retrieves one hash field's value.",
+        "zh-CN": "读取一个哈希字段的值。"
+      },
+      "notes": {
+        "en": "The field is populated with HSET before retrieval.",
+        "zh-CN": "测试先通过 HSET 写入字段，再读取其值。"
+      }
+    },
+    {
+      "name": "HMGET",
+      "syntax": "HMGET key field [field ...]",
+      "summary": {
+        "en": "Retrieves hash field values in the requested order.",
+        "zh-CN": "按请求顺序读取多个哈希字段的值。"
+      },
+      "notes": {
+        "en": "An absent field contributes a null entry without shifting the other positions.",
+        "zh-CN": "不存在的字段在对应位置返回空值，不会改变其他位置的对应关系。"
+      }
+    },
+    {
+      "name": "HDEL",
+      "syntax": "HDEL key field",
+      "summary": {
+        "en": "Removes a field from a hash.",
+        "zh-CN": "从哈希中删除字段。"
+      },
+      "notes": {
+        "en": "The case deletes an existing field and counts it as one removal.",
+        "zh-CN": "测试删除了一个已存在的字段，并将其计为一次删除。"
+      }
+    },
+    {
+      "name": "HLEN",
+      "syntax": "HLEN key",
+      "summary": {
+        "en": "Counts the fields in a hash.",
+        "zh-CN": "统计哈希中的字段数。"
+      },
+      "notes": {
+        "en": "The count refers to fields, not the combined number of field names and values.",
+        "zh-CN": "计数针对字段，不是字段名与值的总项数。"
+      }
+    },
+    {
+      "name": "HEXISTS",
+      "syntax": "HEXISTS key field",
+      "summary": {
+        "en": "Checks whether a hash contains a field.",
+        "zh-CN": "检查哈希是否包含指定字段。"
+      },
+      "notes": {
+        "en": "The case verifies presence after creating the field with HSET.",
+        "zh-CN": "测试在通过 HSET 创建字段后确认其存在。"
+      }
+    },
+    {
+      "name": "HGETALL",
+      "syntax": "HGETALL key",
+      "summary": {
+        "en": "Retrieves all fields and values from a hash.",
+        "zh-CN": "读取哈希的全部字段及其值。"
+      },
+      "notes": {
+        "en": "It also verifies that LAVIK.HREPLACE removes old fields and leaves only the replacement field set.",
+        "zh-CN": "此命令还用于验证 LAVIK.HREPLACE 删除旧字段后，只保留替换后的字段集合。"
+      }
+    },
+    {
+      "name": "HKEYS",
+      "syntax": "HKEYS key",
+      "summary": {
+        "en": "Returns the field names in a hash.",
+        "zh-CN": "返回哈希中的字段名。"
+      },
+      "notes": {
+        "en": "The result contains names without their associated values.",
+        "zh-CN": "结果包含字段名，不包含对应的字段值。"
+      }
+    },
+    {
+      "name": "HVALS",
+      "syntax": "HVALS key",
+      "summary": {
+        "en": "Returns the values stored in a hash.",
+        "zh-CN": "返回哈希中存储的字段值。"
+      },
+      "notes": {
+        "en": "The case retrieves a field's value without including its name.",
+        "zh-CN": "测试读取了字段值，结果中不包含字段名。"
+      }
+    },
+    {
+      "name": "HSTRLEN",
+      "syntax": "HSTRLEN key field",
+      "summary": {
+        "en": "Reports the byte length of a hash field's value.",
+        "zh-CN": "查询哈希字段值的字节长度。"
+      },
+      "notes": {
+        "en": "The example measures an ASCII value, so its byte length also equals its character count.",
+        "zh-CN": "示例测量的是 ASCII 值，因此字节长度与字符数相同。"
+      }
+    },
+    {
+      "name": "HINCRBY",
+      "syntax": "HINCRBY key field increment",
+      "summary": {
+        "en": "Adds an integer increment to a hash field.",
+        "zh-CN": "为哈希字段增加指定整数。"
+      },
+      "notes": {
+        "en": "The case targets a missing field in an existing hash and initializes it from zero before incrementing.",
+        "zh-CN": "测试针对已有哈希中不存在的字段，在递增前将其按零初始化。"
+      }
+    },
+    {
+      "name": "HINCRBYFLOAT",
+      "syntax": "HINCRBYFLOAT key field increment",
+      "summary": {
+        "en": "Adds a floating-point increment to a hash field.",
+        "zh-CN": "为哈希字段增加指定浮点数。"
+      },
+      "notes": {
+        "en": "A missing field in the prepared hash is initialized and receives the fractional increment.",
+        "zh-CN": "预先准备的哈希中，缺失字段被初始化并加上小数增量。"
+      }
+    },
+    {
+      "name": "HRANDFIELD",
+      "syntax": "HRANDFIELD key",
+      "summary": {
+        "en": "Returns a randomly selected hash field name.",
+        "zh-CN": "随机返回一个哈希字段名。"
+      },
+      "notes": {
+        "en": "The verified hash has one field, and the plain form returns its name without the value.",
+        "zh-CN": "已验证的哈希只有一个字段，基本形式返回字段名而不包含字段值。"
+      }
+    },
+    {
+      "name": "HSCAN",
+      "syntax": "HSCAN key cursor",
+      "summary": {
+        "en": "Iterates over a hash's fields and values using a cursor.",
+        "zh-CN": "通过游标遍历哈希的字段及其值。"
+      },
+      "notes": {
+        "en": "Start with cursor 0; the small tested hash completes in one batch with a terminal cursor.",
+        "zh-CN": "从游标 0 开始；测试中的小哈希在一个批次内完成，并返回结束游标。"
+      }
+    },
+    {
+      "name": "SADD",
+      "syntax": "SADD key member",
+      "summary": {
+        "en": "Adds a member to a set.",
+        "zh-CN": "向集合添加成员。"
+      },
+      "notes": {
+        "en": "The cases create a set and then add a distinct member, counting each new insertion.",
+        "zh-CN": "测试先创建集合，再添加不同成员，并分别统计新增数量。"
+      }
+    },
+    {
+      "name": "SCARD",
+      "syntax": "SCARD key",
+      "summary": {
+        "en": "Returns a set's member count.",
+        "zh-CN": "返回集合的成员数量。"
+      },
+      "notes": {
+        "en": "The case counts the member inserted by SADD.",
+        "zh-CN": "测试统计了通过 SADD 插入的成员。"
+      }
+    },
+    {
+      "name": "SDIFF",
+      "syntax": "SDIFF key1 key2",
+      "summary": {
+        "en": "Returns members of the first set that are absent from the second.",
+        "zh-CN": "返回属于第一个集合但不属于第二个集合的成员。"
+      },
+      "notes": {
+        "en": "With the second key missing, the tested result contains the first set's member.",
+        "zh-CN": "第二个键不存在时，测试结果包含第一个集合的成员。"
+      }
+    },
+    {
+      "name": "SDIFFSTORE",
+      "syntax": "SDIFFSTORE destination key1 key2",
+      "summary": {
+        "en": "Stores a set difference in a destination key.",
+        "zh-CN": "将集合差集存入目标键。"
+      },
+      "notes": {
+        "en": "The tested second source is missing, and the reported stored count matches the first source's size.",
+        "zh-CN": "测试中的第二个源键不存在，返回的存储成员数与第一个源集合的大小一致。"
+      }
+    },
+    {
+      "name": "SINTER",
+      "syntax": "SINTER key1 key2",
+      "summary": {
+        "en": "Returns members shared by the input sets.",
+        "zh-CN": "返回输入集合共有的成员。"
+      },
+      "notes": {
+        "en": "A missing input key makes the tested intersection empty.",
+        "zh-CN": "测试中一个输入键不存在，因此交集为空。"
+      }
+    },
+    {
+      "name": "SINTERCARD",
+      "syntax": "SINTERCARD numkeys key1 key2",
+      "summary": {
+        "en": "Counts members in a set intersection.",
+        "zh-CN": "统计集合交集中的成员数。"
+      },
+      "notes": {
+        "en": "The case declares two input keys and returns zero because one input is missing.",
+        "zh-CN": "测试声明两个输入键，由于其中一个键不存在，结果为零。"
+      }
+    },
+    {
+      "name": "SINTERSTORE",
+      "syntax": "SINTERSTORE destination key1 key2",
+      "summary": {
+        "en": "Stores the intersection of input sets.",
+        "zh-CN": "存储输入集合的交集。"
+      },
+      "notes": {
+        "en": "The verified operation reports an empty result when one source key is missing.",
+        "zh-CN": "已验证的操作在一个源键不存在时报告空结果。"
+      }
+    },
+    {
+      "name": "SISMEMBER",
+      "syntax": "SISMEMBER key member",
+      "summary": {
+        "en": "Checks whether a set contains a member.",
+        "zh-CN": "检查集合是否包含指定成员。"
+      },
+      "notes": {
+        "en": "The case confirms membership for a value previously added with SADD.",
+        "zh-CN": "测试确认了先前通过 SADD 添加的值属于该集合。"
+      }
+    },
+    {
+      "name": "SMEMBERS",
+      "syntax": "SMEMBERS key",
+      "summary": {
+        "en": "Returns all members of a set.",
+        "zh-CN": "返回集合中的全部成员。"
+      },
+      "notes": {
+        "en": "The case uses a single-member set; it provides no ordering guarantee for larger results.",
+        "zh-CN": "测试使用单成员集合，不提供更大结果集的顺序保证。"
+      }
+    },
+    {
+      "name": "SMISMEMBER",
+      "syntax": "SMISMEMBER key member [member ...]",
+      "summary": {
+        "en": "Checks several set members in one request.",
+        "zh-CN": "在一次请求中检查多个集合成员。"
+      },
+      "notes": {
+        "en": "Presence and absence results follow the order of the requested members.",
+        "zh-CN": "存在与不存在的结果按请求成员的顺序排列。"
+      }
+    },
+    {
+      "name": "SMOVE",
+      "syntax": "SMOVE source destination member",
+      "summary": {
+        "en": "Moves a member from one set to another.",
+        "zh-CN": "将成员从一个集合移动到另一个集合。"
+      },
+      "notes": {
+        "en": "The case selects a member present in the source and confirms a successful move.",
+        "zh-CN": "测试选取源集合中已存在的成员，并确认移动成功。"
+      }
+    },
+    {
+      "name": "SPOP",
+      "syntax": "SPOP key",
+      "summary": {
+        "en": "Removes and returns a randomly selected set member.",
+        "zh-CN": "随机移除并返回一个集合成员。"
+      },
+      "notes": {
+        "en": "The plain form is exercised on a single-member set.",
+        "zh-CN": "测试对单成员集合执行了基本形式。"
+      }
+    },
+    {
+      "name": "SRANDMEMBER",
+      "syntax": "SRANDMEMBER key",
+      "summary": {
+        "en": "Returns a random set member without removing it.",
+        "zh-CN": "随机返回一个集合成员而不将其移除。"
+      },
+      "notes": {
+        "en": "The tested form selects one member and has no count argument.",
+        "zh-CN": "已测试的形式选取一个成员，不带数量参数。"
+      }
+    },
+    {
+      "name": "SREM",
+      "syntax": "SREM key member",
+      "summary": {
+        "en": "Removes a specified member from a set.",
+        "zh-CN": "从集合中移除指定成员。"
+      },
+      "notes": {
+        "en": "Removing the existing member is counted as one deletion.",
+        "zh-CN": "移除已存在的成员被计为一次删除。"
+      }
+    },
+    {
+      "name": "SSCAN",
+      "syntax": "SSCAN key cursor",
+      "summary": {
+        "en": "Iterates through set members with a cursor.",
+        "zh-CN": "通过游标遍历集合成员。"
+      },
+      "notes": {
+        "en": "The single-member case starts at cursor 0 and finishes in one batch.",
+        "zh-CN": "单成员测试从游标 0 开始，并在一个批次内完成。"
+      }
+    },
+    {
+      "name": "SUNION",
+      "syntax": "SUNION key1 key2",
+      "summary": {
+        "en": "Returns the union of input sets.",
+        "zh-CN": "返回输入集合的并集。"
+      },
+      "notes": {
+        "en": "The missing second input contributes no members to the tested result.",
+        "zh-CN": "测试中不存在的第二个输入键未向结果贡献成员。"
+      }
+    },
+    {
+      "name": "SUNIONSTORE",
+      "syntax": "SUNIONSTORE destination key1 key2",
+      "summary": {
+        "en": "Stores a set union in a destination key.",
+        "zh-CN": "将集合并集存入目标键。"
+      },
+      "notes": {
+        "en": "The case combines a populated set with a missing input and reports the resulting member count.",
+        "zh-CN": "测试合并非空集合与不存在的输入键，并返回结果成员数。"
+      }
+    },
+    {
+      "name": "BZMPOP",
+      "syntax": "BZMPOP timeout-seconds numkeys key MIN COUNT count",
+      "summary": {
+        "en": "Removes a batch of lowest-score members with a waiting timeout.",
+        "zh-CN": "批量移除最低分成员，并允许等待至超时。"
+      },
+      "notes": {
+        "en": "The case supplies one sorted set and retrieves two members in ascending score order; a missing key times out with null.",
+        "zh-CN": "测试提供一个有序集合，按分数升序取出两个成员；键不存在时超时返回空值。"
+      }
+    },
+    {
+      "name": "BZPOPMAX",
+      "syntax": "BZPOPMAX key timeout-seconds",
+      "summary": {
+        "en": "Removes the highest-score member, waiting up to a timeout if needed.",
+        "zh-CN": "移除最高分成员，必要时等待至超时。"
+      },
+      "notes": {
+        "en": "A populated set returns its maximum immediately; a missing key returns null after the tested fractional-second timeout.",
+        "zh-CN": "非空集合立即返回最高分成员；键不存在时，在测试的小数秒超时后返回空值。"
+      }
+    },
+    {
+      "name": "BZPOPMIN",
+      "syntax": "BZPOPMIN key timeout-seconds",
+      "summary": {
+        "en": "Removes the lowest-score member, waiting up to a timeout if needed.",
+        "zh-CN": "移除最低分成员，必要时等待至超时。"
+      },
+      "notes": {
+        "en": "The cases exercise an immediate minimum pop and a timeout with no available key.",
+        "zh-CN": "测试覆盖了立即弹出最低分成员，以及没有可用键时超时的情况。"
+      }
+    },
+    {
+      "name": "ZADD",
+      "syntax": "ZADD key score member [score member ...]",
+      "summary": {
+        "en": "Adds members with scores to a sorted set.",
+        "zh-CN": "向有序集合添加带分数的成员。"
+      },
+      "notes": {
+        "en": "The cases insert multiple pairs and later add a distinct member; the result counts newly added members.",
+        "zh-CN": "测试先插入多组分数与成员，再添加不同成员；结果统计新增成员数量。"
+      }
+    },
+    {
+      "name": "ZCARD",
+      "syntax": "ZCARD key",
+      "summary": {
+        "en": "Counts members in a sorted set.",
+        "zh-CN": "统计有序集合中的成员数。"
+      },
+      "notes": {
+        "en": "The case checks the cardinality after inserting two distinct members.",
+        "zh-CN": "测试在插入两个不同成员后检查集合基数。"
+      }
+    },
+    {
+      "name": "ZCOUNT",
+      "syntax": "ZCOUNT key min max",
+      "summary": {
+        "en": "Counts sorted-set members within a score range.",
+        "zh-CN": "统计分数位于指定范围内的有序集合成员。"
+      },
+      "notes": {
+        "en": "Both numeric endpoints are included in the tested range.",
+        "zh-CN": "测试范围包含两个数值端点。"
+      }
+    },
+    {
+      "name": "ZINCRBY",
+      "syntax": "ZINCRBY key increment member",
+      "summary": {
+        "en": "Adds an increment to a sorted-set member's score.",
+        "zh-CN": "为有序集合成员的分数增加指定数值。"
+      },
+      "notes": {
+        "en": "The case updates an existing member and returns its resulting score.",
+        "zh-CN": "测试更新了已有成员，并返回更新后的分数。"
+      }
+    },
+    {
+      "name": "ZLEXCOUNT",
+      "syntax": "ZLEXCOUNT key min max",
+      "summary": {
+        "en": "Counts members within a lexicographical range.",
+        "zh-CN": "统计字典序范围内的成员数。"
+      },
+      "notes": {
+        "en": "The case uses equal-score members and the unbounded endpoints - and +.",
+        "zh-CN": "测试使用分数相同的成员，以及无界端点 - 和 +。"
+      }
+    },
+    {
+      "name": "ZMPOP",
+      "syntax": "ZMPOP numkeys key MIN COUNT count",
+      "summary": {
+        "en": "Removes a batch of lowest-score members from a sorted set.",
+        "zh-CN": "从有序集合批量移除最低分成员。"
+      },
+      "notes": {
+        "en": "The verified form supplies one key and returns two member-score pairs in ascending score order.",
+        "zh-CN": "已验证的形式提供一个键，并按分数升序返回两组成对的成员与分数。"
+      }
+    },
+    {
+      "name": "ZMSCORE",
+      "syntax": "ZMSCORE key member [member ...]",
+      "summary": {
+        "en": "Retrieves scores for several sorted-set members.",
+        "zh-CN": "读取多个有序集合成员的分数。"
+      },
+      "notes": {
+        "en": "Scores preserve request order, and an absent member leaves a null entry at its position.",
+        "zh-CN": "分数按请求顺序返回，不存在的成员在对应位置保留空值。"
+      }
+    },
+    {
+      "name": "ZPOPMAX",
+      "syntax": "ZPOPMAX key",
+      "summary": {
+        "en": "Removes and returns the highest-score member and its score.",
+        "zh-CN": "移除并返回最高分成员及其分数。"
+      },
+      "notes": {
+        "en": "The plain form selects one member from the prepared sorted set.",
+        "zh-CN": "基本形式从预先准备的有序集合中选取一个成员。"
+      }
+    },
+    {
+      "name": "ZPOPMIN",
+      "syntax": "ZPOPMIN key",
+      "summary": {
+        "en": "Removes and returns the lowest-score member and its score.",
+        "zh-CN": "移除并返回最低分成员及其分数。"
+      },
+      "notes": {
+        "en": "The plain form selects one member, without a count argument.",
+        "zh-CN": "基本形式选取一个成员，不带数量参数。"
+      }
+    },
+    {
+      "name": "ZRANDMEMBER",
+      "syntax": "ZRANDMEMBER key",
+      "summary": {
+        "en": "Returns a random sorted-set member without removing it.",
+        "zh-CN": "随机返回一个有序集合成员而不移除它。"
+      },
+      "notes": {
+        "en": "The tested set has one member, and the plain form returns no score.",
+        "zh-CN": "测试集合只有一个成员，基本形式不返回分数。"
+      }
+    },
+    {
+      "name": "ZRANGE",
+      "syntax": "ZRANGE key start stop WITHSCORES",
+      "summary": {
+        "en": "Returns a rank range of sorted-set members with their scores.",
+        "zh-CN": "返回有序集合中指定排名范围的成员及分数。"
+      },
+      "notes": {
+        "en": "The tested range 0 through -1 includes all members in ascending score order.",
+        "zh-CN": "测试范围从 0 到 -1，按分数升序包含所有成员。"
+      }
+    },
+    {
+      "name": "ZRANGESTORE",
+      "syntax": "ZRANGESTORE destination source start stop",
+      "summary": {
+        "en": "Stores a rank range from a sorted set in a destination key.",
+        "zh-CN": "将源有序集合的指定排名范围存入目标键。"
+      },
+      "notes": {
+        "en": "The case selects the entire source with bounds 0 and -1 and reports the stored member count.",
+        "zh-CN": "测试使用边界 0 和 -1 选择整个源集合，并返回存储的成员数。"
+      }
+    },
+    {
+      "name": "ZRANGEBYLEX",
+      "syntax": "ZRANGEBYLEX key min max",
+      "summary": {
+        "en": "Returns sorted-set members within a lexicographical range.",
+        "zh-CN": "返回字典序范围内的有序集合成员。"
+      },
+      "notes": {
+        "en": "Equal-score members are queried with - and + to cover the full range in ascending lexicographical order.",
+        "zh-CN": "测试对分数相同的成员使用 - 和 + 查询完整范围，结果按字典序升序返回。"
+      }
+    },
+    {
+      "name": "ZRANGEBYSCORE",
+      "syntax": "ZRANGEBYSCORE key min max",
+      "summary": {
+        "en": "Returns members within an ascending score range.",
+        "zh-CN": "按分数升序返回指定分数范围内的成员。"
+      },
+      "notes": {
+        "en": "The tested numeric lower and upper bounds are inclusive.",
+        "zh-CN": "已测试的数值下界和上界均包含在范围内。"
+      }
+    },
+    {
+      "name": "ZRANK",
+      "syntax": "ZRANK key member",
+      "summary": {
+        "en": "Returns a member's rank in ascending score order.",
+        "zh-CN": "返回成员按分数升序排列时的排名。"
+      },
+      "notes": {
+        "en": "Ranks are zero-based; the higher-score member in the two-member case occupies rank 1.",
+        "zh-CN": "排名从零开始；双成员测试中分数较高的成员排名为 1。"
+      }
+    },
+    {
+      "name": "ZREM",
+      "syntax": "ZREM key member",
+      "summary": {
+        "en": "Removes a specified member from a sorted set.",
+        "zh-CN": "从有序集合移除指定成员。"
+      },
+      "notes": {
+        "en": "The case removes a present member and reports one removal.",
+        "zh-CN": "测试移除了一个已有成员，并报告删除数量为一。"
+      }
+    },
+    {
+      "name": "ZREMRANGEBYLEX",
+      "syntax": "ZREMRANGEBYLEX key min max",
+      "summary": {
+        "en": "Removes members within a lexicographical range.",
+        "zh-CN": "移除字典序范围内的成员。"
+      },
+      "notes": {
+        "en": "The case uses equal-score members and unbounded endpoints to remove the entire tested set.",
+        "zh-CN": "测试使用分数相同的成员和无界端点，移除了测试集合中的全部成员。"
+      }
+    },
+    {
+      "name": "ZREMRANGEBYRANK",
+      "syntax": "ZREMRANGEBYRANK key start stop",
+      "summary": {
+        "en": "Removes sorted-set members within a rank range.",
+        "zh-CN": "移除有序集合中指定排名范围的成员。"
+      },
+      "notes": {
+        "en": "Using the same start and stop rank removes one member in the tested case.",
+        "zh-CN": "测试使用相同的起止排名，移除了一个成员。"
+      }
+    },
+    {
+      "name": "ZREMRANGEBYSCORE",
+      "syntax": "ZREMRANGEBYSCORE key min max",
+      "summary": {
+        "en": "Removes sorted-set members within a score range.",
+        "zh-CN": "移除有序集合中指定分数范围的成员。"
+      },
+      "notes": {
+        "en": "Equal numeric bounds select the member at that exact score in the case.",
+        "zh-CN": "测试使用相等的数值边界，选中分数恰好等于该值的成员。"
+      }
+    },
+    {
+      "name": "ZREVRANGE",
+      "syntax": "ZREVRANGE key start stop",
+      "summary": {
+        "en": "Returns a rank range in descending score order.",
+        "zh-CN": "按分数降序返回指定排名范围的成员。"
+      },
+      "notes": {
+        "en": "The tested bounds 0 and -1 return every member, highest score first.",
+        "zh-CN": "测试边界 0 和 -1 返回所有成员，最高分成员在前。"
+      }
+    },
+    {
+      "name": "ZREVRANGEBYLEX",
+      "syntax": "ZREVRANGEBYLEX key max min",
+      "summary": {
+        "en": "Returns a lexicographical range in reverse order.",
+        "zh-CN": "按逆字典序返回指定范围的成员。"
+      },
+      "notes": {
+        "en": "The case uses equal-score members and supplies the upper endpoint + before the lower endpoint -.",
+        "zh-CN": "测试使用分数相同的成员，并先传上界 +，再传下界 -。"
+      }
+    },
+    {
+      "name": "ZREVRANGEBYSCORE",
+      "syntax": "ZREVRANGEBYSCORE key max min",
+      "summary": {
+        "en": "Returns a score range in descending order.",
+        "zh-CN": "按降序返回指定分数范围内的成员。"
+      },
+      "notes": {
+        "en": "Supply the upper score before the lower score; both tested endpoints are included.",
+        "zh-CN": "应先提供分数上界，再提供下界；测试包含两个端点。"
+      }
+    },
+    {
+      "name": "ZREVRANK",
+      "syntax": "ZREVRANK key member",
+      "summary": {
+        "en": "Returns a member's rank in descending score order.",
+        "zh-CN": "返回成员按分数降序排列时的排名。"
+      },
+      "notes": {
+        "en": "The highest-score member has zero-based rank 0 in the case.",
+        "zh-CN": "测试中最高分成员的排名为 0，排名从零开始。"
+      }
+    },
+    {
+      "name": "ZSCAN",
+      "syntax": "ZSCAN key cursor",
+      "summary": {
+        "en": "Iterates through sorted-set members and scores with a cursor.",
+        "zh-CN": "通过游标遍历有序集合的成员及分数。"
+      },
+      "notes": {
+        "en": "The small tested set starts at cursor 0 and completes in one batch containing member-score pairs.",
+        "zh-CN": "测试中的小集合从游标 0 开始，在一个包含成员与分数对的批次内完成。"
+      }
+    },
+    {
+      "name": "ZSCORE",
+      "syntax": "ZSCORE key member",
+      "summary": {
+        "en": "Retrieves the score of a sorted-set member.",
+        "zh-CN": "读取有序集合成员的分数。"
+      },
+      "notes": {
+        "en": "The case checks a score previously assigned with ZADD.",
+        "zh-CN": "测试检查了先前通过 ZADD 设置的分数。"
+      }
+    },
+    {
+      "name": "ZDIFF",
+      "syntax": "ZDIFF numkeys key",
+      "summary": {
+        "en": "Returns the difference of sorted-set inputs.",
+        "zh-CN": "返回有序集合输入的差集。"
+      },
+      "notes": {
+        "en": "The case declares one input, so all its members are returned; subtraction between different sets is not exercised.",
+        "zh-CN": "测试仅声明一个输入，因此返回其全部成员；未执行不同集合之间的差集运算。"
+      }
+    },
+    {
+      "name": "ZDIFFSTORE",
+      "syntax": "ZDIFFSTORE destination numkeys key",
+      "summary": {
+        "en": "Stores a sorted-set difference in a destination.",
+        "zh-CN": "将有序集合差集存入目标键。"
+      },
+      "notes": {
+        "en": "The verified one-input operation reports a destination count equal to the source cardinality.",
+        "zh-CN": "已验证的单输入操作返回的目标成员数等于源集合基数。"
+      }
+    },
+    {
+      "name": "ZINTER",
+      "syntax": "ZINTER numkeys key",
+      "summary": {
+        "en": "Returns the intersection of sorted-set inputs.",
+        "zh-CN": "返回有序集合输入的交集。"
+      },
+      "notes": {
+        "en": "Only a one-input intersection is exercised, returning the source members without score options.",
+        "zh-CN": "仅执行了单输入交集，返回源集合成员，未使用分数选项。"
+      }
+    },
+    {
+      "name": "ZINTERCARD",
+      "syntax": "ZINTERCARD numkeys key",
+      "summary": {
+        "en": "Counts members in a sorted-set intersection.",
+        "zh-CN": "统计有序集合交集中的成员数。"
+      },
+      "notes": {
+        "en": "The case supplies one input, making the result equal to that set's cardinality.",
+        "zh-CN": "测试只提供一个输入，因此结果等于该集合的基数。"
+      }
+    },
+    {
+      "name": "ZINTERSTORE",
+      "syntax": "ZINTERSTORE destination numkeys key",
+      "summary": {
+        "en": "Stores a sorted-set intersection in a destination.",
+        "zh-CN": "将有序集合交集存入目标键。"
+      },
+      "notes": {
+        "en": "The verified form uses one source and reports its member count; no weighting or aggregation options are exercised.",
+        "zh-CN": "已验证的形式使用一个源集合并返回其成员数；未使用权重或聚合选项。"
+      }
+    },
+    {
+      "name": "ZUNION",
+      "syntax": "ZUNION numkeys key",
+      "summary": {
+        "en": "Returns the union of sorted-set inputs.",
+        "zh-CN": "返回有序集合输入的并集。"
+      },
+      "notes": {
+        "en": "The case uses one input and returns its members; score combination across inputs is not exercised.",
+        "zh-CN": "测试使用一个输入并返回其成员；未执行多个输入之间的分数合并。"
+      }
+    },
+    {
+      "name": "ZUNIONSTORE",
+      "syntax": "ZUNIONSTORE destination numkeys key",
+      "summary": {
+        "en": "Stores a sorted-set union in a destination.",
+        "zh-CN": "将有序集合并集存入目标键。"
+      },
+      "notes": {
+        "en": "The single-source case reports the number of members written to the destination.",
+        "zh-CN": "单源测试返回写入目标键的成员数量。"
+      }
+    },
+    {
+      "name": "GEOADD",
+      "syntax": "GEOADD key longitude latitude member",
+      "summary": {
+        "en": "Adds a named geographic location to a key.",
+        "zh-CN": "向键中添加带名称的地理位置。"
+      },
+      "notes": {
+        "en": "Coordinates are supplied as longitude followed by latitude; the cases add distinct locations in separate calls.",
+        "zh-CN": "坐标按经度在前、纬度在后的顺序提供；测试通过分别调用添加不同位置。"
+      }
+    },
+    {
+      "name": "GEODIST",
+      "syntax": "GEODIST key member1 member2 km",
+      "summary": {
+        "en": "Reports the distance between two stored locations in kilometers.",
+        "zh-CN": "查询两个已存储位置之间的距离，单位为千米。"
+      },
+      "notes": {
+        "en": "The verified calculation compares a member with itself and returns zero; a nonzero distance is not checked.",
+        "zh-CN": "已验证的计算比较同一成员与自身，距离为零；未检查非零距离。"
+      }
+    },
+    {
+      "name": "GEOHASH",
+      "syntax": "GEOHASH key member",
+      "summary": {
+        "en": "Returns the geohash representation of a stored location.",
+        "zh-CN": "返回已存储位置的 geohash 表示。"
+      },
+      "notes": {
+        "en": "The case checks the encoding of a member previously inserted with GEOADD.",
+        "zh-CN": "测试检查了先前通过 GEOADD 插入的成员的编码。"
+      }
+    },
+    {
+      "name": "GEOPOS",
+      "syntax": "GEOPOS key member",
+      "summary": {
+        "en": "Returns a stored member's geographic coordinates.",
+        "zh-CN": "返回已存储成员的地理坐标。"
+      },
+      "notes": {
+        "en": "Coordinates are approximate: the case checks proximity to the original longitude and latitude rather than exact decimal equality.",
+        "zh-CN": "坐标为近似值：测试检查其接近原始经纬度，而不是要求小数完全相等。"
+      }
+    },
+    {
+      "name": "GEORADIUS",
+      "syntax": "GEORADIUS key longitude latitude radius km",
+      "summary": {
+        "en": "Finds stored locations within a radius of supplied coordinates.",
+        "zh-CN": "查找给定坐标周围指定半径内的已存储位置。"
+      },
+      "notes": {
+        "en": "The case queries in kilometers around an inserted location and includes that location in the result.",
+        "zh-CN": "测试以千米为单位，在已插入位置周围查询，结果包含该位置。"
+      }
+    },
+    {
+      "name": "GEORADIUS_RO",
+      "syntax": "GEORADIUS_RO key longitude latitude radius km",
+      "summary": {
+        "en": "Performs a read-only radius query around supplied coordinates.",
+        "zh-CN": "对给定坐标周围执行只读半径查询。"
+      },
+      "notes": {
+        "en": "The verified query uses kilometers and returns the member located at the query center.",
+        "zh-CN": "已验证的查询使用千米单位，并返回位于查询中心的成员。"
+      }
+    },
+    {
+      "name": "GEORADIUSBYMEMBER",
+      "syntax": "GEORADIUSBYMEMBER key member radius km",
+      "summary": {
+        "en": "Finds locations within a radius of a stored member.",
+        "zh-CN": "查找指定已存储成员周围半径内的位置。"
+      },
+      "notes": {
+        "en": "The center member is included in the tested result; distances use kilometers.",
+        "zh-CN": "测试结果包含作为中心的成员；距离单位为千米。"
+      }
+    },
+    {
+      "name": "GEORADIUSBYMEMBER_RO",
+      "syntax": "GEORADIUSBYMEMBER_RO key member radius km",
+      "summary": {
+        "en": "Performs a read-only radius query centered on a stored member.",
+        "zh-CN": "以已存储成员为中心执行只读半径查询。"
+      },
+      "notes": {
+        "en": "The case uses a single stored location and confirms that it matches its own surrounding radius.",
+        "zh-CN": "测试使用一个已存储位置，确认它位于以自身为中心的查询半径内。"
+      }
+    },
+    {
+      "name": "GEOSEARCH",
+      "syntax": "GEOSEARCH key FROMMEMBER member BYRADIUS radius km",
+      "summary": {
+        "en": "Finds locations by radius around a named member.",
+        "zh-CN": "以命名成员为中心按半径查找位置。"
+      },
+      "notes": {
+        "en": "The tested combination is FROMMEMBER with BYRADIUS in kilometers.",
+        "zh-CN": "已测试的组合为 FROMMEMBER 与 BYRADIUS，单位为千米。"
+      }
+    },
+    {
+      "name": "GEOSEARCHSTORE",
+      "syntax": "GEOSEARCHSTORE destination source FROMMEMBER member BYRADIUS radius km",
+      "summary": {
+        "en": "Stores the results of a member-centered geographic radius search.",
+        "zh-CN": "存储以成员为中心的地理半径查询结果。"
+      },
+      "notes": {
+        "en": "The case writes to a separate destination and reports one matching location.",
+        "zh-CN": "测试写入独立目标键，并报告一个匹配位置。"
+      }
+    },
+    {
+      "name": "XADD",
+      "syntax": "XADD key id field value",
+      "summary": {
+        "en": "Appends an entry with a specified ID to a stream.",
+        "zh-CN": "向流追加具有指定 ID 的条目。"
+      },
+      "notes": {
+        "en": "The cases supply explicit increasing IDs and one field-value pair per entry.",
+        "zh-CN": "测试提供显式递增的 ID，每个条目包含一组字段和值。"
+      }
+    },
+    {
+      "name": "XDEL",
+      "syntax": "XDEL key id",
+      "summary": {
+        "en": "Deletes a stream entry by ID.",
+        "zh-CN": "按 ID 删除流条目。"
+      },
+      "notes": {
+        "en": "The case removes an entry created by XADD and counts one deletion.",
+        "zh-CN": "测试移除了通过 XADD 创建的条目，并统计为一次删除。"
+      }
+    },
+    {
+      "name": "XLEN",
+      "syntax": "XLEN key",
+      "summary": {
+        "en": "Returns the number of entries in a stream.",
+        "zh-CN": "返回流中的条目数量。"
+      },
+      "notes": {
+        "en": "The case checks the length after adding one explicit-ID entry.",
+        "zh-CN": "测试在添加一个具有显式 ID 的条目后检查长度。"
+      }
+    },
+    {
+      "name": "XRANGE",
+      "syntax": "XRANGE key start end",
+      "summary": {
+        "en": "Returns stream entries in ascending ID order within a range.",
+        "zh-CN": "按 ID 升序返回指定范围内的流条目。"
+      },
+      "notes": {
+        "en": "The tested endpoints - and + select the entire stream.",
+        "zh-CN": "已测试的端点 - 和 + 选择整个流。"
+      }
+    },
+    {
+      "name": "XREVRANGE",
+      "syntax": "XREVRANGE key end start",
+      "summary": {
+        "en": "Returns stream entries in descending ID order within a range.",
+        "zh-CN": "按 ID 降序返回指定范围内的流条目。"
+      },
+      "notes": {
+        "en": "The full-range case supplies + before - and contains one entry.",
+        "zh-CN": "完整范围测试先提供 +，再提供 -，测试流中包含一个条目。"
+      }
+    },
+    {
+      "name": "XTRIM",
+      "syntax": "XTRIM key MAXLEN threshold",
+      "summary": {
+        "en": "Trims a stream to a maximum entry count.",
+        "zh-CN": "将流裁剪至指定的最大条目数。"
+      },
+      "notes": {
+        "en": "The tested threshold is zero, removing the sole entry without approximate-trimming options.",
+        "zh-CN": "测试阈值为零，移除了唯一条目，未使用近似裁剪选项。"
+      }
+    },
+    {
+      "name": "XSETID",
+      "syntax": "XSETID key last-id",
+      "summary": {
+        "en": "Sets the stream's last-generated ID metadata.",
+        "zh-CN": "设置流的最后生成 ID 元数据。"
+      },
+      "notes": {
+        "en": "The case applies a later explicit ID to an existing stream; it does not add an entry.",
+        "zh-CN": "测试为已有流设置更大的显式 ID；该操作不会添加条目。"
+      }
+    },
+    {
+      "name": "XGROUP",
+      "syntax": "XGROUP CREATE key group id | XGROUP CREATECONSUMER key group consumer | XGROUP DESTROY key group",
+      "summary": {
+        "en": "Creates stream consumer groups and consumers, or destroys a group.",
+        "zh-CN": "创建流消费组及消费者，或删除消费组。"
+      },
+      "notes": {
+        "en": "The stream exists before CREATE; the case then creates a consumer and destroys the group.",
+        "zh-CN": "执行 CREATE 前流已存在；测试随后创建消费者，并删除消费组。"
+      }
+    },
+    {
+      "name": "XACK",
+      "syntax": "XACK key group id",
+      "summary": {
+        "en": "Acknowledges a stream entry pending in a consumer group.",
+        "zh-CN": "确认消费组中待确认的流条目。"
+      },
+      "notes": {
+        "en": "The case first delivers the entry with XREADGROUP, then acknowledges it in the same group.",
+        "zh-CN": "测试先通过 XREADGROUP 投递条目，再在同一消费组中确认该条目。"
+      }
+    },
+    {
+      "name": "XPENDING",
+      "syntax": "XPENDING key group",
+      "summary": {
+        "en": "Summarizes a consumer group's pending entries.",
+        "zh-CN": "汇总消费组中的待确认条目。"
+      },
+      "notes": {
+        "en": "The summary includes total count, ID bounds and consumer counts after XREADGROUP delivery. Per-consumer counts are integers in the tested RESP2 reply.",
+        "zh-CN": "XREADGROUP 投递后，汇总包含总数、ID 边界和各消费者计数。已测试的 RESP2 响应中，各消费者计数为整数。"
+      }
+    },
+    {
+      "name": "XCLAIM",
+      "syntax": "XCLAIM key group consumer min-idle-ms id",
+      "summary": {
+        "en": "Transfers a pending entry to another consumer.",
+        "zh-CN": "将待确认条目转交给另一个消费者。"
+      },
+      "notes": {
+        "en": "The entry is first delivered to one consumer, then claimed by another with a zero minimum idle time.",
+        "zh-CN": "条目先投递给一个消费者，再由另一个消费者使用零最小空闲时间认领。"
+      }
+    },
+    {
+      "name": "XAUTOCLAIM",
+      "syntax": "XAUTOCLAIM key group consumer min-idle-ms start-id",
+      "summary": {
+        "en": "Scans and transfers eligible pending entries to a consumer.",
+        "zh-CN": "扫描符合条件的待确认条目并转交给消费者。"
+      },
+      "notes": {
+        "en": "The case starts at 0-0 with zero minimum idle time and claims an entry previously delivered to another consumer.",
+        "zh-CN": "测试从 0-0 开始，最小空闲时间为零，认领了先前投递给其他消费者的条目。"
+      }
+    },
+    {
+      "name": "XINFO",
+      "syntax": "XINFO STREAM key",
+      "summary": {
+        "en": "Reports stream metadata.",
+        "zh-CN": "查询流的元数据。"
+      },
+      "notes": {
+        "en": "The case checks the entry count and last-generated ID after inserting an explicit-ID entry.",
+        "zh-CN": "测试在插入具有显式 ID 的条目后，检查条目数和最后生成的 ID。"
+      }
+    },
+    {
+      "name": "XREAD",
+      "syntax": "XREAD STREAMS key id",
+      "summary": {
+        "en": "Reads stream entries after a supplied ID.",
+        "zh-CN": "读取指定 ID 之后的流条目。"
+      },
+      "notes": {
+        "en": "The case reads one existing stream from ID 0 without a BLOCK option.",
+        "zh-CN": "测试从 ID 0 读取一个已有流，未使用 BLOCK 选项。"
+      }
+    },
+    {
+      "name": "XREADGROUP",
+      "syntax": "XREADGROUP GROUP group consumer STREAMS key >",
+      "summary": {
+        "en": "Delivers new stream entries to a consumer in a group.",
+        "zh-CN": "向消费组中的消费者投递新的流条目。"
+      },
+      "notes": {
+        "en": "Create the group first; the tested > selector delivers a new entry that subsequent pending and acknowledgement commands operate on.",
+        "zh-CN": "应先创建消费组；已测试的 > 选择符投递新条目，后续待确认查询和确认命令针对该条目操作。"
+      }
+    },
+    {
+      "name": "STRLEN",
+      "syntax": "STRLEN key",
+      "summary": {
+        "en": "Returns the byte length of a string value.",
+        "zh-CN": "返回字符串值的字节长度。"
+      },
+      "notes": {
+        "en": "The verified input is ASCII, for which byte length and character count coincide.",
+        "zh-CN": "已验证的输入为 ASCII，字节长度与字符数一致。"
+      }
+    },
+    {
+      "name": "INCR",
+      "syntax": "INCR key",
+      "summary": {
+        "en": "Increments an integer string value by one.",
+        "zh-CN": "将整数字符串值加一。"
+      },
+      "notes": {
+        "en": "A subsequent GET confirms that the updated number is stored as the key's string value.",
+        "zh-CN": "后续 GET 确认更新后的数字作为该键的字符串值存储。"
+      }
+    },
+    {
+      "name": "INCRBY",
+      "syntax": "INCRBY key increment",
+      "summary": {
+        "en": "Adds an integer increment to a string counter.",
+        "zh-CN": "为字符串计数器增加指定整数。"
+      },
+      "notes": {
+        "en": "The case starts with an existing numeric string and checks the updated value with GET.",
+        "zh-CN": "测试从已有数字字符串开始，并通过 GET 检查更新后的值。"
+      }
+    },
+    {
+      "name": "INCRBYFLOAT",
+      "syntax": "INCRBYFLOAT key increment",
+      "summary": {
+        "en": "Adds a floating-point increment to a numeric string.",
+        "zh-CN": "为数字字符串增加指定浮点数。"
+      },
+      "notes": {
+        "en": "The case applies a fractional increment and confirms the stored decimal result with GET.",
+        "zh-CN": "测试应用小数增量，并通过 GET 确认存储的小数结果。"
+      }
+    },
+    {
+      "name": "DECR",
+      "syntax": "DECR key",
+      "summary": {
+        "en": "Decrements an integer string value by one.",
+        "zh-CN": "将整数字符串值减一。"
+      },
+      "notes": {
+        "en": "GET confirms the changed value after decrementing an existing counter.",
+        "zh-CN": "对已有计数器递减后，通过 GET 确认值已改变。"
+      }
+    },
+    {
+      "name": "DECRBY",
+      "syntax": "DECRBY key decrement",
+      "summary": {
+        "en": "Subtracts an integer amount from a string counter.",
+        "zh-CN": "从字符串计数器中减去指定整数。"
+      },
+      "notes": {
+        "en": "The case uses a positive decrement and reads back the resulting numeric string.",
+        "zh-CN": "测试使用正数减量，并回读得到的数字字符串。"
+      }
+    },
+    {
+      "name": "EXPIRE",
+      "syntax": "EXPIRE key seconds",
+      "summary": {
+        "en": "Sets a key's remaining lifetime in seconds.",
+        "zh-CN": "设置键的剩余生存时间，单位为秒。"
+      },
+      "notes": {
+        "en": "PTTL verifies a positive remaining lifetime afterward; expiry applies to the whole key.",
+        "zh-CN": "随后通过 PTTL 验证剩余生存时间为正；过期设置作用于整个键。"
+      }
+    },
+    {
+      "name": "PEXPIRE",
+      "syntax": "PEXPIRE key milliseconds",
+      "summary": {
+        "en": "Sets a key's remaining lifetime in milliseconds.",
+        "zh-CN": "设置键的剩余生存时间，单位为毫秒。"
+      },
+      "notes": {
+        "en": "The case checks that PTTL falls within the requested duration after expiry is set.",
+        "zh-CN": "测试在设置过期时间后，检查 PTTL 位于所请求的时长范围内。"
+      }
+    },
+    {
+      "name": "EXPIREAT",
+      "syntax": "EXPIREAT key unix-seconds",
+      "summary": {
+        "en": "Sets a key's expiry to an absolute Unix timestamp in seconds.",
+        "zh-CN": "将键的过期时间设为以秒为单位的绝对 Unix 时间戳。"
+      },
+      "notes": {
+        "en": "EXPIRETIME confirms the exact timestamp installed by the command.",
+        "zh-CN": "通过 EXPIRETIME 确认该命令设置的精确时间戳。"
+      }
+    },
+    {
+      "name": "PEXPIREAT",
+      "syntax": "PEXPIREAT key unix-milliseconds",
+      "summary": {
+        "en": "Sets a key's expiry to an absolute Unix timestamp in milliseconds.",
+        "zh-CN": "将键的过期时间设为以毫秒为单位的绝对 Unix 时间戳。"
+      },
+      "notes": {
+        "en": "The cases check the corresponding timestamp and use this expiry when verifying that LAVIK.HREPLACE preserves it.",
+        "zh-CN": "测试检查对应时间戳，并使用此过期设置验证 LAVIK.HREPLACE 会保留它。"
+      }
+    },
+    {
+      "name": "PERSIST",
+      "syntax": "PERSIST key",
+      "summary": {
+        "en": "Removes a key's expiry.",
+        "zh-CN": "移除键的过期设置。"
+      },
+      "notes": {
+        "en": "TTL confirms the key no longer expires after PERSIST; this concerns whole-key expiry, not hash field expiry.",
+        "zh-CN": "执行 PERSIST 后，TTL 确认键不再过期；此操作针对整个键，不涉及哈希字段过期。"
+      }
+    },
+    {
+      "name": "TTL",
+      "syntax": "TTL key",
+      "summary": {
+        "en": "Reports a key's remaining lifetime in seconds.",
+        "zh-CN": "查询键的剩余生存时间，单位为秒。"
+      },
+      "notes": {
+        "en": "The cases distinguish a persistent key (-1) from a missing key (-2) and check persistence after PERSIST.",
+        "zh-CN": "测试区分了不过期的键（-1）与不存在的键（-2），并检查 PERSIST 执行后的状态。"
+      }
+    },
+    {
+      "name": "PTTL",
+      "syntax": "PTTL key",
+      "summary": {
+        "en": "Reports a key's remaining lifetime in milliseconds.",
+        "zh-CN": "查询键的剩余生存时间，单位为毫秒。"
+      },
+      "notes": {
+        "en": "A persistent key gives -1 and a missing key gives -2; other cases verify positive lifetimes after expiry-setting commands.",
+        "zh-CN": "不过期的键返回 -1，不存在的键返回 -2；其他测试验证了设置过期时间后的正剩余生存时间。"
+      }
+    },
+    {
+      "name": "EXPIRETIME",
+      "syntax": "EXPIRETIME key",
+      "summary": {
+        "en": "Reports a key's absolute expiry timestamp in seconds.",
+        "zh-CN": "查询键的绝对过期时间戳，单位为秒。"
+      },
+      "notes": {
+        "en": "The cases verify an installed timestamp, -1 for a persistent key, and -2 for a missing key.",
+        "zh-CN": "测试验证了已设置的时间戳、不过期键的 -1，以及不存在键的 -2。"
+      }
+    },
+    {
+      "name": "PEXPIRETIME",
+      "syntax": "PEXPIRETIME key",
+      "summary": {
+        "en": "Reports a key's absolute expiry timestamp in milliseconds.",
+        "zh-CN": "查询键的绝对过期时间戳，单位为毫秒。"
+      },
+      "notes": {
+        "en": "The cases verify persistent and missing-key sentinels and confirm an exact expiry survives LAVIK.HREPLACE.",
+        "zh-CN": "测试验证了不过期键和不存在键的特殊返回值，并确认精确过期时间在 LAVIK.HREPLACE 后保持不变。"
+      }
+    },
+    {
+      "name": "DEL",
+      "syntax": "DEL key",
+      "summary": {
+        "en": "Deletes a key.",
+        "zh-CN": "删除键。"
+      },
+      "notes": {
+        "en": "The case removes an existing string key and reports one deletion.",
+        "zh-CN": "测试删除一个已存在的字符串键，并报告删除数量为一。"
+      }
+    },
+    {
+      "name": "UNLINK",
+      "syntax": "UNLINK key",
+      "summary": {
+        "en": "Removes a key from the keyspace.",
+        "zh-CN": "从键空间中移除键。"
+      },
+      "notes": {
+        "en": "The receipt confirms removal of an existing key; it does not establish background memory-reclamation timing.",
+        "zh-CN": "回执确认移除了已有键，但未验证后台内存回收的时序。"
+      }
+    },
+    {
+      "name": "RENAME",
+      "syntax": "RENAME source destination",
+      "summary": {
+        "en": "Changes a key's name.",
+        "zh-CN": "更改键名。"
+      },
+      "notes": {
+        "en": "The case renames an existing string key to a previously unused destination.",
+        "zh-CN": "测试将已有字符串键重命名为此前未使用的目标键名。"
+      }
+    },
+    {
+      "name": "RENAMENX",
+      "syntax": "RENAMENX source destination",
+      "summary": {
+        "en": "Renames a key only when the destination does not exist.",
+        "zh-CN": "仅在目标键不存在时重命名源键。"
+      },
+      "notes": {
+        "en": "The verified path uses an unused destination and reports a successful rename.",
+        "zh-CN": "已验证的路径使用未占用的目标键名，并报告重命名成功。"
+      }
+    },
+    {
+      "name": "COPY",
+      "syntax": "COPY source destination",
+      "summary": {
+        "en": "Copies a key's value to a destination key.",
+        "zh-CN": "将源键的值复制到目标键。"
+      },
+      "notes": {
+        "en": "The case copies an existing string to an unused destination without database or replacement options.",
+        "zh-CN": "测试将已有字符串复制到未使用的目标键，未使用数据库或替换选项。"
+      }
+    },
+    {
+      "name": "EXISTS",
+      "syntax": "EXISTS key [key ...]",
+      "summary": {
+        "en": "Counts existing keys among the supplied names.",
+        "zh-CN": "统计给定键名中已存在的键数。"
+      },
+      "notes": {
+        "en": "A mixed request containing one present key and one missing key counts only the present key.",
+        "zh-CN": "同时请求一个已有键与一个缺失键时，只统计已有键。"
+      }
+    },
+    {
+      "name": "TOUCH",
+      "syntax": "TOUCH key [key ...]",
+      "summary": {
+        "en": "Touches the supplied keys and reports how many exist.",
+        "zh-CN": "触碰指定键，并返回其中已存在的键数。"
+      },
+      "notes": {
+        "en": "The case verifies the count for present and missing keys; access-metadata changes are not measured.",
+        "zh-CN": "测试验证了已有键与缺失键的计数，未测量访问元数据的变化。"
+      }
+    },
+    {
+      "name": "MSET",
+      "syntax": "MSET key value [key value ...]",
+      "summary": {
+        "en": "Stores several string key-value pairs in one command.",
+        "zh-CN": "在一次命令中存储多个字符串键值对。"
+      },
+      "notes": {
+        "en": "MGET reads back the supplied values in the requested key order.",
+        "zh-CN": "通过 MGET 按请求的键顺序回读写入的值。"
+      }
+    },
+    {
+      "name": "MSETNX",
+      "syntax": "MSETNX key value [key value ...]",
+      "summary": {
+        "en": "Stores all supplied string pairs only if none of their keys exists.",
+        "zh-CN": "仅在所有指定键均不存在时写入全部字符串键值对。"
+      },
+      "notes": {
+        "en": "When one requested key already exists, the case confirms that its value stays unchanged and the other missing key is not created.",
+        "zh-CN": "当一个请求键已存在时，测试确认其值不变，另一个缺失键也不会被创建。"
+      }
+    },
+    {
+      "name": "MGET",
+      "syntax": "MGET key [key ...]",
+      "summary": {
+        "en": "Retrieves several string values in key argument order.",
+        "zh-CN": "按键参数顺序读取多个字符串值。"
+      },
+      "notes": {
+        "en": "A missing key contributes null at its original position, preserving the mapping between keys and results.",
+        "zh-CN": "缺失键在原位置返回空值，保持键与结果之间的对应关系。"
+      }
+    },
+    {
+      "name": "MULTI",
+      "syntax": "MULTI",
+      "summary": {
+        "en": "Starts queuing commands for a transaction.",
+        "zh-CN": "开始将命令加入事务队列。"
+      },
+      "notes": {
+        "en": "The case queues SET followed by GET; EXEC then executes them in order so the read observes the write.",
+        "zh-CN": "测试先将 SET、再将 GET 入队；EXEC 按顺序执行，因此读取能看到前面的写入。"
+      }
+    },
+    {
+      "name": "EXEC",
+      "syntax": "EXEC",
+      "summary": {
+        "en": "Executes the commands queued by MULTI.",
+        "zh-CN": "执行通过 MULTI 排队的命令。"
+      },
+      "notes": {
+        "en": "Results follow queue order; a separate-connection change to a watched key causes the tested transaction to abort with null.",
+        "zh-CN": "结果遵循入队顺序；另一连接修改被监视键时，测试事务中止并返回空值。"
+      }
+    },
+    {
+      "name": "DISCARD",
+      "syntax": "DISCARD",
+      "summary": {
+        "en": "Cancels the queued transaction.",
+        "zh-CN": "取消排队中的事务。"
+      },
+      "notes": {
+        "en": "A queued SET is not applied, as confirmed by a subsequent GET of the still-missing key.",
+        "zh-CN": "排队的 SET 未被执行，后续 GET 确认该键仍不存在。"
+      }
+    },
+    {
+      "name": "WATCH",
+      "syntax": "WATCH key",
+      "summary": {
+        "en": "Registers a key for optimistic transaction conflict detection.",
+        "zh-CN": "注册键以进行乐观事务冲突检测。"
+      },
+      "notes": {
+        "en": "The case modifies the watched key from another connection before EXEC, which then aborts the queued transaction.",
+        "zh-CN": "测试在 EXEC 前由另一连接修改被监视键，随后排队的事务被中止。"
+      }
+    },
+    {
+      "name": "UNWATCH",
+      "syntax": "UNWATCH",
+      "summary": {
+        "en": "Clears the connection's watched-key registrations.",
+        "zh-CN": "清除当前连接的键监视注册。"
+      },
+      "notes": {
+        "en": "After UNWATCH, a change from another connection does not abort the tested transaction, and its read sees the new value.",
+        "zh-CN": "UNWATCH 后，另一连接的修改未导致测试事务中止，事务中的读取看到了新值。"
+      }
+    },
+    {
+      "name": "CLIENT",
+      "syntax": "CLIENT SETNAME name | CLIENT GETNAME | CLIENT ID | CLIENT SETINFO LIB-NAME name",
+      "summary": {
+        "en": "Manages connection naming and library metadata and reports client identity.",
+        "zh-CN": "管理连接名称和客户端库元数据，并查询客户端标识。"
+      },
+      "notes": {
+        "en": "SETNAME/GETNAME, ID and SETINFO LIB-NAME are verified. CLIENT TRACKING ON is rejected, so client-side caching integrations must account for that gap.",
+        "zh-CN": "已验证 SETNAME/GETNAME、ID 和 SETINFO LIB-NAME。CLIENT TRACKING ON 被拒绝，客户端缓存集成需要考虑这一缺口。"
+      }
+    },
+    {
+      "name": "REPLICAOF",
+      "syntax": "REPLICAOF NO ONE",
+      "summary": {
+        "en": "Requests standalone master role with the NO ONE form.",
+        "zh-CN": "通过 NO ONE 形式请求单机主节点角色。"
+      },
+      "notes": {
+        "en": "ROLE reports master afterward; the case establishes only standalone role control, not replication setup or failover.",
+        "zh-CN": "随后 ROLE 报告 master；测试仅证明单机角色控制，不证明复制配置或故障转移。"
+      }
+    },
+    {
+      "name": "SLAVEOF",
+      "syntax": "SLAVEOF NO ONE",
+      "summary": {
+        "en": "Requests standalone master role using the SLAVEOF command name.",
+        "zh-CN": "通过 SLAVEOF 命令名请求单机主节点角色。"
+      },
+      "notes": {
+        "en": "Only NO ONE followed by a master ROLE check is verified; upstream replication is not exercised.",
+        "zh-CN": "仅验证了 NO ONE 及随后的 master 角色检查；未执行上游复制。"
+      }
+    },
+    {
+      "name": "ADDREPLICAOF",
+      "syntax": "ADDREPLICAOF NO ONE",
+      "summary": {
+        "en": "Provides an additional replication-source command whose verified invocation is rejected.",
+        "zh-CN": "提供附加复制源命令入口，但已验证的调用被拒绝。"
+      },
+      "notes": {
+        "en": "Only rejection of NO ONE is tested, with an explicit error that this command does not accept that form. No successful replication configuration is established.",
+        "zh-CN": "仅测试了拒绝 NO ONE 的情况，错误明确说明此命令不接受该形式。未验证任何成功的复制配置。"
+      }
+    },
+    {
+      "name": "CONFIG",
+      "syntax": "CONFIG GET parameter | CONFIG SET parameter value | CONFIG RESETSTAT",
+      "summary": {
+        "en": "Reads or changes runtime configuration and resets command statistics.",
+        "zh-CN": "读取或修改运行时配置，并重置命令统计。"
+      },
+      "notes": {
+        "en": "GET and SET are verified for maxclients, including restoring its original value. RESETSTAT clears command counters according to the architecture, without changing stored data.",
+        "zh-CN": "GET 和 SET 已针对 maxclients 验证，并恢复了原值。架构说明 RESETSTAT 清除命令计数，不修改已存储数据。"
+      }
+    },
+    {
+      "name": "INFO",
+      "syntax": "INFO server | INFO replication",
+      "summary": {
+        "en": "Reports server or replication status information.",
+        "zh-CN": "查询服务器或复制状态信息。"
+      },
+      "notes": {
+        "en": "The cases identify the pinned Lavik version and standalone master role; these status fields do not demonstrate a working replication topology.",
+        "zh-CN": "测试确认了固定的 Lavik 版本和单机 master 角色；这些状态字段不能证明复制拓扑已正常工作。"
+      }
+    },
+    {
+      "name": "ROLE",
+      "syntax": "ROLE",
+      "summary": {
+        "en": "Reports the server's current replication role.",
+        "zh-CN": "查询服务器当前的复制角色。"
+      },
+      "notes": {
+        "en": "The standalone receipts report master, including after REPLICAOF NO ONE and SLAVEOF NO ONE.",
+        "zh-CN": "单机回执报告 master，包括执行 REPLICAOF NO ONE 和 SLAVEOF NO ONE 之后。"
+      }
+    },
+    {
+      "name": "WAIT",
+      "syntax": "WAIT numreplicas timeout-ms",
+      "summary": {
+        "en": "Requests a replication acknowledgement count for preceding writes.",
+        "zh-CN": "请求查询此前写入获得的复制确认数量。"
+      },
+      "notes": {
+        "en": "The only case requests zero replicas after SET and returns zero; it does not demonstrate acknowledgement by any replica.",
+        "zh-CN": "唯一测试在 SET 后请求零个副本并返回零；未证明任何副本完成确认。"
+      }
+    },
+    {
+      "name": "CLUSTER",
+      "syntax": "CLUSTER KEYSLOT key",
+      "summary": {
+        "en": "Calculates a key's hash slot through KEYSLOT.",
+        "zh-CN": "通过 KEYSLOT 计算键的哈希槽。"
+      },
+      "notes": {
+        "en": "KEYSLOT is verified on a standalone server; this does not establish cluster operation, routing or failover.",
+        "zh-CN": "KEYSLOT 在单机服务器上得到验证；这不代表已验证集群运行、路由或故障转移。"
+      }
+    },
+    {
+      "name": "COMMAND",
+      "syntax": "COMMAND COUNT | COMMAND GETKEYS command arg [arg ...]",
+      "summary": {
+        "en": "Counts registered commands or extracts command key arguments.",
+        "zh-CN": "统计已注册命令的数量，或提取命令的键参数。"
+      },
+      "notes": {
+        "en": "The pinned count is 217, and GETKEYS is exercised with MGET. COMMAND INFO fails; command registration does not imply full support for every option.",
+        "zh-CN": "固定版本的计数为 217，GETKEYS 通过 MGET 验证。COMMAND INFO 调用失败；注册命令不代表完整支持其所有选项。"
+      }
+    },
+    {
+      "name": "READONLY",
+      "syntax": "READONLY",
+      "summary": {
+        "en": "Accepts a connection read-mode request.",
+        "zh-CN": "接受连接读取模式请求。"
+      },
+      "notes": {
+        "en": "Only acceptance on a standalone server is verified; replica reads and cluster read routing are not demonstrated.",
+        "zh-CN": "仅验证了单机服务器接受该命令；未证明副本读取或集群读路由行为。"
+      }
+    },
+    {
+      "name": "READWRITE",
+      "syntax": "READWRITE",
+      "summary": {
+        "en": "Accepts a connection read/write-mode request.",
+        "zh-CN": "接受连接读写模式请求。"
+      },
+      "notes": {
+        "en": "The case verifies standalone acceptance only, without checking replication reads or routing changes.",
+        "zh-CN": "测试仅验证单机接受该命令，未检查复制读取或路由变化。"
+      }
+    },
+    {
+      "name": "KEYS",
+      "syntax": "KEYS pattern",
+      "summary": {
+        "en": "Returns key names matching a pattern.",
+        "zh-CN": "返回匹配指定模式的键名。"
+      },
+      "notes": {
+        "en": "The case uses a prefix followed by * to match an existing key; SCAN provides the separate cursor-based traversal interface.",
+        "zh-CN": "测试使用前缀加 * 匹配已有键；SCAN 提供另一个基于游标的遍历接口。"
+      }
+    },
+    {
+      "name": "SAVE",
+      "syntax": "SAVE",
+      "summary": {
+        "en": "Performs a synchronous save.",
+        "zh-CN": "执行同步保存。"
+      },
+      "notes": {
+        "en": "The case verifies successful completion and a subsequent LASTSAVE timestamp. General graceful restart also passed, but backup restoration and crash recovery are not established.",
+        "zh-CN": "测试验证了保存成功完成，以及随后的 LASTSAVE 时间戳。整体平稳重启也已通过，但未证明备份还原或崩溃恢复能力。"
+      }
+    },
+    {
+      "name": "BGSAVE",
+      "syntax": "BGSAVE",
+      "summary": {
+        "en": "Starts a background save.",
+        "zh-CN": "启动后台保存。"
+      },
+      "notes": {
+        "en": "The receipt verifies only that background saving started; completion and recovery from its output are not checked.",
+        "zh-CN": "回执仅验证后台保存已启动；未检查其完成情况或使用其输出进行恢复。"
+      }
+    },
+    {
+      "name": "LASTSAVE",
+      "syntax": "LASTSAVE",
+      "summary": {
+        "en": "Reports the timestamp of the last successful save.",
+        "zh-CN": "查询最近一次成功保存的时间戳。"
+      },
+      "notes": {
+        "en": "The case calls SAVE first and checks for a positive timestamp afterward.",
+        "zh-CN": "测试先执行 SAVE，再检查返回的时间戳为正。"
+      }
+    },
+    {
+      "name": "MONITOR",
+      "syntax": "MONITOR",
+      "summary": {
+        "en": "Streams observed command activity to the connection.",
+        "zh-CN": "向当前连接持续发送观察到的命令活动。"
+      },
+      "notes": {
+        "en": "The case uses a dedicated monitor connection and verifies that it receives a SET issued on another connection.",
+        "zh-CN": "测试使用独立监控连接，并确认它收到另一连接执行的 SET 记录。"
+      }
+    },
+    {
+      "name": "SLOWLOG",
+      "syntax": "SLOWLOG LEN | SLOWLOG GET count | SLOWLOG RESET",
+      "summary": {
+        "en": "Inspects or clears the slow-command log.",
+        "zh-CN": "查看或清空慢命令日志。"
+      },
+      "notes": {
+        "en": "The case resets the log, checks its length and retrieves entries; the actual retrieval is empty, so populated entry contents are not verified.",
+        "zh-CN": "测试重置日志、检查长度并获取条目；实际获取结果为空，因此未验证非空条目的内容。"
+      }
+    },
+    {
+      "name": "TOMBRAIDER",
+      "syntax": "TOMBRAIDER STATUS | TOMBRAIDER OFF | TOMBRAIDER ON",
+      "summary": {
+        "en": "Inspects or toggles the TombRaider maintenance service.",
+        "zh-CN": "查询或切换 TombRaider 维护服务的状态。"
+      },
+      "notes": {
+        "en": "STATUS returns bulk text containing mode and scheduling fields, not an array; OFF changes the reported mode to off, and ON is accepted afterward.",
+        "zh-CN": "STATUS 返回包含模式和调度字段的批量文本，而不是数组；OFF 使报告的模式变为 off，随后 ON 被接受。"
+      }
+    },
+    {
+      "name": "DEFRAG",
+      "syntax": "DEFRAG STATUS | DEFRAG PAUSE | DEFRAG RESUME",
+      "summary": {
+        "en": "Inspects, pauses or resumes defragmentation maintenance.",
+        "zh-CN": "查询、暂停或恢复碎片整理维护。"
+      },
+      "notes": {
+        "en": "STATUS is bulk text, not an array; the case checks that PAUSE changes paused from 0 to 1, then issues RESUME.",
+        "zh-CN": "STATUS 返回批量文本，而不是数组；测试确认 PAUSE 将 paused 从 0 改为 1，随后执行 RESUME。"
+      }
+    }
+  ],
+  "introduction": {
+    "en": "This reference covers all 217 command names in the pinned Lavik 0.1.0-beta.1 inventory, using the supplied Docker receipts, executable cases and architecture description. Read it by command family: connections, keys, strings, bitmaps, collections, geospatial data, streams, scripting, transactions, Pub/Sub and server administration. Treat client compatibility as a separate migration check, including protocol negotiation, authentication, startup probes and reply decoding. Each syntax describes an exercised form rather than every registered option; notes explain setup, observed effects and important gaps. Verified examples include HELLO 2/3, selected SET conditions, script and function lifecycle operations, and transaction conflicts. COMMAND INFO and CLIENT TRACKING ON fail, and several familiar Redis commands are absent. Before migrating a Redis or Valkey application, test its exact subcommands, option combinations, data shapes, error handling and connection lifecycle. Standalone control acknowledgements do not establish replication or cluster behavior, and successful saves or graceful restart do not establish crash recovery.",
+    "zh-CN": "本参考固定于 Lavik 0.1.0-beta.1，覆盖清单中的全部 217 个命令名，依据提供的 Docker 回执、可执行用例和架构说明编写。可按连接、键、字符串、位图、集合类数据、地理位置、流、脚本、事务、发布订阅和服务器管理等命令族查阅。客户端兼容性应单独评估，重点包括协议协商、认证、启动探测和响应解析。每条语法描述实际执行过的形式，不代表注册信息中的所有选项均可用；备注说明测试准备、实际效果及重要缺口。已验证内容包括 HELLO 2/3、部分 SET 条件、脚本与函数库生命周期操作，以及事务冲突。COMMAND INFO 和 CLIENT TRACKING ON 调用失败，部分常见 Redis 命令也不存在。迁移 Redis 或 Valkey 应用前，应验证应用实际使用的子命令、选项组合、数据形态、错误处理及连接生命周期。单机控制命令被接受，不等于复制或集群行为已验证；保存成功或平稳重启通过，也不能证明崩溃恢复能力。"
+  }
+}

@@ -1,0 +1,5154 @@
+[
+  {
+    "name": "ADDREPLICAOF",
+    "group": "server",
+    "syntax": "ADDREPLICAOF NO ONE (rejected)",
+    "scope": "rejection-only",
+    "steps": [
+      {
+        "argv": ["ADDREPLICAOF", "NO", "ONE"],
+        "expect": {
+          "errorContains": "does not accept NO ONE"
+        }
+      }
+    ]
+  },
+  {
+    "name": "APPEND",
+    "group": "strings",
+    "syntax": "APPEND greeting world",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["SET", "greeting", "hello"],
+        "expect": {
+          "equals": "OK"
+        }
+      },
+      {
+        "argv": ["APPEND", "greeting", "world"],
+        "expect": {
+          "equals": 10
+        }
+      }
+    ]
+  },
+  {
+    "name": "AUTH",
+    "group": "connection",
+    "syntax": "AUTH manual-test-only",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["AUTH", "manual-test-only"],
+        "expect": {
+          "equals": "OK"
+        }
+      }
+    ]
+  },
+  {
+    "name": "BGSAVE",
+    "group": "server",
+    "syntax": "BGSAVE",
+    "scope": "background-start",
+    "steps": [
+      {
+        "argv": ["SET", "sample", "value"],
+        "expect": {
+          "equals": "OK"
+        }
+      },
+      {
+        "argv": ["BGSAVE"],
+        "expect": {
+          "equals": "Background saving started"
+        }
+      }
+    ]
+  },
+  {
+    "name": "BITCOUNT",
+    "group": "bitmaps",
+    "syntax": "BITCOUNT bits",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["SETBIT", "bits", "1", "1"],
+        "expect": {
+          "equals": 0
+        }
+      },
+      {
+        "argv": ["BITCOUNT", "bits"],
+        "expect": {
+          "equals": 1
+        }
+      }
+    ]
+  },
+  {
+    "name": "BITFIELD",
+    "group": "bitmaps",
+    "syntax": "BITFIELD bits INCRBY u4 0 1 GET u4 0",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["SETBIT", "bits", "1", "1"],
+        "expect": {
+          "equals": 0
+        }
+      },
+      {
+        "argv": [
+          "BITFIELD",
+          "bits",
+          "INCRBY",
+          "u4",
+          "0",
+          "1",
+          "GET",
+          "u4",
+          "0"
+        ],
+        "expect": {
+          "equals": [5, 5]
+        }
+      }
+    ]
+  },
+  {
+    "name": "BITFIELD_RO",
+    "group": "bitmaps",
+    "syntax": "BITFIELD_RO bits GET u4 0",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["SETBIT", "bits", "1", "1"],
+        "expect": {
+          "equals": 0
+        }
+      },
+      {
+        "argv": ["BITFIELD_RO", "bits", "GET", "u4", "0"],
+        "expect": {
+          "equals": [4]
+        }
+      }
+    ]
+  },
+  {
+    "name": "BITOP",
+    "group": "bitmaps",
+    "syntax": "BITOP OR destination key [key ...]",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["SET", "left", "A"],
+        "expect": {
+          "equals": "OK"
+        }
+      },
+      {
+        "argv": ["SET", "right", "B"],
+        "expect": {
+          "equals": "OK"
+        }
+      },
+      {
+        "argv": ["BITOP", "OR", "union", "left", "right"],
+        "expect": {
+          "equals": 1
+        }
+      },
+      {
+        "argv": ["GET", "union"],
+        "expect": {
+          "equals": "C"
+        }
+      }
+    ]
+  },
+  {
+    "name": "BITPOS",
+    "group": "bitmaps",
+    "syntax": "BITPOS bits 1",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["SETBIT", "bits", "1", "1"],
+        "expect": {
+          "equals": 0
+        }
+      },
+      {
+        "argv": ["BITPOS", "bits", "1"],
+        "expect": {
+          "equals": 1
+        }
+      }
+    ]
+  },
+  {
+    "name": "BLMOVE",
+    "group": "lists",
+    "syntax": "BLMOVE queue destination LEFT RIGHT 0.1",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["RPUSH", "queue", "a", "b", "c"],
+        "expect": {
+          "equals": 3
+        }
+      },
+      {
+        "argv": ["BLMOVE", "queue", "destination", "LEFT", "RIGHT", "0.1"],
+        "expect": {
+          "equals": "a"
+        }
+      },
+      {
+        "argv": [
+          "BLMOVE",
+          "missing-list",
+          "destination",
+          "LEFT",
+          "RIGHT",
+          "0.1"
+        ],
+        "expect": {
+          "equals": null
+        }
+      }
+    ]
+  },
+  {
+    "name": "BLMPOP",
+    "group": "lists",
+    "syntax": "BLMPOP 0.1 1 queue LEFT COUNT 2",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["RPUSH", "queue", "a", "b", "c"],
+        "expect": {
+          "equals": 3
+        }
+      },
+      {
+        "argv": ["BLMPOP", "0.1", "1", "queue", "LEFT", "COUNT", "2"],
+        "expect": {
+          "equals": ["queue", ["a", "b"]]
+        }
+      },
+      {
+        "argv": ["BLMPOP", "0.1", "1", "missing-list", "LEFT", "COUNT", "2"],
+        "expect": {
+          "equals": null
+        }
+      }
+    ]
+  },
+  {
+    "name": "BLPOP",
+    "group": "lists",
+    "syntax": "BLPOP queue 0.1",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["RPUSH", "queue", "a", "b", "c"],
+        "expect": {
+          "equals": 3
+        }
+      },
+      {
+        "argv": ["BLPOP", "queue", "0.1"],
+        "expect": {
+          "equals": ["queue", "a"]
+        }
+      },
+      {
+        "argv": ["BLPOP", "missing-list", "0.1"],
+        "expect": {
+          "equals": null
+        }
+      }
+    ]
+  },
+  {
+    "name": "BRPOP",
+    "group": "lists",
+    "syntax": "BRPOP queue 0.1",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["RPUSH", "queue", "a", "b", "c"],
+        "expect": {
+          "equals": 3
+        }
+      },
+      {
+        "argv": ["BRPOP", "queue", "0.1"],
+        "expect": {
+          "equals": ["queue", "c"]
+        }
+      },
+      {
+        "argv": ["BRPOP", "missing-list", "0.1"],
+        "expect": {
+          "equals": null
+        }
+      }
+    ]
+  },
+  {
+    "name": "BRPOPLPUSH",
+    "group": "lists",
+    "syntax": "BRPOPLPUSH queue destination 0.1",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["RPUSH", "queue", "a", "b", "c"],
+        "expect": {
+          "equals": 3
+        }
+      },
+      {
+        "argv": ["BRPOPLPUSH", "queue", "destination", "0.1"],
+        "expect": {
+          "equals": "c"
+        }
+      },
+      {
+        "argv": ["BRPOPLPUSH", "missing-list", "destination", "0.1"],
+        "expect": {
+          "equals": null
+        }
+      }
+    ]
+  },
+  {
+    "name": "BZMPOP",
+    "group": "sorted-sets",
+    "syntax": "BZMPOP 0.1 1 scores MIN COUNT 2",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["ZADD", "scores", "1", "a", "2", "b"],
+        "expect": {
+          "equals": 2
+        }
+      },
+      {
+        "argv": ["BZMPOP", "0.1", "1", "scores", "MIN", "COUNT", "2"],
+        "expect": {
+          "equals": [
+            "scores",
+            [
+              ["a", "1"],
+              ["b", "2"]
+            ]
+          ]
+        }
+      },
+      {
+        "argv": ["BZMPOP", "0.1", "1", "missing-zset", "MIN", "COUNT", "2"],
+        "expect": {
+          "equals": null
+        }
+      }
+    ]
+  },
+  {
+    "name": "BZPOPMAX",
+    "group": "sorted-sets",
+    "syntax": "BZPOPMAX scores 0.1",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["ZADD", "scores", "1", "a", "2", "b"],
+        "expect": {
+          "equals": 2
+        }
+      },
+      {
+        "argv": ["BZPOPMAX", "scores", "0.1"],
+        "expect": {
+          "equals": ["scores", "b", "2"]
+        }
+      },
+      {
+        "argv": ["BZPOPMAX", "missing-zset", "0.1"],
+        "expect": {
+          "equals": null
+        }
+      }
+    ]
+  },
+  {
+    "name": "BZPOPMIN",
+    "group": "sorted-sets",
+    "syntax": "BZPOPMIN scores 0.1",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["ZADD", "scores", "1", "a", "2", "b"],
+        "expect": {
+          "equals": 2
+        }
+      },
+      {
+        "argv": ["BZPOPMIN", "scores", "0.1"],
+        "expect": {
+          "equals": ["scores", "a", "1"]
+        }
+      },
+      {
+        "argv": ["BZPOPMIN", "missing-zset", "0.1"],
+        "expect": {
+          "equals": null
+        }
+      }
+    ]
+  },
+  {
+    "name": "CLIENT",
+    "group": "connection",
+    "syntax": "CLIENT SETNAME name | GETNAME | ID | SETINFO LIB-NAME name",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["CLIENT", "SETNAME", "manual"],
+        "expect": {
+          "equals": "OK"
+        }
+      },
+      {
+        "argv": ["CLIENT", "GETNAME"],
+        "expect": {
+          "equals": "manual"
+        }
+      },
+      {
+        "argv": ["CLIENT", "ID"],
+        "expect": {
+          "integerMin": 1
+        }
+      },
+      {
+        "argv": ["CLIENT", "SETINFO", "LIB-NAME", "lavik-manual"],
+        "expect": {
+          "equals": "OK"
+        }
+      },
+      {
+        "argv": ["CLIENT", "TRACKING", "ON"],
+        "expect": {
+          "errorContains": "subcommand"
+        }
+      }
+    ]
+  },
+  {
+    "name": "CLUSTER",
+    "group": "server",
+    "syntax": "CLUSTER KEYSLOT key",
+    "scope": "standalone-control",
+    "steps": [
+      {
+        "argv": ["CLUSTER", "KEYSLOT", "foo"],
+        "expect": {
+          "equals": 12182
+        }
+      }
+    ]
+  },
+  {
+    "name": "COMMAND",
+    "group": "server",
+    "syntax": "COMMAND COUNT | GETKEYS command [arg ...]",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["COMMAND", "COUNT"],
+        "expect": {
+          "equals": 217
+        }
+      },
+      {
+        "argv": ["COMMAND", "INFO", "get"],
+        "expect": {
+          "errorContains": "unknown subcommand"
+        }
+      },
+      {
+        "argv": ["COMMAND", "GETKEYS", "MGET", "one", "two"],
+        "expect": {
+          "equals": ["one", "two"]
+        }
+      }
+    ]
+  },
+  {
+    "name": "CONFIG",
+    "group": "server",
+    "syntax": "CONFIG GET parameter | SET parameter value | RESETSTAT",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["CONFIG", "GET", "maxclients"],
+        "expect": {
+          "equals": ["maxclients", "10000"]
+        }
+      },
+      {
+        "argv": ["CONFIG", "SET", "maxclients", "9999"],
+        "expect": {
+          "equals": "OK"
+        }
+      },
+      {
+        "argv": ["CONFIG", "GET", "maxclients"],
+        "expect": {
+          "equals": ["maxclients", "9999"]
+        }
+      },
+      {
+        "argv": ["CONFIG", "SET", "maxclients", "10000"],
+        "expect": {
+          "equals": "OK"
+        }
+      },
+      {
+        "argv": ["CONFIG", "RESETSTAT"],
+        "expect": {
+          "equals": "OK"
+        }
+      }
+    ]
+  },
+  {
+    "name": "COPY",
+    "group": "keys",
+    "syntax": "COPY sample copied",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["SET", "sample", "value"],
+        "expect": {
+          "equals": "OK"
+        }
+      },
+      {
+        "argv": ["COPY", "sample", "copied"],
+        "expect": {
+          "equals": 1
+        }
+      }
+    ]
+  },
+  {
+    "name": "DBSIZE",
+    "group": "keys",
+    "syntax": "DBSIZE",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["SET", "sample", "value"],
+        "expect": {
+          "equals": "OK"
+        }
+      },
+      {
+        "argv": ["DBSIZE"],
+        "expect": {
+          "equals": 1
+        }
+      }
+    ]
+  },
+  {
+    "name": "DECR",
+    "group": "strings",
+    "syntax": "DECR counter",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["SET", "counter", "10"],
+        "expect": {
+          "equals": "OK"
+        }
+      },
+      {
+        "argv": ["DECR", "counter"],
+        "expect": {
+          "equals": 9
+        }
+      },
+      {
+        "argv": ["GET", "counter"],
+        "expect": {
+          "equals": "9"
+        }
+      }
+    ]
+  },
+  {
+    "name": "DECRBY",
+    "group": "strings",
+    "syntax": "DECRBY counter 3",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["SET", "counter", "10"],
+        "expect": {
+          "equals": "OK"
+        }
+      },
+      {
+        "argv": ["DECRBY", "counter", "3"],
+        "expect": {
+          "equals": 7
+        }
+      },
+      {
+        "argv": ["GET", "counter"],
+        "expect": {
+          "equals": "7"
+        }
+      }
+    ]
+  },
+  {
+    "name": "DEFRAG",
+    "group": "server",
+    "syntax": "DEFRAG STATUS | PAUSE | RESUME",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["DEFRAG", "STATUS"],
+        "expect": {
+          "contains": "paused=0"
+        }
+      },
+      {
+        "argv": ["DEFRAG", "PAUSE"],
+        "expect": {
+          "equals": "OK"
+        }
+      },
+      {
+        "argv": ["DEFRAG", "STATUS"],
+        "expect": {
+          "contains": "paused=1"
+        }
+      },
+      {
+        "argv": ["DEFRAG", "RESUME"],
+        "expect": {
+          "equals": "OK"
+        }
+      }
+    ]
+  },
+  {
+    "name": "DEL",
+    "group": "keys",
+    "syntax": "DEL sample",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["SET", "sample", "value"],
+        "expect": {
+          "equals": "OK"
+        }
+      },
+      {
+        "argv": ["DEL", "sample"],
+        "expect": {
+          "equals": 1
+        }
+      }
+    ]
+  },
+  {
+    "name": "DISCARD",
+    "group": "transactions",
+    "syntax": "DISCARD",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["MULTI"],
+        "expect": {
+          "equals": "OK"
+        }
+      },
+      {
+        "argv": ["SET", "sample", "value"],
+        "expect": {
+          "equals": "QUEUED"
+        }
+      },
+      {
+        "argv": ["DISCARD"],
+        "expect": {
+          "equals": "OK"
+        }
+      },
+      {
+        "argv": ["GET", "sample"],
+        "expect": {
+          "equals": null
+        }
+      }
+    ]
+  },
+  {
+    "name": "DUMP",
+    "group": "keys",
+    "syntax": "DUMP key",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["SET", "sample", "value"],
+        "expect": {
+          "equals": "OK"
+        }
+      },
+      {
+        "argv": ["DUMP", "sample"],
+        "expect": {
+          "binaryMin": 10
+        },
+        "capture": "payload"
+      },
+      {
+        "argv": [
+          "RESTORE",
+          "restored",
+          "0",
+          {
+            "ref": "payload"
+          }
+        ],
+        "expect": {
+          "equals": "OK"
+        }
+      },
+      {
+        "argv": ["GET", "restored"],
+        "expect": {
+          "equals": "value"
+        }
+      }
+    ]
+  },
+  {
+    "name": "ECHO",
+    "group": "connection",
+    "syntax": "ECHO hello",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["ECHO", "hello"],
+        "expect": {
+          "equals": "hello"
+        }
+      }
+    ]
+  },
+  {
+    "name": "EVAL",
+    "group": "scripting",
+    "syntax": "EVAL script numkeys key",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["SET", "sample", "value"],
+        "expect": {
+          "equals": "OK"
+        }
+      },
+      {
+        "argv": ["EVAL", "return redis.call('GET', KEYS[1])", "1", "sample"],
+        "expect": {
+          "equals": "value"
+        }
+      }
+    ]
+  },
+  {
+    "name": "EVALSHA",
+    "group": "scripting",
+    "syntax": "EVALSHA sha numkeys key",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["SET", "sample", "value"],
+        "expect": {
+          "equals": "OK"
+        }
+      },
+      {
+        "argv": ["SCRIPT", "LOAD", "return redis.call('GET', KEYS[1])"],
+        "expect": {
+          "equals": "d3c21d0c2b9ca22f82737626a27bcaf5d288f99f"
+        }
+      },
+      {
+        "argv": [
+          "EVALSHA",
+          "d3c21d0c2b9ca22f82737626a27bcaf5d288f99f",
+          "1",
+          "sample"
+        ],
+        "expect": {
+          "equals": "value"
+        }
+      }
+    ]
+  },
+  {
+    "name": "EVALSHA_RO",
+    "group": "scripting",
+    "syntax": "EVALSHA_RO sha numkeys key",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["SET", "sample", "value"],
+        "expect": {
+          "equals": "OK"
+        }
+      },
+      {
+        "argv": ["SCRIPT", "LOAD", "return redis.call('GET', KEYS[1])"],
+        "expect": {
+          "equals": "d3c21d0c2b9ca22f82737626a27bcaf5d288f99f"
+        }
+      },
+      {
+        "argv": [
+          "EVALSHA_RO",
+          "d3c21d0c2b9ca22f82737626a27bcaf5d288f99f",
+          "1",
+          "sample"
+        ],
+        "expect": {
+          "equals": "value"
+        }
+      }
+    ]
+  },
+  {
+    "name": "EVAL_RO",
+    "group": "scripting",
+    "syntax": "EVAL_RO script numkeys key",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["SET", "sample", "value"],
+        "expect": {
+          "equals": "OK"
+        }
+      },
+      {
+        "argv": ["EVAL_RO", "return redis.call('GET', KEYS[1])", "1", "sample"],
+        "expect": {
+          "equals": "value"
+        }
+      }
+    ]
+  },
+  {
+    "name": "EXEC",
+    "group": "transactions",
+    "syntax": "EXEC",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["MULTI"],
+        "expect": {
+          "equals": "OK"
+        }
+      },
+      {
+        "argv": ["SET", "sample", "value"],
+        "expect": {
+          "equals": "QUEUED"
+        }
+      },
+      {
+        "argv": ["GET", "sample"],
+        "expect": {
+          "equals": "QUEUED"
+        }
+      },
+      {
+        "argv": ["EXEC"],
+        "expect": {
+          "equals": ["OK", "value"]
+        }
+      }
+    ]
+  },
+  {
+    "name": "EXISTS",
+    "group": "keys",
+    "syntax": "EXISTS sample missing",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["SET", "sample", "value"],
+        "expect": {
+          "equals": "OK"
+        }
+      },
+      {
+        "argv": ["EXISTS", "sample", "missing"],
+        "expect": {
+          "equals": 1
+        }
+      }
+    ]
+  },
+  {
+    "name": "EXPIRE",
+    "group": "keys",
+    "syntax": "EXPIRE sample 60",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["SET", "sample", "value"],
+        "expect": {
+          "equals": "OK"
+        }
+      },
+      {
+        "argv": ["EXPIRE", "sample", "60"],
+        "expect": {
+          "equals": 1
+        }
+      },
+      {
+        "argv": ["PTTL", "sample"],
+        "expect": {
+          "integerRange": [1, 60000]
+        }
+      }
+    ]
+  },
+  {
+    "name": "EXPIREAT",
+    "group": "keys",
+    "syntax": "EXPIREAT sample 4102444800",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["SET", "sample", "value"],
+        "expect": {
+          "equals": "OK"
+        }
+      },
+      {
+        "argv": ["EXPIREAT", "sample", "4102444800"],
+        "expect": {
+          "equals": 1
+        }
+      },
+      {
+        "argv": ["EXPIRETIME", "sample"],
+        "expect": {
+          "equals": 4102444800
+        }
+      }
+    ]
+  },
+  {
+    "name": "EXPIRETIME",
+    "group": "keys",
+    "syntax": "EXPIRETIME sample",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["SET", "sample", "value"],
+        "expect": {
+          "equals": "OK"
+        }
+      },
+      {
+        "argv": ["EXPIRETIME", "sample"],
+        "expect": {
+          "equals": -1
+        }
+      },
+      {
+        "argv": ["EXPIRETIME", "missing"],
+        "expect": {
+          "equals": -2
+        }
+      }
+    ]
+  },
+  {
+    "name": "FCALL",
+    "group": "scripting",
+    "syntax": "FCALL function numkeys key",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["FUNCTION", "FLUSH"],
+        "expect": {
+          "equals": "OK"
+        }
+      },
+      {
+        "argv": [
+          "FUNCTION",
+          "LOAD",
+          "#!lua name=manual\nredis.register_function{function_name='read_value', callback=function(keys,args) return redis.call('GET',keys[1]) end, flags={'no-writes'}}"
+        ],
+        "expect": {
+          "equals": "manual"
+        }
+      },
+      {
+        "argv": ["SET", "sample", "value"],
+        "expect": {
+          "equals": "OK"
+        }
+      },
+      {
+        "argv": ["fcall", "read_value", "1", "sample"],
+        "expect": {
+          "equals": "value"
+        }
+      }
+    ]
+  },
+  {
+    "name": "FCALL_RO",
+    "group": "scripting",
+    "syntax": "FCALL_RO function numkeys key",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["FUNCTION", "FLUSH"],
+        "expect": {
+          "equals": "OK"
+        }
+      },
+      {
+        "argv": [
+          "FUNCTION",
+          "LOAD",
+          "#!lua name=manual\nredis.register_function{function_name='read_value', callback=function(keys,args) return redis.call('GET',keys[1]) end, flags={'no-writes'}}"
+        ],
+        "expect": {
+          "equals": "manual"
+        }
+      },
+      {
+        "argv": ["SET", "sample", "value"],
+        "expect": {
+          "equals": "OK"
+        }
+      },
+      {
+        "argv": ["fcall_ro", "read_value", "1", "sample"],
+        "expect": {
+          "equals": "value"
+        }
+      }
+    ]
+  },
+  {
+    "name": "FLUSHALL",
+    "group": "keys",
+    "syntax": "FLUSHALL",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["SET", "sample", "value"],
+        "expect": {
+          "equals": "OK"
+        }
+      },
+      {
+        "argv": ["FLUSHALL"],
+        "expect": {
+          "equals": "OK"
+        }
+      },
+      {
+        "argv": ["DBSIZE"],
+        "expect": {
+          "equals": 0
+        }
+      }
+    ]
+  },
+  {
+    "name": "FLUSHDB",
+    "group": "keys",
+    "syntax": "FLUSHDB",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["SET", "sample", "value"],
+        "expect": {
+          "equals": "OK"
+        }
+      },
+      {
+        "argv": ["FLUSHDB"],
+        "expect": {
+          "equals": "OK"
+        }
+      },
+      {
+        "argv": ["DBSIZE"],
+        "expect": {
+          "equals": 0
+        }
+      }
+    ]
+  },
+  {
+    "name": "FUNCTION",
+    "group": "scripting",
+    "syntax": "FUNCTION LOAD library | LIST | DUMP | RESTORE payload | DELETE library | FLUSH",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["FUNCTION", "FLUSH"],
+        "expect": {
+          "equals": "OK"
+        }
+      },
+      {
+        "argv": [
+          "FUNCTION",
+          "LOAD",
+          "#!lua name=manual\nredis.register_function{function_name='read_value', callback=function(keys,args) return redis.call('GET',keys[1]) end, flags={'no-writes'}}"
+        ],
+        "expect": {
+          "equals": "manual"
+        }
+      },
+      {
+        "argv": ["SET", "sample", "value"],
+        "expect": {
+          "equals": "OK"
+        }
+      },
+      {
+        "argv": ["FUNCTION", "LIST"],
+        "expect": {
+          "nestedContains": "manual"
+        }
+      },
+      {
+        "argv": ["FUNCTION", "DUMP"],
+        "expect": {
+          "binaryMin": 10
+        },
+        "capture": "libraries"
+      },
+      {
+        "argv": ["FUNCTION", "FLUSH"],
+        "expect": {
+          "equals": "OK"
+        }
+      },
+      {
+        "argv": [
+          "FUNCTION",
+          "RESTORE",
+          {
+            "ref": "libraries"
+          }
+        ],
+        "expect": {
+          "equals": "OK"
+        }
+      },
+      {
+        "argv": ["FCALL", "read_value", "1", "sample"],
+        "expect": {
+          "equals": "value"
+        }
+      },
+      {
+        "argv": ["FUNCTION", "DELETE", "manual"],
+        "expect": {
+          "equals": "OK"
+        }
+      }
+    ]
+  },
+  {
+    "name": "GEOADD",
+    "group": "geospatial",
+    "syntax": "GEOADD places 15.087269 37.502669 Catania",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["GEOADD", "places", "13.361389", "38.115556", "Palermo"],
+        "expect": {
+          "equals": 1
+        }
+      },
+      {
+        "argv": ["GEOADD", "places", "15.087269", "37.502669", "Catania"],
+        "expect": {
+          "equals": 1
+        }
+      }
+    ]
+  },
+  {
+    "name": "GEODIST",
+    "group": "geospatial",
+    "syntax": "GEODIST places Palermo Palermo km",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["GEOADD", "places", "13.361389", "38.115556", "Palermo"],
+        "expect": {
+          "equals": 1
+        }
+      },
+      {
+        "argv": ["GEODIST", "places", "Palermo", "Palermo", "km"],
+        "expect": {
+          "equals": "0.0000"
+        }
+      }
+    ]
+  },
+  {
+    "name": "GEOHASH",
+    "group": "geospatial",
+    "syntax": "GEOHASH places Palermo",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["GEOADD", "places", "13.361389", "38.115556", "Palermo"],
+        "expect": {
+          "equals": 1
+        }
+      },
+      {
+        "argv": ["GEOHASH", "places", "Palermo"],
+        "expect": {
+          "equals": ["sqc8b49rny0"]
+        }
+      }
+    ]
+  },
+  {
+    "name": "GEOPOS",
+    "group": "geospatial",
+    "syntax": "GEOPOS key member",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["GEOADD", "places", "13.361389", "38.115556", "Palermo"],
+        "expect": {
+          "equals": 1
+        }
+      },
+      {
+        "argv": ["GEOPOS", "places", "Palermo"],
+        "expect": {
+          "coordinatesNear": [13.361389, 38.115556]
+        }
+      }
+    ]
+  },
+  {
+    "name": "GEORADIUS",
+    "group": "geospatial",
+    "syntax": "GEORADIUS places 13.361389 38.115556 1 km",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["GEOADD", "places", "13.361389", "38.115556", "Palermo"],
+        "expect": {
+          "equals": 1
+        }
+      },
+      {
+        "argv": ["GEORADIUS", "places", "13.361389", "38.115556", "1", "km"],
+        "expect": {
+          "equals": ["Palermo"]
+        }
+      }
+    ]
+  },
+  {
+    "name": "GEORADIUSBYMEMBER",
+    "group": "geospatial",
+    "syntax": "GEORADIUSBYMEMBER places Palermo 1 km",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["GEOADD", "places", "13.361389", "38.115556", "Palermo"],
+        "expect": {
+          "equals": 1
+        }
+      },
+      {
+        "argv": ["GEORADIUSBYMEMBER", "places", "Palermo", "1", "km"],
+        "expect": {
+          "equals": ["Palermo"]
+        }
+      }
+    ]
+  },
+  {
+    "name": "GEORADIUSBYMEMBER_RO",
+    "group": "geospatial",
+    "syntax": "GEORADIUSBYMEMBER_RO places Palermo 1 km",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["GEOADD", "places", "13.361389", "38.115556", "Palermo"],
+        "expect": {
+          "equals": 1
+        }
+      },
+      {
+        "argv": ["GEORADIUSBYMEMBER_RO", "places", "Palermo", "1", "km"],
+        "expect": {
+          "equals": ["Palermo"]
+        }
+      }
+    ]
+  },
+  {
+    "name": "GEORADIUS_RO",
+    "group": "geospatial",
+    "syntax": "GEORADIUS_RO places 13.361389 38.115556 1 km",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["GEOADD", "places", "13.361389", "38.115556", "Palermo"],
+        "expect": {
+          "equals": 1
+        }
+      },
+      {
+        "argv": ["GEORADIUS_RO", "places", "13.361389", "38.115556", "1", "km"],
+        "expect": {
+          "equals": ["Palermo"]
+        }
+      }
+    ]
+  },
+  {
+    "name": "GEOSEARCH",
+    "group": "geospatial",
+    "syntax": "GEOSEARCH places FROMMEMBER Palermo BYRADIUS 1 km",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["GEOADD", "places", "13.361389", "38.115556", "Palermo"],
+        "expect": {
+          "equals": 1
+        }
+      },
+      {
+        "argv": [
+          "GEOSEARCH",
+          "places",
+          "FROMMEMBER",
+          "Palermo",
+          "BYRADIUS",
+          "1",
+          "km"
+        ],
+        "expect": {
+          "equals": ["Palermo"]
+        }
+      }
+    ]
+  },
+  {
+    "name": "GEOSEARCHSTORE",
+    "group": "geospatial",
+    "syntax": "GEOSEARCHSTORE result places FROMMEMBER Palermo BYRADIUS 1 km",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["GEOADD", "places", "13.361389", "38.115556", "Palermo"],
+        "expect": {
+          "equals": 1
+        }
+      },
+      {
+        "argv": [
+          "GEOSEARCHSTORE",
+          "result",
+          "places",
+          "FROMMEMBER",
+          "Palermo",
+          "BYRADIUS",
+          "1",
+          "km"
+        ],
+        "expect": {
+          "equals": 1
+        }
+      }
+    ]
+  },
+  {
+    "name": "GET",
+    "group": "strings",
+    "syntax": "GET greeting",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["SET", "greeting", "hello"],
+        "expect": {
+          "equals": "OK"
+        }
+      },
+      {
+        "argv": ["GET", "greeting"],
+        "expect": {
+          "equals": "hello"
+        }
+      }
+    ]
+  },
+  {
+    "name": "GETBIT",
+    "group": "bitmaps",
+    "syntax": "GETBIT bits 1",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["SETBIT", "bits", "1", "1"],
+        "expect": {
+          "equals": 0
+        }
+      },
+      {
+        "argv": ["GETBIT", "bits", "1"],
+        "expect": {
+          "equals": 1
+        }
+      }
+    ]
+  },
+  {
+    "name": "GETDEL",
+    "group": "strings",
+    "syntax": "GETDEL greeting",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["SET", "greeting", "hello"],
+        "expect": {
+          "equals": "OK"
+        }
+      },
+      {
+        "argv": ["GETDEL", "greeting"],
+        "expect": {
+          "equals": "hello"
+        }
+      },
+      {
+        "argv": ["GET", "greeting"],
+        "expect": {
+          "equals": null
+        }
+      }
+    ]
+  },
+  {
+    "name": "GETEX",
+    "group": "strings",
+    "syntax": "GETEX greeting EX 60",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["SET", "greeting", "hello"],
+        "expect": {
+          "equals": "OK"
+        }
+      },
+      {
+        "argv": ["GETEX", "greeting", "EX", "60"],
+        "expect": {
+          "equals": "hello"
+        }
+      },
+      {
+        "argv": ["PTTL", "greeting"],
+        "expect": {
+          "integerRange": [1, 60000]
+        }
+      }
+    ]
+  },
+  {
+    "name": "GETRANGE",
+    "group": "strings",
+    "syntax": "GETRANGE greeting 1 3",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["SET", "greeting", "hello"],
+        "expect": {
+          "equals": "OK"
+        }
+      },
+      {
+        "argv": ["GETRANGE", "greeting", "1", "3"],
+        "expect": {
+          "equals": "ell"
+        }
+      }
+    ]
+  },
+  {
+    "name": "GETSET",
+    "group": "strings",
+    "syntax": "GETSET greeting world",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["SET", "greeting", "hello"],
+        "expect": {
+          "equals": "OK"
+        }
+      },
+      {
+        "argv": ["GETSET", "greeting", "world"],
+        "expect": {
+          "equals": "hello"
+        }
+      }
+    ]
+  },
+  {
+    "name": "HDEL",
+    "group": "hashes",
+    "syntax": "HDEL user name",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["HSET", "user", "name", "Ada"],
+        "expect": {
+          "equals": 1
+        }
+      },
+      {
+        "argv": ["HDEL", "user", "name"],
+        "expect": {
+          "equals": 1
+        }
+      }
+    ]
+  },
+  {
+    "name": "HELLO",
+    "group": "connection",
+    "syntax": "HELLO 3",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["HELLO", "3"],
+        "expect": {
+          "mapIncludes": {
+            "proto": 3
+          }
+        }
+      },
+      {
+        "argv": ["PING"],
+        "expect": {
+          "equals": "PONG"
+        }
+      },
+      {
+        "argv": ["HELLO", "2"],
+        "expect": {
+          "contains": "proto"
+        }
+      }
+    ]
+  },
+  {
+    "name": "HEXISTS",
+    "group": "hashes",
+    "syntax": "HEXISTS user name",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["HSET", "user", "name", "Ada"],
+        "expect": {
+          "equals": 1
+        }
+      },
+      {
+        "argv": ["HEXISTS", "user", "name"],
+        "expect": {
+          "equals": 1
+        }
+      }
+    ]
+  },
+  {
+    "name": "HGET",
+    "group": "hashes",
+    "syntax": "HGET user name",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["HSET", "user", "name", "Ada"],
+        "expect": {
+          "equals": 1
+        }
+      },
+      {
+        "argv": ["HGET", "user", "name"],
+        "expect": {
+          "equals": "Ada"
+        }
+      }
+    ]
+  },
+  {
+    "name": "HGETALL",
+    "group": "hashes",
+    "syntax": "HGETALL user",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["HSET", "user", "name", "Ada"],
+        "expect": {
+          "equals": 1
+        }
+      },
+      {
+        "argv": ["HGETALL", "user"],
+        "expect": {
+          "equals": ["name", "Ada"]
+        }
+      }
+    ]
+  },
+  {
+    "name": "HINCRBY",
+    "group": "hashes",
+    "syntax": "HINCRBY user visits 2",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["HSET", "user", "name", "Ada"],
+        "expect": {
+          "equals": 1
+        }
+      },
+      {
+        "argv": ["HINCRBY", "user", "visits", "2"],
+        "expect": {
+          "equals": 2
+        }
+      }
+    ]
+  },
+  {
+    "name": "HINCRBYFLOAT",
+    "group": "hashes",
+    "syntax": "HINCRBYFLOAT user score 0.5",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["HSET", "user", "name", "Ada"],
+        "expect": {
+          "equals": 1
+        }
+      },
+      {
+        "argv": ["HINCRBYFLOAT", "user", "score", "0.5"],
+        "expect": {
+          "equals": "0.5"
+        }
+      }
+    ]
+  },
+  {
+    "name": "HKEYS",
+    "group": "hashes",
+    "syntax": "HKEYS user",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["HSET", "user", "name", "Ada"],
+        "expect": {
+          "equals": 1
+        }
+      },
+      {
+        "argv": ["HKEYS", "user"],
+        "expect": {
+          "equals": ["name"]
+        }
+      }
+    ]
+  },
+  {
+    "name": "HLEN",
+    "group": "hashes",
+    "syntax": "HLEN user",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["HSET", "user", "name", "Ada"],
+        "expect": {
+          "equals": 1
+        }
+      },
+      {
+        "argv": ["HLEN", "user"],
+        "expect": {
+          "equals": 1
+        }
+      }
+    ]
+  },
+  {
+    "name": "HMGET",
+    "group": "hashes",
+    "syntax": "HMGET user name missing",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["HSET", "user", "name", "Ada"],
+        "expect": {
+          "equals": 1
+        }
+      },
+      {
+        "argv": ["HMGET", "user", "name", "missing"],
+        "expect": {
+          "equals": ["Ada", null]
+        }
+      }
+    ]
+  },
+  {
+    "name": "HMSET",
+    "group": "hashes",
+    "syntax": "HMSET user name Bob",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["HSET", "user", "name", "Ada"],
+        "expect": {
+          "equals": 1
+        }
+      },
+      {
+        "argv": ["HMSET", "user", "name", "Bob"],
+        "expect": {
+          "equals": "OK"
+        }
+      }
+    ]
+  },
+  {
+    "name": "HRANDFIELD",
+    "group": "hashes",
+    "syntax": "HRANDFIELD user",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["HSET", "user", "name", "Ada"],
+        "expect": {
+          "equals": 1
+        }
+      },
+      {
+        "argv": ["HRANDFIELD", "user"],
+        "expect": {
+          "equals": "name"
+        }
+      }
+    ]
+  },
+  {
+    "name": "HSCAN",
+    "group": "hashes",
+    "syntax": "HSCAN user 0",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["HSET", "user", "name", "Ada"],
+        "expect": {
+          "equals": 1
+        }
+      },
+      {
+        "argv": ["HSCAN", "user", "0"],
+        "expect": {
+          "equals": ["0", ["name", "Ada"]]
+        }
+      }
+    ]
+  },
+  {
+    "name": "HSET",
+    "group": "hashes",
+    "syntax": "HSET user name Bob city Paris",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["HSET", "user", "name", "Ada"],
+        "expect": {
+          "equals": 1
+        }
+      },
+      {
+        "argv": ["HSET", "user", "name", "Bob", "city", "Paris"],
+        "expect": {
+          "equals": 1
+        }
+      }
+    ]
+  },
+  {
+    "name": "HSETNX",
+    "group": "hashes",
+    "syntax": "HSETNX user city Paris",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["HSET", "user", "name", "Ada"],
+        "expect": {
+          "equals": 1
+        }
+      },
+      {
+        "argv": ["HSETNX", "user", "city", "Paris"],
+        "expect": {
+          "equals": 1
+        }
+      }
+    ]
+  },
+  {
+    "name": "HSTRLEN",
+    "group": "hashes",
+    "syntax": "HSTRLEN user name",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["HSET", "user", "name", "Ada"],
+        "expect": {
+          "equals": 1
+        }
+      },
+      {
+        "argv": ["HSTRLEN", "user", "name"],
+        "expect": {
+          "equals": 3
+        }
+      }
+    ]
+  },
+  {
+    "name": "HVALS",
+    "group": "hashes",
+    "syntax": "HVALS user",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["HSET", "user", "name", "Ada"],
+        "expect": {
+          "equals": 1
+        }
+      },
+      {
+        "argv": ["HVALS", "user"],
+        "expect": {
+          "equals": ["Ada"]
+        }
+      }
+    ]
+  },
+  {
+    "name": "INCR",
+    "group": "strings",
+    "syntax": "INCR counter",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["SET", "counter", "10"],
+        "expect": {
+          "equals": "OK"
+        }
+      },
+      {
+        "argv": ["INCR", "counter"],
+        "expect": {
+          "equals": 11
+        }
+      },
+      {
+        "argv": ["GET", "counter"],
+        "expect": {
+          "equals": "11"
+        }
+      }
+    ]
+  },
+  {
+    "name": "INCRBY",
+    "group": "strings",
+    "syntax": "INCRBY counter 3",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["SET", "counter", "10"],
+        "expect": {
+          "equals": "OK"
+        }
+      },
+      {
+        "argv": ["INCRBY", "counter", "3"],
+        "expect": {
+          "equals": 13
+        }
+      },
+      {
+        "argv": ["GET", "counter"],
+        "expect": {
+          "equals": "13"
+        }
+      }
+    ]
+  },
+  {
+    "name": "INCRBYFLOAT",
+    "group": "strings",
+    "syntax": "INCRBYFLOAT counter 0.5",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["SET", "counter", "10"],
+        "expect": {
+          "equals": "OK"
+        }
+      },
+      {
+        "argv": ["INCRBYFLOAT", "counter", "0.5"],
+        "expect": {
+          "equals": "10.5"
+        }
+      },
+      {
+        "argv": ["GET", "counter"],
+        "expect": {
+          "equals": "10.5"
+        }
+      }
+    ]
+  },
+  {
+    "name": "INFO",
+    "group": "server",
+    "syntax": "INFO server | replication",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["INFO", "server"],
+        "expect": {
+          "contains": "lavik_version:0.1.0-beta.1"
+        }
+      },
+      {
+        "argv": ["INFO", "replication"],
+        "expect": {
+          "contains": "role:master"
+        }
+      }
+    ]
+  },
+  {
+    "name": "KEYS",
+    "group": "keys",
+    "syntax": "KEYS sam*",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["SET", "sample", "value"],
+        "expect": {
+          "equals": "OK"
+        }
+      },
+      {
+        "argv": ["KEYS", "sam*"],
+        "expect": {
+          "equals": ["sample"]
+        }
+      }
+    ]
+  },
+  {
+    "name": "LASTSAVE",
+    "group": "server",
+    "syntax": "LASTSAVE",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["SAVE"],
+        "expect": {
+          "equals": "OK"
+        }
+      },
+      {
+        "argv": ["LASTSAVE"],
+        "expect": {
+          "integerMin": 1
+        }
+      }
+    ]
+  },
+  {
+    "name": "LAVIK.HREPLACE",
+    "group": "hashes",
+    "syntax": "LAVIK.HREPLACE user city Paris",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["HSET", "user", "name", "Ada"],
+        "expect": {
+          "equals": 1
+        }
+      },
+      {
+        "argv": ["LAVIK.HREPLACE", "user", "city", "Paris"],
+        "expect": {
+          "equals": "OK"
+        }
+      },
+      {
+        "argv": ["HGETALL", "user"],
+        "expect": {
+          "equals": ["city", "Paris"]
+        }
+      },
+      {
+        "argv": ["LAVIK.HREPLACE", "missing", "field", "value"],
+        "expect": {
+          "equals": null
+        }
+      },
+      {
+        "argv": ["SET", "text", "value"],
+        "expect": {
+          "equals": "OK"
+        }
+      },
+      {
+        "argv": ["LAVIK.HREPLACE", "text", "field", "value"],
+        "expect": {
+          "errorContains": "WRONGTYPE"
+        }
+      },
+      {
+        "argv": ["PEXPIREAT", "user", "4102444800000"],
+        "expect": {
+          "equals": 1
+        }
+      },
+      {
+        "argv": ["LAVIK.HREPLACE", "user", "city", "Rome"],
+        "expect": {
+          "equals": "OK"
+        }
+      },
+      {
+        "argv": ["PEXPIRETIME", "user"],
+        "expect": {
+          "equals": 4102444800000
+        }
+      }
+    ]
+  },
+  {
+    "name": "LCS",
+    "group": "strings",
+    "syntax": "LCS key1 key2",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["MSET", "first", "hello", "second", "cello"],
+        "expect": {
+          "equals": "OK"
+        }
+      },
+      {
+        "argv": ["LCS", "first", "second"],
+        "expect": {
+          "equals": "ello"
+        }
+      }
+    ]
+  },
+  {
+    "name": "LINDEX",
+    "group": "lists",
+    "syntax": "LINDEX queue 1",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["RPUSH", "queue", "a", "b", "c"],
+        "expect": {
+          "equals": 3
+        }
+      },
+      {
+        "argv": ["LINDEX", "queue", "1"],
+        "expect": {
+          "equals": "b"
+        }
+      }
+    ]
+  },
+  {
+    "name": "LINSERT",
+    "group": "lists",
+    "syntax": "LINSERT queue BEFORE b z",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["RPUSH", "queue", "a", "b", "c"],
+        "expect": {
+          "equals": 3
+        }
+      },
+      {
+        "argv": ["LINSERT", "queue", "BEFORE", "b", "z"],
+        "expect": {
+          "equals": 4
+        }
+      }
+    ]
+  },
+  {
+    "name": "LLEN",
+    "group": "lists",
+    "syntax": "LLEN queue",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["RPUSH", "queue", "a", "b", "c"],
+        "expect": {
+          "equals": 3
+        }
+      },
+      {
+        "argv": ["LLEN", "queue"],
+        "expect": {
+          "equals": 3
+        }
+      }
+    ]
+  },
+  {
+    "name": "LMOVE",
+    "group": "lists",
+    "syntax": "LMOVE queue destination LEFT RIGHT",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["RPUSH", "queue", "a", "b", "c"],
+        "expect": {
+          "equals": 3
+        }
+      },
+      {
+        "argv": ["LMOVE", "queue", "destination", "LEFT", "RIGHT"],
+        "expect": {
+          "equals": "a"
+        }
+      }
+    ]
+  },
+  {
+    "name": "LMPOP",
+    "group": "lists",
+    "syntax": "LMPOP 1 queue LEFT COUNT 2",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["RPUSH", "queue", "a", "b", "c"],
+        "expect": {
+          "equals": 3
+        }
+      },
+      {
+        "argv": ["LMPOP", "1", "queue", "LEFT", "COUNT", "2"],
+        "expect": {
+          "equals": ["queue", ["a", "b"]]
+        }
+      }
+    ]
+  },
+  {
+    "name": "LPOP",
+    "group": "lists",
+    "syntax": "LPOP queue",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["RPUSH", "queue", "a", "b", "c"],
+        "expect": {
+          "equals": 3
+        }
+      },
+      {
+        "argv": ["LPOP", "queue"],
+        "expect": {
+          "equals": "a"
+        }
+      }
+    ]
+  },
+  {
+    "name": "LPOS",
+    "group": "lists",
+    "syntax": "LPOS queue b",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["RPUSH", "queue", "a", "b", "c"],
+        "expect": {
+          "equals": 3
+        }
+      },
+      {
+        "argv": ["LPOS", "queue", "b"],
+        "expect": {
+          "equals": 1
+        }
+      }
+    ]
+  },
+  {
+    "name": "LPUSH",
+    "group": "lists",
+    "syntax": "LPUSH queue z",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["RPUSH", "queue", "a", "b", "c"],
+        "expect": {
+          "equals": 3
+        }
+      },
+      {
+        "argv": ["LPUSH", "queue", "z"],
+        "expect": {
+          "equals": 4
+        }
+      }
+    ]
+  },
+  {
+    "name": "LPUSHX",
+    "group": "lists",
+    "syntax": "LPUSHX queue z",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["RPUSH", "queue", "a", "b", "c"],
+        "expect": {
+          "equals": 3
+        }
+      },
+      {
+        "argv": ["LPUSHX", "queue", "z"],
+        "expect": {
+          "equals": 4
+        }
+      }
+    ]
+  },
+  {
+    "name": "LRANGE",
+    "group": "lists",
+    "syntax": "LRANGE queue 0 -1",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["RPUSH", "queue", "a", "b", "c"],
+        "expect": {
+          "equals": 3
+        }
+      },
+      {
+        "argv": ["LRANGE", "queue", "0", "-1"],
+        "expect": {
+          "equals": ["a", "b", "c"]
+        }
+      }
+    ]
+  },
+  {
+    "name": "LREM",
+    "group": "lists",
+    "syntax": "LREM queue 1 b",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["RPUSH", "queue", "a", "b", "c"],
+        "expect": {
+          "equals": 3
+        }
+      },
+      {
+        "argv": ["LREM", "queue", "1", "b"],
+        "expect": {
+          "equals": 1
+        }
+      }
+    ]
+  },
+  {
+    "name": "LSET",
+    "group": "lists",
+    "syntax": "LSET queue 1 z",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["RPUSH", "queue", "a", "b", "c"],
+        "expect": {
+          "equals": 3
+        }
+      },
+      {
+        "argv": ["LSET", "queue", "1", "z"],
+        "expect": {
+          "equals": "OK"
+        }
+      }
+    ]
+  },
+  {
+    "name": "LTRIM",
+    "group": "lists",
+    "syntax": "LTRIM queue 0 1",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["RPUSH", "queue", "a", "b", "c"],
+        "expect": {
+          "equals": 3
+        }
+      },
+      {
+        "argv": ["LTRIM", "queue", "0", "1"],
+        "expect": {
+          "equals": "OK"
+        }
+      }
+    ]
+  },
+  {
+    "name": "MGET",
+    "group": "strings",
+    "syntax": "MGET key [key ...]",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["MSET", "one", "1", "two", "2"],
+        "expect": {
+          "equals": "OK"
+        }
+      },
+      {
+        "argv": ["MGET", "one", "missing", "two"],
+        "expect": {
+          "equals": ["1", null, "2"]
+        }
+      }
+    ]
+  },
+  {
+    "name": "MONITOR",
+    "group": "server",
+    "syntax": "MONITOR",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["MONITOR"],
+        "expect": {
+          "equals": "OK"
+        },
+        "connection": "monitor"
+      },
+      {
+        "argv": ["SET", "observed", "value"],
+        "expect": {
+          "equals": "OK"
+        }
+      },
+      {
+        "read": true,
+        "connection": "monitor",
+        "expect": {
+          "contains": "\"SET\" \"observed\" \"value\""
+        }
+      }
+    ]
+  },
+  {
+    "name": "MSET",
+    "group": "strings",
+    "syntax": "MSET key value [key value ...]",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["MSET", "one", "1", "two", "2"],
+        "expect": {
+          "equals": "OK"
+        }
+      },
+      {
+        "argv": ["MGET", "one", "two"],
+        "expect": {
+          "equals": ["1", "2"]
+        }
+      }
+    ]
+  },
+  {
+    "name": "MSETNX",
+    "group": "strings",
+    "syntax": "MSETNX key value [key value ...]",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["MSETNX", "one", "1", "two", "2"],
+        "expect": {
+          "equals": 1
+        }
+      },
+      {
+        "argv": ["MSETNX", "two", "changed", "three", "3"],
+        "expect": {
+          "equals": 0
+        }
+      },
+      {
+        "argv": ["MGET", "one", "two", "three"],
+        "expect": {
+          "equals": ["1", "2", null]
+        }
+      }
+    ]
+  },
+  {
+    "name": "MULTI",
+    "group": "transactions",
+    "syntax": "MULTI",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["MULTI"],
+        "expect": {
+          "equals": "OK"
+        }
+      },
+      {
+        "argv": ["SET", "sample", "value"],
+        "expect": {
+          "equals": "QUEUED"
+        }
+      },
+      {
+        "argv": ["GET", "sample"],
+        "expect": {
+          "equals": "QUEUED"
+        }
+      },
+      {
+        "argv": ["EXEC"],
+        "expect": {
+          "equals": ["OK", "value"]
+        }
+      }
+    ]
+  },
+  {
+    "name": "PERSIST",
+    "group": "keys",
+    "syntax": "PERSIST key",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["SET", "sample", "value", "EX", "60"],
+        "expect": {
+          "equals": "OK"
+        }
+      },
+      {
+        "argv": ["PERSIST", "sample"],
+        "expect": {
+          "equals": 1
+        }
+      },
+      {
+        "argv": ["TTL", "sample"],
+        "expect": {
+          "equals": -1
+        }
+      }
+    ]
+  },
+  {
+    "name": "PEXPIRE",
+    "group": "keys",
+    "syntax": "PEXPIRE sample 60000",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["SET", "sample", "value"],
+        "expect": {
+          "equals": "OK"
+        }
+      },
+      {
+        "argv": ["PEXPIRE", "sample", "60000"],
+        "expect": {
+          "equals": 1
+        }
+      },
+      {
+        "argv": ["PTTL", "sample"],
+        "expect": {
+          "integerRange": [1, 60000]
+        }
+      }
+    ]
+  },
+  {
+    "name": "PEXPIREAT",
+    "group": "keys",
+    "syntax": "PEXPIREAT sample 4102444800000",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["SET", "sample", "value"],
+        "expect": {
+          "equals": "OK"
+        }
+      },
+      {
+        "argv": ["PEXPIREAT", "sample", "4102444800000"],
+        "expect": {
+          "equals": 1
+        }
+      },
+      {
+        "argv": ["EXPIRETIME", "sample"],
+        "expect": {
+          "equals": 4102444800
+        }
+      }
+    ]
+  },
+  {
+    "name": "PEXPIRETIME",
+    "group": "keys",
+    "syntax": "PEXPIRETIME sample",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["SET", "sample", "value"],
+        "expect": {
+          "equals": "OK"
+        }
+      },
+      {
+        "argv": ["PEXPIRETIME", "sample"],
+        "expect": {
+          "equals": -1
+        }
+      },
+      {
+        "argv": ["PEXPIRETIME", "missing"],
+        "expect": {
+          "equals": -2
+        }
+      }
+    ]
+  },
+  {
+    "name": "PING",
+    "group": "connection",
+    "syntax": "PING",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["PING"],
+        "expect": {
+          "equals": "PONG"
+        }
+      }
+    ]
+  },
+  {
+    "name": "PSETEX",
+    "group": "strings",
+    "syntax": "PSETEX greeting 60000 world",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["SET", "greeting", "hello"],
+        "expect": {
+          "equals": "OK"
+        }
+      },
+      {
+        "argv": ["PSETEX", "greeting", "60000", "world"],
+        "expect": {
+          "equals": "OK"
+        }
+      },
+      {
+        "argv": ["PTTL", "greeting"],
+        "expect": {
+          "integerRange": [1, 60000]
+        }
+      }
+    ]
+  },
+  {
+    "name": "PSUBSCRIBE",
+    "group": "pubsub",
+    "syntax": "PSUBSCRIBE pattern",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["PSUBSCRIBE", "news.*"],
+        "expect": {
+          "equals": ["psubscribe", "news.*", 1]
+        },
+        "connection": "subscriber"
+      },
+      {
+        "argv": ["PUBLISH", "news.one", "hello"],
+        "expect": {
+          "equals": 1
+        }
+      },
+      {
+        "read": true,
+        "connection": "subscriber",
+        "expect": {
+          "equals": ["pmessage", "news.*", "news.one", "hello"]
+        }
+      },
+      {
+        "argv": ["PUNSUBSCRIBE", "news.*"],
+        "expect": {
+          "equals": ["punsubscribe", "news.*", 0]
+        },
+        "connection": "subscriber"
+      }
+    ]
+  },
+  {
+    "name": "PTTL",
+    "group": "keys",
+    "syntax": "PTTL sample",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["SET", "sample", "value"],
+        "expect": {
+          "equals": "OK"
+        }
+      },
+      {
+        "argv": ["PTTL", "sample"],
+        "expect": {
+          "equals": -1
+        }
+      },
+      {
+        "argv": ["PTTL", "missing"],
+        "expect": {
+          "equals": -2
+        }
+      }
+    ]
+  },
+  {
+    "name": "PUBLISH",
+    "group": "pubsub",
+    "syntax": "PUBLISH channel message",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["SUBSCRIBE", "updates"],
+        "expect": {
+          "equals": ["subscribe", "updates", 1]
+        },
+        "connection": "subscriber"
+      },
+      {
+        "argv": ["PUBSUB", "NUMSUB", "updates"],
+        "expect": {
+          "equals": ["updates", 1]
+        }
+      },
+      {
+        "argv": ["PUBLISH", "updates", "hello"],
+        "expect": {
+          "equals": 1
+        }
+      },
+      {
+        "read": true,
+        "connection": "subscriber",
+        "expect": {
+          "equals": ["message", "updates", "hello"]
+        }
+      },
+      {
+        "argv": ["UNSUBSCRIBE", "updates"],
+        "expect": {
+          "equals": ["unsubscribe", "updates", 0]
+        },
+        "connection": "subscriber"
+      }
+    ]
+  },
+  {
+    "name": "PUBSUB",
+    "group": "pubsub",
+    "syntax": "PUBSUB NUMSUB channel",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["SUBSCRIBE", "updates"],
+        "expect": {
+          "equals": ["subscribe", "updates", 1]
+        },
+        "connection": "subscriber"
+      },
+      {
+        "argv": ["PUBSUB", "NUMSUB", "updates"],
+        "expect": {
+          "equals": ["updates", 1]
+        }
+      },
+      {
+        "argv": ["PUBLISH", "updates", "hello"],
+        "expect": {
+          "equals": 1
+        }
+      },
+      {
+        "read": true,
+        "connection": "subscriber",
+        "expect": {
+          "equals": ["message", "updates", "hello"]
+        }
+      },
+      {
+        "argv": ["UNSUBSCRIBE", "updates"],
+        "expect": {
+          "equals": ["unsubscribe", "updates", 0]
+        },
+        "connection": "subscriber"
+      }
+    ]
+  },
+  {
+    "name": "PUNSUBSCRIBE",
+    "group": "pubsub",
+    "syntax": "PUNSUBSCRIBE pattern",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["PSUBSCRIBE", "news.*"],
+        "expect": {
+          "equals": ["psubscribe", "news.*", 1]
+        },
+        "connection": "subscriber"
+      },
+      {
+        "argv": ["PUBLISH", "news.one", "hello"],
+        "expect": {
+          "equals": 1
+        }
+      },
+      {
+        "read": true,
+        "connection": "subscriber",
+        "expect": {
+          "equals": ["pmessage", "news.*", "news.one", "hello"]
+        }
+      },
+      {
+        "argv": ["PUNSUBSCRIBE", "news.*"],
+        "expect": {
+          "equals": ["punsubscribe", "news.*", 0]
+        },
+        "connection": "subscriber"
+      }
+    ]
+  },
+  {
+    "name": "QUIT",
+    "group": "connection",
+    "syntax": "QUIT",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["QUIT"],
+        "expect": {
+          "equals": "OK"
+        }
+      }
+    ]
+  },
+  {
+    "name": "RANDOMKEY",
+    "group": "keys",
+    "syntax": "RANDOMKEY",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["SET", "sample", "value"],
+        "expect": {
+          "equals": "OK"
+        }
+      },
+      {
+        "argv": ["RANDOMKEY"],
+        "expect": {
+          "equals": "sample"
+        }
+      }
+    ]
+  },
+  {
+    "name": "READONLY",
+    "group": "server",
+    "syntax": "READONLY",
+    "scope": "standalone-control",
+    "steps": [
+      {
+        "argv": ["READONLY"],
+        "expect": {
+          "equals": "OK"
+        }
+      }
+    ]
+  },
+  {
+    "name": "READWRITE",
+    "group": "server",
+    "syntax": "READWRITE",
+    "scope": "standalone-control",
+    "steps": [
+      {
+        "argv": ["READWRITE"],
+        "expect": {
+          "equals": "OK"
+        }
+      }
+    ]
+  },
+  {
+    "name": "RENAME",
+    "group": "keys",
+    "syntax": "RENAME sample renamed",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["SET", "sample", "value"],
+        "expect": {
+          "equals": "OK"
+        }
+      },
+      {
+        "argv": ["RENAME", "sample", "renamed"],
+        "expect": {
+          "equals": "OK"
+        }
+      }
+    ]
+  },
+  {
+    "name": "RENAMENX",
+    "group": "keys",
+    "syntax": "RENAMENX sample renamed",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["SET", "sample", "value"],
+        "expect": {
+          "equals": "OK"
+        }
+      },
+      {
+        "argv": ["RENAMENX", "sample", "renamed"],
+        "expect": {
+          "equals": 1
+        }
+      }
+    ]
+  },
+  {
+    "name": "REPLICAOF",
+    "group": "server",
+    "syntax": "REPLICAOF NO ONE",
+    "scope": "standalone-control",
+    "steps": [
+      {
+        "argv": ["REPLICAOF", "NO", "ONE"],
+        "expect": {
+          "equals": "OK"
+        }
+      },
+      {
+        "argv": ["ROLE"],
+        "expect": {
+          "first": "master"
+        }
+      }
+    ]
+  },
+  {
+    "name": "RESET",
+    "group": "connection",
+    "syntax": "RESET",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["RESET"],
+        "expect": {
+          "equals": "RESET"
+        }
+      }
+    ]
+  },
+  {
+    "name": "RESTORE",
+    "group": "keys",
+    "syntax": "RESTORE key ttl serialized-value",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["SET", "sample", "value"],
+        "expect": {
+          "equals": "OK"
+        }
+      },
+      {
+        "argv": ["DUMP", "sample"],
+        "expect": {
+          "binaryMin": 10
+        },
+        "capture": "payload"
+      },
+      {
+        "argv": [
+          "RESTORE",
+          "restored",
+          "0",
+          {
+            "ref": "payload"
+          }
+        ],
+        "expect": {
+          "equals": "OK"
+        }
+      },
+      {
+        "argv": ["GET", "restored"],
+        "expect": {
+          "equals": "value"
+        }
+      }
+    ]
+  },
+  {
+    "name": "ROLE",
+    "group": "server",
+    "syntax": "ROLE",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["ROLE"],
+        "expect": {
+          "first": "master"
+        }
+      }
+    ]
+  },
+  {
+    "name": "RPOP",
+    "group": "lists",
+    "syntax": "RPOP queue",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["RPUSH", "queue", "a", "b", "c"],
+        "expect": {
+          "equals": 3
+        }
+      },
+      {
+        "argv": ["RPOP", "queue"],
+        "expect": {
+          "equals": "c"
+        }
+      }
+    ]
+  },
+  {
+    "name": "RPOPLPUSH",
+    "group": "lists",
+    "syntax": "RPOPLPUSH queue destination",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["RPUSH", "queue", "a", "b", "c"],
+        "expect": {
+          "equals": 3
+        }
+      },
+      {
+        "argv": ["RPOPLPUSH", "queue", "destination"],
+        "expect": {
+          "equals": "c"
+        }
+      }
+    ]
+  },
+  {
+    "name": "RPUSH",
+    "group": "lists",
+    "syntax": "RPUSH queue z",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["RPUSH", "queue", "a", "b", "c"],
+        "expect": {
+          "equals": 3
+        }
+      },
+      {
+        "argv": ["RPUSH", "queue", "z"],
+        "expect": {
+          "equals": 4
+        }
+      }
+    ]
+  },
+  {
+    "name": "RPUSHX",
+    "group": "lists",
+    "syntax": "RPUSHX queue z",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["RPUSH", "queue", "a", "b", "c"],
+        "expect": {
+          "equals": 3
+        }
+      },
+      {
+        "argv": ["RPUSHX", "queue", "z"],
+        "expect": {
+          "equals": 4
+        }
+      }
+    ]
+  },
+  {
+    "name": "SADD",
+    "group": "sets",
+    "syntax": "SADD team b",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["SADD", "team", "a"],
+        "expect": {
+          "equals": 1
+        }
+      },
+      {
+        "argv": ["SADD", "team", "b"],
+        "expect": {
+          "equals": 1
+        }
+      }
+    ]
+  },
+  {
+    "name": "SAVE",
+    "group": "server",
+    "syntax": "SAVE",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["SET", "sample", "value"],
+        "expect": {
+          "equals": "OK"
+        }
+      },
+      {
+        "argv": ["SAVE"],
+        "expect": {
+          "equals": "OK"
+        }
+      },
+      {
+        "argv": ["LASTSAVE"],
+        "expect": {
+          "integerMin": 1
+        }
+      }
+    ]
+  },
+  {
+    "name": "SCAN",
+    "group": "keys",
+    "syntax": "SCAN cursor MATCH pattern COUNT count",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["SET", "sample", "value"],
+        "expect": {
+          "equals": "OK"
+        }
+      },
+      {
+        "argv": ["SCAN", "0", "MATCH", "sam*", "COUNT", "1000"],
+        "expect": {
+          "equals": ["sample"]
+        },
+        "scanAll": true
+      }
+    ]
+  },
+  {
+    "name": "SCARD",
+    "group": "sets",
+    "syntax": "SCARD team",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["SADD", "team", "a"],
+        "expect": {
+          "equals": 1
+        }
+      },
+      {
+        "argv": ["SCARD", "team"],
+        "expect": {
+          "equals": 1
+        }
+      }
+    ]
+  },
+  {
+    "name": "SCRIPT",
+    "group": "scripting",
+    "syntax": "SCRIPT LOAD script | EXISTS sha | FLUSH",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["SCRIPT", "LOAD", "return redis.call('GET', KEYS[1])"],
+        "expect": {
+          "equals": "d3c21d0c2b9ca22f82737626a27bcaf5d288f99f"
+        }
+      },
+      {
+        "argv": [
+          "SCRIPT",
+          "EXISTS",
+          "d3c21d0c2b9ca22f82737626a27bcaf5d288f99f"
+        ],
+        "expect": {
+          "equals": [1]
+        }
+      },
+      {
+        "argv": ["SCRIPT", "FLUSH"],
+        "expect": {
+          "equals": "OK"
+        }
+      },
+      {
+        "argv": [
+          "SCRIPT",
+          "EXISTS",
+          "d3c21d0c2b9ca22f82737626a27bcaf5d288f99f"
+        ],
+        "expect": {
+          "equals": [0]
+        }
+      }
+    ]
+  },
+  {
+    "name": "SDIFF",
+    "group": "sets",
+    "syntax": "SDIFF team other",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["SADD", "team", "a"],
+        "expect": {
+          "equals": 1
+        }
+      },
+      {
+        "argv": ["SDIFF", "team", "other"],
+        "expect": {
+          "equals": ["a"]
+        }
+      }
+    ]
+  },
+  {
+    "name": "SDIFFSTORE",
+    "group": "sets",
+    "syntax": "SDIFFSTORE result team other",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["SADD", "team", "a"],
+        "expect": {
+          "equals": 1
+        }
+      },
+      {
+        "argv": ["SDIFFSTORE", "result", "team", "other"],
+        "expect": {
+          "equals": 1
+        }
+      }
+    ]
+  },
+  {
+    "name": "SELECT",
+    "group": "connection",
+    "syntax": "SELECT 0",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["SELECT", "0"],
+        "expect": {
+          "equals": "OK"
+        }
+      }
+    ]
+  },
+  {
+    "name": "SET",
+    "group": "strings",
+    "syntax": "SET greeting world NX",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["SET", "greeting", "hello"],
+        "expect": {
+          "equals": "OK"
+        }
+      },
+      {
+        "argv": ["SET", "greeting", "world", "NX"],
+        "expect": {
+          "equals": null
+        }
+      },
+      {
+        "argv": ["SET", "fresh", "world", "NX", "EX", "60"],
+        "expect": {
+          "equals": "OK"
+        }
+      },
+      {
+        "argv": ["GET", "fresh"],
+        "expect": {
+          "equals": "world"
+        }
+      },
+      {
+        "argv": ["SET", "fresh", "changed", "XX", "GET"],
+        "expect": {
+          "equals": "world"
+        }
+      },
+      {
+        "argv": ["GET", "fresh"],
+        "expect": {
+          "equals": "changed"
+        }
+      }
+    ]
+  },
+  {
+    "name": "SETBIT",
+    "group": "bitmaps",
+    "syntax": "SETBIT bits 1 0",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["SETBIT", "bits", "1", "1"],
+        "expect": {
+          "equals": 0
+        }
+      },
+      {
+        "argv": ["SETBIT", "bits", "1", "0"],
+        "expect": {
+          "equals": 1
+        }
+      }
+    ]
+  },
+  {
+    "name": "SETEX",
+    "group": "strings",
+    "syntax": "SETEX greeting 60 world",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["SET", "greeting", "hello"],
+        "expect": {
+          "equals": "OK"
+        }
+      },
+      {
+        "argv": ["SETEX", "greeting", "60", "world"],
+        "expect": {
+          "equals": "OK"
+        }
+      },
+      {
+        "argv": ["PTTL", "greeting"],
+        "expect": {
+          "integerRange": [1, 60000]
+        }
+      }
+    ]
+  },
+  {
+    "name": "SETNX",
+    "group": "strings",
+    "syntax": "SETNX greeting world",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["SET", "greeting", "hello"],
+        "expect": {
+          "equals": "OK"
+        }
+      },
+      {
+        "argv": ["SETNX", "greeting", "world"],
+        "expect": {
+          "equals": 0
+        }
+      },
+      {
+        "argv": ["SETNX", "fresh", "world"],
+        "expect": {
+          "equals": 1
+        }
+      },
+      {
+        "argv": ["GET", "fresh"],
+        "expect": {
+          "equals": "world"
+        }
+      }
+    ]
+  },
+  {
+    "name": "SETRANGE",
+    "group": "strings",
+    "syntax": "SETRANGE greeting 0 H",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["SET", "greeting", "hello"],
+        "expect": {
+          "equals": "OK"
+        }
+      },
+      {
+        "argv": ["SETRANGE", "greeting", "0", "H"],
+        "expect": {
+          "equals": 5
+        }
+      }
+    ]
+  },
+  {
+    "name": "SINTER",
+    "group": "sets",
+    "syntax": "SINTER team other",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["SADD", "team", "a"],
+        "expect": {
+          "equals": 1
+        }
+      },
+      {
+        "argv": ["SINTER", "team", "other"],
+        "expect": {
+          "equals": []
+        }
+      }
+    ]
+  },
+  {
+    "name": "SINTERCARD",
+    "group": "sets",
+    "syntax": "SINTERCARD 2 team other",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["SADD", "team", "a"],
+        "expect": {
+          "equals": 1
+        }
+      },
+      {
+        "argv": ["SINTERCARD", "2", "team", "other"],
+        "expect": {
+          "equals": 0
+        }
+      }
+    ]
+  },
+  {
+    "name": "SINTERSTORE",
+    "group": "sets",
+    "syntax": "SINTERSTORE result team other",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["SADD", "team", "a"],
+        "expect": {
+          "equals": 1
+        }
+      },
+      {
+        "argv": ["SINTERSTORE", "result", "team", "other"],
+        "expect": {
+          "equals": 0
+        }
+      }
+    ]
+  },
+  {
+    "name": "SISMEMBER",
+    "group": "sets",
+    "syntax": "SISMEMBER team a",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["SADD", "team", "a"],
+        "expect": {
+          "equals": 1
+        }
+      },
+      {
+        "argv": ["SISMEMBER", "team", "a"],
+        "expect": {
+          "equals": 1
+        }
+      }
+    ]
+  },
+  {
+    "name": "SLAVEOF",
+    "group": "server",
+    "syntax": "SLAVEOF NO ONE",
+    "scope": "standalone-control",
+    "steps": [
+      {
+        "argv": ["SLAVEOF", "NO", "ONE"],
+        "expect": {
+          "equals": "OK"
+        }
+      },
+      {
+        "argv": ["ROLE"],
+        "expect": {
+          "first": "master"
+        }
+      }
+    ]
+  },
+  {
+    "name": "SLOWLOG",
+    "group": "server",
+    "syntax": "SLOWLOG LEN | GET count | RESET",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["SLOWLOG", "RESET"],
+        "expect": {
+          "equals": "OK"
+        }
+      },
+      {
+        "argv": ["SLOWLOG", "LEN"],
+        "expect": {
+          "integerMin": 0
+        }
+      },
+      {
+        "argv": ["SLOWLOG", "GET", "1"],
+        "expect": {
+          "type": "array"
+        }
+      }
+    ]
+  },
+  {
+    "name": "SMEMBERS",
+    "group": "sets",
+    "syntax": "SMEMBERS team",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["SADD", "team", "a"],
+        "expect": {
+          "equals": 1
+        }
+      },
+      {
+        "argv": ["SMEMBERS", "team"],
+        "expect": {
+          "equals": ["a"]
+        }
+      }
+    ]
+  },
+  {
+    "name": "SMISMEMBER",
+    "group": "sets",
+    "syntax": "SMISMEMBER team a b",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["SADD", "team", "a"],
+        "expect": {
+          "equals": 1
+        }
+      },
+      {
+        "argv": ["SMISMEMBER", "team", "a", "b"],
+        "expect": {
+          "equals": [1, 0]
+        }
+      }
+    ]
+  },
+  {
+    "name": "SMOVE",
+    "group": "sets",
+    "syntax": "SMOVE team other a",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["SADD", "team", "a"],
+        "expect": {
+          "equals": 1
+        }
+      },
+      {
+        "argv": ["SMOVE", "team", "other", "a"],
+        "expect": {
+          "equals": 1
+        }
+      }
+    ]
+  },
+  {
+    "name": "SORT",
+    "group": "keys",
+    "syntax": "SORT key",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["RPUSH", "numbers", "3", "1", "2"],
+        "expect": {
+          "equals": 3
+        }
+      },
+      {
+        "argv": ["sort", "numbers"],
+        "expect": {
+          "equals": ["1", "2", "3"]
+        }
+      }
+    ]
+  },
+  {
+    "name": "SORT_RO",
+    "group": "keys",
+    "syntax": "SORT_RO key",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["RPUSH", "numbers", "3", "1", "2"],
+        "expect": {
+          "equals": 3
+        }
+      },
+      {
+        "argv": ["sort_ro", "numbers"],
+        "expect": {
+          "equals": ["1", "2", "3"]
+        }
+      }
+    ]
+  },
+  {
+    "name": "SPOP",
+    "group": "sets",
+    "syntax": "SPOP team",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["SADD", "team", "a"],
+        "expect": {
+          "equals": 1
+        }
+      },
+      {
+        "argv": ["SPOP", "team"],
+        "expect": {
+          "equals": "a"
+        }
+      }
+    ]
+  },
+  {
+    "name": "SRANDMEMBER",
+    "group": "sets",
+    "syntax": "SRANDMEMBER team",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["SADD", "team", "a"],
+        "expect": {
+          "equals": 1
+        }
+      },
+      {
+        "argv": ["SRANDMEMBER", "team"],
+        "expect": {
+          "equals": "a"
+        }
+      }
+    ]
+  },
+  {
+    "name": "SREM",
+    "group": "sets",
+    "syntax": "SREM team a",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["SADD", "team", "a"],
+        "expect": {
+          "equals": 1
+        }
+      },
+      {
+        "argv": ["SREM", "team", "a"],
+        "expect": {
+          "equals": 1
+        }
+      }
+    ]
+  },
+  {
+    "name": "SSCAN",
+    "group": "sets",
+    "syntax": "SSCAN team 0",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["SADD", "team", "a"],
+        "expect": {
+          "equals": 1
+        }
+      },
+      {
+        "argv": ["SSCAN", "team", "0"],
+        "expect": {
+          "equals": ["0", ["a"]]
+        }
+      }
+    ]
+  },
+  {
+    "name": "STRLEN",
+    "group": "strings",
+    "syntax": "STRLEN greeting",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["SET", "greeting", "hello"],
+        "expect": {
+          "equals": "OK"
+        }
+      },
+      {
+        "argv": ["STRLEN", "greeting"],
+        "expect": {
+          "equals": 5
+        }
+      }
+    ]
+  },
+  {
+    "name": "SUBSCRIBE",
+    "group": "pubsub",
+    "syntax": "SUBSCRIBE channel",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["SUBSCRIBE", "updates"],
+        "expect": {
+          "equals": ["subscribe", "updates", 1]
+        },
+        "connection": "subscriber"
+      },
+      {
+        "argv": ["PUBSUB", "NUMSUB", "updates"],
+        "expect": {
+          "equals": ["updates", 1]
+        }
+      },
+      {
+        "argv": ["PUBLISH", "updates", "hello"],
+        "expect": {
+          "equals": 1
+        }
+      },
+      {
+        "read": true,
+        "connection": "subscriber",
+        "expect": {
+          "equals": ["message", "updates", "hello"]
+        }
+      },
+      {
+        "argv": ["UNSUBSCRIBE", "updates"],
+        "expect": {
+          "equals": ["unsubscribe", "updates", 0]
+        },
+        "connection": "subscriber"
+      }
+    ]
+  },
+  {
+    "name": "SUBSTR",
+    "group": "strings",
+    "syntax": "SUBSTR greeting 1 3",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["SET", "greeting", "hello"],
+        "expect": {
+          "equals": "OK"
+        }
+      },
+      {
+        "argv": ["SUBSTR", "greeting", "1", "3"],
+        "expect": {
+          "equals": "ell"
+        }
+      }
+    ]
+  },
+  {
+    "name": "SUNION",
+    "group": "sets",
+    "syntax": "SUNION team other",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["SADD", "team", "a"],
+        "expect": {
+          "equals": 1
+        }
+      },
+      {
+        "argv": ["SUNION", "team", "other"],
+        "expect": {
+          "equals": ["a"]
+        }
+      }
+    ]
+  },
+  {
+    "name": "SUNIONSTORE",
+    "group": "sets",
+    "syntax": "SUNIONSTORE result team other",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["SADD", "team", "a"],
+        "expect": {
+          "equals": 1
+        }
+      },
+      {
+        "argv": ["SUNIONSTORE", "result", "team", "other"],
+        "expect": {
+          "equals": 1
+        }
+      }
+    ]
+  },
+  {
+    "name": "TOMBRAIDER",
+    "group": "server",
+    "syntax": "TOMBRAIDER STATUS | OFF | ON",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["TOMBRAIDER", "STATUS"],
+        "expect": {
+          "contains": "mode=interval"
+        }
+      },
+      {
+        "argv": ["TOMBRAIDER", "OFF"],
+        "expect": {
+          "equals": "OK"
+        }
+      },
+      {
+        "argv": ["TOMBRAIDER", "STATUS"],
+        "expect": {
+          "contains": "mode=off"
+        }
+      },
+      {
+        "argv": ["TOMBRAIDER", "ON"],
+        "expect": {
+          "equals": "OK"
+        }
+      }
+    ]
+  },
+  {
+    "name": "TOUCH",
+    "group": "keys",
+    "syntax": "TOUCH sample missing",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["SET", "sample", "value"],
+        "expect": {
+          "equals": "OK"
+        }
+      },
+      {
+        "argv": ["TOUCH", "sample", "missing"],
+        "expect": {
+          "equals": 1
+        }
+      }
+    ]
+  },
+  {
+    "name": "TTL",
+    "group": "keys",
+    "syntax": "TTL sample",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["SET", "sample", "value"],
+        "expect": {
+          "equals": "OK"
+        }
+      },
+      {
+        "argv": ["TTL", "sample"],
+        "expect": {
+          "equals": -1
+        }
+      },
+      {
+        "argv": ["TTL", "missing"],
+        "expect": {
+          "equals": -2
+        }
+      }
+    ]
+  },
+  {
+    "name": "TYPE",
+    "group": "keys",
+    "syntax": "TYPE sample",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["SET", "sample", "value"],
+        "expect": {
+          "equals": "OK"
+        }
+      },
+      {
+        "argv": ["TYPE", "sample"],
+        "expect": {
+          "equals": "string"
+        }
+      }
+    ]
+  },
+  {
+    "name": "UNLINK",
+    "group": "keys",
+    "syntax": "UNLINK sample",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["SET", "sample", "value"],
+        "expect": {
+          "equals": "OK"
+        }
+      },
+      {
+        "argv": ["UNLINK", "sample"],
+        "expect": {
+          "equals": 1
+        }
+      }
+    ]
+  },
+  {
+    "name": "UNSUBSCRIBE",
+    "group": "pubsub",
+    "syntax": "UNSUBSCRIBE channel",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["SUBSCRIBE", "updates"],
+        "expect": {
+          "equals": ["subscribe", "updates", 1]
+        },
+        "connection": "subscriber"
+      },
+      {
+        "argv": ["PUBSUB", "NUMSUB", "updates"],
+        "expect": {
+          "equals": ["updates", 1]
+        }
+      },
+      {
+        "argv": ["PUBLISH", "updates", "hello"],
+        "expect": {
+          "equals": 1
+        }
+      },
+      {
+        "read": true,
+        "connection": "subscriber",
+        "expect": {
+          "equals": ["message", "updates", "hello"]
+        }
+      },
+      {
+        "argv": ["UNSUBSCRIBE", "updates"],
+        "expect": {
+          "equals": ["unsubscribe", "updates", 0]
+        },
+        "connection": "subscriber"
+      }
+    ]
+  },
+  {
+    "name": "UNWATCH",
+    "group": "transactions",
+    "syntax": "UNWATCH",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["WATCH", "sample"],
+        "expect": {
+          "equals": "OK"
+        }
+      },
+      {
+        "argv": ["UNWATCH"],
+        "expect": {
+          "equals": "OK"
+        }
+      },
+      {
+        "argv": ["SET", "sample", "other"],
+        "expect": {
+          "equals": "OK"
+        },
+        "connection": "other"
+      },
+      {
+        "argv": ["MULTI"],
+        "expect": {
+          "equals": "OK"
+        }
+      },
+      {
+        "argv": ["GET", "sample"],
+        "expect": {
+          "equals": "QUEUED"
+        }
+      },
+      {
+        "argv": ["EXEC"],
+        "expect": {
+          "equals": ["other"]
+        }
+      }
+    ]
+  },
+  {
+    "name": "WAIT",
+    "group": "server",
+    "syntax": "WAIT numreplicas timeout-ms",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["SET", "sample", "value"],
+        "expect": {
+          "equals": "OK"
+        }
+      },
+      {
+        "argv": ["WAIT", "0", "100"],
+        "expect": {
+          "equals": 0
+        }
+      }
+    ]
+  },
+  {
+    "name": "WATCH",
+    "group": "transactions",
+    "syntax": "WATCH key [key ...]",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["WATCH", "sample"],
+        "expect": {
+          "equals": "OK"
+        }
+      },
+      {
+        "argv": ["SET", "sample", "other"],
+        "expect": {
+          "equals": "OK"
+        },
+        "connection": "other"
+      },
+      {
+        "argv": ["MULTI"],
+        "expect": {
+          "equals": "OK"
+        }
+      },
+      {
+        "argv": ["GET", "sample"],
+        "expect": {
+          "equals": "QUEUED"
+        }
+      },
+      {
+        "argv": ["EXEC"],
+        "expect": {
+          "equals": null
+        }
+      }
+    ]
+  },
+  {
+    "name": "XACK",
+    "group": "streams",
+    "syntax": "XACK events workers 1-0",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["XADD", "events", "1-0", "event", "created"],
+        "expect": {
+          "equals": "1-0"
+        }
+      },
+      {
+        "argv": ["XGROUP", "CREATE", "events", "workers", "0"],
+        "expect": {
+          "equals": "OK"
+        }
+      },
+      {
+        "argv": [
+          "XREADGROUP",
+          "GROUP",
+          "workers",
+          "alice",
+          "STREAMS",
+          "events",
+          ">"
+        ],
+        "expect": {
+          "equals": [["events", [["1-0", ["event", "created"]]]]]
+        }
+      },
+      {
+        "argv": ["XACK", "events", "workers", "1-0"],
+        "expect": {
+          "equals": 1
+        }
+      }
+    ]
+  },
+  {
+    "name": "XADD",
+    "group": "streams",
+    "syntax": "XADD events 2-0 event updated",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["XADD", "events", "1-0", "event", "created"],
+        "expect": {
+          "equals": "1-0"
+        }
+      },
+      {
+        "argv": ["XADD", "events", "2-0", "event", "updated"],
+        "expect": {
+          "equals": "2-0"
+        }
+      }
+    ]
+  },
+  {
+    "name": "XAUTOCLAIM",
+    "group": "streams",
+    "syntax": "XAUTOCLAIM events workers bob 0 0-0",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["XADD", "events", "1-0", "event", "created"],
+        "expect": {
+          "equals": "1-0"
+        }
+      },
+      {
+        "argv": ["XGROUP", "CREATE", "events", "workers", "0"],
+        "expect": {
+          "equals": "OK"
+        }
+      },
+      {
+        "argv": [
+          "XREADGROUP",
+          "GROUP",
+          "workers",
+          "alice",
+          "STREAMS",
+          "events",
+          ">"
+        ],
+        "expect": {
+          "equals": [["events", [["1-0", ["event", "created"]]]]]
+        }
+      },
+      {
+        "argv": ["XAUTOCLAIM", "events", "workers", "bob", "0", "0-0"],
+        "expect": {
+          "equals": ["0-0", [["1-0", ["event", "created"]]], []]
+        }
+      }
+    ]
+  },
+  {
+    "name": "XCLAIM",
+    "group": "streams",
+    "syntax": "XCLAIM events workers bob 0 1-0",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["XADD", "events", "1-0", "event", "created"],
+        "expect": {
+          "equals": "1-0"
+        }
+      },
+      {
+        "argv": ["XGROUP", "CREATE", "events", "workers", "0"],
+        "expect": {
+          "equals": "OK"
+        }
+      },
+      {
+        "argv": [
+          "XREADGROUP",
+          "GROUP",
+          "workers",
+          "alice",
+          "STREAMS",
+          "events",
+          ">"
+        ],
+        "expect": {
+          "equals": [["events", [["1-0", ["event", "created"]]]]]
+        }
+      },
+      {
+        "argv": ["XCLAIM", "events", "workers", "bob", "0", "1-0"],
+        "expect": {
+          "equals": [["1-0", ["event", "created"]]]
+        }
+      }
+    ]
+  },
+  {
+    "name": "XDEL",
+    "group": "streams",
+    "syntax": "XDEL events 1-0",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["XADD", "events", "1-0", "event", "created"],
+        "expect": {
+          "equals": "1-0"
+        }
+      },
+      {
+        "argv": ["XDEL", "events", "1-0"],
+        "expect": {
+          "equals": 1
+        }
+      }
+    ]
+  },
+  {
+    "name": "XGROUP",
+    "group": "streams",
+    "syntax": "XGROUP CREATE key group id | CREATECONSUMER key group consumer | DESTROY key group",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["XADD", "events", "1-0", "event", "created"],
+        "expect": {
+          "equals": "1-0"
+        }
+      },
+      {
+        "argv": ["XGROUP", "CREATE", "events", "workers", "0"],
+        "expect": {
+          "equals": "OK"
+        }
+      },
+      {
+        "argv": ["XGROUP", "CREATECONSUMER", "events", "workers", "alice"],
+        "expect": {
+          "equals": 1
+        }
+      },
+      {
+        "argv": ["XGROUP", "DESTROY", "events", "workers"],
+        "expect": {
+          "equals": 1
+        }
+      }
+    ]
+  },
+  {
+    "name": "XINFO",
+    "group": "streams",
+    "syntax": "XINFO STREAM key",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["XADD", "events", "1-0", "event", "created"],
+        "expect": {
+          "equals": "1-0"
+        }
+      },
+      {
+        "argv": ["XINFO", "STREAM", "events"],
+        "expect": {
+          "pairsInclude": {
+            "length": 1,
+            "last-generated-id": "1-0"
+          }
+        }
+      }
+    ]
+  },
+  {
+    "name": "XLEN",
+    "group": "streams",
+    "syntax": "XLEN events",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["XADD", "events", "1-0", "event", "created"],
+        "expect": {
+          "equals": "1-0"
+        }
+      },
+      {
+        "argv": ["XLEN", "events"],
+        "expect": {
+          "equals": 1
+        }
+      }
+    ]
+  },
+  {
+    "name": "XPENDING",
+    "group": "streams",
+    "syntax": "XPENDING events workers",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["XADD", "events", "1-0", "event", "created"],
+        "expect": {
+          "equals": "1-0"
+        }
+      },
+      {
+        "argv": ["XGROUP", "CREATE", "events", "workers", "0"],
+        "expect": {
+          "equals": "OK"
+        }
+      },
+      {
+        "argv": [
+          "XREADGROUP",
+          "GROUP",
+          "workers",
+          "alice",
+          "STREAMS",
+          "events",
+          ">"
+        ],
+        "expect": {
+          "equals": [["events", [["1-0", ["event", "created"]]]]]
+        }
+      },
+      {
+        "argv": ["XPENDING", "events", "workers"],
+        "expect": {
+          "equals": [1, "1-0", "1-0", [["alice", 1]]]
+        }
+      }
+    ]
+  },
+  {
+    "name": "XRANGE",
+    "group": "streams",
+    "syntax": "XRANGE events - +",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["XADD", "events", "1-0", "event", "created"],
+        "expect": {
+          "equals": "1-0"
+        }
+      },
+      {
+        "argv": ["XRANGE", "events", "-", "+"],
+        "expect": {
+          "equals": [["1-0", ["event", "created"]]]
+        }
+      }
+    ]
+  },
+  {
+    "name": "XREAD",
+    "group": "streams",
+    "syntax": "XREAD STREAMS events 0",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["XADD", "events", "1-0", "event", "created"],
+        "expect": {
+          "equals": "1-0"
+        }
+      },
+      {
+        "argv": ["XREAD", "STREAMS", "events", "0"],
+        "expect": {
+          "equals": [["events", [["1-0", ["event", "created"]]]]]
+        }
+      }
+    ]
+  },
+  {
+    "name": "XREADGROUP",
+    "group": "streams",
+    "syntax": "XREADGROUP GROUP group consumer STREAMS key id",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["XADD", "events", "1-0", "event", "created"],
+        "expect": {
+          "equals": "1-0"
+        }
+      },
+      {
+        "argv": ["XGROUP", "CREATE", "events", "workers", "0"],
+        "expect": {
+          "equals": "OK"
+        }
+      },
+      {
+        "argv": [
+          "XREADGROUP",
+          "GROUP",
+          "workers",
+          "alice",
+          "STREAMS",
+          "events",
+          ">"
+        ],
+        "expect": {
+          "equals": [["events", [["1-0", ["event", "created"]]]]]
+        }
+      }
+    ]
+  },
+  {
+    "name": "XREVRANGE",
+    "group": "streams",
+    "syntax": "XREVRANGE events + -",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["XADD", "events", "1-0", "event", "created"],
+        "expect": {
+          "equals": "1-0"
+        }
+      },
+      {
+        "argv": ["XREVRANGE", "events", "+", "-"],
+        "expect": {
+          "equals": [["1-0", ["event", "created"]]]
+        }
+      }
+    ]
+  },
+  {
+    "name": "XSETID",
+    "group": "streams",
+    "syntax": "XSETID events 3-0",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["XADD", "events", "1-0", "event", "created"],
+        "expect": {
+          "equals": "1-0"
+        }
+      },
+      {
+        "argv": ["XSETID", "events", "3-0"],
+        "expect": {
+          "equals": "OK"
+        }
+      }
+    ]
+  },
+  {
+    "name": "XTRIM",
+    "group": "streams",
+    "syntax": "XTRIM events MAXLEN 0",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["XADD", "events", "1-0", "event", "created"],
+        "expect": {
+          "equals": "1-0"
+        }
+      },
+      {
+        "argv": ["XTRIM", "events", "MAXLEN", "0"],
+        "expect": {
+          "equals": 1
+        }
+      }
+    ]
+  },
+  {
+    "name": "ZADD",
+    "group": "sorted-sets",
+    "syntax": "ZADD scores 3 c",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["ZADD", "scores", "1", "a", "2", "b"],
+        "expect": {
+          "equals": 2
+        }
+      },
+      {
+        "argv": ["ZADD", "scores", "3", "c"],
+        "expect": {
+          "equals": 1
+        }
+      }
+    ]
+  },
+  {
+    "name": "ZCARD",
+    "group": "sorted-sets",
+    "syntax": "ZCARD scores",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["ZADD", "scores", "1", "a", "2", "b"],
+        "expect": {
+          "equals": 2
+        }
+      },
+      {
+        "argv": ["ZCARD", "scores"],
+        "expect": {
+          "equals": 2
+        }
+      }
+    ]
+  },
+  {
+    "name": "ZCOUNT",
+    "group": "sorted-sets",
+    "syntax": "ZCOUNT scores 1 2",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["ZADD", "scores", "1", "a", "2", "b"],
+        "expect": {
+          "equals": 2
+        }
+      },
+      {
+        "argv": ["ZCOUNT", "scores", "1", "2"],
+        "expect": {
+          "equals": 2
+        }
+      }
+    ]
+  },
+  {
+    "name": "ZDIFF",
+    "group": "sorted-sets",
+    "syntax": "ZDIFF 1 scores",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["ZADD", "scores", "1", "a", "2", "b"],
+        "expect": {
+          "equals": 2
+        }
+      },
+      {
+        "argv": ["ZDIFF", "1", "scores"],
+        "expect": {
+          "equals": ["a", "b"]
+        }
+      }
+    ]
+  },
+  {
+    "name": "ZDIFFSTORE",
+    "group": "sorted-sets",
+    "syntax": "ZDIFFSTORE result 1 scores",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["ZADD", "scores", "1", "a", "2", "b"],
+        "expect": {
+          "equals": 2
+        }
+      },
+      {
+        "argv": ["ZDIFFSTORE", "result", "1", "scores"],
+        "expect": {
+          "equals": 2
+        }
+      }
+    ]
+  },
+  {
+    "name": "ZINCRBY",
+    "group": "sorted-sets",
+    "syntax": "ZINCRBY scores 2 a",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["ZADD", "scores", "1", "a", "2", "b"],
+        "expect": {
+          "equals": 2
+        }
+      },
+      {
+        "argv": ["ZINCRBY", "scores", "2", "a"],
+        "expect": {
+          "equals": "3"
+        }
+      }
+    ]
+  },
+  {
+    "name": "ZINTER",
+    "group": "sorted-sets",
+    "syntax": "ZINTER 1 scores",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["ZADD", "scores", "1", "a", "2", "b"],
+        "expect": {
+          "equals": 2
+        }
+      },
+      {
+        "argv": ["ZINTER", "1", "scores"],
+        "expect": {
+          "equals": ["a", "b"]
+        }
+      }
+    ]
+  },
+  {
+    "name": "ZINTERCARD",
+    "group": "sorted-sets",
+    "syntax": "ZINTERCARD 1 scores",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["ZADD", "scores", "1", "a", "2", "b"],
+        "expect": {
+          "equals": 2
+        }
+      },
+      {
+        "argv": ["ZINTERCARD", "1", "scores"],
+        "expect": {
+          "equals": 2
+        }
+      }
+    ]
+  },
+  {
+    "name": "ZINTERSTORE",
+    "group": "sorted-sets",
+    "syntax": "ZINTERSTORE result 1 scores",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["ZADD", "scores", "1", "a", "2", "b"],
+        "expect": {
+          "equals": 2
+        }
+      },
+      {
+        "argv": ["ZINTERSTORE", "result", "1", "scores"],
+        "expect": {
+          "equals": 2
+        }
+      }
+    ]
+  },
+  {
+    "name": "ZLEXCOUNT",
+    "group": "sorted-sets",
+    "syntax": "ZLEXCOUNT scores - +",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["ZADD", "scores", "1", "a", "1", "b"],
+        "expect": {
+          "equals": 2
+        }
+      },
+      {
+        "argv": ["ZLEXCOUNT", "scores", "-", "+"],
+        "expect": {
+          "equals": 2
+        }
+      }
+    ]
+  },
+  {
+    "name": "ZMPOP",
+    "group": "sorted-sets",
+    "syntax": "ZMPOP 1 scores MIN COUNT 2",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["ZADD", "scores", "1", "a", "2", "b"],
+        "expect": {
+          "equals": 2
+        }
+      },
+      {
+        "argv": ["ZMPOP", "1", "scores", "MIN", "COUNT", "2"],
+        "expect": {
+          "equals": [
+            "scores",
+            [
+              ["a", "1"],
+              ["b", "2"]
+            ]
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "name": "ZMSCORE",
+    "group": "sorted-sets",
+    "syntax": "ZMSCORE scores a b missing",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["ZADD", "scores", "1", "a", "2", "b"],
+        "expect": {
+          "equals": 2
+        }
+      },
+      {
+        "argv": ["ZMSCORE", "scores", "a", "b", "missing"],
+        "expect": {
+          "equals": ["1", "2", null]
+        }
+      }
+    ]
+  },
+  {
+    "name": "ZPOPMAX",
+    "group": "sorted-sets",
+    "syntax": "ZPOPMAX scores",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["ZADD", "scores", "1", "a", "2", "b"],
+        "expect": {
+          "equals": 2
+        }
+      },
+      {
+        "argv": ["ZPOPMAX", "scores"],
+        "expect": {
+          "equals": ["b", "2"]
+        }
+      }
+    ]
+  },
+  {
+    "name": "ZPOPMIN",
+    "group": "sorted-sets",
+    "syntax": "ZPOPMIN scores",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["ZADD", "scores", "1", "a", "2", "b"],
+        "expect": {
+          "equals": 2
+        }
+      },
+      {
+        "argv": ["ZPOPMIN", "scores"],
+        "expect": {
+          "equals": ["a", "1"]
+        }
+      }
+    ]
+  },
+  {
+    "name": "ZRANDMEMBER",
+    "group": "sorted-sets",
+    "syntax": "ZRANDMEMBER key",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["ZADD", "scores", "1", "a"],
+        "expect": {
+          "equals": 1
+        }
+      },
+      {
+        "argv": ["ZRANDMEMBER", "scores"],
+        "expect": {
+          "equals": "a"
+        }
+      }
+    ]
+  },
+  {
+    "name": "ZRANGE",
+    "group": "sorted-sets",
+    "syntax": "ZRANGE scores 0 -1 WITHSCORES",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["ZADD", "scores", "1", "a", "2", "b"],
+        "expect": {
+          "equals": 2
+        }
+      },
+      {
+        "argv": ["ZRANGE", "scores", "0", "-1", "WITHSCORES"],
+        "expect": {
+          "equals": ["a", "1", "b", "2"]
+        }
+      }
+    ]
+  },
+  {
+    "name": "ZRANGEBYLEX",
+    "group": "sorted-sets",
+    "syntax": "ZRANGEBYLEX scores - +",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["ZADD", "scores", "1", "a", "1", "b"],
+        "expect": {
+          "equals": 2
+        }
+      },
+      {
+        "argv": ["ZRANGEBYLEX", "scores", "-", "+"],
+        "expect": {
+          "equals": ["a", "b"]
+        }
+      }
+    ]
+  },
+  {
+    "name": "ZRANGEBYSCORE",
+    "group": "sorted-sets",
+    "syntax": "ZRANGEBYSCORE scores 1 2",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["ZADD", "scores", "1", "a", "2", "b"],
+        "expect": {
+          "equals": 2
+        }
+      },
+      {
+        "argv": ["ZRANGEBYSCORE", "scores", "1", "2"],
+        "expect": {
+          "equals": ["a", "b"]
+        }
+      }
+    ]
+  },
+  {
+    "name": "ZRANGESTORE",
+    "group": "sorted-sets",
+    "syntax": "ZRANGESTORE result scores 0 -1",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["ZADD", "scores", "1", "a", "2", "b"],
+        "expect": {
+          "equals": 2
+        }
+      },
+      {
+        "argv": ["ZRANGESTORE", "result", "scores", "0", "-1"],
+        "expect": {
+          "equals": 2
+        }
+      }
+    ]
+  },
+  {
+    "name": "ZRANK",
+    "group": "sorted-sets",
+    "syntax": "ZRANK scores b",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["ZADD", "scores", "1", "a", "2", "b"],
+        "expect": {
+          "equals": 2
+        }
+      },
+      {
+        "argv": ["ZRANK", "scores", "b"],
+        "expect": {
+          "equals": 1
+        }
+      }
+    ]
+  },
+  {
+    "name": "ZREM",
+    "group": "sorted-sets",
+    "syntax": "ZREM scores a",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["ZADD", "scores", "1", "a", "2", "b"],
+        "expect": {
+          "equals": 2
+        }
+      },
+      {
+        "argv": ["ZREM", "scores", "a"],
+        "expect": {
+          "equals": 1
+        }
+      }
+    ]
+  },
+  {
+    "name": "ZREMRANGEBYLEX",
+    "group": "sorted-sets",
+    "syntax": "ZREMRANGEBYLEX scores - +",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["ZADD", "scores", "1", "a", "1", "b"],
+        "expect": {
+          "equals": 2
+        }
+      },
+      {
+        "argv": ["ZREMRANGEBYLEX", "scores", "-", "+"],
+        "expect": {
+          "equals": 2
+        }
+      }
+    ]
+  },
+  {
+    "name": "ZREMRANGEBYRANK",
+    "group": "sorted-sets",
+    "syntax": "ZREMRANGEBYRANK scores 0 0",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["ZADD", "scores", "1", "a", "2", "b"],
+        "expect": {
+          "equals": 2
+        }
+      },
+      {
+        "argv": ["ZREMRANGEBYRANK", "scores", "0", "0"],
+        "expect": {
+          "equals": 1
+        }
+      }
+    ]
+  },
+  {
+    "name": "ZREMRANGEBYSCORE",
+    "group": "sorted-sets",
+    "syntax": "ZREMRANGEBYSCORE scores 1 1",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["ZADD", "scores", "1", "a", "2", "b"],
+        "expect": {
+          "equals": 2
+        }
+      },
+      {
+        "argv": ["ZREMRANGEBYSCORE", "scores", "1", "1"],
+        "expect": {
+          "equals": 1
+        }
+      }
+    ]
+  },
+  {
+    "name": "ZREVRANGE",
+    "group": "sorted-sets",
+    "syntax": "ZREVRANGE scores 0 -1",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["ZADD", "scores", "1", "a", "2", "b"],
+        "expect": {
+          "equals": 2
+        }
+      },
+      {
+        "argv": ["ZREVRANGE", "scores", "0", "-1"],
+        "expect": {
+          "equals": ["b", "a"]
+        }
+      }
+    ]
+  },
+  {
+    "name": "ZREVRANGEBYLEX",
+    "group": "sorted-sets",
+    "syntax": "ZREVRANGEBYLEX scores + -",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["ZADD", "scores", "1", "a", "1", "b"],
+        "expect": {
+          "equals": 2
+        }
+      },
+      {
+        "argv": ["ZREVRANGEBYLEX", "scores", "+", "-"],
+        "expect": {
+          "equals": ["b", "a"]
+        }
+      }
+    ]
+  },
+  {
+    "name": "ZREVRANGEBYSCORE",
+    "group": "sorted-sets",
+    "syntax": "ZREVRANGEBYSCORE scores 2 1",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["ZADD", "scores", "1", "a", "2", "b"],
+        "expect": {
+          "equals": 2
+        }
+      },
+      {
+        "argv": ["ZREVRANGEBYSCORE", "scores", "2", "1"],
+        "expect": {
+          "equals": ["b", "a"]
+        }
+      }
+    ]
+  },
+  {
+    "name": "ZREVRANK",
+    "group": "sorted-sets",
+    "syntax": "ZREVRANK scores b",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["ZADD", "scores", "1", "a", "2", "b"],
+        "expect": {
+          "equals": 2
+        }
+      },
+      {
+        "argv": ["ZREVRANK", "scores", "b"],
+        "expect": {
+          "equals": 0
+        }
+      }
+    ]
+  },
+  {
+    "name": "ZSCAN",
+    "group": "sorted-sets",
+    "syntax": "ZSCAN scores 0",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["ZADD", "scores", "1", "a", "2", "b"],
+        "expect": {
+          "equals": 2
+        }
+      },
+      {
+        "argv": ["ZSCAN", "scores", "0"],
+        "expect": {
+          "scanPairs": {
+            "a": "1",
+            "b": "2"
+          }
+        }
+      }
+    ]
+  },
+  {
+    "name": "ZSCORE",
+    "group": "sorted-sets",
+    "syntax": "ZSCORE scores a",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["ZADD", "scores", "1", "a", "2", "b"],
+        "expect": {
+          "equals": 2
+        }
+      },
+      {
+        "argv": ["ZSCORE", "scores", "a"],
+        "expect": {
+          "equals": "1"
+        }
+      }
+    ]
+  },
+  {
+    "name": "ZUNION",
+    "group": "sorted-sets",
+    "syntax": "ZUNION 1 scores",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["ZADD", "scores", "1", "a", "2", "b"],
+        "expect": {
+          "equals": 2
+        }
+      },
+      {
+        "argv": ["ZUNION", "1", "scores"],
+        "expect": {
+          "equals": ["a", "b"]
+        }
+      }
+    ]
+  },
+  {
+    "name": "ZUNIONSTORE",
+    "group": "sorted-sets",
+    "syntax": "ZUNIONSTORE result 1 scores",
+    "scope": "example",
+    "steps": [
+      {
+        "argv": ["ZADD", "scores", "1", "a", "2", "b"],
+        "expect": {
+          "equals": 2
+        }
+      },
+      {
+        "argv": ["ZUNIONSTORE", "result", "1", "scores"],
+        "expect": {
+          "equals": 2
+        }
+      }
+    ]
+  }
+]
