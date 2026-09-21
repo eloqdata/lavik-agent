@@ -1,0 +1,123 @@
+{
+  "id": "fast-restart-with-index-checkpoints",
+  "locale": "en",
+  "version": "0.1.0",
+  "kind": "blog",
+  "slug": "fast-restart-with-index-checkpoints",
+  "title": "Fast restart begins with knowing when an index is stale",
+  "summary": "Lavik treats a shutdown checkpoint as a one-use recovery accelerator. Its publication, consumption, and fallback rules are the substance of the design.",
+  "updatedAt": "2026-09-21",
+  "sourceRevision": "9d6b212da5da820b4bed63fc047b5c2ed6be1fa5",
+  "blocks": [
+    {
+      "type": "paragraph",
+      "text": "A large SSD dataset can have a relatively small memory index, yet rebuilding that index still requires work. Reading durable records after every planned restart may become operationally expensive even when steady-state serving is efficient. Lavik offers an optional clean-shutdown index checkpoint to reduce restart disk traffic. Its value depends on a stricter question than whether serialization is fast: can the next process prove that this saved index still describes the authoritative records?",
+      "sources": [
+        "design-architecture--06-shutdown-index-checkpoints",
+        "design-architecture--04-storage-and-recovery"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "Keep the source of truth separate from the shortcut"
+    },
+    {
+      "type": "paragraph",
+      "text": "The checkpoint is an optional, one-use cache of runtime top-level indexes. Ordinary committed records remain authoritative, and an absent or unusable checkpoint leads recovery back to the record scan. Enabling the feature does not change command durability or turn an acknowledged write into a stronger persistence guarantee. The documented default is disabled.",
+      "sources": [
+        "design-architecture--06-shutdown-index-checkpoints"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "It is also specifically a clean-shutdown mechanism. A scheduled restart that reaches the freeze and publication protocol is different from an abrupt process or machine failure. Operational estimates should separate these paths. A fast planned restart says little about cold-scan recovery time after a crash, and neither path should be inferred from steady-state GET throughput.",
+      "sources": [
+        "design-architecture--06-shutdown-index-checkpoints"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "Freeze more than incoming requests"
+    },
+    {
+      "type": "paragraph",
+      "text": "Checkpoint construction starts after request admission stops, accepted requests drain, and control and replication tasks capable of mutating storage have joined. Workers seal and flush streams, drain maintenance, and meet a barrier. Worker zero then runs transaction cleaning to a fixed point, relocating committed tagged winners into durable ordinary records and retiring old transaction generations.",
+      "sources": [
+        "design-architecture--06-shutdown-index-checkpoints"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "That cleaning can create new staged records, so a second seal-and-drain round is necessary. A final check rejects the checkpoint if expiration, flush work, or a storage failure appeared behind the freeze. This sequence explains why copying hash buckets alone would be unsafe: the saved index and its physical accounting must reflect a quiescent, reconciled storage state.",
+      "sources": [
+        "design-architecture--06-shutdown-index-checkpoints"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "Publish a complete generation"
+    },
+    {
+      "type": "paragraph",
+      "text": "Workers serialize capacity, index, and block-accounting chunks. Capacity information supplies expected counts for every owned partition and logical database; index chunks carry complete keys and their record references; accounting chunks describe live physical blocks. These are complementary checks, not interchangeable summaries of the same bytes.",
+      "sources": [
+        "design-architecture--06-shutdown-index-checkpoints"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "Publication writes all checkpoint blocks, writes the checkpoint discovery bitmap, synchronizes the data and bitmap on each device, and only then publishes the generation and expected counts through the mirrored root. Until that final publication succeeds, the new blocks are merely unpublished acceleration state. An incomplete attempt cannot become current just because some of its blocks reached a device.",
+      "sources": [
+        "design-architecture--06-shutdown-index-checkpoints"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "Discovery is not allocation authority"
+    },
+    {
+      "type": "paragraph",
+      "text": "The checkpoint bitmap tells the loader which blocks deserve inspection. It does not independently prove that a block belongs to the selected checkpoint. Allocation state, block headers, generation, layout discriminators, checksums, and completeness checks establish the matching structure. This matters when blocks are reused: a familiar physical address can belong to a different generation.",
+      "sources": [
+        "design-architecture--06-shutdown-index-checkpoints"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "The one-use rule addresses another stale-state problem. After a successful restart begins using and changing storage, the old shutdown image must not be accepted again as if those subsequent mutations never occurred. Published and consumed generations make that lifecycle explicit. A checkpoint is a handoff between two process lifetimes, not an indefinitely reusable backup.",
+      "sources": [
+        "design-architecture--06-shutdown-index-checkpoints"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "Faster startup changes when some errors appear"
+    },
+    {
+      "type": "paragraph",
+      "text": "Checkpoint loading validates the serialized index structure, but ordinary record bodies are validated lazily when read. A structurally valid checkpoint can restore a location whose value later reports media corruption; a cold scan might have encountered that body during startup instead. This is a documented tradeoff in where verification work occurs, and it belongs in a recovery runbook.",
+      "sources": [
+        "design-architecture--06-shutdown-index-checkpoints"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "Checkpoint creation also needs foreground allocation space and may fail if cleanup cannot quiesce, an entry cannot fit, or I/O fails. Such failure does not change the durability of ordinary or transaction records. It changes which recovery path will be available. Monitor checkpoint outcomes rather than assuming a configuration setting guarantees the accelerated path on the next boot.",
+      "sources": [
+        "design-architecture--06-shutdown-index-checkpoints"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "Measure both sides of the restart"
+    },
+    {
+      "type": "paragraph",
+      "text": "Evaluate total planned downtime: request draining, transaction cleaning, checkpoint construction, startup validation, and the first useful application requests. Separately exercise missing and invalid checkpoints and the ordinary scan fallback. Record the amount of live data, obsolete versions, key lengths, and free space. The design offers an opportunity to move work out of repeated value-body scanning, but only a workload-specific restart experiment can quantify the operational benefit.",
+      "sources": [
+        "design-architecture--06-shutdown-index-checkpoints",
+        "design-architecture--04-storage-and-recovery"
+      ]
+    }
+  ]
+}

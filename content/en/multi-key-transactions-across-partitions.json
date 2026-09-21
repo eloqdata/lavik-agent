@@ -1,0 +1,125 @@
+{
+  "id": "multi-key-transactions-across-partitions",
+  "locale": "en",
+  "version": "0.1.0",
+  "kind": "blog",
+  "slug": "multi-key-transactions-across-partitions",
+  "title": "Coordinating multi-key work across Lavik partitions",
+  "summary": "Key ownership makes local work efficient. Multi-key commands need a separate design for scheduling, lock lifetime, command errors, and durable completion.",
+  "updatedAt": "2026-09-21",
+  "sourceRevision": "9d6b212da5da820b4bed63fc047b5c2ed6be1fa5",
+  "blocks": [
+    {
+      "type": "paragraph",
+      "text": "A single-key operation has an obvious place to run: the key’s owner. A multi-key operation may need several owners to agree on when its work can proceed and what state remains protected between execution steps. Lavik separates this scheduling problem from the later storage commit problem. For engineers moving Redis transactions or keyed Lua workloads, that separation explains both the fast paths and the failure cases worth testing.",
+      "sources": [
+        "design-architecture--03-transaction-coordination",
+        "design-architecture--02-request-serving"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "Single-owner work avoids unnecessary scheduling"
+    },
+    {
+      "type": "paragraph",
+      "text": "When all keys belong to one owner, scheduling does not immediately allocate a global scheduling ID. Execution deduplicates and acquires the key set on that owner. If the recorded intents are compatible, the operation proceeds without entering the global-ID and shard-queue path. A conflict changes the situation: the waiter retains its intents, receives an ID, enters the queue, and suspends.",
+      "sources": [
+        "design-architecture--03-transaction-coordination"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "The qualification is important. Avoiding a scheduling ID does not mean a multi-key write avoids a durable transaction ID. The first identity orders lock scheduling; the second identifies storage records and their commit decision. Conflating them would make a local scheduling optimization sound like a claim about crash recovery that it does not establish.",
+      "sources": [
+        "design-architecture--03-transaction-coordination"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "Several owners need a shared scheduling round"
+    },
+    {
+      "type": "paragraph",
+      "text": "A multi-shard transaction allocates a scheduling ID and registers its intents with every participating owner. An owner can reject an ID that is too old for its committed watermark or conflicts with ordering already exposed by a later queue position. The coordinator cancels the successful registrations before retrying with a fresh ID. The current documented retry loop is unbounded and has no explicit backoff.",
+      "sources": [
+        "design-architecture--03-transaction-coordination"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "This creates a useful evaluation question for contention-heavy workloads: how often is scheduling retried, and what happens to tail latency while that retry rate rises? A high independent-key throughput result does not answer it. Transactions touching overlapping key sets exercise coordination and queue ordering in addition to storage throughput.",
+      "sources": [
+        "design-architecture--03-transaction-coordination"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "Order cannot become a cross-shard waiting cycle"
+    },
+    {
+      "type": "paragraph",
+      "text": "The scheduler preserves transaction queue positions, but an armed participant whose complete intent set was granted can enter an owner-local bypass-ready queue. It is conflict-free with earlier registered work on that shard, and its retained intents prevent later conflicting work from asserting the same property. A final hold-compatibility check still applies. This allows eligible work to make progress without abandoning the ordering information needed by other participants.",
+      "sources": [
+        "design-architecture--03-transaction-coordination"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "After callbacks finish, a barrier brings their statuses back to the coordinator’s original worker. A non-releasing hop retains holds, intents, and queue positions for the next step. A releasing hop removes them and repolls the shard. The coordinator awaits every round it starts, so a suspended callback cannot outlive the transaction frame it still references.",
+      "sources": [
+        "design-architecture--03-transaction-coordination"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "A caught command error still matters to recovery"
+    },
+    {
+      "type": "paragraph",
+      "text": "Inside EXEC or Lua, a multi-step command can fail while the enclosing operation continues. Simply rewinding the runtime index would leave recovery exposed to partial records already appended by that failed command. The documented design uses a command-local undo boundary within the outer storage transaction and appends compensation records under the same transaction ID.",
+      "sources": [
+        "design-architecture--03-transaction-coordination"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "For example, a command inside a Lua call may fail after doing some internal preparation or mutation, and the script may handle the error before issuing later commands. Runtime visibility and recovery must agree about which effects survived. The important property is not that every command error aborts the entire script; it is that committing later effects cannot resurrect the failed command’s compensated partial writes.",
+      "sources": [
+        "design-architecture--03-transaction-coordination"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "Logical completion and durable completion diverge"
+    },
+    {
+      "type": "paragraph",
+      "text": "Successful write paths hand their storage receipts to a worker-local commit queue after settling undo state. A drain can merge flush requirements that identify the same physical block and allocation epoch, while each transaction still receives its own commit decision. This amortizes coordination without replacing individual transaction boundaries with one undifferentiated batch outcome.",
+      "sources": [
+        "design-architecture--03-transaction-coordination",
+        "design-architecture--04-storage-and-recovery"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "The queue also has reply-side backpressure. Reaching its documented high watermark causes a command to wait for queue depth to fall, but a successful reply is not thereby a synchronous durability promise. During recovery, tagged records without their durable commit decision are dropped atomically. Application retry policy, crash durability, scheduling isolation, and cross-node replication are related concerns with different proofs.",
+      "sources": [
+        "design-architecture--03-transaction-coordination",
+        "design-architecture--04-storage-and-recovery"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "Test the transaction shape you actually use"
+    },
+    {
+      "type": "paragraph",
+      "text": "Replay overlapping and disjoint key sets, one-owner and many-owner commands, WATCH conflicts, and scripts that handle intermediate errors. Record scheduling retries, queue depth, contention, and application latency separately from raw command throughput. Also define what the client does after a connection loss with an uncertain outcome. The transaction document provides the mechanism; the application must still decide which operations are safe to retry and which require a higher-level reconciliation record.",
+      "sources": [
+        "design-architecture--03-transaction-coordination",
+        "design-architecture--02-request-serving"
+      ]
+    }
+  ]
+}

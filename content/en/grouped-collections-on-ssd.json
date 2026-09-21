@@ -1,0 +1,126 @@
+{
+  "id": "grouped-collections-on-ssd",
+  "locale": "en",
+  "version": "0.1.0",
+  "kind": "blog",
+  "slug": "grouped-collections-on-ssd",
+  "title": "How grouped collections change the cost of large Redis values",
+  "summary": "Large hashes, lists, sets, and sorted sets need more than a place to store one giant value. Lavik uses collection-specific routing and atomic graph publication.",
+  "updatedAt": "2026-09-21",
+  "sourceRevision": "9d6b212da5da820b4bed63fc047b5c2ed6be1fa5",
+  "blocks": [
+    {
+      "type": "paragraph",
+      "text": "A large collection is not simply a large string. Reading one hash field, moving a list boundary, and finding a sorted-set rank ask different questions of storage. If every small change requires rebuilding a complete collection image, retained capacity and mutation cost become tightly coupled. Lavik’s grouped-collection representation separates a collection’s logical root from independently addressed group snapshots, while preserving one user-visible key and its transaction lifecycle.",
+      "sources": [
+        "design-architecture--09-grouped-collections"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "Small and large representations share a key"
+    },
+    {
+      "type": "paragraph",
+      "text": "Hash, Set, List, and Sorted Set support compact complete-value encodings as well as grouped representations. Writes promote a compact collection at an encoded-size threshold, and the grouped form remains until the key is deleted or replaced. Streaming imports can construct grouped graphs directly. This is an internal storage representation, not a new Redis keyspace or an application-visible database.",
+      "sources": [
+        "design-architecture--09-grouped-collections",
+        "design-architecture--04-storage-and-recovery"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "That boundary keeps a useful application property: callers still address the same logical key, type, expiry, and version through the command interface. The top-level index marks the grouped form and directs access to a sparse object index. It does not need to retain every collection field or value in memory simply because the logical collection is large.",
+      "sources": [
+        "design-architecture--09-grouped-collections",
+        "design-architecture--04-storage-and-recovery"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "The data structure follows the access pattern"
+    },
+    {
+      "type": "paragraph",
+      "text": "Hash and Set use a prefix directory with a persisted routing seed. Set members are represented as fields with empty values. List uses an ordered-page directory. Newly built Sorted Sets combine ordered score/member pages with a member-to-score prefix directory. A single hash directory cannot answer rank and score-order queries, so the sorted-set design needs both access paths.",
+      "sources": [
+        "design-architecture--09-grouped-collections"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "This is worth preserving in an evaluation model. A hash point lookup, a list range, and a sorted-set update have different metadata and page-access work. A benchmark of small string GETs does not establish their costs. Grouping creates an opportunity to limit work to relevant parts of a collection; it does not make every command a constant-cost single-page operation.",
+      "sources": [
+        "design-architecture--09-grouped-collections"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "Sorted sets pay for two complementary views"
+    },
+    {
+      "type": "paragraph",
+      "text": "The indexed sorted-set representation persists each member in an ordered page and again in the member index with its score. The member index stores scores rather than ordered-page identifiers, so splitting ordered pages does not require rewriting member routing just because page boundaries moved. Both graphs belong to one object and share its incarnation and cardinality.",
+      "sources": [
+        "design-architecture--09-grouped-collections"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "That is a concrete tradeoff: additional persistent member representation buys a separate lookup path and less coupling to ordered-page topology. The routing metadata retained in memory scales with pages rather than retaining each member’s payload. Engineers should examine their member lengths, update distribution, rank queries, and range sizes before assuming a large leaderboard has the same economics as a large string cache.",
+      "sources": [
+        "design-architecture--09-grouped-collections"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "A mutation publishes a graph, not loose pages"
+    },
+    {
+      "type": "paragraph",
+      "text": "The logical root ties together the representation that readers should observe. Directory changes, group snapshots, extent manifests, and retirement evidence must remain consistent with that root. A page split or removal can change neighboring links and routing metadata as well as the page being edited. Publishing only the newly written payload would leave recovery or a reader with an incomplete graph.",
+      "sources": [
+        "design-architecture--09-grouped-collections"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "Incarnations distinguish deletion and recreation from updates to an existing object. Revisions identify group mutations, while the outer record preserves source command ordering. Retirement records retain evidence about superseded structure. These identities prevent an old physical snapshot from being interpreted as a current part of a later collection merely because its key or storage location looks familiar.",
+      "sources": [
+        "design-architecture--09-grouped-collections"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "Snapshots make reclamation part of the design"
+    },
+    {
+      "type": "paragraph",
+      "text": "Immutable views can share unchanged physical index pages across mutations. Retained directories, manifests, reservations, and snapshot pin lists still participate in memory admission. A metadata handle is not itself a permanent guarantee about physical storage: coordinates and allocation epochs are captured before suspension, and snapshot readers additionally pin the captured graph.",
+      "sources": [
+        "design-architecture--09-grouped-collections",
+        "design-architecture--04-storage-and-recovery"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "Expiration-only updates illustrate why these distinctions help. They can append a new root while sharing unchanged routing and payload state, rather than reading and rewriting every group. Deletion and immediate expiration take the ordinary graph-retirement path. Evaluate not only a mutation in isolation, but also what remains retained while scans, snapshots, and key transfers overlap with it.",
+      "sources": [
+        "design-architecture--09-grouped-collections",
+        "design-architecture--04-storage-and-recovery"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "Design a collection-specific trial"
+    },
+    {
+      "type": "paragraph",
+      "text": "Use realistic field and member lengths, cardinalities, update skew, and range widths. Include growth through the compact-to-grouped transition, deletion and recreation, expiration, concurrent snapshots, and recovery. Track memory metadata, device bytes, write amplification, and application latency together. The purpose is to establish whether the collection’s access pattern benefits from independent group snapshots, while accounting for the routing, duplication, and lifetime costs that make those snapshots correct.",
+      "sources": [
+        "design-architecture--09-grouped-collections",
+        "design-architecture--04-storage-and-recovery"
+      ]
+    }
+  ]
+}

@@ -19,6 +19,7 @@ import { ArticleBody as VerifiedArticleBody } from "../../../../components/conte
 import {
   articleReview,
   articleReceipts,
+  publicationErrors,
 } from "../../../../../../packages/content/gate";
 import { BenchmarkChart } from "../../../../components/benchmark";
 import { CostCalculator } from "../../../../components/cost-calculator";
@@ -134,7 +135,12 @@ export default async function Page({
     return <ManualPage route={route} locale={locale} />;
   const pages = articles().filter((a) => a.locale === locale);
   const article = pages.find((a) => articlePath(a) === `/${locale}/${route}/`);
-  if (article)
+  if (article) {
+    const errors = publicationErrors(article);
+    if (errors.length)
+      throw new Error(
+        `Article cannot be exported: ${article.id}: ${errors.join("; ")}`,
+      );
     return (
       <main
         id="main"
@@ -151,8 +157,28 @@ export default async function Page({
           <h1>{article.title}</h1>
           <p className="document-summary">{article.summary}</p>
           <div className="article-meta">
-            {zh ? "文档版本" : "Documentation"}: 0.1.0 · {release.tag} ·{" "}
-            {article.updatedAt}
+            {article.kind === "blog" ? (
+              <>
+                {zh ? "工程与设计" : "Engineering & design"} ·{" "}
+                {article.updatedAt}
+                {article.sourceRevision ? (
+                  <>
+                    {" "}
+                    ·{" "}
+                    <a
+                      href={`https://github.com/eloqdata/lavik/tree/${article.sourceRevision}`}
+                    >
+                      {article.sourceRevision.slice(0, 7)}
+                    </a>
+                  </>
+                ) : null}
+              </>
+            ) : (
+              <>
+                {zh ? "文档版本" : "Documentation"}: 0.1.0 · {release.tag} ·{" "}
+                {article.updatedAt}
+              </>
+            )}
           </div>
           {article.kind === "release" || article.id === "quick-start" ? (
             <div className="download-box">
@@ -177,6 +203,7 @@ export default async function Page({
         </article>
       </main>
     );
+  }
   if (route === "benchmarks")
     return (
       <main id="main" className="container wide-page">
@@ -301,6 +328,11 @@ export default async function Page({
       <div className="article-list">
         {pages
           .filter((a) => a.kind === kind)
+          .sort(
+            (a, b) =>
+              b.updatedAt.localeCompare(a.updatedAt) ||
+              a.title.localeCompare(b.title),
+          )
           .map((a) => (
             <Link
               href={articlePath(a)}

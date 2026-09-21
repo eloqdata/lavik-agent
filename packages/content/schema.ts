@@ -33,6 +33,10 @@ export const articleSchema = z
     title: z.string().min(1).max(160),
     summary: z.string().min(1).max(500),
     updatedAt: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+    sourceRevision: z
+      .string()
+      .regex(/^[a-f0-9]{40}$/)
+      .optional(),
     blocks: z.array(blockSchema).min(1).max(40),
   })
   .strict();

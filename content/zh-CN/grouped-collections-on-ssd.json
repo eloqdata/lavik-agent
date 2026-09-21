@@ -1,0 +1,126 @@
+{
+  "id": "grouped-collections-on-ssd",
+  "locale": "zh-CN",
+  "version": "0.1.0",
+  "kind": "blog",
+  "slug": "grouped-collections-on-ssd",
+  "title": "分组集合如何改变大 Redis 值的存储代价",
+  "summary": "大型哈希、列表、集合与有序集合，需要的不只是存放一个巨大值的位置。Lavik 使用按集合类型设计的路由与原子图发布。",
+  "updatedAt": "2026-09-21",
+  "sourceRevision": "9d6b212da5da820b4bed63fc047b5c2ed6be1fa5",
+  "blocks": [
+    {
+      "type": "paragraph",
+      "text": "大集合并不只是一个大字符串。读取哈希字段、移动列表边界、查找有序集合排名，对存储提出的是不同问题。如果每次小修改都要重建完整集合镜像，保留容量与修改成本就会紧密耦合。Lavik 的分组集合表示将逻辑根与可独立寻址的分组快照分开，同时保留一个用户可见键及其事务生命周期。",
+      "sources": [
+        "design-architecture--09-grouped-collections"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "小集合与大集合共享同一个键"
+    },
+    {
+      "type": "paragraph",
+      "text": "Hash、Set、List 和 Sorted Set 同时支持紧凑完整值编码与分组表示。写入在编码大小达到阈值时将紧凑集合提升为分组形式，随后一直保持分组，直到键被删除或替换。流式导入可以直接构建分组图。这属于内部存储表示，并不是新的 Redis 键空间或应用可见数据库。",
+      "sources": [
+        "design-architecture--09-grouped-collections",
+        "design-architecture--04-storage-and-recovery"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "这一边界保留了有用的应用属性：调用者仍通过命令接口访问同一逻辑键、类型、过期时间和版本。顶层索引标记分组形式，并将访问导向稀疏对象索引。逻辑集合很大，并不意味着每个字段或值都必须保存在内存中。",
+      "sources": [
+        "design-architecture--09-grouped-collections",
+        "design-architecture--04-storage-and-recovery"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "数据结构服从访问模式"
+    },
+    {
+      "type": "paragraph",
+      "text": "Hash 与 Set 使用带持久路由种子的前缀目录，Set 成员表示为值为空的字段。List 使用有序页目录。新构建的 Sorted Set 则同时拥有按分数与成员排序的页面，以及成员到分数的前缀目录。单个哈希目录无法回答排名与分数顺序查询，因此有序集合需要两条访问路径。",
+      "sources": [
+        "design-architecture--09-grouped-collections"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "评估模型应保留这种差异。哈希点查、列表范围读取和有序集合更新，涉及不同的元数据与页面访问工作。小字符串 GET 基准不能证明这些操作的成本。分组提供了只处理集合相关部分的机会，但不会让每个命令都变成固定成本的单页操作。",
+      "sources": [
+        "design-architecture--09-grouped-collections"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "有序集合维护两种互补视图"
+    },
+    {
+      "type": "paragraph",
+      "text": "带成员索引的有序集合，会在有序页中保存成员，并在成员索引中再次保存成员及其分数。成员索引记录分数，而不是有序页标识，因此有序页分裂、页边界移动时，不必仅因这个原因就重写成员路由。两张图属于同一个对象，并共享实例身份与基数。",
+      "sources": [
+        "design-architecture--09-grouped-collections"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "这是明确的取舍：额外的持久成员表示，换来了独立查询路径，以及与有序页拓扑之间更低的耦合。驻留内存的路由元数据按页面规模增长，而不保留每个成员的数据载荷。工程师应先分析成员长度、更新分布、排名查询与范围大小，不能直接假设大型排行榜与大型字符串缓存具有相同经济性。",
+      "sources": [
+        "design-architecture--09-grouped-collections"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "一次修改发布的是图，而不是零散页面"
+    },
+    {
+      "type": "paragraph",
+      "text": "逻辑根把读取者应看到的表示连接起来。目录变化、分组快照、区段清单与退役证据，都必须与这个根一致。页分裂或删除不仅可能改变被编辑的页，还可能改变相邻链接和路由元数据。如果只发布新写入的数据载荷，恢复或读取者就可能看到不完整的图。",
+      "sources": [
+        "design-architecture--09-grouped-collections"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "实例身份用于区分删除后重建与现有对象更新。修订号识别分组修改，外层记录则保留源命令顺序。退役记录保留被替代结构的证据。这些身份共同防止某份旧物理快照，仅因键名或存储位置看起来熟悉，就被解释为后续集合的当前组成部分。",
+      "sources": [
+        "design-architecture--09-grouped-collections"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "快照让空间回收成为设计的一部分"
+    },
+    {
+      "type": "paragraph",
+      "text": "不可变视图可以在多次修改之间共享未变化的物理索引页。但保留的目录、清单、预留与快照固定列表，仍参与内存准入。元数据句柄本身并不永久保证物理存储有效：挂起前需要捕获坐标与分配时期，快照读取者还会固定所捕获的完整图。",
+      "sources": [
+        "design-architecture--09-grouped-collections",
+        "design-architecture--04-storage-and-recovery"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "只更新过期时间的操作，说明了这些区分的价值。它可以追加新根，同时共享未改变的路由与数据载荷状态，而不必读取并重写每个分组。删除和立即过期则走普通图退役路径。评估时不应只看孤立修改，还要观察扫描、快照和键传输与修改重叠时，哪些状态仍被保留。",
+      "sources": [
+        "design-architecture--09-grouped-collections",
+        "design-architecture--04-storage-and-recovery"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "按集合类型设计实验"
+    },
+    {
+      "type": "paragraph",
+      "text": "使用真实的字段与成员长度、基数、更新倾斜程度和范围宽度。实验应包含跨越紧凑到分组阈值的增长、删除重建、过期、并发快照与恢复，同时跟踪内存元数据、设备字节、写放大和应用延迟。目标是确认访问模式能否从独立分组快照中受益，并计入为保证快照正确性而存在的路由、重复表示与生命周期成本。",
+      "sources": [
+        "design-architecture--09-grouped-collections",
+        "design-architecture--04-storage-and-recovery"
+      ]
+    }
+  ]
+}

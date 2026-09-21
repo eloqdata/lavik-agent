@@ -1,0 +1,136 @@
+{
+  "id": "why-lavik-separates-index-from-values",
+  "locale": "en",
+  "version": "0.1.0",
+  "kind": "blog",
+  "slug": "why-lavik-separates-index-from-values",
+  "title": "Why Lavik separates its memory index from SSD values",
+  "summary": "Follow the ownership, append, read, and reclamation decisions behind a value store that can grow beyond DRAM capacity.",
+  "updatedAt": "2026-09-21",
+  "sourceRevision": "9d6b212da5da820b4bed63fc047b5c2ed6be1fa5",
+  "blocks": [
+    {
+      "type": "paragraph",
+      "text": "For a growing Redis workload, keeping a broader dataset can become a memory-capacity decision before it becomes a compute decision. More product variants, older sessions, or additional feature versions add retained bytes even when request volume changes little. Lavik addresses that shape of growth by keeping top-level key indexes in memory and durable value representations on storage. The architectural work is in making those two representations agree while reads, writes, recovery, and reclamation overlap.",
+      "sources": [
+        "design-architecture--01-overview",
+        "design-architecture--04-storage-and-recovery"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "An index is not the whole value"
+    },
+    {
+      "type": "paragraph",
+      "text": "The storage engine owns the runtime top-level indexes and reconstructs them from durable records at startup. The overview assigns this responsibility to storage; the storage document explains the record locations, epochs, and ownership behind it. An in-memory lookup helps identify where a value lives. It does not mean every value body, collection member, or version is also resident.",
+      "sources": [
+        "design-architecture--01-overview",
+        "design-architecture--04-storage-and-recovery",
+        "design-architecture--09-grouped-collections"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "This distinction changes capacity planning. Retained payload can grow on SSD, while key count, collection routing metadata, active buffers, snapshots, and replication state still consume memory. A workload made of many tiny values can have a very different memory profile from one with the same payload bytes in fewer large objects. “Fits on SSD” is therefore only the beginning of sizing.",
+      "sources": [
+        "design-architecture--01-overview",
+        "design-architecture--04-storage-and-recovery",
+        "design-architecture--09-grouped-collections"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "Three kinds of ownership"
+    },
+    {
+      "type": "paragraph",
+      "text": "Logical key ownership, physical block ownership, and device allocation ownership are separate. A logical partition corresponds to a Redis hash slot and is assigned to a key owner. A physical block has a runtime owner responsible for mutable block state. A device allocator serializes its free pools, allocation bitmap, and allocation epochs. These responsibilities need not belong to the same worker.",
+      "sources": [
+        "design-architecture--04-storage-and-recovery",
+        "design-design-storage-block-ownership"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "That separation matters during a read or relocation. The worker that arbitrates a key should not directly mutate another worker’s block accounting. Cross-worker submissions carry the work to the responsible owner. SPDK adds a physical eligibility constraint: a worker must have a queue pair for the relevant controller. Ownership is therefore also a rule about which worker can actually submit an I/O operation.",
+      "sources": [
+        "design-architecture--04-storage-and-recovery",
+        "design-design-storage-block-ownership"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "Append a version, then manage its lifetime"
+    },
+    {
+      "type": "paragraph",
+      "text": "Lavik appends immutable record versions instead of treating the index location as an in-place value slot. Active append streams belong to workers and transaction generations, rather than allocating an active stream for every hash slot. The documented staging buffers are 8 MiB, so the number of live streams is itself a memory-planning variable.",
+      "sources": [
+        "design-architecture--04-storage-and-recovery",
+        "design-design-storage-block-ownership"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "Imagine replacing a cached object while a reader still references its previous version. The new logical value, the previous physical record, and the storage space that can eventually be reused have different lifetimes. Key arbitration, record publication, read pins, and reclamation must preserve those distinctions. Updating an index entry alone is not sufficient proof that every byte belonging to the old version can immediately be reused.",
+      "sources": [
+        "design-architecture--04-storage-and-recovery",
+        "design-design-storage-block-ownership"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "Asynchronous storage needs identity checks"
+    },
+    {
+      "type": "paragraph",
+      "text": "A storage operation can suspend while work happens on another owner or device. Physical coordinates alone are unsafe if a block can be freed and reused before that operation resumes. Allocation epochs distinguish incarnations of a block; ownership and pinning rules preserve the state that an in-flight operation actually references. The block-ownership design is consequently part of correctness, not just thread placement.",
+      "sources": [
+        "design-architecture--04-storage-and-recovery",
+        "design-design-storage-block-ownership"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "The io_uring and SPDK selections control buffer allocation, submission, and device eligibility together. They are fixed before storage preparation and do not change the durable format. It is reasonable to evaluate their different I/O paths on suitable hardware, but backend selection is not a substitute for testing dataset size, locality, concurrent writes, and tail latency.",
+      "sources": [
+        "design-architecture--04-storage-and-recovery",
+        "design-design-storage-block-ownership"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "Free capacity must become reusable capacity"
+    },
+    {
+      "type": "paragraph",
+      "text": "Old versions, expiration, transaction cleanup, and collection graph retirement all create maintenance work. Lavik’s storage layer tracks live and committed bytes, maintains allocation state, and performs online defragmentation and reclamation. A device can have nominal capacity remaining while the foreground allocator still needs suitable reusable blocks and maintenance headroom.",
+      "sources": [
+        "design-architecture--04-storage-and-recovery",
+        "design-design-storage-block-ownership"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "For a cache with frequent refreshes, measure sustained behavior after multiple replacement cycles, not only the initial fill. Track device occupancy, memory admission, write traffic, and the latency experienced while maintenance runs. This is an engineering implication of append-and-reclaim storage: the cost of keeping a large dataset includes keeping its physical layout serviceable over time.",
+      "sources": [
+        "design-architecture--04-storage-and-recovery",
+        "design-design-storage-block-ownership"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "Build a capacity model for the real workload"
+    },
+    {
+      "type": "paragraph",
+      "text": "Start with retained value bytes, key cardinality, collection sizes, and update rate. Add the memory required for indexes and retained runtime state, then reserve storage headroom for maintenance and recovery. Compare complete deployments at the same retained dataset and latency target. The attractive opportunity is to stop paying DRAM capacity prices for every retained value byte. The useful design question is how much of that opportunity your actual object distribution and access pattern can realize.",
+      "sources": [
+        "design-architecture--01-overview",
+        "design-architecture--04-storage-and-recovery",
+        "design-architecture--09-grouped-collections"
+      ]
+    }
+  ]
+}

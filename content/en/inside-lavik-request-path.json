@@ -1,0 +1,130 @@
+{
+  "id": "inside-lavik-request-path",
+  "locale": "en",
+  "version": "0.1.0",
+  "kind": "blog",
+  "slug": "inside-lavik-request-path",
+  "title": "How Lavik keeps requests moving while storage waits",
+  "summary": "An SSD-backed Redis interface needs more than asynchronous reads. Follow a request through connection state, admission, partition ownership, and reply backpressure.",
+  "updatedAt": "2026-09-21",
+  "sourceRevision": "9d6b212da5da820b4bed63fc047b5c2ed6be1fa5",
+  "blocks": [
+    {
+      "type": "paragraph",
+      "text": "Replacing DRAM capacity with NVMe SSD changes where a server spends time. A lookup can wait for storage, a key lock, another worker, or a slow client. If those waits monopolize the request executor, fast devices alone cannot keep unrelated requests moving. Lavik’s request architecture separates connection state, execution ownership, and asynchronous work. The useful question for a Redis application is how those boundaries preserve semantics while allowing the server to use its workers.",
+      "sources": [
+        "design-architecture--02-request-serving",
+        "design-architecture--01-overview"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "One connection still has an order"
+    },
+    {
+      "type": "paragraph",
+      "text": "A connection is more than a socket. Its context owns authentication, the selected logical database, negotiated RESP version, transaction queue, WATCH registrations, and reply state. Requests from that connection are dispatched sequentially. That matters when a database selection precedes a read in a pipeline: parsing several commands ahead does not authorize executing them in a different session order.",
+      "sources": [
+        "design-architecture--02-request-serving"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "Lavik can retain up to 128 parsed commands in wire order. This is a parsing window, not a promise of 128 concurrent executions on one connection. For a client evaluation, distinguish pipeline depth from the number of independent connections. They exercise different parts of the server, and increasing one is not automatically equivalent to increasing the other.",
+      "sources": [
+        "design-architecture--02-request-serving"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "The serving worker and the key owner"
+    },
+    {
+      "type": "paragraph",
+      "text": "A connection enters a Bycorf serving coroutine, while a key belongs to a worker-owned logical partition. Execution may therefore need a worker hop. Eligible single-key writes take an owner-local fast path so that publication admission and mutation happen on the key owner. Other operations may coordinate several owners. Storage and transaction interfaces make this ownership explicit rather than permitting arbitrary concurrent access to an index.",
+      "sources": [
+        "design-architecture--02-request-serving",
+        "design-architecture--04-storage-and-recovery",
+        "design-architecture--03-transaction-coordination"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "Consider two connections reading different keys. One lookup may suspend on a disk read while other runnable work proceeds. That does not make every wait harmless: a suspended operation can still retain a key lock, a buffer lease, or a database gate. Understanding what remains held across suspension is more useful than treating “asynchronous” as a latency guarantee.",
+      "sources": [
+        "design-architecture--02-request-serving",
+        "design-architecture--04-storage-and-recovery",
+        "design-architecture--03-transaction-coordination"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "Admission must survive the wait"
+    },
+    {
+      "type": "paragraph",
+      "text": "Managed serving adds another complication: authority can change while a request is waiting. The request path checks readiness and the committed serving state before entering the handler. Admitted writes also carry authority information through outer admissions, worker hops, and transaction execution. A storage-neutral mutation precondition is checked after preparation and immediately before the logical keyspace mutation.",
+      "sources": [
+        "design-architecture--02-request-serving"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "The failure case is concrete. A request passes an initial check, waits for a lock, and resumes after a failover has revoked its authority. An early check alone would be stale. Rechecking at the mutation boundary closes that window. Background maintenance, rollback, and trusted replica apply have different authority responsibilities; treating them as ordinary client writes would also be incorrect.",
+      "sources": [
+        "design-architecture--02-request-serving"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "Backpressure starts before the disk"
+    },
+    {
+      "type": "paragraph",
+      "text": "The parser itself retains memory. Lavik separates the allowance for bytes held by ordinary client connections from the limit on one partially assembled command. Commands queued inside a transaction retain their charge because their arguments still exist after the queued reply. A tiny socket read buffer does not eliminate the memory held by parsed arguments.",
+      "sources": [
+        "design-architecture--02-request-serving",
+        "design-architecture--05-replication"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "Source writes reserve replication publication capacity before database and key work. This ordering avoids discovering only after mutation that the server cannot retain the corresponding replication event. These are different admission boundaries with different purposes. A workload with huge requests, long transaction queues, or lagging replicas can encounter pressure before NVMe throughput is the limiting factor.",
+      "sources": [
+        "design-architecture--02-request-serving",
+        "design-architecture--05-replication"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "Returning a value also has a lifetime"
+    },
+    {
+      "type": "paragraph",
+      "text": "The response path can send an encoded reply, a direct storage-backed value, or bounded chunks. A direct disk reply retains its read lease. Streaming therefore reduces the need for a single enormous response allocation, but it still ties resources to client progress. The documented path closes a connection that makes no progress for 30 seconds while a streamed reply holds a database gate.",
+      "sources": [
+        "design-architecture--02-request-serving"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "The practical implication is to include slow readers in evaluation. A client that stops consuming a large result changes resource lifetimes even if storage reads complete quickly. Measure tail latency for unrelated traffic while varying result size and client read rate. Connection cleanup must also release WATCH, subscriptions, client records, and other session state; the implementation routes disconnects through a shared cleanup point.",
+      "sources": [
+        "design-architecture--02-request-serving"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "Evaluate the complete request path"
+    },
+    {
+      "type": "paragraph",
+      "text": "Use the request-serving document as a map for a workload replay: connection count, pipeline depth, command sizes, key locality, transaction overlap, and response consumption all belong in the experiment. Attribute time to admission, owner coordination, storage, and output rather than assuming every slow request is a disk problem. Lavik’s design gives asynchronous I/O a request lifecycle in which to operate. Whether that lifecycle meets an application deadline remains a question for the actual command mix and deployment.",
+      "sources": [
+        "design-architecture--02-request-serving",
+        "design-architecture--03-transaction-coordination",
+        "design-architecture--04-storage-and-recovery"
+      ]
+    }
+  ]
+}

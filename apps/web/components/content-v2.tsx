@@ -132,12 +132,21 @@ export function ArticleBody({
           {article.locale === "en" ? "Sources for this page" : "本页资料来源"}
         </h2>
         <p>
-          {article.locale === "en" ? "Documentation snapshot" : "文档快照"}:{" "}
-          {release.tag} ·{" "}
-          <a href={`https://github.com/eloqdata/lavik/tree/${release.commit}`}>
-            {release.commit.slice(0, 7)}
+          {article.locale === "en" ? "Source snapshot" : "资料快照"}:{" "}
+          {article.sourceRevision ? "" : `${release.tag} · `}
+          <a
+            href={`https://github.com/eloqdata/lavik/tree/${article.sourceRevision ?? release.commit}`}
+          >
+            {(article.sourceRevision ?? release.commit).slice(0, 7)}
           </a>
         </p>
+        {article.sourceRevision ? (
+          <p>
+            {article.locale === "en"
+              ? "Engineering notes based on this repository snapshot. Consult the versioned manual for the downloadable beta's verified behavior."
+              : "本文工程分析基于此仓库快照。下载的 beta 版本已验证行为请查阅版本化手册。"}
+          </p>
+        ) : null}
         <ul>
           {[...used].map((id) => {
             const source = sources.find((s) => s.id === id)!;

@@ -1,0 +1,136 @@
+{
+  "id": "why-lavik-separates-index-from-values",
+  "locale": "zh-CN",
+  "version": "0.1.0",
+  "kind": "blog",
+  "slug": "why-lavik-separates-index-from-values",
+  "title": "Lavik 为什么将内存索引与 SSD 值数据分开",
+  "summary": "沿着所有权、追加、读取与空间回收四个环节，理解 Lavik 如何让值数据容量超越 DRAM。",
+  "updatedAt": "2026-09-21",
+  "sourceRevision": "9d6b212da5da820b4bed63fc047b5c2ed6be1fa5",
+  "blocks": [
+    {
+      "type": "paragraph",
+      "text": "对于持续增长的 Redis 工作负载，是否保留更多数据，可能先成为内存容量问题，随后才是计算能力问题。商品变体、历史会话或额外特征版本会增加保留字节，即使请求量变化不大。Lavik 将顶层键索引留在内存中，把值的持久表示放在存储上。真正的架构工作，是在读取、写入、恢复与空间回收并行推进时，让两种表示始终一致。",
+      "sources": [
+        "design-architecture--01-overview",
+        "design-architecture--04-storage-and-recovery"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "索引不等于完整的值"
+    },
+    {
+      "type": "paragraph",
+      "text": "存储引擎拥有运行时顶层索引，并在启动时从持久记录中重建它们。总览文档把这项职责划归存储层；存储文档进一步说明记录位置、分配时期与所有权。内存中的索引查询帮助定位值，但不代表所有值正文、集合成员或历史版本也驻留内存。",
+      "sources": [
+        "design-architecture--01-overview",
+        "design-architecture--04-storage-and-recovery",
+        "design-architecture--09-grouped-collections"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "这种区分会改变容量规划。保留的数据载荷可以在 SSD 上增长，但键数量、集合路由元数据、活动缓冲区、快照和复制状态仍消耗内存。相同的数据载荷字节，若由大量小值组成，内存分布可能与少量大对象完全不同。因此，“SSD 放得下”只是容量规划的起点。",
+      "sources": [
+        "design-architecture--01-overview",
+        "design-architecture--04-storage-and-recovery",
+        "design-architecture--09-grouped-collections"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "三种不同的所有权"
+    },
+    {
+      "type": "paragraph",
+      "text": "逻辑键所有权、物理块所有权和设备分配所有权彼此分离。逻辑分区对应 Redis 哈希槽，由键所有者管理；物理块的运行时所有者负责可变块状态；设备分配器串行管理空闲池、分配位图与分配时期。这些职责不一定属于同一个工作线程。",
+      "sources": [
+        "design-architecture--04-storage-and-recovery",
+        "design-design-storage-block-ownership"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "这种分离在读取和搬迁时很重要。负责键仲裁的线程不应直接修改其他线程的块计量状态，而应通过跨线程提交，把工作交给负责的所有者。SPDK 还增加了物理访问资格限制：线程必须持有对应控制器的队列对。因此，所有权也规定了哪个线程真正能够提交 I/O。",
+      "sources": [
+        "design-architecture--04-storage-and-recovery",
+        "design-design-storage-block-ownership"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "追加新版本，再管理其生命周期"
+    },
+    {
+      "type": "paragraph",
+      "text": "Lavik 追加不可变的记录版本，而不是把索引指向的位置当成可原地覆盖的值槽。活动追加流属于工作线程及事务代际，不会为每个哈希槽都分配一个活动流。文档中的暂存缓冲区大小为 8 MiB，因此，存活追加流的数量本身就是内存规划变量。",
+      "sources": [
+        "design-architecture--04-storage-and-recovery",
+        "design-design-storage-block-ownership"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "设想更新一个缓存对象时，某个读取者仍引用它的旧版本。新的逻辑值、旧的物理记录，以及最终能够重新利用的存储空间，具有不同的生命周期。键仲裁、记录发布、读取固定与空间回收必须保留这种区分。索引条目已更新，并不足以证明旧版本的所有字节都可以立即复用。",
+      "sources": [
+        "design-architecture--04-storage-and-recovery",
+        "design-design-storage-block-ownership"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "异步存储需要身份检查"
+    },
+    {
+      "type": "paragraph",
+      "text": "存储操作可能在其他所有者或设备处理工作时挂起。如果操作恢复之前，物理块已经释放并被复用，仅有物理坐标就不安全。分配时期用于区分同一块的不同实例；所有权与固定规则则保护在途操作实际引用的状态。因此，块所有权设计是正确性的一部分，而不只是线程放置策略。",
+      "sources": [
+        "design-architecture--04-storage-and-recovery",
+        "design-design-storage-block-ownership"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "io_uring 与 SPDK 的选择共同决定缓冲区分配、I/O 提交及设备访问资格。这个选择在存储准备之前固定，并不改变持久格式。可以在适合的硬件上比较两种 I/O 路径，但选择后端不能替代对数据集大小、局部性、并发写入与尾延迟的验证。",
+      "sources": [
+        "design-architecture--04-storage-and-recovery",
+        "design-design-storage-block-ownership"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "空闲容量还必须能够被重新利用"
+    },
+    {
+      "type": "paragraph",
+      "text": "旧版本、过期、事务清理和集合图退役，都会产生维护工作。Lavik 的存储层跟踪有效字节与已提交字节，维护分配状态，并在线执行碎片整理与空间回收。设备即使仍有标称剩余容量，前台分配器也可能需要合适的可复用块和维护余量。",
+      "sources": [
+        "design-architecture--04-storage-and-recovery",
+        "design-design-storage-block-ownership"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "对于频繁刷新的缓存，应测量多轮替换后的持续行为，而不只是初次填充。观察设备占用、内存准入、写入流量，以及维护执行期间的请求延迟。这是追加并回收式存储带来的工程含义：保留大数据集的成本，也包括长期维持其物理布局的可服务性。",
+      "sources": [
+        "design-architecture--04-storage-and-recovery",
+        "design-design-storage-block-ownership"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "为真实工作负载建立容量模型"
+    },
+    {
+      "type": "paragraph",
+      "text": "从保留的值字节、键基数、集合大小和更新速率出发，加入索引与运行时保留状态所需的内存，再为维护和恢复预留存储余量。应在相同保留数据集与延迟目标下比较完整部署。这里的吸引力，是无需为每个保留的值字节支付 DRAM 容量价格；真正值得回答的设计问题，是实际对象分布与访问模式能够实现其中多少收益。",
+      "sources": [
+        "design-architecture--01-overview",
+        "design-architecture--04-storage-and-recovery",
+        "design-architecture--09-grouped-collections"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,123 @@
+{
+  "id": "fast-restart-with-index-checkpoints",
+  "locale": "zh-CN",
+  "version": "0.1.0",
+  "kind": "blog",
+  "slug": "fast-restart-with-index-checkpoints",
+  "title": "快速重启，首先要知道索引何时已经过期",
+  "summary": "Lavik 将关机检查点视为一次性恢复加速器。真正重要的是它的发布、消费与回退规则。",
+  "updatedAt": "2026-09-21",
+  "sourceRevision": "9d6b212da5da820b4bed63fc047b5c2ed6be1fa5",
+  "blocks": [
+    {
+      "type": "paragraph",
+      "text": "大型 SSD 数据集的内存索引可能相对较小，但重建索引仍需要工作。即使稳态服务高效，每次计划重启都读取持久记录，也可能带来可观的运维成本。Lavik 提供可选的干净关机索引检查点，以减少重启时的磁盘读取量。它的价值取决于一个比序列化速度更严格的问题：下一个进程能否证明，这份保存的索引仍然对应权威记录？",
+      "sources": [
+        "design-architecture--06-shutdown-index-checkpoints",
+        "design-architecture--04-storage-and-recovery"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "把权威数据与恢复捷径分开"
+    },
+    {
+      "type": "paragraph",
+      "text": "检查点是运行时顶层索引的可选、一次性缓存。普通已提交记录仍然具有权威性；检查点缺失或不可用时，恢复会回到记录扫描。启用此功能不会改变命令持久性，也不会强化已确认写入的持久化保证。文档中的默认设置是关闭。",
+      "sources": [
+        "design-architecture--06-shutdown-index-checkpoints"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "它也明确属于干净关机机制。能够完成冻结和发布协议的计划重启，与进程或机器突然故障不同。运维估算应区分这些路径：计划重启很快，并不能说明崩溃后冷扫描恢复的时间；两种恢复路径也都不能从稳态 GET 吞吐量推导出来。",
+      "sources": [
+        "design-architecture--06-shutdown-index-checkpoints"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "需要冻结的不只是新请求"
+    },
+    {
+      "type": "paragraph",
+      "text": "检查点构建开始之前，需要停止请求准入、排空已接受请求，并等待控制与复制层中所有可能修改存储的任务退出。工作线程封存并刷出追加流、排空维护工作，然后到达屏障。工作线程零再将事务清理推进到固定点，把已提交且带事务标签的胜出记录搬迁为持久普通记录，并退役旧事务代际。",
+      "sources": [
+        "design-architecture--06-shutdown-index-checkpoints"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "清理可能产生新的暂存记录，因此还需要第二轮封存与排空。最终检查会在冻结之后出现过期处理、刷盘工作或存储故障时拒绝检查点。这个顺序说明，单纯复制哈希桶为什么不安全：保存的索引及其物理计量必须对应已静止并完成整理的存储状态。",
+      "sources": [
+        "design-architecture--06-shutdown-index-checkpoints"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "发布完整的一代检查点"
+    },
+    {
+      "type": "paragraph",
+      "text": "工作线程序列化容量、索引与块计量三类数据块。容量信息给出每个所属分区和逻辑数据库的预期条目数；索引块携带完整键及其记录引用；计量块描述存活的物理块。这些检查彼此补充，并不是同一批字节的可互换摘要。",
+      "sources": [
+        "design-architecture--06-shutdown-index-checkpoints"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "发布过程先写入全部检查点块，再写入发现位图，在每个设备上同步数据和位图，最后才通过镜像根发布代际与预期计数。在最后一步成功之前，新块只是尚未发布的加速状态。一次不完整的尝试，不会仅因为部分数据已到达设备就成为当前检查点。",
+      "sources": [
+        "design-architecture--06-shutdown-index-checkpoints"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "发现线索并不等于分配权威"
+    },
+    {
+      "type": "paragraph",
+      "text": "检查点位图告诉加载器哪些块值得检查，但不能独立证明某个块属于选中的检查点。分配状态、块头、代际、布局标识、校验和及完整性检查共同确定匹配结构。块被复用时，这一点尤其重要：熟悉的物理地址可能已经属于另一个代际。",
+      "sources": [
+        "design-architecture--06-shutdown-index-checkpoints"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "一次性规则处理的是另一种过期状态问题。进程重启并开始使用、修改存储后，旧的关机镜像不能再次被接受，好像后续修改从未发生。已发布代际与已消费代际明确表达了这种生命周期。检查点是两个进程生命周期之间的交接，并不是可以无限重复使用的备份。",
+      "sources": [
+        "design-architecture--06-shutdown-index-checkpoints"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "更快启动也会改变部分错误出现的时间"
+    },
+    {
+      "type": "paragraph",
+      "text": "检查点加载会验证序列化索引结构，但普通记录正文在被读取时才进行惰性验证。因此，结构有效的检查点可能恢复某个位置，而后续读取该值时才报告介质损坏；冷扫描则可能在启动阶段就遇到该正文。这是文档明确说明的验证时机取舍，应写进恢复操作手册。",
+      "sources": [
+        "design-architecture--06-shutdown-index-checkpoints"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "创建检查点还需要前台分配空间，并可能因清理无法静止、条目无法容纳或 I/O 失败而失败。这不会改变普通记录或事务记录的持久性，但会改变下一次可用的恢复路径。应监控检查点结果，而不是假设打开配置就保证下次启动一定走加速路径。",
+      "sources": [
+        "design-architecture--06-shutdown-index-checkpoints"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "同时测量关机与启动"
+    },
+    {
+      "type": "paragraph",
+      "text": "应测量完整的计划停机时间：请求排空、事务清理、检查点构建、启动验证，以及应用首次得到有效响应。另行测试检查点缺失、无效及普通扫描回退，并记录存活数据量、旧版本数量、键长与空闲空间。这种设计有机会减少重复扫描值正文的工作，但具体运维收益只能通过实际工作负载的重启实验量化。",
+      "sources": [
+        "design-architecture--06-shutdown-index-checkpoints",
+        "design-architecture--04-storage-and-recovery"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,141 @@
+{
+  "id": "failover-intent-authority-and-evidence",
+  "locale": "zh-CN",
+  "version": "0.1.0",
+  "kind": "blog",
+  "slug": "failover-intent-authority-and-evidence",
+  "title": "故障转移需要意图、权威与证据",
+  "summary": "Lavik 控制面的决策区分计划交接与所有者失效。沿着状态转换，理解它如何防止过期准备状态或观测值成为新的服务权威。",
+  "updatedAt": "2026-09-21",
+  "sourceRevision": "9d6b212da5da820b4bed63fc047b5c2ed6be1fa5",
+  "blocks": [
+    {
+      "type": "paragraph",
+      "text": "“晋升最好的副本”并没有回答几个关键问题：依据哪一段历史判断最好？谁撤销了原所有者的权限？已经放弃的尝试中准备好的候选者，还能激活吗？Lavik 的故障转移架构显式建模这些问题。决策记录将已提交意图与实时观测分开，为晋升尝试赋予独立身份，并对受控与非受控转换采用不同顺序。当恢复的进程或迟到的消息重新进入系统时，这些选择尤其重要。",
+      "sources": [
+        "design-architecture--08-meta-control-plane",
+        "design-adr--0003-separate-failover-intent-from-live-observation",
+        "design-adr--0005-order-controlled-and-uncontrolled-failover-differently",
+        "design-adr--0007-bind-promotion-to-a-committed-action"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "观测结果不会直接授予权限"
+    },
+    {
+      "type": "paragraph",
+      "text": "节点报告的进度与就绪状态可以帮助 Meta 选择动作，但它们仍是实时证据，不能替代已提交的期望状态。控制面提交“应当发生什么”，数据面再结合当前本地条件执行和协调。如果把每个不断变化的观测都复制进权威状态，就会混淆作出决策所依据的证据与决策本身。",
+      "sources": [
+        "design-architecture--08-meta-control-plane",
+        "design-adr--0003-separate-failover-intent-from-live-observation",
+        "design-architecture--05-replication"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "例如，一份旧的就绪报告在进程重启后才到达。其字节格式可能有效，但启动与数据群体上下文已经不再描述当前候选者，身份检查必须拒绝这种复用。同样，数据源能够传输数据，并不意味着它获得了决定客户端路由或写入权限的权威。",
+      "sources": [
+        "design-architecture--08-meta-control-plane",
+        "design-adr--0003-separate-failover-intent-from-live-observation",
+        "design-architecture--05-replication"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "受控交接保留可退回的路径"
+    },
+    {
+      "type": "paragraph",
+      "text": "受控故障转移会在可撤销的写暂停之后，保留源所有者已提交的权限。候选者追赶并完成晋升准备，然后由一次切换推进复制组任期并安装新权威。如果计划维护在切换前失败，保留原所有者权限就使受控中止成为可能。",
+      "sources": [
+        "design-adr--0005-order-controlled-and-uncontrolled-failover-differently",
+        "design-architecture--08-meta-control-plane"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "重点在于顺序：暂停写入不等于转移所有权，追赶完成也不等于提交新的所有者。如果时间线把这些过程都压缩成“开始晋升”，就无法解释发生中断后旧源能否恢复，或哪个节点有权提供服务。运维人员需要这些中间状态来分析一次失败的维护尝试。",
+      "sources": [
+        "design-adr--0005-order-controlled-and-uncontrolled-failover-differently",
+        "design-architecture--08-meta-control-plane"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "所有者失效需要不同的第一步"
+    },
+    {
+      "type": "paragraph",
+      "text": "非受控转换会在开始时推进任期，并隔离不可用的旧所有者。之后可以在同一任期内替换候选者。这种顺序防止失效所有者仅因恢复可达，就重新获得写入权限。它恢复后的数据仍可能是有用证据，但不能恢复已经被排除的授权。",
+      "sources": [
+        "design-adr--0005-order-controlled-and-uncontrolled-failover-differently",
+        "design-architecture--05-replication"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "既有复制导出也需要遵守这种区分。隔离不会刻意终止旧所有者全部已建立、已认证的下游导出；剩余数据可以尽力帮助恢复。但有用的数据流并不等于接受新写入的租约。即使旧所有者后来重新具备候选资格，也仍需要新的动作、准备过程与切换。",
+      "sources": [
+        "design-adr--0005-order-controlled-and-uncontrolled-failover-differently",
+        "design-architecture--05-replication"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "把准备状态绑定到一次已提交动作"
+    },
+    {
+      "type": "paragraph",
+      "text": "每次选择候选者都会获得新的不可变动作身份，即使再次选中同一节点实例也是如此。受控晋升准备要求 Meta 为该动作提交单向授权锁存。最终授权保留获胜动作作为激活身份，数据节点只激活与之匹配的已准备上下文。",
+      "sources": [
+        "design-adr--0007-bind-promotion-to-a-committed-action",
+        "design-architecture--08-meta-control-plane"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "设想候选者准备成功后，尝试被中止，源节点恢复写入。如果之后再次选择候选者时复用旧准备状态，就可能跳过新的追赶义务。新的动作身份阻止了这种捷径。终态动作失败还会撤销该动作在本次启动中的准备能力，以及同一数据群体实例的候选资格；临时失败应在现有动作内重试，而不是无限生成新身份。",
+      "sources": [
+        "design-adr--0007-bind-promotion-to-a-committed-action",
+        "design-architecture--08-meta-control-plane"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "限制恢复工作，只报告能够证明的丢失结论"
+    },
+    {
+      "type": "paragraph",
+      "text": "候选恢复在晋升之前受到边界限制，而不是无限尝试收集所有可能剩余的记录。相关决策记录把恢复范围与结束条件纳入动作协议。这在运维上很重要：候选者正在忙于恢复，并不意味着它已经获得所有权；一次恢复尝试也需要可观察的结果。",
+      "sources": [
+        "design-adr--0021-bound-candidate-recovery-before-promotion",
+        "design-adr--0010-report-only-provable-failover-loss",
+        "design-architecture--08-meta-control-plane"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "终态丢失报告刻意采用分类结论。某些具备所需授权证据的受控结果可以报告 none；普通非受控恢复和候选替换报告 unknown。如果没有已提交的最终源前沿，仅凭副本偏移量无法证明数值 RPO 或有界丢失。unknown 表达的是证据边界，而不是虚构一个丢失的应用写入数量。",
+      "sources": [
+        "design-adr--0021-bound-candidate-recovery-before-promotion",
+        "design-adr--0010-report-only-provable-failover-loss",
+        "design-architecture--08-meta-control-plane"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "把故障转移读成一连串证据判断"
+    },
+    {
+      "type": "paragraph",
+      "text": "评估时，应记录已提交任期、候选动作身份、暂停或隔离、准备结果、切换，以及客户端观察到的结果。分别演练维护中断、候选者失败、报告延迟和旧所有者重新出现。在判断实际具备哪些自动化能力时，还要区分故障检测与故障转移执行。架构提供了明确的状态机；生产操作手册仍需建立检测策略、时间预算、应用重试行为，以及具体部署所需的证据。",
+      "sources": [
+        "design-architecture--08-meta-control-plane",
+        "design-adr--0005-order-controlled-and-uncontrolled-failover-differently",
+        "design-adr--0007-bind-promotion-to-a-committed-action",
+        "design-adr--0010-report-only-provable-failover-loss"
+      ]
+    }
+  ]
+}

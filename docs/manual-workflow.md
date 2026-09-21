@@ -24,6 +24,12 @@ An explicit `--additional-review=reason` argument to `manual:review` can use
 an unused writer slot for one third review, while retaining the four-call
 total limit. The reason is recorded in the receipt; normal runs keep the
 two-review limit. This is never an automatic retry or a quota fallback.
+For a multi-article batch, the coordinator can explicitly request one further
+infrastructure review with `additionalBatchReviewReason` (maximum 120 characters).
+This allows at most four reviewer calls and five total calls in the same task
+directory, including failed attempts. It records the reason in the receipt and
+does not change normal task limits. `review-blog-batch.ts` exposes this as
+`LAVIK_BATCH_REVIEW_REASON`; it must be set deliberately for that invocation.
 No background loop, silent model replacement, quota retry or API fallback
 exists. These runs use ChatGPT's Codex allowance and remain subject to its
 usage limits; they are not unlimited or offline model inference.

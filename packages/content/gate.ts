@@ -91,6 +91,35 @@ export function validateArticle(
 ): string[] {
   const failures: string[] = [];
   articleSchema.parse(article);
+  if (article.sourceRevision && article.kind !== "blog")
+    failures.push(
+      "A source-revision override is reserved for engineering blog articles",
+    );
+  function checkSource(id: string) {
+    try {
+      sourceText(id);
+      const source = sources.find((entry) => entry.id === id)!;
+      const snapshotPrefix = `https://github.com/eloqdata/lavik/blob/${article.sourceRevision}/`;
+      if (article.sourceRevision && !source.url.startsWith(snapshotPrefix))
+        failures.push(`Source does not match the article snapshot: ${id}`);
+      // Versioned pages may cite historical benchmark reports, but newer
+      // implementation docs must be labeled as an engineering snapshot.
+      if (
+        !article.sourceRevision &&
+        /^https:\/\/github\.com\/eloqdata\/lavik\/blob\/[^/]+\/docs\//.test(
+          source.url,
+        ) &&
+        !source.url.startsWith(
+          `https://github.com/eloqdata/lavik/blob/${release.commit}/`,
+        )
+      )
+        failures.push(
+          `Non-release documentation needs an explicit engineering snapshot: ${id}`,
+        );
+    } catch {
+      failures.push(`Missing or changed source: ${id}`);
+    }
+  }
   const text = [
     article.title,
     article.summary,
@@ -123,27 +152,15 @@ export function validateArticle(
     if (block.type === "paragraph") {
       if (!block.sources.length)
         failures.push("Every factual paragraph needs a source reference");
-      for (const id of block.sources) {
-        try {
-          sourceText(id);
-        } catch {
-          failures.push(`Missing or changed source: ${id}`);
-        }
-      }
+      for (const id of block.sources) checkSource(id);
     }
     if (block.type === "claim") {
       const claim = claims.find((c) => c.id === block.claimId);
       if (!claim || claim.status !== "supported")
         failures.push(`Unsupported claim: ${block.claimId}`);
-      else
-        for (const id of claim.sources) {
-          try {
-            sourceText(id);
-          } catch {
-            failures.push(`Missing or changed source: ${id}`);
-          }
-        }
+      else for (const id of claim.sources) checkSource(id);
     }
+    if (block.type === "calculation") checkSource("tiering-cost");
     if (block.type === "recipe") {
       if (!getReceipt) {
         failures.push(`No execution evidence for ${block.recipeId}`);
@@ -225,11 +242,10 @@ export function publicationErrors(article: Article): string[] {
   if (review.knowledgeHash !== knowledgeHash())
     failures.push("Review invalidated by changed claims or evidence registry");
   if (
-    review.method === "agent-review" &&
     review.renderingHash !==
-      (review.rendererVersion === 2
-        ? publicationRenderingHash()
-        : renderingHash())
+    (review.rendererVersion === 2
+      ? publicationRenderingHash()
+      : renderingHash())
   )
     failures.push(
       "Review invalidated by changed content rendering or calculator logic",

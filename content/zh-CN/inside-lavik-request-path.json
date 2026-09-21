@@ -1,0 +1,130 @@
+{
+  "id": "inside-lavik-request-path",
+  "locale": "zh-CN",
+  "version": "0.1.0",
+  "kind": "blog",
+  "slug": "inside-lavik-request-path",
+  "title": "存储等待时，Lavik 如何继续推进请求",
+  "summary": "支持 SSD 的 Redis 接口需要的不只是异步读取。沿着连接状态、准入、分区所有权与响应背压，理解 Lavik 的请求处理路径。",
+  "updatedAt": "2026-09-21",
+  "sourceRevision": "9d6b212da5da820b4bed63fc047b5c2ed6be1fa5",
+  "blocks": [
+    {
+      "type": "paragraph",
+      "text": "用 NVMe SSD 替代 DRAM 容量，会改变服务器花费时间的位置。一次查询可能等待存储、键锁、其他工作线程，也可能被慢客户端拖住。如果这些等待独占请求执行资源，设备再快也无法让无关请求继续推进。Lavik 将连接状态、执行所有权与异步工作分开。对 Redis 应用来说，关键在于这些边界如何在利用工作线程的同时保持语义。",
+      "sources": [
+        "design-architecture--02-request-serving",
+        "design-architecture--01-overview"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "一条连接仍然有自己的顺序"
+    },
+    {
+      "type": "paragraph",
+      "text": "连接不只是套接字。连接上下文拥有认证状态、所选逻辑数据库、RESP 版本、事务队列、WATCH 注册与响应状态。来自同一连接的请求按顺序分派。因此，流水线中先切换数据库再读取时，即使服务器提前解析了多个命令，也不能改变这些命令的会话顺序。",
+      "sources": [
+        "design-architecture--02-request-serving"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "Lavik 最多按线路顺序保留 128 个已解析命令。这是解析窗口，并不代表一条连接能够同时执行 128 个命令。评估客户端时，应区分流水线深度与独立连接数量：两者作用于服务器的不同环节，增加其中一个并不等价于增加另一个。",
+      "sources": [
+        "design-architecture--02-request-serving"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "服务连接的线程与键的所有者"
+    },
+    {
+      "type": "paragraph",
+      "text": "连接进入 Bycorf 服务协程，而键属于由特定工作线程拥有的逻辑分区，因此执行可能需要跨线程跳转。符合条件的单键写入走所有者本地快速路径，让发布准入与数据修改发生在键的所有者上；其他操作可能需要协调多个所有者。存储与事务接口明确表达了这种所有权，而不是允许任意线程并发访问索引。",
+      "sources": [
+        "design-architecture--02-request-serving",
+        "design-architecture--04-storage-and-recovery",
+        "design-architecture--03-transaction-coordination"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "例如，两条连接读取不同的键，其中一次查询等待磁盘时，其他可运行的工作仍可推进。但这不代表所有等待都没有代价：挂起的操作仍可能持有键锁、缓冲区租约或数据库准入门。理解挂起期间保留了哪些资源，比把“异步”当成延迟保证更有意义。",
+      "sources": [
+        "design-architecture--02-request-serving",
+        "design-architecture--04-storage-and-recovery",
+        "design-architecture--03-transaction-coordination"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "准入判断必须经得起等待"
+    },
+    {
+      "type": "paragraph",
+      "text": "托管模式还有一个问题：请求等待期间，写入权限可能发生变化。请求路径在进入处理函数之前检查就绪状态与已提交的服务状态。已获准的写入还会在外层准入、跨线程跳转和事务执行中携带权限信息。存储无关的修改前置条件在准备工作结束后、真正修改逻辑键空间之前再次检查。",
+      "sources": [
+        "design-architecture--02-request-serving"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "具体场景是：请求通过初次检查，等待键锁，恢复执行时故障转移已撤销原有权限。只检查一次就会使用过期判断。在修改边界重新检查，可以关闭这个时间窗口。后台维护、回滚和可信副本应用承担的是其他权限职责，把它们全部当作普通客户端写入也不正确。",
+      "sources": [
+        "design-architecture--02-request-serving"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "背压在访问磁盘之前就开始了"
+    },
+    {
+      "type": "paragraph",
+      "text": "解析器本身也会保留内存。Lavik 将普通客户端连接保留字节的配额，与单个尚未组装完成的命令大小限制分开。事务队列中的命令在收到排队响应后仍保留内存计费，因为参数还存在。套接字读取缓冲区很小，并不意味着解析后的参数不占内存。",
+      "sources": [
+        "design-architecture--02-request-serving",
+        "design-architecture--05-replication"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "源节点写入会在数据库与键操作之前预留复制发布容量，避免修改完成后才发现无法保留对应的复制事件。这些准入边界服务于不同目的。大请求、长事务队列或落后的副本，都可能让工作负载在触及 NVMe 吞吐量上限之前遇到压力。",
+      "sources": [
+        "design-architecture--02-request-serving",
+        "design-architecture--05-replication"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "返回值也有自己的生命周期"
+    },
+    {
+      "type": "paragraph",
+      "text": "响应路径可以发送编码后的回复、直接来自存储的值，或大小受限的数据块。直接磁盘响应会保留读取租约。因此，流式输出虽然减少了分配单个巨大响应缓冲区的需要，但资源生命周期仍受客户端消费速度影响。文档描述的路径会关闭连续 30 秒没有进展、且流式响应仍持有数据库准入门的连接。",
+      "sources": [
+        "design-architecture--02-request-serving"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "评估时应包含慢速读取者。即使存储读取很快，客户端停止消费大结果也会改变资源保留时间。可以改变结果大小与客户端读取速度，测量无关流量的尾延迟。断开连接还必须释放 WATCH、订阅、客户端记录等会话状态；实现把这些断开路径汇入统一清理点。",
+      "sources": [
+        "design-architecture--02-request-serving"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "评估完整的请求路径"
+    },
+    {
+      "type": "paragraph",
+      "text": "可以用请求服务文档为流量回放建立检查地图：连接数、流水线深度、命令大小、键访问局部性、事务重叠与响应消费速度，都应纳入实验。将耗时分别归因于准入、所有者协调、存储与输出，而不是把所有慢请求都归因于磁盘。Lavik 的设计为异步 I/O 提供了完整的请求生命周期；能否满足应用截止时间，仍需要用实际命令组合与部署来验证。",
+      "sources": [
+        "design-architecture--02-request-serving",
+        "design-architecture--03-transaction-coordination",
+        "design-architecture--04-storage-and-recovery"
+      ]
+    }
+  ]
+}

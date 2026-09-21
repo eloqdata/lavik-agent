@@ -1,0 +1,123 @@
+{
+  "id": "lua-functions-as-a-durable-catalog",
+  "locale": "zh-CN",
+  "version": "0.1.0",
+  "kind": "blog",
+  "slug": "lua-functions-as-a-durable-catalog",
+  "title": "为什么 Lua 函数目录也是一个存储问题",
+  "summary": "函数库需要在工作线程之间保持一致、跨重启保留，并经由复制传播。Lavik 先构建完整候选目录，再将其变为可见。",
+  "updatedAt": "2026-09-21",
+  "sourceRevision": "9d6b212da5da820b4bed63fc047b5c2ed6be1fa5",
+  "blocks": [
+    {
+      "type": "paragraph",
+      "text": "应用团队往往把 Lua 函数部署理解为向 Redis 兼容服务器加载代码。但对于多工作线程的持久存储，问题更复杂：各线程必须对可见目录达成一致，重启后必须恢复预期定义集合，复制还要传播这次变化，同时避免再发明一套身份协议。Lavik 为函数目录定义了独立提交生命周期。理解它，有助于分析部署在编译、持久化与客户端响应之间失败的情形。",
+      "sources": [
+        "design-architecture--07-function-catalog"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "把定义集合与编译后的运行时分开"
+    },
+    {
+      "type": "paragraph",
+      "text": "FunctionCatalog 拥有进程级定义集合，每个工作线程的 Lua 运行时则拥有编译后的闭包与注册表。因此，不能把目录修改安全地实现成任意顺序、逐线程可见的更新。模块会先准备完整的隐藏目标，在改变可见性之前，跨线程检查编译、注册、标志、描述与最终元数据。",
+      "sources": [
+        "design-architecture--07-function-catalog"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "如果准备失败，隐藏运行时会被销毁，可见目录与持久目录保持不变。这为函数部署建立了明确的准备边界。某个库在一个线程上编译成功，并不代表它已成为整个进程成功安装的目录。准备的单位是完整目标定义集合，而不是最先完成的那个线程。",
+      "sources": [
+        "design-architecture--07-function-catalog"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "先持久化，再发布新运行时"
+    },
+    {
+      "type": "paragraph",
+      "text": "成功的主节点修改会用现有函数转储格式编码完整目标，准备并验证隐藏运行时，使用此前已获得的复制发布准入，再把转储提交到系统状态。随后才交换工作线程运行时与进程级元数据，发布原始 Redis Function 命令，并回复客户端。文档将持久提交后的运行时交换定义为不会失败的操作。",
+      "sources": [
+        "design-architecture--07-function-catalog"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "这个顺序处理了一个具体故障：如果函数定义在拥有可恢复的持久表示之前就变得可见，调用就可能依赖重启后消失的代码。反过来，仅有持久化也不足以报告干净的部署结果；已经持久化的修改若无法一致地发布到复制路径，同样需要处理。故障逻辑必须覆盖可见性边界的两侧。",
+      "sources": [
+        "design-architecture--07-function-catalog"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "完成状态不确定时，需要隔离服务"
+    },
+    {
+      "type": "paragraph",
+      "text": "根提交之前的存储失败，可以中止隐藏准备。但根提交结果不确定，或已持久修改无法发布时，处理方式不同：关闭客户端连接，把请求服务全局隔离为加载状态，并要求重启恢复。其他连接不能观察到持久根或复制历史不确定的运行时目录。",
+      "sources": [
+        "design-architecture--07-function-catalog"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "这会影响应用部署自动化。连接丢失不足以证明旧目录仍然安装着，也不足以证明盲目重试修改没有风险。部署控制器需要在服务器恢复后重新核对状态。该架构说明，保持明确的故障边界，有时比返回一个表面方便的错误、然后继续服务更重要。",
+      "sources": [
+        "design-architecture--07-function-catalog"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "旧调用仍然拥有自己的执行上下文"
+    },
+    {
+      "type": "paragraph",
+      "text": "在途 EVAL 或函数调用，拥有创建其 Lua 线程的工作线程运行时。目录交换后，该运行时不再接受新调用，但只有最后一个运行中或挂起的执行释放线程后才会关闭。这把“为未来调用改变目录”与“销毁已获准工作的执行上下文”分开。",
+      "sources": [
+        "design-architecture--07-function-catalog"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "目录还与调用、读取、修改、安装及晋升捕获共享操作保护机制，隐藏准备状态不会对外提供调用。因此，设计同时包含逻辑可见性规则与生命周期规则。替换定义，并不意味着可以回收仍被挂起工作引用的对象；异步执行让这种区分不可避免。",
+      "sources": [
+        "design-architecture--07-function-catalog"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "恢复与复制使用不同的身份"
+    },
+    {
+      "type": "paragraph",
+      "text": "持久目录令牌包含节点本地代际与转储校验和，可用于本地恢复和晋升捕获，但不同节点上的代际并不是可以比较的复制身份。复制继续携带原始 Function 命令。副本只有在本地转储已持久化、运行时交换已完成后，才推进事件游标。",
+      "sources": [
+        "design-architecture--07-function-catalog"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "系统状态更新在完整清单中同时保留目录与晋升信息。恢复会在配置的各设备之间选择匹配的有效根，并验证引用的正文；已经存在但损坏的根不能被悄悄当成空目录。原生全量同步在最终切点安装完整目录；如果后续数据群体步骤失败，目标会保持隔离，而不是假设旧目录可以方便地回滚恢复。",
+      "sources": [
+        "design-architecture--07-function-catalog"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "分别评估函数部署与函数执行"
+    },
+    {
+      "type": "paragraph",
+      "text": "应将库校验失败、修改期间连接丢失、干净重启、全量同步与晋升，作为不同的部署场景来测试。同时把这些场景与函数调用产生的数据效果分开：定义目录持久存在，本身并不能证明调用中每次写入都同步持久，也不能证明调用恰好执行一次。用函数目录文档识别安装边界，再结合请求与事务文档，评估通过这些定义执行的应用操作。",
+      "sources": [
+        "design-architecture--07-function-catalog",
+        "design-architecture--02-request-serving",
+        "design-architecture--03-transaction-coordination"
+      ]
+    }
+  ]
+}

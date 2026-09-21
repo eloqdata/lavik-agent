@@ -65,24 +65,46 @@ export function codexArguments(role: "writer" | "reviewer", directory: string) {
   ];
 }
 
+export function codexInvocationBudget(
+  role: "writer" | "reviewer",
+  additionalReviewReason?: string,
+  additionalBatchReviewReason?: string,
+) {
+  if (additionalBatchReviewReason?.trim()) {
+    if (role !== "reviewer" || additionalBatchReviewReason.length > 120)
+      throw new Error(
+        "A batch extension requires a reviewer and a short explicit reason.",
+      );
+    return { roleLimit: 4, totalLimit: 5 };
+  }
+  return {
+    roleLimit: role === "reviewer" && additionalReviewReason?.trim() ? 3 : 2,
+    totalLimit: 4,
+  };
+}
+
 export async function runLocalCodex(options: {
   role: "writer" | "reviewer";
   taskDirectory: string;
   prompt: string;
   schema: unknown;
   additionalReviewReason?: string;
+  additionalBatchReviewReason?: string;
 }) {
   const task = path.resolve(options.taskDirectory);
   await fs.mkdir(task, { recursive: true, mode: 0o700 });
   // Four total attempts, normally at most two per role. A specifically
   // requested third review can use an unused writer slot; it does not expand
-  // the total budget. Exclusive creation also
+  // the total budget. An explicit batch follow-up allows one additional call,
+  // up to four reviewer calls and five total, with its reason in the receipt.
+  // No automatic retries or quota recovery are enabled. Exclusive creation also
   // prevents two coordinators from silently consuming the same task budget.
   let directory: string | undefined;
-  const limit =
-    options.role === "reviewer" && options.additionalReviewReason?.trim()
-      ? 3
-      : 2;
+  const { roleLimit: limit, totalLimit } = codexInvocationBudget(
+    options.role,
+    options.additionalReviewReason,
+    options.additionalBatchReviewReason,
+  );
   for (let attempt = 1; attempt <= limit; attempt++) {
     const candidate = path.join(task, `${options.role}-${attempt}`);
     try {
@@ -98,11 +120,11 @@ export async function runLocalCodex(options: {
       `Local task ${options.role} invocation budget exhausted (${limit}).`,
     );
   const attempts = (await fs.readdir(task)).filter((entry) =>
-    /^(writer|reviewer)-[1-3]$/.test(entry),
+    /^(writer|reviewer)-[1-4]$/.test(entry),
   );
-  if (attempts.length > 4)
+  if (attempts.length > totalLimit)
     throw new Error(
-      "Local task total invocation budget exhausted (4). No model request was made.",
+      `Local task total invocation budget exhausted (${totalLimit}). No model request was made.`,
     );
   const env = subscriptionEnvironment();
   async function invoke(
@@ -181,6 +203,9 @@ export async function runLocalCodex(options: {
     reasoning: options.role === "writer" ? "medium" : "high",
     ...(options.additionalReviewReason
       ? { additionalReviewReason: options.additionalReviewReason }
+      : {}),
+    ...(options.additionalBatchReviewReason
+      ? { additionalBatchReviewReason: options.additionalBatchReviewReason }
       : {}),
     startedAt,
     finishedAt: new Date().toISOString(),

@@ -1,0 +1,126 @@
+{
+  "id": "replication-acks-and-recovery-boundaries",
+  "locale": "zh-CN",
+  "version": "0.1.0",
+  "kind": "blog",
+  "slug": "replication-acks-and-recovery-boundaries",
+  "title": "复制进度，不能只看一个偏移量",
+  "summary": "Lavik 按历史与逻辑流跟踪原生复制。理解确认能够证明什么、重启会丢弃什么，以及故障转移为什么还需要额外证据。",
+  "updatedAt": "2026-09-21",
+  "sourceRevision": "9d6b212da5da820b4bed63fc047b5c2ed6be1fa5",
+  "blocks": [
+    {
+      "type": "paragraph",
+      "text": "副本偏移量是有用的运维信号，但也很容易被赋予过多含义。收到字节、应用完整逻辑事件、完成本地持久化，以及获得服务权限，是不同的事实。Lavik 的原生复制设计为这些事实分别定义身份与生命周期规则。对于熟悉 Redis 的运维人员，理解这些规则的实际价值，是知道哪些进度指标在重连、全量同步与晋升之后仍然有意义。",
+      "sources": [
+        "design-architecture--05-replication"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "一段历史包含多条逻辑流"
+    },
+    {
+      "type": "paragraph",
+      "text": "原生复制包含一条控制连接，以及每个源工作线程对应的一条数据流。目标节点可以使用不同数量的工作线程，同时保留源节点的逻辑流身份。已应用进度是一个向量：每个分量标识某条源逻辑流上下一个尚未完成的事件，并不是任意传输分片中的字节偏移量集合。",
+      "sources": [
+        "design-architecture--05-replication"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "续传要求复制组与历史上下文匹配、流布局相同，而且每条流都保留了所需历史覆盖。缺少这些证明时，整个复制组进入全量同步。部分流续传、部分流全量同步，不符合文档中的数据群体契约。比较两份进度报告之前，首先要确定它们使用同一段历史和同一坐标系。",
+      "sources": [
+        "design-architecture--05-replication"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "收到分片不等于完成事件"
+    },
+    {
+      "type": "paragraph",
+      "text": "一个逻辑事件可能跨越多个传输分片和积压块。接收端验证帧完整性、重新组装事件、协调有序应用，并且只在完整事件成功后推进续传游标。因此，即使已收到大量字节，一个尚未收齐的大命令也不能被算作候选副本的已应用进度。",
+      "sources": [
+        "design-architecture--05-replication"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "对于效果跨越多条流的事务，这尤其重要。参与者必须到达所需的汇合点，逻辑工作才算完成。源端可以继续发送有界批次，同时由独立接收路径处理确认，避免发送者等待尚需其他流参与的事务，从而把某个参与者挡在后面。这些是协议与调度决策，并不代表所有争用模式都不会出现等待环。",
+      "sources": [
+        "design-architecture--05-replication"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "确认能够证明什么"
+    },
+    {
+      "type": "paragraph",
+      "text": "有序的原生 ACK 表明对应流与历史中的应用进度已经完成。协商启用的范围 ACK 会压缩连续完成的事件，但不会放宽完整事件规则。WAIT 会按需为各工作线程发布器建立栅栏，只有某个原生副本的所有流确认游标都越过捕获的历史内向量时，才计入该副本。这是身份与范围都明确的进度检查。",
+      "sources": [
+        "design-architecture--05-replication",
+        "design-architecture--02-request-serving",
+        "design-adr--0010-report-only-provable-failover-loss"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "不能把它悄悄解释成跨节点持久提交法定多数。复制文档明确指出，在非受控恢复中，若已确认写入未出现在最终选中的副本上，它们仍可能丢失。本地存储持久性、复制应用，以及最终选择新所有者，具有独立边界。应用若要求特定恢复点目标，需要完整故障路径的证据，而不只是看起来安心的 ACK 计数。",
+      "sources": [
+        "design-architecture--05-replication",
+        "design-architecture--02-request-serving",
+        "design-adr--0010-report-only-provable-failover-loss"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "积压日志是需要准入与保留策略的状态"
+    },
+    {
+      "type": "paragraph",
+      "text": "源节点写入在修改之前预留发布容量。发布队列、积压块、全量同步覆盖与目标暂存，都是受准入规则约束的保留内存。大命令可以跨越分片，但分片不会取消完整规范事件的大小限制，避免传输优化变成放行复制系统无法保留事件的漏洞。",
+      "sources": [
+        "design-architecture--05-replication"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "落后的消费者随后带来策略选择：保留压力可以等待 ACK 推进；配置为不施加背压时，也可以撤销该消费者的历史覆盖，迫使其之后全量同步。这个选择会影响前台延迟、内存保留与重建流量。因此，容量规划应包含慢副本与断开的副本，而不只是测量一对始终同步的节点。",
+      "sources": [
+        "design-architecture--05-replication"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "数据持久存在，不代表运行时身份也被保留"
+    },
+    {
+      "type": "paragraph",
+      "text": "在文档描述的设计中，Redis PSYNC 游标和原生续传游标都不会跨重启保留。目标节点可能仍有持久数据，却缺少下一次会话所需的有效续传历史。Meta 管理的数据群体就绪状态与授权，也绑定于当前启动实例；旧指令和就绪令牌不能直接重新打开服务。",
+      "sources": [
+        "design-architecture--05-replication"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "全量同步还有一个重要边界：它会破坏性重置目标数据群体，而不是保留旧活动根并在旁边构建独立暂存根。只有复制组整体条件全部验证后，目标节点才会就绪。因此，应将重启或重建失败作为生命周期转换来测试，而不能只通过暂停 TCP 连接、观察其恢复来模拟。",
+      "sources": [
+        "design-architecture--05-replication"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "让故障实验与所需结论相匹配"
+    },
+    {
+      "type": "paragraph",
+      "text": "建立测试矩阵，分别覆盖短暂断连、历史覆盖丢失、进程重启、全量同步失败与所有者失效。观察历史身份、所有流的应用进度、就绪状态、前台延迟，以及应用从外部记录的写入。还要验证准确拓扑：这个快照不支持普通原生级联复制。目标是确定真实应用效果跨故障发生了什么，而不是把某个偏移量或仍存在的存储文件当作完整恢复证明。",
+      "sources": [
+        "design-architecture--05-replication",
+        "design-adr--0010-report-only-provable-failover-loss"
+      ]
+    }
+  ]
+}

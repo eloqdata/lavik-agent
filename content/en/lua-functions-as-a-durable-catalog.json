@@ -1,0 +1,123 @@
+{
+  "id": "lua-functions-as-a-durable-catalog",
+  "locale": "en",
+  "version": "0.1.0",
+  "kind": "blog",
+  "slug": "lua-functions-as-a-durable-catalog",
+  "title": "Why a Lua function catalog is a storage problem",
+  "summary": "A function library must become consistent across workers, survive restart, and travel through replication. Lavik stages complete catalogs before making them visible.",
+  "updatedAt": "2026-09-21",
+  "sourceRevision": "9d6b212da5da820b4bed63fc047b5c2ed6be1fa5",
+  "blocks": [
+    {
+      "type": "paragraph",
+      "text": "Application teams often think about Lua function deployment as loading code into a Redis-compatible server. A multi-worker persistent store has a harder problem: workers must agree on the visible catalog, a restart must recover the intended definition set, and replication must carry the change without inventing a second identity protocol. Lavik gives the function catalog its own commit lifecycle. Understanding that lifecycle is useful when a deployment fails between compilation, persistence, and the client reply.",
+      "sources": [
+        "design-architecture--07-function-catalog"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "Separate definitions from compiled runtimes"
+    },
+    {
+      "type": "paragraph",
+      "text": "FunctionCatalog owns the process-wide definition set. Each worker’s Lua runtime owns compiled closures and its registry. A catalog mutation therefore cannot be implemented safely as an arbitrary sequence of visible per-worker edits. The module prepares a complete hidden target and checks compilation, registration, flags, descriptions, and resulting metadata across workers before changing visibility.",
+      "sources": [
+        "design-architecture--07-function-catalog"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "If staging fails, the hidden runtimes are destroyed and the visible and durable catalog remain unchanged. This gives a function deployment a meaningful preparation boundary. A library that compiles on one worker has not yet become a successfully installed catalog for the process. The unit being prepared is the complete target definition set, not whichever individual worker happened to finish first.",
+      "sources": [
+        "design-architecture--07-function-catalog"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "Persist before publishing the new runtime"
+    },
+    {
+      "type": "paragraph",
+      "text": "A successful primary mutation encodes the complete target in the existing function-dump format, stages and validates hidden runtimes, uses previously acquired replication publication admission, and commits the dump to system state. Only then does it swap worker runtimes and process-wide metadata, publish the original Redis Function command, and reply to the client. The documented runtime swaps after durable commit are non-failing operations.",
+      "sources": [
+        "design-architecture--07-function-catalog"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "That order addresses a concrete failure: exposing a new function definition before it has a recoverable durable representation would allow calls to depend on code that disappears after restart. Conversely, persistence alone is not enough to report a clean deployment outcome if the already durable mutation cannot be published consistently to replication. The failure handling must cover both sides of the visibility boundary.",
+      "sources": [
+        "design-architecture--07-function-catalog"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "Ambiguous completion needs a serving fence"
+    },
+    {
+      "type": "paragraph",
+      "text": "A storage failure before the root commit can abort hidden staging. An ambiguous root outcome, or a failure to publish an already durable mutation, has a different response: the client connection closes, request serving is globally fenced as loading, and restart recovery is required. Another connection must not observe a runtime catalog whose durable root or replication history is uncertain.",
+      "sources": [
+        "design-architecture--07-function-catalog"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "This affects application deployment automation. A lost connection is not sufficient evidence that the old catalog remains installed, nor that blindly retrying a mutation is harmless. The deployment controller needs to reconcile after the server has recovered. The architecture explains why preserving a clean failure boundary can be more important than returning a superficially convenient error while continuing to serve.",
+      "sources": [
+        "design-architecture--07-function-catalog"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "Old calls still own their execution context"
+    },
+    {
+      "type": "paragraph",
+      "text": "An in-flight EVAL or function call owns the worker runtime that created its Lua thread. A catalog swap makes that runtime unavailable to new calls, but it closes only after the last running or suspended execution releases its thread. This separates changing the catalog for future calls from destroying the execution context of work already admitted.",
+      "sources": [
+        "design-architecture--07-function-catalog"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "The catalog also shares an operation guard with calls, reads, mutation, installation, and promotion capture. Hidden staging is never externally callable. The design therefore has both a logical visibility rule and a lifetime rule. Replacing definitions does not grant permission to reclaim objects still referenced by suspended work; asynchronous execution makes that distinction unavoidable.",
+      "sources": [
+        "design-architecture--07-function-catalog"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "Recovery and replication use different identities"
+    },
+    {
+      "type": "paragraph",
+      "text": "The durable catalog token contains a node-local generation and a dump checksum. It is useful for local recovery and promotion capture, but generations on different nodes are not comparable replication identities. Replication continues to carry the original Function command. Replica application advances its event cursor only after the local dump is durable and the runtime swap has completed.",
+      "sources": [
+        "design-architecture--07-function-catalog"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "System-state updates preserve both catalog and promotion information in a complete manifest. Recovery selects a matching valid root across configured devices and validates the referenced body; an existing corrupt root must not silently become an empty catalog. Native full sync installs a complete catalog at its final cut, and a later population failure keeps the target fenced instead of rolling back to a conveniently assumed old catalog.",
+      "sources": [
+        "design-architecture--07-function-catalog"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "Evaluate function deployment independently from function execution"
+    },
+    {
+      "type": "paragraph",
+      "text": "Test library validation failures, mutation connection loss, clean restart, full synchronization, and promotion as separate deployment scenarios. Keep these distinct from the data effects of a function invocation: a durable definition catalog does not, by itself, prove synchronous durability or exactly-once execution for every write performed by a call. Use the function-catalog document to identify the installation boundaries, and the request and transaction documents to evaluate the application operations that run through those definitions.",
+      "sources": [
+        "design-architecture--07-function-catalog",
+        "design-architecture--02-request-serving",
+        "design-architecture--03-transaction-coordination"
+      ]
+    }
+  ]
+}

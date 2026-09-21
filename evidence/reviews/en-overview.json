@@ -1,6 +1,6 @@
 {
-  "method": "source-audit",
-  "reviewer": "Codex initial implementation: source and bilingual editorial review",
+  "method": "agent-review",
+  "reviewer": "Local independent Codex review; gpt-6-astra; chatgpt",
   "verdict": "pass",
   "contentHash": "7eb320f7d71214002434ceaac3f4945f42f50f38d4f42c8afe3655a92ffeac01",
   "releaseCommit": "3955b98d43b312324aa8d52775df52cfb111c0d0",
@@ -15,8 +15,50 @@
     "benchmark-data": "199ef794aa6e50f3634d45230cf6395cd751bf34d0da73a1d87983065c19f19e",
     "tiering-cost": "489490a32fa6e2351dfb48ea64ee27ec1dbc110f62b249a0b0ad866698a5f04b",
     "benchmark-spdk": "fb1b18a0b73155b5f218d0398b0d780ee734bfb1a4002f8c9c50fd8f4a8e3992",
-    "benchmark-spdk-data": "b2b19a631628d5dcbffb382de40b2468577832a3f9e9bd8019ba7e3c48eb5a9e"
+    "benchmark-spdk-data": "b2b19a631628d5dcbffb382de40b2468577832a3f9e9bd8019ba7e3c48eb5a9e",
+    "design-architecture--readme": "357f72ca2465054aa4eeea3792c1f7d434b3f980a9e72e51fc7d1685243294a8",
+    "design-architecture--01-overview": "c2f95e2d7e4f5e90a6e0e143f266f359dffe62643e0512532c717de23b1855a4",
+    "design-architecture--02-request-serving": "d94670cc117634f00de6e2dab13ce3b5e9cfee772877fd84ba89d6b6b54c613f",
+    "design-architecture--03-transaction-coordination": "a8163ac6f88c1ec53da326ba4a2b265b996942103a47ef081a613b9ec2fcf19e",
+    "design-architecture--04-storage-and-recovery": "5720cd2c4b01681d841419da9f331b40965abcd79e7efc5811ed034a2f5c3547",
+    "design-architecture--05-replication": "ee4e65ca3307e57d0fc0330b6e1c5e57e0b2a593177571f65e2fc146325fdbe7",
+    "design-architecture--06-shutdown-index-checkpoints": "961f2d474757b092cab1e15279925f4cb53b39a9414503575570d31c35163971",
+    "design-architecture--07-function-catalog": "637406d995d4b1b12ea4c834f438b83abe0da4277351ec1560a04a0382bea902",
+    "design-architecture--08-meta-control-plane": "bb4ab24c2a2a092734f94ee56fce0d5d78a2fe8e4a2723fd21b9a7b12d87e542",
+    "design-architecture--09-grouped-collections": "bfde6e99b61bbb7c1fac6a89dfde153c012baabb676d1acc57150e44d2afafcf",
+    "design-design-readme": "961ee3ada127c0c2636043154fa12159059be2dda27a4ee9945afd19c33c50b6",
+    "design-design-storage-block-ownership": "23d908c91375a5ca98a04b5d9eee1b0edbe8fab05eb58c050d4eea5ccc814aea",
+    "design-design-recovery-metadata-design": "c1e162af44311ae9cf28090aa143f4e23a94a078fe67ef029d177ff72df7c8ad",
+    "design-design-logical-databases": "521a79030cea78180ee04a18a631db624e48708bac3d6e5cc8541b41121ee3a5",
+    "design-adr--0003-separate-failover-intent-from-live-observation": "21fa357e83c1a36e1a939a552dc887cbf620001cb0fd0a179720e51538bd48ec",
+    "design-adr--0005-order-controlled-and-uncontrolled-failover-differently": "d41a7d71381e91ffcfe9d47003dd3aaa8eed317ed70af30689e467d9fc47aac0",
+    "design-adr--0007-bind-promotion-to-a-committed-action": "50b9fa560f5e5e40ce57d80e0bb170e4538fadbae92ae3a85dfee5ba0581a795",
+    "design-adr--0010-report-only-provable-failover-loss": "27e1cf0382027c4a7dd8768c2d915e1ecfc9dc2de5cede5befb478a1908aec29",
+    "design-adr--0021-bound-candidate-recovery-before-promotion": "f54d5b343d89c2c9d9e77cabc85fed9db1bf942929fcf0423c5b029a818b06a8"
   },
   "notes": "Initial curated edition. Executable examples require separate real execution receipts; this record alone does not authorize a build. September 20 source audit: added the pinned beta SPDK report and 10M CSV, checked against the updated upstream README. This article and its existing historical sources are unchanged.",
-  "knowledgeHash": "569b3d5d9e0b1c2774a92378c1b5fb5c6d62615c17f6a5068a92e75c3b30aaf9"
+  "knowledgeHash": "7c77c4dbba6848e7e6a2f5c0339ffe677ac5b0a21adbf48d968e1381dba88037",
+  "findings": [],
+  "renderingHash": "e7cdfc40d4d0240e7164e6ca7e53a9d85b1c387933b448e11ca2af297f9afad9",
+  "checkedSourceIds": [
+    "readme",
+    "storage",
+    "architecture",
+    "release",
+    "build",
+    "license"
+  ],
+  "reviewedAt": "2026-09-21T16:35:10.516Z",
+  "localReviewer": {
+    "role": "reviewer",
+    "model": "gpt-6-astra",
+    "provider": "openai",
+    "authentication": "chatgpt",
+    "reasoning": "high",
+    "additionalBatchReviewReason": "Final eight-article batch checks.",
+    "startedAt": "2026-09-21T16:32:30.345Z",
+    "finishedAt": "2026-09-21T16:35:10.516Z",
+    "promptSha256": "6c90daaee816b58c52d9ac8cae5ebdc6a443a3d232ea6e960689ddda41529c0c",
+    "outputSha256": "395a3b0c2062243db430eb75979df29a37a6d28f1c4eca104c03413240054fb3"
+  }
 }

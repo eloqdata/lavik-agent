@@ -1,0 +1,141 @@
+{
+  "id": "failover-intent-authority-and-evidence",
+  "locale": "en",
+  "version": "0.1.0",
+  "kind": "blog",
+  "slug": "failover-intent-authority-and-evidence",
+  "title": "Failover needs intent, authority, and evidence",
+  "summary": "Lavik’s control-plane decisions distinguish a planned handoff from owner loss. Follow the state transitions that prevent stale preparation and observations from becoming authority.",
+  "updatedAt": "2026-09-21",
+  "sourceRevision": "9d6b212da5da820b4bed63fc047b5c2ed6be1fa5",
+  "blocks": [
+    {
+      "type": "paragraph",
+      "text": "“Promote the best replica” leaves several questions unanswered. Best according to which history? Who revoked the previous owner’s authority? Can a prepared candidate from an abandoned attempt still activate? Lavik’s failover architecture models these questions explicitly. Its decision records separate committed intent from live observations, give promotion attempts their own identity, and use different ordering for controlled and uncontrolled transitions. These choices matter whenever a recovered process or delayed message re-enters the system.",
+      "sources": [
+        "design-architecture--08-meta-control-plane",
+        "design-adr--0003-separate-failover-intent-from-live-observation",
+        "design-adr--0005-order-controlled-and-uncontrolled-failover-differently",
+        "design-adr--0007-bind-promotion-to-a-committed-action"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "An observation does not grant authority"
+    },
+    {
+      "type": "paragraph",
+      "text": "A node’s reported progress and readiness can help Meta choose an action, but they remain live evidence rather than a replacement for committed desired state. The control plane commits what should happen; data-plane execution reconciles that intent against current local conditions. Copying every changing observation into authoritative state would blur the distinction between evidence used to decide and the decision itself.",
+      "sources": [
+        "design-architecture--08-meta-control-plane",
+        "design-adr--0003-separate-failover-intent-from-live-observation",
+        "design-architecture--05-replication"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "Consider an old readiness report arriving after a process restart. Its bytes may be well formed, but its boot and population context no longer describe the current candidate. Identity checks must reject that reuse. Likewise, a population source can transfer data without acquiring the authority to decide client routing or who is allowed to accept writes.",
+      "sources": [
+        "design-architecture--08-meta-control-plane",
+        "design-adr--0003-separate-failover-intent-from-live-observation",
+        "design-architecture--05-replication"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "Controlled handoff preserves a way back"
+    },
+    {
+      "type": "paragraph",
+      "text": "A controlled failover keeps the source owner’s committed authority in place behind a reversible write pause. The candidate catches up and completes promotion preparation before one cutover advances the group term and installs the new authority. If planned maintenance fails before that cutover, preserving the original owner’s authority makes a controlled abort possible.",
+      "sources": [
+        "design-adr--0005-order-controlled-and-uncontrolled-failover-differently",
+        "design-architecture--08-meta-control-plane"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "The ordering is the point. Pausing writes is not the same event as transferring ownership. Catch-up is not the same event as committing a new owner. A timeline that collapses them into “promotion started” cannot explain whether the old source may resume or which node is allowed to serve after an interruption. Operators need those intermediate states to reason about a failed maintenance attempt.",
+      "sources": [
+        "design-adr--0005-order-controlled-and-uncontrolled-failover-differently",
+        "design-architecture--08-meta-control-plane"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "Owner loss requires the opposite first move"
+    },
+    {
+      "type": "paragraph",
+      "text": "An uncontrolled transition advances the term and fences the unavailable owner when the transition begins. Candidate replacement can then happen within that term. This ordering prevents a failed owner from regaining write authority simply because it becomes reachable again. Its recovered data can still be useful evidence without restoring its excluded grant.",
+      "sources": [
+        "design-adr--0005-order-controlled-and-uncontrolled-failover-differently",
+        "design-architecture--05-replication"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "The distinction also applies to existing replication exports. Fencing does not intentionally terminate every already established authenticated downstream export from the former owner; remaining data may help recovery on a best-effort basis. But useful data flow is not a lease to accept new writes. If the former owner later qualifies as a candidate, it still needs a fresh action, preparation, and cutover.",
+      "sources": [
+        "design-adr--0005-order-controlled-and-uncontrolled-failover-differently",
+        "design-architecture--05-replication"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "Bind preparation to one committed action"
+    },
+    {
+      "type": "paragraph",
+      "text": "Each candidate selection receives a new immutable action identity, even when the same node incarnation is selected again. Controlled promotion preparation requires a committed one-way authorization latch for that action. The winning action remains the activation identity in the final grant, and the data node activates only a matching prepared context.",
+      "sources": [
+        "design-adr--0007-bind-promotion-to-a-committed-action",
+        "design-architecture--08-meta-control-plane"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "Suppose candidate preparation succeeds, the attempt is aborted, and the source resumes writes. Reusing that old prepared state during a later selection could skip the new catch-up obligation. A fresh action identity prevents this shortcut. A terminal action failure also revokes its boot-local preparation capability and candidate eligibility for the same population incarnation; transient retries belong within the existing action instead of minting unbounded new identities.",
+      "sources": [
+        "design-adr--0007-bind-promotion-to-a-committed-action",
+        "design-architecture--08-meta-control-plane"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "Bound recovery work and report only provable loss"
+    },
+    {
+      "type": "paragraph",
+      "text": "Candidate recovery is bounded before promotion rather than becoming an open-ended attempt to collect every possible remaining record. The associated decision record makes recovery scope and termination part of the action protocol. This is important operationally: a candidate that is busy doing recovery work has not thereby obtained ownership, and a recovery attempt needs an observable outcome.",
+      "sources": [
+        "design-adr--0021-bound-candidate-recovery-before-promotion",
+        "design-adr--0010-report-only-provable-failover-loss",
+        "design-architecture--08-meta-control-plane"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "Terminal loss reporting is deliberately categorical. Certain controlled outcomes with the required authorization evidence can report none; ordinary uncontrolled recovery and candidate replacement report unknown. Without a committed final source frontier, replica offsets alone do not justify a numeric RPO or a bounded-loss claim. Unknown is information about the available proof, not a fabricated count of lost application writes.",
+      "sources": [
+        "design-adr--0021-bound-candidate-recovery-before-promotion",
+        "design-adr--0010-report-only-provable-failover-loss",
+        "design-architecture--08-meta-control-plane"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "Read a failover as a sequence of proofs"
+    },
+    {
+      "type": "paragraph",
+      "text": "For an evaluation, record the committed term, candidate action identity, pause or fence, preparation result, cutover, and observed client outcomes. Exercise interrupted maintenance, candidate failure, delayed reports, and the return of an old owner separately. Distinguish failure detection from failover execution when deciding what automation is actually available. The architecture provides a disciplined state machine; a production runbook must still establish its detection policy, time budgets, application retry behavior, and evidence for the chosen deployment.",
+      "sources": [
+        "design-architecture--08-meta-control-plane",
+        "design-adr--0005-order-controlled-and-uncontrolled-failover-differently",
+        "design-adr--0007-bind-promotion-to-a-committed-action",
+        "design-adr--0010-report-only-provable-failover-loss"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,125 @@
+{
+  "id": "multi-key-transactions-across-partitions",
+  "locale": "zh-CN",
+  "version": "0.1.0",
+  "kind": "blog",
+  "slug": "multi-key-transactions-across-partitions",
+  "title": "Lavik 如何跨分区协调多键操作",
+  "summary": "键所有权让本地操作更高效，而多键命令还需要独立设计调度、锁生命周期、命令错误与持久完成过程。",
+  "updatedAt": "2026-09-21",
+  "sourceRevision": "9d6b212da5da820b4bed63fc047b5c2ed6be1fa5",
+  "blocks": [
+    {
+      "type": "paragraph",
+      "text": "单键操作有明确的执行位置：键的所有者。多键操作则可能需要多个所有者共同确定何时能够执行，以及各执行步骤之间应保护哪些状态。Lavik 将这种调度问题与后续存储提交问题分开。对于迁移 Redis 事务或带键 Lua 工作负载的工程师，这种区分有助于理解快速路径与需要验证的故障情形。",
+      "sources": [
+        "design-architecture--03-transaction-coordination",
+        "design-architecture--02-request-serving"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "单所有者操作避免不必要的调度"
+    },
+    {
+      "type": "paragraph",
+      "text": "所有键都属于同一个所有者时，调度不会立即分配全局调度 ID。执行阶段在该所有者上去重并获取键集合。如果已记录的意图相容，操作就不必经过全局 ID 与分片队列路径。遇到冲突则不同：等待者保留意图，获得 ID，进入队列并挂起。",
+      "sources": [
+        "design-architecture--03-transaction-coordination"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "这里有一个重要限定：不分配调度 ID，并不意味着多键写入不需要持久事务 ID。前者用于锁调度排序，后者用于识别存储记录及其提交决定。混淆二者，会把本地调度优化错误地解释成它并未证明的崩溃恢复保证。",
+      "sources": [
+        "design-architecture--03-transaction-coordination"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "多个所有者需要共同的调度轮次"
+    },
+    {
+      "type": "paragraph",
+      "text": "跨分片事务分配一个调度 ID，并向所有参与所有者登记意图。如果 ID 早于所有者的已提交水位，或与较晚队列位置已经暴露的顺序冲突，所有者可以拒绝登记。协调者会先取消已成功的登记，再使用新 ID 重试。当前文档描述的重试循环没有次数上限，也没有显式退避。",
+      "sources": [
+        "design-architecture--03-transaction-coordination"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "这为高争用工作负载提供了明确的评估问题：调度重试有多频繁？重试率上升时，尾延迟如何变化？独立键上的高吞吐结果无法回答这个问题。访问重叠键集合的事务，除了存储吞吐量，还会考验协调与队列排序。",
+      "sources": [
+        "design-architecture--03-transaction-coordination"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "顺序不能演变成跨分片等待环"
+    },
+    {
+      "type": "paragraph",
+      "text": "调度器保留事务的队列位置，但对于已激活、且完整意图集合已获授予的参与者，可以进入所有者本地的就绪旁路队列。它与该分片上更早登记的工作无冲突，而保留的意图又阻止后续冲突操作作出同样判断。最终仍需检查持有相容性。这样，符合条件的工作可以推进，同时保留其他参与者需要的顺序信息。",
+      "sources": [
+        "design-architecture--03-transaction-coordination"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "回调完成后，屏障把参与者状态汇总回协调者原来的工作线程。不释放资源的执行跳保留持有、意图与队列位置，以供下一步使用；释放跳则移除这些状态，并重新轮询分片。协调者等待自己启动的每一轮，因此，挂起的回调不会超出其仍引用的事务帧生命周期。",
+      "sources": [
+        "design-architecture--03-transaction-coordination"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "被捕获的命令错误仍然影响恢复"
+    },
+    {
+      "type": "paragraph",
+      "text": "在 EXEC 或 Lua 中，多步骤命令可能失败，而外层操作继续执行。如果只是回退运行时索引，恢复过程仍可能看到失败命令已经追加的部分记录。文档中的设计在外层存储事务内建立命令级撤销边界，并在同一事务 ID 下追加补偿记录。",
+      "sources": [
+        "design-architecture--03-transaction-coordination"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "例如，Lua 调用中的某个命令在完成部分内部准备或修改后失败，脚本处理错误后继续执行后续命令。运行时可见性与恢复结果必须对保留下来的效果达成一致。重点不是每个命令错误都中止整个脚本，而是提交后续效果时，不能让失败命令已被补偿的部分写入重新出现。",
+      "sources": [
+        "design-architecture--03-transaction-coordination"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "逻辑完成与持久完成并非同一时刻"
+    },
+    {
+      "type": "paragraph",
+      "text": "成功的写入路径在处理好撤销状态后，把存储回执交给工作线程本地提交队列。排空协程可以合并指向同一物理块和分配时期的刷盘要求，但每个事务仍有自己的提交决定。这种方式摊薄协调成本，却不会把独立事务边界替换成一个无法区分的批次结果。",
+      "sources": [
+        "design-architecture--03-transaction-coordination",
+        "design-architecture--04-storage-and-recovery"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "队列还提供响应侧背压。达到文档中的高水位后，命令会等待队列深度下降，但成功响应并不会因此变成同步持久性承诺。恢复时，没有持久提交决定的带标签记录会被原子丢弃。应用重试策略、崩溃持久性、调度隔离与跨节点复制相互关联，却需要不同的证据。",
+      "sources": [
+        "design-architecture--03-transaction-coordination",
+        "design-architecture--04-storage-and-recovery"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "验证应用实际使用的事务形状"
+    },
+    {
+      "type": "paragraph",
+      "text": "回放重叠与不重叠键集合、单所有者与多所有者命令、WATCH 冲突，以及处理中间错误的脚本。除了原始命令吞吐量，还应分别记录调度重试、队列深度、争用和应用延迟。同时明确：连接丢失且结果不确定时，客户端如何处理。事务文档解释了机制，而哪些操作可以安全重试、哪些需要上层对账记录，仍由应用决定。",
+      "sources": [
+        "design-architecture--03-transaction-coordination",
+        "design-architecture--02-request-serving"
+      ]
+    }
+  ]
+}

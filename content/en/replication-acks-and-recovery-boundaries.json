@@ -1,0 +1,126 @@
+{
+  "id": "replication-acks-and-recovery-boundaries",
+  "locale": "en",
+  "version": "0.1.0",
+  "kind": "blog",
+  "slug": "replication-acks-and-recovery-boundaries",
+  "title": "Replication progress is more than one offset",
+  "summary": "Lavik tracks native replication by history and logical flow. Understand what an acknowledgement proves, what a restart discards, and why failover needs additional evidence.",
+  "updatedAt": "2026-09-21",
+  "sourceRevision": "9d6b212da5da820b4bed63fc047b5c2ed6be1fa5",
+  "blocks": [
+    {
+      "type": "paragraph",
+      "text": "A replica offset is a useful operational signal, but it is easy to ask it to prove too much. Bytes received, a complete logical event applied, locally durable storage, and authority to serve are different facts. Lavik’s native replication design gives them separate identities and lifecycle rules. For a Redis-experienced operator, the practical benefit of reading those rules is knowing which progress measurements remain meaningful across reconnects, full synchronization, and promotion.",
+      "sources": [
+        "design-architecture--05-replication"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "A history contains several logical flows"
+    },
+    {
+      "type": "paragraph",
+      "text": "Native replication has a control connection and one data flow per source worker. A target can use a different number of workers while retaining the source’s logical flow identities. Applied progress is a vector: each component identifies the next incomplete logical event on one source flow. It is not a collection of byte offsets into arbitrary transport fragments.",
+      "sources": [
+        "design-architecture--05-replication"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "Continuation requires matching group and history context, the same flow layout, and retained coverage for every flow. If those proofs do not hold, the whole group performs full synchronization. Mixing continuation for some flows with full synchronization for others would not satisfy the documented population contract. When comparing two progress reports, first establish that they describe the same history and coordinate system.",
+      "sources": [
+        "design-architecture--05-replication"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "A fragment is not a completed event"
+    },
+    {
+      "type": "paragraph",
+      "text": "A logical event can span transport fragments and multiple backlog blocks. The receiver verifies frame integrity, reassembles the event, coordinates ordered application, and advances its resume cursor only after the complete event succeeds. A partially received large command therefore cannot become candidate progress simply because many bytes have arrived.",
+      "sources": [
+        "design-architecture--05-replication"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "This is particularly important for a transaction whose effects cross flows. Its participants must reach the required rendezvous before the logical work is complete. The source can keep sending bounded batches while a separate receiver processes acknowledgements, so one participant is not hidden behind a sender waiting for a transaction that needs another flow. These are protocol and scheduling decisions, not a guarantee that every contention pattern is deadlock-free.",
+      "sources": [
+        "design-architecture--05-replication"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "What an acknowledgement can establish"
+    },
+    {
+      "type": "paragraph",
+      "text": "An ordered native ACK establishes completed application progress for its flow and history. Negotiated range ACKs compress contiguous completed events; they do not weaken the complete-event rule. WAIT lazily fences worker publishers and counts a native replica only when all its flow ACK cursors cross the captured history-local vector. That is a specific progress test with a specific identity.",
+      "sources": [
+        "design-architecture--05-replication",
+        "design-architecture--02-request-serving",
+        "design-adr--0010-report-only-provable-failover-loss"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "It should not be silently converted into a cross-node durable commit quorum. The replication document explicitly allows acknowledged writes absent from a selected replica to be lost during uncontrolled recovery. Local storage durability, replication application, and the eventual choice of a new owner have separate boundaries. An application requiring a particular recovery-point objective needs evidence for that complete failure path, not only a reassuring ACK counter.",
+      "sources": [
+        "design-architecture--05-replication",
+        "design-architecture--02-request-serving",
+        "design-adr--0010-report-only-provable-failover-loss"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "Backlog is admitted state with a retention policy"
+    },
+    {
+      "type": "paragraph",
+      "text": "Source writes reserve publication capacity before mutation. Publisher queues, backlog blocks, full-sync coverage, and target staging are retained memory with admission rules. Large commands may span fragments, but fragmentation does not remove the limit on a complete canonical event. This prevents a transport optimization from becoming a way to admit an event the replication system cannot retain.",
+      "sources": [
+        "design-architecture--05-replication"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "A lagging consumer then creates a policy choice. Retention pressure can wait for ACK progress or, when configured not to backpressure, revoke that consumer’s coverage and force a later full sync. The choice affects foreground latency, memory retention, and rebuild traffic. Capacity planning should therefore include slow and disconnected replicas rather than measuring a permanently caught-up pair.",
+      "sources": [
+        "design-architecture--05-replication"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "Durable data does not preserve every runtime identity"
+    },
+    {
+      "type": "paragraph",
+      "text": "Redis PSYNC cursors and native continuation cursors do not survive restart in the documented design. A target can retain durable data while lacking a valid continuation history for its next session. Meta-managed population readiness and authorization are also bound to the current boot; old directives and ready tokens cannot simply reopen serving.",
+      "sources": [
+        "design-architecture--05-replication"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "Full synchronization has its own consequential boundary: it destructively resets the target population rather than retaining an old active root beside a separate staging root. The target becomes ready only after the whole-group conditions validate. This is why a restart or failed rebuild should be tested as a lifecycle transition, not simulated solely by pausing a TCP connection and watching it resume.",
+      "sources": [
+        "design-architecture--05-replication"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "Make the failure experiment match the claim"
+    },
+    {
+      "type": "paragraph",
+      "text": "Build a test matrix that separates a short disconnect, lost retained history, process restart, failed full sync, and owner loss. Observe history identity, all-flow application progress, readiness, foreground latency, and the application’s externally recorded writes. Verify the exact topology: ordinary native cascading replication is not supported in this snapshot. The goal is to establish what happened to real application effects across a failure, rather than treating one offset or a surviving storage file as a complete recovery proof.",
+      "sources": [
+        "design-architecture--05-replication",
+        "design-adr--0010-report-only-provable-failover-loss"
+      ]
+    }
+  ]
+}
