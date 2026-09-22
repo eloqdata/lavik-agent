@@ -6,16 +6,14 @@ import { useCases } from "../../../packages/use-cases/content";
 
 export function Mark() {
   return (
-    <svg
-      width="30"
+    <img
+      className="brand-mark"
+      src="/logo/lavik-logo-black.svg"
+      width="84"
       height="30"
-      viewBox="0 0 30 30"
-      fill="none"
+      alt=""
       aria-hidden="true"
-    >
-      <path d="M5 4v22h20v-6H11V4H5Z" fill="currentColor" />
-      <path d="M15 4v12h10V4H15Z" fill="currentColor" opacity=".4" />
-    </svg>
+    />
   );
 }
 export function Header({ locale }: { locale: Locale }) {
