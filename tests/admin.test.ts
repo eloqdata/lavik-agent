@@ -1029,6 +1029,7 @@ function model(): AgentRuntime {
         articles().find((a) => a.locale === input.locale)!,
       );
       article.kind = input.kind ?? "blog";
+      if (article.kind === "blog") article.topics = ["architecture"];
       article.blocks = [
         {
           type: "paragraph",

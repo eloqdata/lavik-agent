@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { blogTopicSchema } from "../blog/topics.ts";
 
 export const localeSchema = z.enum(["en", "zh-CN"]);
 export type Locale = z.infer<typeof localeSchema>;
@@ -37,6 +38,7 @@ export const articleSchema = z
       .string()
       .regex(/^[a-f0-9]{40}$/)
       .optional(),
+    topics: blogTopicSchema.array().min(1).max(5).optional(),
     blocks: z.array(blockSchema).min(1).max(40),
   })
   .strict();

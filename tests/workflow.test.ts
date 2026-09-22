@@ -27,6 +27,7 @@ const runtime = (
       articles().find((a) => a.locale === locale)!,
     );
     article.kind = "blog";
+    article.topics = ["architecture"];
     article.blocks = [
       {
         type: "paragraph",
@@ -193,6 +194,7 @@ test("real verifier failure blocks publication even if a reviewer would pass", a
   model.write = async ({ locale }) => ({
     ...articles().find((a) => a.locale === locale)!,
     kind: "blog",
+    topics: ["architecture"],
     blocks: [{ type: "recipe", recipeId: "basic-commands" }],
   });
   try {

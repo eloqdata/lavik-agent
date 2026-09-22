@@ -19,6 +19,7 @@ import {
   sources,
 } from "../content/repository.ts";
 import { checkReceipt, validateArticle } from "../content/gate.ts";
+import { blogPresentation } from "../blog/presentation.ts";
 import {
   publicationPolicyHash,
   publicationRenderingHash,
@@ -103,6 +104,12 @@ export async function validatePublication(
       errors.push(...checkReceipt(receipt, receipt.recipeId));
     if (errors.length)
       reject(`Publication evidence failed: ${errors.join("; ")}`);
+    if (
+      article.kind === "blog" &&
+      JSON.stringify(blogPresentation(article)) !==
+        JSON.stringify(blogPresentation(first))
+    )
+      reject("Blog translations must share topics and artwork.");
     // ValidateArticle checks support; this additionally proves the reviewer read it.
     const claims = readJson("content/claims.json") as {
       id: string;

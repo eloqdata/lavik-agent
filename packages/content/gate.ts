@@ -22,6 +22,7 @@ import {
   sources,
 } from "./repository.ts";
 import { publicationRenderingHash } from "./publication-context.ts";
+import { blogPresentation } from "../blog/presentation.ts";
 
 export function checkReceipt(receipt: Receipt, recipeId: string): string[] {
   const failures: string[] = [];
@@ -91,6 +92,17 @@ export function validateArticle(
 ): string[] {
   const failures: string[] = [];
   articleSchema.parse(article);
+  if (article.kind === "blog") {
+    try {
+      const { topics } = blogPresentation(article);
+      if (new Set(topics).size !== topics.length)
+        failures.push("Blog topics must be unique");
+    } catch (error) {
+      failures.push((error as Error).message);
+    }
+  } else if (article.topics) {
+    failures.push("Topics are reserved for blog articles");
+  }
   if (article.sourceRevision && article.kind !== "blog")
     failures.push(
       "A source-revision override is reserved for engineering blog articles",

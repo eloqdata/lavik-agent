@@ -61,6 +61,7 @@ test("engineering snapshot metadata cannot silently relabel release docs or cite
 
 test("current architecture citations require explicit snapshot labels, including through claims", () => {
   const article = structuredClone(articles()[0]);
+  article.topics = ["architecture"];
   delete article.sourceRevision;
   article.kind = "docs";
   article.blocks = [
@@ -115,6 +116,7 @@ test("current architecture citations require explicit snapshot labels, including
   }
   delete article.sourceRevision;
   article.kind = "docs";
+  delete article.topics;
   article.blocks = [
     {
       type: "paragraph",

@@ -83,7 +83,9 @@ test("new public pages, community destinations, and Blog navigation", async ({
     await expect(page.locator("h1")).toHaveText(
       locale === "en" ? "Lavik Blog" : "Lavik 博客",
     );
-    await expect(page.locator("header")).not.toContainText("Journal");
+    await expect(page.locator("header.site-header")).not.toContainText(
+      "Journal",
+    );
     for (const section of ["download", "community", "docs/0.1.0", "docs"])
       expect((await request.get(`/${locale}/${section}/`)).status()).toBe(200);
   }

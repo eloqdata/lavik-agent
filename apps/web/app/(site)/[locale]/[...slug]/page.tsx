@@ -35,6 +35,13 @@ import { DocsHome } from "../../../../components/docs-home";
 import { DocsSidebar } from "../../../../components/docs-sidebar";
 import { UseCasePage, UseCasesHome } from "../../../../components/use-cases";
 import { useCases } from "../../../../../../packages/use-cases/content";
+import { blogTopics } from "../../../../../../packages/blog/topics";
+import {
+  BlogIndex,
+  BlogSidebar,
+  BlogCover,
+  BlogTopicLinks,
+} from "../../../../components/blog";
 
 const indexRoutes = [
   "benchmarks",
@@ -62,6 +69,7 @@ export function generateStaticParams({
     ...indexRoutes.map((route) => ({ slug: route.split("/") })),
     ...manualRoutes().map((route) => ({ slug: route.split("/") })),
     ...useCases.map((entry) => ({ slug: ["use-cases", entry.slug] })),
+    ...blogTopics.map((entry) => ({ slug: ["blog", "topic", entry.id] })),
   ];
 }
 export async function generateMetadata({
@@ -75,6 +83,10 @@ export async function generateMetadata({
       ? useCases.find((entry) => entry.slug === slug[1])
       : undefined;
   const parsedLocale = localeSchema.parse(locale);
+  const topic =
+    slug.length === 3 && slug[0] === "blog" && slug[1] === "topic"
+      ? blogTopics.find((entry) => entry.id === slug[2])
+      : undefined;
   const article = articles().find(
     (a) => articlePath(a) === `/${locale}/${slug.join("/")}/`,
   );
@@ -90,11 +102,17 @@ export async function generateMetadata({
   };
   return {
     title:
+      (topic ? `${topic.label[parsedLocale]} | Lavik Blog` : undefined) ??
       useCase?.title[parsedLocale] ??
       article?.title ??
       manualTitle(slug.join("/"), localeSchema.parse(locale)) ??
       titles[slug[0]]?.[locale === "en" ? 0 : 1],
     description:
+      (topic
+        ? parsedLocale === "en"
+          ? `Explore ${topic.label.en.toLowerCase()} on the Lavik blog.`
+          : `阅读 Lavik 博客的${topic.label[parsedLocale]}文章。`
+        : undefined) ??
       useCase?.summary[parsedLocale] ??
       article?.summary ??
       (slug[0] === "download"
@@ -134,6 +152,10 @@ export default async function Page({
   if (manualTitle(route, locale))
     return <ManualPage route={route} locale={locale} />;
   const pages = articles().filter((a) => a.locale === locale);
+  if (route === "blog") return <BlogIndex locale={locale} posts={pages} />;
+  const topic = blogTopics.find((entry) => route === `blog/topic/${entry.id}`);
+  if (topic)
+    return <BlogIndex locale={locale} posts={pages} topic={topic.id} />;
   const article = pages.find((a) => articlePath(a) === `/${locale}/${route}/`);
   if (article) {
     const errors = publicationErrors(article);
@@ -144,10 +166,18 @@ export default async function Page({
     return (
       <main
         id="main"
-        className="container document-layout"
+        className={`container document-layout${article.kind === "blog" ? " blog-detail" : ""}`}
         data-content-hash={contentHash(article)}
       >
-        <DocsSidebar locale={locale} route={route} />
+        {article.kind === "blog" ? (
+          <BlogSidebar
+            locale={locale}
+            posts={pages}
+            activeArticle={article.id}
+          />
+        ) : (
+          <DocsSidebar locale={locale} route={route} />
+        )}
         <article className="document">
           <div className="breadcrumb">
             <Link href={`/${locale}/`}>Lavik</Link>
@@ -180,6 +210,14 @@ export default async function Page({
               </>
             )}
           </div>
+          {article.kind === "blog" ? (
+            <>
+              <BlogTopicLinks article={article} />
+              <div className="blog-cover-frame">
+                <BlogCover article={article} priority />
+              </div>
+            </>
+          ) : null}
           {article.kind === "release" || article.id === "quick-start" ? (
             <div className="download-box">
               <a
@@ -302,14 +340,12 @@ export default async function Page({
     );
   const kinds = {
     "use-cases": "use-case",
-    blog: "blog",
     releases: "release",
   } as const;
   const kind = kinds[route as keyof typeof kinds];
   if (!kind) notFound();
   const titles = {
     "use-case": zh ? "从你的应用出发。" : "Start with your application.",
-    blog: zh ? "Lavik 博客" : "Lavik Blog",
     release: zh ? "每个版本，都有依据。" : "Every version, accounted for.",
   };
   return (

@@ -15,6 +15,7 @@ import {
   sources,
 } from "../content/repository.ts";
 import { validateArticle } from "../content/gate.ts";
+import { blogPresentation } from "../blog/presentation.ts";
 import {
   campaignPath,
   event,
@@ -100,6 +101,11 @@ export async function publishCampaign(id: string) {
         );
         if (errors.length) throw new Error(errors.join("; "));
       }
+      if (
+        JSON.stringify(blogPresentation(state.editions.en!.article)) !==
+        JSON.stringify(blogPresentation(state.editions["zh-CN"]!.article))
+      )
+        throw new Error("Blog translations must share topics and artwork.");
       for (const locale of ["en", "zh-CN"] as const) {
         const edition = state.editions[locale]!;
         // Receipts stay in a campaign-specific record as well as the current recipe record.
