@@ -2,8 +2,8 @@
   "version": "0.1.0",
   "release": "0.1.0-beta.1",
   "sourceCommit": "3955b98d43b312324aa8d52775df52cfb111c0d0",
-  "bundleHash": "f3aaa2a07b2e0a29591e63c75851cc33435b04dee08ef096b94bb2e8cb052b9c",
-  "reviewedAt": "2026-09-25T16:08:32.330Z",
+  "bundleHash": "8f35f8205fab88c90447c85a93c94bcc1e7b89a379ece0b0c74b7f98478be79e",
+  "reviewedAt": "2026-09-25T16:20:58.796Z",
   "reviewedFiles": {
     ".github/workflows/ci.yml": "25ee36452e88bc8557f9dc839f0ed93d7c311cfe6a9106c4b0cf1542a4a8dd10",
     "apps/web/app/(entry)/blog-covers/[file]/route.ts": "f409d6151aef1c5b1e4199604a6fa9d91153952383998a4dd879ae6202501431",
@@ -18,7 +18,7 @@
     "apps/web/components/copy-code.tsx": "97d9360c361baa6c13dbbc2beb925eee72db4a13350ce641fae7c367a37220fb",
     "apps/web/components/docs-home.tsx": "244527a5fe95c7d174e5fc94177bfc9616cc1e677a0628c3d78e890392570403",
     "apps/web/components/docs-navigation.tsx": "131b1056a0cc581b64546fb3583b12cd148040cf1c5598d2bc9908c050eb9926",
-    "apps/web/components/docs-sidebar.tsx": "f7ef298babaab77cede22fd98ecfa4bc017788930a8cbd3e970916d284d4431e",
+    "apps/web/components/docs-sidebar.tsx": "77091031d21cdb9f9c4b989f99cdcc17897d0b6b81f39663772c2cf359792178",
     "apps/web/components/download-page.tsx": "bae8b4830b0df220ed64b7908b40ad52fdc0c529930c54ccd980ef23456ecc90",
     "apps/web/components/latency-explorer.tsx": "5c5f5b7e8686eff80a9d247bb5945c8bed2a0512704ceec49ba67a789e13955d",
     "apps/web/components/manual.css": "a69803ae6bde073be855383427ddfeb7ae04c3bc6e038b4287c5831fd182006f",
@@ -175,11 +175,11 @@
     "findings": [
       {
         "severity": "note",
-        "message": "The loader correction reads the published fixtures directly without weakening assertions or adding a gate bypass. Coverage retains both languages, every matching block for the seven listed snippet names per guide, English navigation/search, manifest/sitemap checks and three responsive widths."
+        "message": "The supplied diff correctly capitalizes English sidebar labels, preserves lavik-ctl, HA/FAQ, Chinese text and URLs, and updates the exact browser link locator while retaining the page-heading assertion. No tools or tests were run."
       },
       {
         "severity": "note",
-        "message": "Review is limited to the supplied correction and prior-review context; no tools, credentials or tests were used. Reported execution results and hash comparisons were not independently verified. Refresh manual-approval hashes for the corrected bundle."
+        "message": "The changedFiles inventory omits tests/browser/manual.spec.ts, which appears in the diff; include it in the review inventory."
       }
     ]
   },
@@ -189,16 +189,15 @@
     "provider": "openai",
     "authentication": "chatgpt",
     "reasoning": "high",
-    "additionalReviewReason": "Review browser fixture import correction after the full guide and runtime corrections passed.",
-    "startedAt": "2026-09-25T16:08:14.321Z",
-    "finishedAt": "2026-09-25T16:08:32.330Z",
-    "promptSha256": "12c3b1e3ba402357ef722d82e8581d27fc20e6992d679ac0583a50b0c08474ab",
-    "outputSha256": "b5e5131547466b654cc620341ac60910332309daeb2e7a3fc9d1811b4b46f837"
+    "startedAt": "2026-09-25T16:20:41.383Z",
+    "finishedAt": "2026-09-25T16:20:58.796Z",
+    "promptSha256": "c3dcdaab1f72d22418d30359b65a31e460c8450d381690d3b052a91b6d2d7151",
+    "outputSha256": "89b3d9866c0d47f986c86e51c005ab5570ba6c5a246e5bf181290566b687855b"
   },
   "reviewScope": "incremental",
-  "previousBundleHash": "5df29a37c1f75f27f8b77b06177b78b816d5dd84bfe9a6dc972ba22781c1f965",
+  "previousBundleHash": "f3aaa2a07b2e0a29591e63c75851cc33435b04dee08ef096b94bb2e8cb052b9c",
   "reviewedChanges": [
-    "tests/browser/operations.spec.ts"
+    "apps/web/components/docs-sidebar.tsx"
   ],
   "precedingReview": {
     "review": {
@@ -206,23 +205,11 @@
       "findings": [
         {
           "severity": "note",
-          "message": "Monitoring-permissions blocker resolved: extraction uses umask 022 in a subshell. Supplied fresh execution inherits umask 077, successfully provisions Prometheus/Grafana, and records credentials mode 0600."
+          "message": "The loader correction reads the published fixtures directly without weakening assertions or adding a gate bypass. Coverage retains both languages, every matching block for the seven listed snippet names per guide, English navigation/search, manifest/sitemap checks and three responsive widths."
         },
         {
           "severity": "note",
-          "message": "Follower-restart blocker resolved: explicit status-error handling and snapshot checks require the original serving term-1 owner, fresh observations, no blockers and a healthy failover detector. Seven negative cases reject before PID lookup without Bash errexit. Both languages explain the guard’s scope and concurrent-administration restriction."
-        },
-        {
-          "severity": "note",
-          "message": "Target-refresh blocker resolved: the harness changes discovery from two targets to one and restores two, recording exited/0 generators and the actual healthy target sets. The gate and negative tests reject incomplete, failed or unobserved refresh outcomes."
-        },
-        {
-          "severity": "note",
-          "message": "Both fresh ARM64 HA runs initially failed follower synchronization, then passed after the documented state-preserving restart. Subsequent synchronization, client acknowledgements, completed controlled failover, graceful restart and automatic promotion support their scoped claims. They do not establish universal recovery, lossless failover or restored redundancy after the crash. Kernel TCP/io_uring and the isolated monitoring-network adaptation remain disclosed."
-        },
-        {
-          "severity": "note",
-          "message": "The browser selector now checks every matching snippet block, accommodating repeated status blocks. Supplied hash maps retain unchanged source and render/build/manifest-gate review coverage, preserve baseline-bound paths and match execution-input bindings. Bilingual guidance preserves the distinction between the co-located lab and untested separate-host availability. No tools or credentials were used, and no tests were run for this review."
+          "message": "Review is limited to the supplied correction and prior-review context; no tools, credentials or tests were used. Reported execution results and hash comparisons were not independently verified. Refresh manual-approval hashes for the corrected bundle."
         }
       ]
     },
@@ -232,10 +219,11 @@
       "provider": "openai",
       "authentication": "chatgpt",
       "reasoning": "high",
-      "startedAt": "2026-09-25T16:04:55.184Z",
-      "finishedAt": "2026-09-25T16:05:31.905Z",
-      "promptSha256": "f97f6eb7bac461e99043f1b62032295a738cb5fd195a0029c82625dd76ae81ec",
-      "outputSha256": "11119ff5de1e8f0997241dff2737a3c01e0797adabfb9220559f1eaf831a72e6"
+      "additionalReviewReason": "Review browser fixture import correction after the full guide and runtime corrections passed.",
+      "startedAt": "2026-09-25T16:08:14.321Z",
+      "finishedAt": "2026-09-25T16:08:32.330Z",
+      "promptSha256": "12c3b1e3ba402357ef722d82e8581d27fc20e6992d679ac0583a50b0c08474ab",
+      "outputSha256": "b5e5131547466b654cc620341ac60910332309daeb2e7a3fc9d1811b4b46f837"
     }
   }
 }

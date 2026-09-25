@@ -22,56 +22,56 @@ export function DocsSidebar({
   const root = `/${locale}/docs/0.1.0`;
   const groups = [
     {
-      title: zh ? "开始使用" : "Get started",
+      title: zh ? "开始使用" : "Get Started",
       links: [
-        { title: zh ? "文档首页" : "Documentation home", href: `${root}/` },
+        { title: zh ? "文档首页" : "Documentation Home", href: `${root}/` },
         { title: zh ? "Lavik 概览" : "About Lavik", href: `${root}/overview/` },
         {
-          title: zh ? "下载与安装" : "Download & install",
+          title: zh ? "下载与安装" : "Download & Install",
           href: `/${locale}/download/`,
         },
         {
-          title: zh ? "快速开始" : "Quick start",
+          title: zh ? "快速开始" : "Quick Start",
           href: `${root}/quick-start/`,
         },
       ],
     },
     {
-      title: zh ? "部署与运维" : "Deploy & operate",
+      title: zh ? "部署与运维" : "Deploy & Operate",
       links: operationsGuides.map((g) => ({
         title:
           g.layout === "single"
             ? zh
               ? "lavik-ctl：单节点"
-              : "lavik-ctl: single node"
+              : "lavik-ctl: Single Node"
             : zh
               ? "lavik-ctl：主从 HA"
-              : "lavik-ctl: primary–follower HA",
+              : "lavik-ctl: Primary–Follower HA",
         href: `${root}/${g.id}/`,
       })),
     },
     {
-      title: zh ? "使用 Lavik" : "Build with Lavik",
+      title: zh ? "使用 Lavik" : "Build With Lavik",
       links: [
         {
-          title: zh ? "命令参考" : "Command reference",
+          title: zh ? "命令参考" : "Command Reference",
           href: `${root}/commands/`,
         },
         {
-          title: zh ? "客户端库" : "Client libraries",
+          title: zh ? "客户端库" : "Client Libraries",
           href: `${root}/clients/`,
         },
         {
-          title: zh ? "兼容性概览" : "Compatibility overview",
+          title: zh ? "兼容性概览" : "Compatibility Overview",
           href: `${root}/compatibility/`,
         },
       ],
     },
     {
-      title: zh ? "理解与评估" : "Understand & evaluate",
+      title: zh ? "理解与评估" : "Understand & Evaluate",
       links: [
         {
-          title: zh ? "存储与持久化" : "Storage & durability",
+          title: zh ? "存储与持久化" : "Storage & Durability",
           href: `${root}/storage/`,
         },
         {
@@ -83,11 +83,11 @@ export function DocsSidebar({
           href: `/${locale}/faq/evaluation/`,
         },
         {
-          title: zh ? "版本说明" : "Release notes",
+          title: zh ? "版本说明" : "Release Notes",
           href: `/${locale}/releases/`,
         },
         {
-          title: zh ? "社区与帮助" : "Community & help",
+          title: zh ? "社区与帮助" : "Community & Help",
           href: `/${locale}/community/`,
         },
       ],
@@ -103,7 +103,7 @@ export function DocsSidebar({
       title: guide.title[locale],
       href,
       keywords: `${guide.summary[locale]} Grafana Prometheus ${guide.sections.map((s) => s.title[locale]).join(" ")}`,
-      kind: zh ? "部署与运维" : "Deploy & operate",
+      kind: zh ? "部署与运维" : "Deploy & Operate",
     });
   }
   for (const article of articles().filter(
