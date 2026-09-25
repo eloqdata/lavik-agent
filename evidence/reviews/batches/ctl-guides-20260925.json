@@ -1,0 +1,181 @@
+{
+  "reviewedAt": "2026-09-25T16:05:31.905Z",
+  "reviewer": {
+    "role": "reviewer",
+    "model": "gpt-6-astra",
+    "provider": "openai",
+    "authentication": "chatgpt",
+    "reasoning": "high",
+    "startedAt": "2026-09-25T16:04:55.184Z",
+    "finishedAt": "2026-09-25T16:05:31.905Z",
+    "promptSha256": "f97f6eb7bac461e99043f1b62032295a738cb5fd195a0029c82625dd76ae81ec",
+    "outputSha256": "11119ff5de1e8f0997241dff2737a3c01e0797adabfb9220559f1eaf831a72e6"
+  },
+  "review": {
+    "decision": "pass",
+    "findings": [
+      {
+        "severity": "note",
+        "message": "Monitoring-permissions blocker resolved: extraction uses umask 022 in a subshell. Supplied fresh execution inherits umask 077, successfully provisions Prometheus/Grafana, and records credentials mode 0600."
+      },
+      {
+        "severity": "note",
+        "message": "Follower-restart blocker resolved: explicit status-error handling and snapshot checks require the original serving term-1 owner, fresh observations, no blockers and a healthy failover detector. Seven negative cases reject before PID lookup without Bash errexit. Both languages explain the guard’s scope and concurrent-administration restriction."
+      },
+      {
+        "severity": "note",
+        "message": "Target-refresh blocker resolved: the harness changes discovery from two targets to one and restores two, recording exited/0 generators and the actual healthy target sets. The gate and negative tests reject incomplete, failed or unobserved refresh outcomes."
+      },
+      {
+        "severity": "note",
+        "message": "Both fresh ARM64 HA runs initially failed follower synchronization, then passed after the documented state-preserving restart. Subsequent synchronization, client acknowledgements, completed controlled failover, graceful restart and automatic promotion support their scoped claims. They do not establish universal recovery, lossless failover or restored redundancy after the crash. Kernel TCP/io_uring and the isolated monitoring-network adaptation remain disclosed."
+      },
+      {
+        "severity": "note",
+        "message": "The browser selector now checks every matching snippet block, accommodating repeated status blocks. Supplied hash maps retain unchanged source and render/build/manifest-gate review coverage, preserve baseline-bound paths and match execution-input bindings. Bilingual guidance preserves the distinction between the co-located lab and untested separate-host availability. No tools or credentials were used, and no tests were run for this review."
+      }
+    ]
+  },
+  "precedingReview": {
+    "reviewer": {
+      "role": "reviewer",
+      "model": "gpt-6-astra",
+      "provider": "openai",
+      "authentication": "chatgpt",
+      "reasoning": "high",
+      "startedAt": "2026-09-25T15:48:50.350Z",
+      "finishedAt": "2026-09-25T15:50:13.951Z",
+      "promptSha256": "4e9a054a0e97e06e0b2d2ff1aaac917c73347c8a38a3acb0e83ce490b9ad52b7",
+      "outputSha256": "7ab8b82b9f94bd224d83b479019518159ccca97c6857e41e955100dddbca7743",
+      "output": ".runs/local/ctl-guides-20260925/reviewer-1/result.json"
+    },
+    "review": {
+      "decision": "changes_required",
+      "findings": [
+        {
+          "severity": "blocking",
+          "message": "The documented same-terminal workflow leaves umask 077 active after initialization. On Linux, monitor-download.sh then extracts the monitoring configuration with permissions that can prevent the non-root Prometheus and Grafana containers from reading their bind-mounted files. The harness misses this because download and configuration run in separate shells. Extract nonsecret monitoring files with explicitly suitable permissions while preserving private .env and state permissions, and verify this path with an inherited umask of 077."
+        },
+        {
+          "severity": "blocking",
+          "message": "restart-follower.sh does not safely handle the documented interactive-shell execution: a nonzero cluster-status assignment does not stop Bash, and its Python guard checks only created state and nominal roles. It can therefore stop the follower while the initial owner is unavailable or a transition is underway. Explicitly handle status exit codes and require a trustworthy snapshot showing the initial owner serving, the initial term, and no active transition before signaling the follower. Add negative coverage proving those failed prerequisites prevent mutation."
+        },
+        {
+          "severity": "blocking",
+          "message": "scripts/verify-operations.py records targetRefresh='passed' immediately after detached target-config recreation, without changing targets, checking the one-shot container's completion, or observing Prometheus refresh. This does not establish the claimed successful refresh. In the disposable fixture, change the target list, require successful generator completion, observe the expected discovered targets, then restore and verify both targets. Reject incomplete refresh evidence in the gate and negative tests."
+        },
+        {
+          "severity": "note",
+          "message": "The supplied final ARM64 receipts support the scoped Minimal/Standard lifecycle and failover claims. Both final initial follower checks succeeded, and both runs additionally exercised the state-preserving restart; this does not establish recovery from every synchronization failure. The bilingual guides appropriately distinguish CLI administration, asynchronous replication, process-level failover, and untested separate-host HA, and disclose the monitoring namespace adaptation. No tools were used or tests run for this review."
+        }
+      ]
+    }
+  },
+  "reviewedCorrections": [
+    "content/operations/0.1.0/guides.json",
+    "docs/operations-verification.md",
+    "evidence/operations/0.1.0/verification.json",
+    "packages/operations/repository.ts",
+    "scripts/verify-operations.py",
+    "tests/browser/operations.spec.ts",
+    "tests/operations.test.ts",
+    "verification/operations/run.py",
+    "verification/operations/snippets/monitor-download.sh",
+    "verification/operations/snippets/monitor-update.sh",
+    "verification/operations/snippets/restart-follower.sh"
+  ],
+  "manual": {
+    "scope": "incremental",
+    "previousBundleHash": "6026356d33263474b46fe8a6f74b8b208b51ed1e92d8820caa8b8a83434c8c07",
+    "bundleHash": "5df29a37c1f75f27f8b77b06177b78b816d5dd84bfe9a6dc972ba22781c1f965",
+    "changedFiles": [
+      "apps/web/app/(entry)/manual-manifest.json/route.ts",
+      "apps/web/app/(entry)/sitemap.ts",
+      "apps/web/app/(site)/[locale]/[...slug]/page.tsx",
+      "apps/web/components/docs-home.tsx",
+      "apps/web/components/docs-sidebar.tsx",
+      "apps/web/components/operations.css",
+      "apps/web/components/operations.tsx",
+      "content/operations/0.1.0/guides.json",
+      "docs/operations-verification.md",
+      "evidence/operations/0.1.0/sources.json",
+      "evidence/operations/0.1.0/sources/app/lavik_ctl.cpp",
+      "evidence/operations/0.1.0/sources/deploy/monitoring/README.md",
+      "evidence/operations/0.1.0/sources/deploy/monitoring/compose.yaml",
+      "evidence/operations/0.1.0/sources/deploy/monitoring/grafana/dashboards/lavik-overview.json",
+      "evidence/operations/0.1.0/sources/deploy/monitoring/grafana/provisioning/dashboards/lavik.yaml",
+      "evidence/operations/0.1.0/sources/deploy/monitoring/grafana/provisioning/datasources/prometheus.yaml",
+      "evidence/operations/0.1.0/sources/deploy/monitoring/prometheus/prometheus.yml",
+      "evidence/operations/0.1.0/sources/docs/operations/cluster-deployment.md",
+      "evidence/operations/0.1.0/sources/docs/operations/meta-control-plane.md",
+      "evidence/operations/0.1.0/sources/docs/operations/metrics.md",
+      "evidence/operations/0.1.0/verification.json",
+      "packages/manual/gate.ts",
+      "packages/operations/repository.ts",
+      "scripts/verify-operations.py",
+      "tests/browser/operations.spec.ts",
+      "tests/operations.test.ts",
+      "verification/operations/Dockerfile",
+      "verification/operations/run.py",
+      "verification/operations/snippets/create.sh",
+      "verification/operations/snippets/failover.sh",
+      "verification/operations/snippets/follow-operation.sh",
+      "verification/operations/snippets/ha-client.sh",
+      "verification/operations/snippets/ha-init.sh",
+      "verification/operations/snippets/ha-start.sh",
+      "verification/operations/snippets/inspect.sh",
+      "verification/operations/snippets/leader-reads.sh",
+      "verification/operations/snippets/metrics-ha.sh",
+      "verification/operations/snippets/metrics-single.sh",
+      "verification/operations/snippets/monitor-config-ha.sh",
+      "verification/operations/snippets/monitor-config-single.sh",
+      "verification/operations/snippets/monitor-download.sh",
+      "verification/operations/snippets/monitor-local.sh",
+      "verification/operations/snippets/monitor-stop.sh",
+      "verification/operations/snippets/monitor-update.sh",
+      "verification/operations/snippets/restart-follower.sh",
+      "verification/operations/snippets/single-client.sh",
+      "verification/operations/snippets/single-init.sh",
+      "verification/operations/snippets/single-start.sh",
+      "verification/operations/snippets/status.sh",
+      "verification/operations/snippets/stop.sh",
+      "verification/operations/snippets/versions.sh",
+      "verification/operations/snippets/wait-follower.sh",
+      "verification/operations/snippets/wait-meta.sh",
+      "verification/operations/snippets/wait-ready.sh"
+    ]
+  },
+  "finalTestReview": {
+    "reviewedAt": "2026-09-25T16:08:32.330Z",
+    "reviewer": {
+      "role": "reviewer",
+      "model": "gpt-6-astra",
+      "provider": "openai",
+      "authentication": "chatgpt",
+      "reasoning": "high",
+      "additionalReviewReason": "Review browser fixture import correction after the full guide and runtime corrections passed.",
+      "startedAt": "2026-09-25T16:08:14.321Z",
+      "finishedAt": "2026-09-25T16:08:32.330Z",
+      "promptSha256": "12c3b1e3ba402357ef722d82e8581d27fc20e6992d679ac0583a50b0c08474ab",
+      "outputSha256": "b5e5131547466b654cc620341ac60910332309daeb2e7a3fc9d1811b4b46f837"
+    },
+    "review": {
+      "decision": "pass",
+      "findings": [
+        {
+          "severity": "note",
+          "message": "The loader correction reads the published fixtures directly without weakening assertions or adding a gate bypass. Coverage retains both languages, every matching block for the seven listed snippet names per guide, English navigation/search, manifest/sitemap checks and three responsive widths."
+        },
+        {
+          "severity": "note",
+          "message": "Review is limited to the supplied correction and prior-review context; no tools, credentials or tests were used. Reported execution results and hash comparisons were not independently verified. Refresh manual-approval hashes for the corrected bundle."
+        }
+      ]
+    },
+    "previousBundleHash": "5df29a37c1f75f27f8b77b06177b78b816d5dd84bfe9a6dc972ba22781c1f965",
+    "bundleHash": "f3aaa2a07b2e0a29591e63c75851cc33435b04dee08ef096b94bb2e8cb052b9c",
+    "changedFiles": [
+      "tests/browser/operations.spec.ts"
+    ]
+  }
+}

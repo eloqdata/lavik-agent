@@ -1,0 +1,2302 @@
+{
+  "release": "0.1.0-beta.1",
+  "sourceCommit": "3955b98d43b312324aa8d52775df52cfb111c0d0",
+  "verifiedAt": "2026-09-25T16:04:35Z",
+  "nativeArch": "aarch64",
+  "fileHashes": {
+    "scripts/verify-operations.py": "ae1f859032223e1e9387b5a5e91d98275991ee9dbbb948c1331dfec1e8402c20",
+    "verification/operations/Dockerfile": "2eabe8a69294a0ca238b2eea411d6bd9d9a6d83813313456d3737a77a5d1351a",
+    "verification/operations/run.py": "2fff33eff76f788115d4519f1af8e4fc6c4c6e673f0858219873177a50616ca3",
+    "verification/operations/snippets/create.sh": "88d01af939d55ac41eb2abce2b6692b171267978190184070c01cafa72c97088",
+    "verification/operations/snippets/failover.sh": "e51a5f217e68454add3f596e84413ebf3e02058df255730e86c259e1bfd93280",
+    "verification/operations/snippets/follow-operation.sh": "b8935cb2172c419f77d1510b6c9421a600a628ffd4ca552e1e2396d60f334c3d",
+    "verification/operations/snippets/ha-client.sh": "b79c2ffff9761f1c6e193f5970afea5180297b239a10ae63a7f105d15ac1687e",
+    "verification/operations/snippets/ha-init.sh": "eb550235a333e54bf9c8c23ce94473dab1a9cc7bd2a1c76ee08f4239e0722e5b",
+    "verification/operations/snippets/ha-start.sh": "a4a7775076a88464bfbc895a5bd06efae78f57fc4322aa9cda6bc7c99559522b",
+    "verification/operations/snippets/inspect.sh": "0044c660d36ad14aa9268565e59f380bf6afd921abc0833e6dc9eeb15eb592b0",
+    "verification/operations/snippets/leader-reads.sh": "b19b64a96100d1e27656515f0561bb74748bc656e86fba4888c1358eda064fce",
+    "verification/operations/snippets/metrics-ha.sh": "e704eea22008e8a59352c832bd1251c7b3d5f60f02831419bd66764cedaa4803",
+    "verification/operations/snippets/metrics-single.sh": "d18518f31d6436f0f43bf414a76f9c510f5a2fc191bb07650855371ae426c9dd",
+    "verification/operations/snippets/monitor-config-ha.sh": "f8fd5b5887a8e9d11d78699402bfbe9d9d496b4105d002e26c9338016965e103",
+    "verification/operations/snippets/monitor-config-single.sh": "164024f4422a6687a044afe8077794f4066d0cb1e6fa9afafd2fba43629ff39a",
+    "verification/operations/snippets/monitor-download.sh": "9d6edd26658ad79712b12a6f47433390c5fbe5ab5cd0c9436e0830f814f4e132",
+    "verification/operations/snippets/monitor-local.sh": "ffa8858c4f7cb9ce98759fef6405ab660443e34e310504ff673bca2f1dddad5d",
+    "verification/operations/snippets/monitor-stop.sh": "44df7e7881f247c5603e8259d6820c9f6f07eb7988e542d88762304e242ac2d2",
+    "verification/operations/snippets/monitor-update.sh": "2e721c04af57212468c0b83465ae05647d0b7f44f5011449da9295a45a650ab7",
+    "verification/operations/snippets/restart-follower.sh": "1f93afe4ba38123e02a149273a64fc3b440d1c90f029d6f38716e4557476f800",
+    "verification/operations/snippets/single-client.sh": "d38d3e30bb259c27de204151f95f48fcd73b2c771f012834aa3629feb7f7ad9b",
+    "verification/operations/snippets/single-init.sh": "416bc1f68603bab2262de5cd7c8dbde4170ca3c58a80deab96ef4fe26ba865af",
+    "verification/operations/snippets/single-start.sh": "2c33bdbf10ba5d07982c8f8e7e16c8c53139d0a7be661560006a81e6a080d156",
+    "verification/operations/snippets/status.sh": "e7bd538eebe651b3305be6c68030f20a8362c6e49da650b41c68077012f3a37b",
+    "verification/operations/snippets/stop.sh": "52451798f264ec23cbba3f0cfd4bd3bc7d521169caf99e076a0af460f7e9c2b6",
+    "verification/operations/snippets/versions.sh": "ade190fe68cf2694e97c2ad00a5d86cac6406b96a7d89e6fdab7fab160278cfe",
+    "verification/operations/snippets/wait-follower.sh": "acc91eb6254d55813a96c17e7c0f0aefa741ca23b95499e0f56eb5e21b266103",
+    "verification/operations/snippets/wait-meta.sh": "886896da3bd7a066850f3fbb1ae50ae782dd55b428254d038b58ad0e098b0bcc",
+    "verification/operations/snippets/wait-ready.sh": "b5bc635de28bb2c7b2e4ac42237ec875e90691ead67b3180fbdeb1311e2f93b8"
+  },
+  "scope": "Native Linux Docker, both package variants, co-located Meta/Data processes using kernel TCP/io_uring. Creation, client operations, metrics, leader reads, controlled failover, graceful restart and automatic failover. Grafana/Prometheus use an isolated shared network namespace instead of the Linux host. No SPDK, real host/network partition, TLS, SLA, power-loss or post-crash node-rejoin certification.",
+  "packages": [
+    {
+      "variant": "minimal",
+      "arch": "aarch64",
+      "filename": "lavik-v0.1.0-beta.1-linux-aarch64-minimal.tar.gz",
+      "sha256": "819df5f9f6c534f0fa988d1a9ec3531f1e6b0651527591a54e7235688bf8d984",
+      "imageId": "sha256:718b1fee4c76a51d9ae05fce4641109f1c27b9111b1256c9e4a269dda67203f2",
+      "dockerArgv": [
+        "docker",
+        "run",
+        "-d",
+        "--name",
+        "lavik-ops-99a0a2a50df1",
+        "--network=none",
+        "--add-host",
+        "prometheus:127.0.0.1",
+        "--read-only",
+        "--cap-drop=ALL",
+        "--security-opt=no-new-privileges",
+        "--security-opt=seccomp=unconfined",
+        "--memory=4g",
+        "--cpus=4",
+        "--pids-limit=256",
+        "--ulimit",
+        "memlock=536870912:536870912",
+        "--tmpfs",
+        "/tmp:rw,exec,nosuid,nodev,size=2g",
+        "-e",
+        "EXPECTED_COMMIT=3955b98d43b312324aa8d52775df52cfb111c0d0",
+        "-e",
+        "LAVIK_MONITOR_HOLD=0",
+        "sha256:718b1fee4c76a51d9ae05fce4641109f1c27b9111b1256c9e4a269dda67203f2",
+        "single"
+      ],
+      "execution": {
+        "layout": "single",
+        "platform": "Linux-7.0.12-linuxkit-aarch64-with-glibc2.39",
+        "sourceCommit": "3955b98d43b312324aa8d52775df52cfb111c0d0",
+        "status": "passed",
+        "steps": [
+          {
+            "argv": [
+              "bash",
+              "-euo",
+              "pipefail",
+              "/verification/snippets/versions.sh"
+            ],
+            "exitCode": 0,
+            "stdout": "lavik 0.1.0-beta.1\nlavik-meta 0.1.0-beta.1 (nuraft 0b01b185b46b8e482f6c384b636c35605121a41e)\nlavik-ctl 0.1.0-beta.1",
+            "stderr": ""
+          },
+          {
+            "argv": [
+              "/tmp/package/lavik-ctl",
+              "--help"
+            ],
+            "exitCode": 0,
+            "stdout": "",
+            "stderr": "Usage:\n  /tmp/package/lavik-ctl --socket PATH [--timeout-ms N] COMMAND [ARG...]\n  /tmp/package/lavik-ctl --addr IP:PORT [--tls-ca FILE --tls-cert FILE --tls-key FILE]\n     [--tls-server-name NAME] [--timeout-ms N] COMMAND [ARG...]\n  /tmp/package/lavik-ctl cluster-status (--socket PATH | --addr IP:PORT)\n     [--tls-ca FILE --tls-cert FILE --tls-key FILE]\n     [--allow-plaintext-admin] [--timeout-ms N] [--json]\n  /tmp/package/lavik-ctl cluster-create --manifest FILE (--socket PATH | --addr IP:PORT)\n     [--tls-ca FILE --tls-cert FILE --tls-key FILE]\n     [--allow-plaintext-admin] [--timeout-ms N] [--yes]\n  /tmp/package/lavik-ctl failover GROUP (--socket PATH | --addr IP:PORT)\n     [--tls-ca FILE --tls-cert FILE --tls-key FILE]\n     [--allow-plaintext-admin] [--timeout-ms N]\n     [--failover-timeout-ms N]\n\nRecovery: --socket PATH promote GROUP --node NODE --accept-data-loss\nSelect one readable recovered population when no automatic candidate exists.\nDirect commands are sent to the specified Meta node as one line.\nstatus reports that node's state; cluster-status discovers the leader\nand reports cluster readiness. cluster-create creates the v1 multi-\nData, multi-Group topology and returns after its Genesis commit. Use\ncluster-status to follow creation and serving readiness. Options may\nprecede\nany local cluster command.\nDurability recovery uses: abortop ID, archiveoperations SEQ..., then\nexportoperations and pruneoperations SEQ....\nExit status is 0 for an OK reply, 2 for an ERR reply, and 1 for a\nlocal, connection, TLS, or malformed-protocol failure.\ncluster-status exits 0 for READY, 2 for NOT READY, 3 for RETRYABLE,\nand 1 for fatal errors. TCP discovery requires mTLS or explicit\n--allow-plaintext-admin; --json applies only to cluster-status.\ncluster-create exits 0 after Genesis commit, 2 for an explicit\nMeta rejection, 3 for a possibly committed interruption/timeout, and\n1 for local manifest, confirmation, or pre-mutation transport errors.\nfailover exits 0 after request commit, 2 for an explicit rejection,\n3 for an uncertain proposal outcome, and 1 for local/transport errors known to occur before submission."
+          },
+          {
+            "argv": [
+              "/tmp/package/lavik-ctl",
+              "start"
+            ],
+            "exitCode": 1,
+            "stdout": "",
+            "stderr": "lavik-ctl: exactly one of --socket and --addr is required"
+          },
+          {
+            "argv": [
+              "bash",
+              "-euo",
+              "pipefail",
+              "/verification/snippets/single-init.sh"
+            ],
+            "exitCode": 0,
+            "stdout": "",
+            "stderr": ""
+          },
+          {
+            "argv": [
+              "bash",
+              "-euo",
+              "pipefail",
+              "/verification/snippets/single-start.sh"
+            ],
+            "exitCode": 0,
+            "stdout": "",
+            "stderr": ""
+          },
+          {
+            "argv": [
+              "bash",
+              "-euo",
+              "pipefail",
+              "/verification/snippets/wait-meta.sh"
+            ],
+            "exitCode": 0,
+            "stdout": "",
+            "stderr": ""
+          },
+          {
+            "argv": [
+              "bash",
+              "-euo",
+              "pipefail",
+              "/verification/snippets/create.sh"
+            ],
+            "exitCode": 0,
+            "stdout": "Cluster create plan (schema v1)\n  Meta member: 1 raft=tcp://127.0.0.1:7101 data-control=tcp://127.0.0.1:7301 ctl=tcp://127.0.0.1:7201\n  Slot layout: contiguous-even\n  Data node: 1111111111111111111111111111111111111111 @ tcp://127.0.0.1:6371\n  Group: group-1 primary=1111111111111111111111111111111111111111 replicas=none\n  Slots: 0-16383 -> group-1\nWARNING: existing data on all Data nodes will be erased.\nCluster create accepted: genesis committed=3 operation=8ad5f3e4453e285c1a5d2a12bb208d90\nRun cluster-status to follow creation and runtime readiness.",
+            "stderr": ""
+          },
+          {
+            "argv": [
+              "bash",
+              "-euo",
+              "pipefail",
+              "/verification/snippets/wait-ready.sh"
+            ],
+            "exitCode": 0,
+            "stdout": "NOT READY\ncluster_state=creating lifecycle_revision=1\nroot_operation=8ad5f3e4453e285c1a5d2a12bb208d90 genesis_commit=3\ncluster_create_phase=wait-data-projection\nmeta_available=yes membership_stable=yes topology_converged=no serving_ready=no\nblocker cluster_create_active cluster non_terminal_cluster_create_operation_exists\nblocker group_not_serving group:group-1 authority_or_recent_lease_missing\nblocker group_runtime_not_converged group:group-1 current_projection_health_or_population_missing\nblocker node_runtime_not_ready node:1111111111111111111111111111111111111111 group=group-1;missing=population\nautomatic_failover group=group-1 state=blocked current_reason=- suspect_elapsed_ms=0 effective_threshold_ms=5000 blocked_reason=indeterminate_evidence\nstatus_explanation=Genesis is committed and the creation workflow is still running\nnext_action=wait and rerun cluster-status; inspect Meta logs if the phase stops advancing\nREADY\ncluster_state=created lifecycle_revision=2\nroot_operation=8ad5f3e4453e285c1a5d2a12bb208d90 genesis_commit=3\nmeta_available=yes membership_stable=yes topology_converged=yes serving_ready=yes\nautomatic_failover group=group-1 state=blocked current_reason=- suspect_elapsed_ms=0 effective_threshold_ms=5000 blocked_reason=leadership_warmup\nstatus_explanation=creation and current runtime readiness are healthy\nnext_action=none",
+            "stderr": ""
+          },
+          {
+            "argv": [
+              "bash",
+              "-euo",
+              "pipefail",
+              "/verification/snippets/status.sh"
+            ],
+            "exitCode": 0,
+            "stdout": "{\"schema_version\":1,\"result\":\"ready\",\"readiness_basis\":\"meta_observed_v1\",\"cluster_state\":\"created\",\"lifecycle_revision\":\"2\",\"root_operation_id\":\"8ad5f3e4453e285c1a5d2a12bb208d90\",\"genesis_commit_index\":\"3\",\"cluster_create_phase\":null,\"provisioning_failure_summary\":null,\"meta_available\":true,\"meta_membership_stable\":true,\"topology_converged\":true,\"serving_ready\":true,\"cluster_ready\":true,\"capture\":{\"responder_id\":\"1\",\"term\":\"1\",\"config_index\":\"1\",\"committed_index\":\"27\",\"topology_epoch\":\"5\"},\"meta_members\":[{\"server_id\":\"1\",\"leader\":true,\"ctl_endpoint\":\"127.0.0.1:7201\"}],\"data_nodes\":[{\"node_id\":\"1111111111111111111111111111111111111111\",\"role\":\"primary\",\"retired\":false,\"group_id\":\"group-1\",\"current_session\":true,\"projection_current\":true,\"health_fresh\":true,\"population_current\":true,\"lease\":\"recently_granted\"}],\"groups\":[{\"group_id\":\"group-1\",\"term\":\"1\",\"owner_node_id\":\"1111111111111111111111111111111111111111\",\"serving_ready\":true,\"topology_converged\":true,\"automatic_failover_state\":\"blocked\",\"current_reason\":null,\"suspect_elapsed_ms\":\"0\",\"effective_threshold_ms\":\"5000\",\"blocked_reason\":\"leadership_warmup\"}],\"slot_ranges\":[{\"first\":\"0\",\"last\":\"16383\",\"group_id\":\"group-1\"}],\"blockers\":[],\"retry\":null,\"status_explanation\":\"creation and current runtime readiness are healthy\",\"next_action\":\"none\"}",
+            "stderr": ""
+          },
+          {
+            "argv": [
+              "bash",
+              "-euo",
+              "pipefail",
+              "/verification/snippets/single-client.sh"
+            ],
+            "exitCode": 0,
+            "stdout": "OK\nhello from Lavik\ncluster_state:ok\ncluster_slots_assigned:16384\ncluster_slots_ok:16384\ncluster_slots_pfail:0\ncluster_slots_fail:0\ncluster_known_nodes:1\ncluster_size:1\ncluster_current_epoch:1\ncluster_my_epoch:1\ncluster_stats_messages_sent:0\ncluster_stats_messages_received:0",
+            "stderr": ""
+          },
+          {
+            "argv": [
+              "bash",
+              "-euo",
+              "pipefail",
+              "/verification/snippets/inspect.sh"
+            ],
+            "exitCode": 0,
+            "stdout": "OK leader=1 id=1 committed=27 snapshot_idx=0 term=1 audit_policy=bounded-rotate audit_size=26 audit_capacity=65536 audit_dropped_total=0 audit_dropped_through=0",
+            "stderr": ""
+          },
+          {
+            "argv": [
+              "bash",
+              "-euo",
+              "pipefail",
+              "/verification/snippets/leader-reads.sh"
+            ],
+            "exitCode": 0,
+            "stdout": "OK candidates=0\nOK version=1 content={\"kind\":\"automatic-uncontrolled-failover-v1\",\"suspect_after_ms\":5000}\nOK version=1 content={\"kind\":\"authority-lease-v1\",\"duration_ms\":5000}\nOK version=1 content={\"kind\":\"candidate-recovery-v1\",\"budget_ms\":2000}",
+            "stderr": ""
+          },
+          {
+            "argv": [
+              "bash",
+              "-euo",
+              "pipefail",
+              "/verification/snippets/stop.sh"
+            ],
+            "exitCode": 0,
+            "stdout": "",
+            "stderr": ""
+          },
+          {
+            "argv": [
+              "bash",
+              "-euo",
+              "pipefail",
+              "/verification/snippets/single-start.sh"
+            ],
+            "exitCode": 0,
+            "stdout": "",
+            "stderr": ""
+          },
+          {
+            "argv": [
+              "bash",
+              "-euo",
+              "pipefail",
+              "/verification/snippets/wait-meta.sh"
+            ],
+            "exitCode": 0,
+            "stdout": "",
+            "stderr": ""
+          },
+          {
+            "argv": [
+              "bash",
+              "-euo",
+              "pipefail",
+              "/verification/snippets/wait-ready.sh"
+            ],
+            "exitCode": 0,
+            "stdout": "NOT READY\ncluster_state=created lifecycle_revision=2\nroot_operation=8ad5f3e4453e285c1a5d2a12bb208d90 genesis_commit=3\nmeta_available=yes membership_stable=yes topology_converged=no serving_ready=no\nblocker group_not_serving group:group-1 authority_or_recent_lease_missing\nblocker group_runtime_not_converged group:group-1 current_projection_health_or_population_missing\nblocker node_runtime_not_ready node:1111111111111111111111111111111111111111 group=group-1;missing=session,projection,health,population\nautomatic_failover group=group-1 state=blocked current_reason=- suspect_elapsed_ms=0 effective_threshold_ms=5000 blocked_reason=leadership_warmup\nstatus_explanation=creation completed but current runtime readiness is blocked\nnext_action=inspect blockers and Data-node sessions, then rerun cluster-status\nNOT READY\ncluster_state=created lifecycle_revision=2\nroot_operation=8ad5f3e4453e285c1a5d2a12bb208d90 genesis_commit=3\nmeta_available=yes membership_stable=yes topology_converged=no serving_ready=no\nblocker group_not_serving group:group-1 authority_or_recent_lease_missing\nblocker group_runtime_not_converged group:group-1 current_projection_health_or_population_missing\nblocker node_runtime_not_ready node:1111111111111111111111111111111111111111 group=group-1;missing=population\nautomatic_failover group=group-1 state=blocked current_reason=- suspect_elapsed_ms=0 effective_threshold_ms=5000 blocked_reason=leadership_warmup\nstatus_explanation=creation completed but current runtime readiness is blocked\nnext_action=inspect blockers and Data-node sessions, then rerun cluster-status\nNOT READY\ncluster_state=created lifecycle_revision=2\nroot_operation=8ad5f3e4453e285c1a5d2a12bb208d90 genesis_commit=3\nmeta_available=yes membership_stable=yes topology_converged=no serving_ready=no\nblocker group_not_serving group:group-1 authority_or_recent_lease_missing\nblocker group_runtime_not_converged group:group-1 current_projection_health_or_population_missing\nblocker node_runtime_not_ready node:1111111111111111111111111111111111111111 group=group-1;missing=population\nautomatic_failover group=group-1 state=blocked current_reason=- suspect_elapsed_ms=0 effective_threshold_ms=5000 blocked_reason=leadership_warmup\nstatus_explanation=creation completed but current runtime readiness is blocked\nnext_action=inspect blockers and Data-node sessions, then rerun cluster-status\nNOT READY\ncluster_state=created lifecycle_revision=2\nroot_operation=8ad5f3e4453e285c1a5d2a12bb208d90 genesis_commit=3\nmeta_available=yes membership_stable=yes topology_converged=no serving_ready=no\nblocker group_not_serving group:group-1 authority_or_recent_lease_missing\nblocker group_runtime_not_converged group:group-1 current_projection_health_or_population_missing\nblocker node_runtime_not_ready node:1111111111111111111111111111111111111111 group=group-1;missing=population\nautomatic_failover group=group-1 state=blocked current_reason=- suspect_elapsed_ms=0 effective_threshold_ms=5000 blocked_reason=leadership_warmup\nstatus_explanation=creation completed but current runtime readiness is blocked\nnext_action=inspect blockers and Data-node sessions, then rerun cluster-status\nNOT READY\ncluster_state=created lifecycle_revision=2\nroot_operation=8ad5f3e4453e285c1a5d2a12bb208d90 genesis_commit=3\nmeta_available=yes membership_stable=yes topology_converged=no serving_ready=no\nblocker group_not_serving group:group-1 authority_or_recent_lease_missing\nblocker group_runtime_not_converged group:group-1 current_projection_health_or_population_missing\nblocker node_runtime_not_ready node:1111111111111111111111111111111111111111 group=group-1;missing=population\nautomatic_failover group=group-1 state=blocked current_reason=- suspect_elapsed_ms=0 effective_threshold_ms=5000 blocked_reason=leadership_warmup\nstatus_explanation=creation completed but current runtime readiness is blocked\nnext_action=inspect blockers and Data-node sessions, then rerun cluster-status\nNOT READY\ncluster_state=created lifecycle_revision=2\nroot_operation=8ad5f3e4453e285c1a5d2a12bb208d90 genesis_commit=3\nmeta_available=yes membership_stable=yes topology_converged=no serving_ready=no\nblocker group_not_serving group:group-1 authority_or_recent_lease_missing\nblocker group_runtime_not_converged group:group-1 current_projection_health_or_population_missing\nblocker node_runtime_not_ready node:1111111111111111111111111111111111111111 group=group-1;missing=population\nautomatic_failover group=group-1 state=blocked current_reason=- suspect_elapsed_ms=0 effective_threshold_ms=5000 blocked_reason=leadership_warmup\nstatus_explanation=creation completed but current runtime readiness is blocked\nnext_action=inspect blockers and Data-node sessions, then rerun cluster-status\nNOT READY\ncluster_state=created lifecycle_revision=2\nroot_operation=8ad5f3e4453e285c1a5d2a12bb208d90 genesis_commit=3\nmeta_available=yes membership_stable=yes topology_converged=no serving_ready=no\nblocker group_not_serving group:group-1 authority_or_recent_lease_missing\nblocker group_runtime_not_converged group:group-1 current_projection_health_or_population_missing\nblocker node_runtime_not_ready node:1111111111111111111111111111111111111111 group=group-1;missing=population\nautomatic_failover group=group-1 state=blocked current_reason=- suspect_elapsed_ms=0 effective_threshold_ms=5000 blocked_reason=leadership_warmup\nstatus_explanation=creation completed but current runtime readiness is blocked\nnext_action=inspect blockers and Data-node sessions, then rerun cluster-status\nNOT READY\ncluster_state=created lifecycle_revision=2\nroot_operation=8ad5f3e4453e285c1a5d2a12bb208d90 genesis_commit=3\nmeta_available=yes membership_stable=yes topology_converged=no serving_ready=no\nblocker group_not_serving group:group-1 authority_or_recent_lease_missing\nblocker group_runtime_not_converged group:group-1 current_projection_health_or_population_missing\nblocker node_runtime_not_ready node:1111111111111111111111111111111111111111 group=group-1;missing=population\nautomatic_failover group=group-1 state=blocked current_reason=- suspect_elapsed_ms=0 effective_threshold_ms=5000 blocked_reason=leadership_warmup\nstatus_explanation=creation completed but current runtime readiness is blocked\nnext_action=inspect blockers and Data-node sessions, then rerun cluster-status\nNOT READY\ncluster_state=created lifecycle_revision=2\nroot_operation=8ad5f3e4453e285c1a5d2a12bb208d90 genesis_commit=3\nmeta_available=yes membership_stable=yes topology_converged=no serving_ready=no\nblocker group_not_serving group:group-1 authority_or_recent_lease_missing\nblocker group_runtime_not_converged group:group-1 current_projection_health_or_population_missing\nblocker node_runtime_not_ready node:1111111111111111111111111111111111111111 group=group-1;missing=population\nautomatic_failover group=group-1 state=blocked current_reason=- suspect_elapsed_ms=0 effective_threshold_ms=5000 blocked_reason=leadership_warmup\nstatus_explanation=creation completed but current runtime readiness is blocked\nnext_action=inspect blockers and Data-node sessions, then rerun cluster-status\nNOT READY\ncluster_state=created lifecycle_revision=2\nroot_operation=8ad5f3e4453e285c1a5d2a12bb208d90 genesis_commit=3\nmeta_available=yes membership_stable=yes topology_converged=no serving_ready=no\nblocker group_not_serving group:group-1 authority_or_recent_lease_missing\nblocker group_runtime_not_converged group:group-1 current_projection_health_or_population_missing\nblocker node_runtime_not_ready node:1111111111111111111111111111111111111111 group=group-1;missing=population\nautomatic_failover group=group-1 state=blocked current_reason=- suspect_elapsed_ms=0 effective_threshold_ms=5000 blocked_reason=leadership_warmup\nstatus_explanation=creation completed but current runtime readiness is blocked\nnext_action=inspect blockers and Data-node sessions, then rerun cluster-status\nNOT READY\ncluster_state=created lifecycle_revision=2\nroot_operation=8ad5f3e4453e285c1a5d2a12bb208d90 genesis_commit=3\nmeta_available=yes membership_stable=yes topology_converged=no serving_ready=no\nblocker group_not_serving group:group-1 authority_or_recent_lease_missing\nblocker group_runtime_not_converged group:group-1 current_projection_health_or_population_missing\nblocker node_runtime_not_ready node:1111111111111111111111111111111111111111 group=group-1;missing=population\nautomatic_failover group=group-1 state=blocked current_reason=- suspect_elapsed_ms=0 effective_threshold_ms=5000 blocked_reason=leadership_warmup\nstatus_explanation=creation completed but current runtime readiness is blocked\nnext_action=inspect blockers and Data-node sessions, then rerun cluster-status\nNOT READY\ncluster_state=created lifecycle_revision=2\nroot_operation=8ad5f3e4453e285c1a5d2a12bb208d90 genesis_commit=3\nmeta_available=yes membership_stable=yes topology_converged=no serving_ready=no\nblocker group_not_serving group:group-1 authority_or_recent_lease_missing\nblocker group_runtime_not_converged group:group-1 current_projection_health_or_population_missing\nblocker node_runtime_not_ready node:1111111111111111111111111111111111111111 group=group-1;missing=population\nautomatic_failover group=group-1 state=suspect current_reason=heartbeat_expired suspect_elapsed_ms=901 effective_threshold_ms=5000 blocked_reason=-\nstatus_explanation=creation completed but current runtime readiness is blocked\nnext_action=inspect blockers and Data-node sessions, then rerun cluster-status\nNOT READY\ncluster_state=created lifecycle_revision=2\nroot_operation=8ad5f3e4453e285c1a5d2a12bb208d90 genesis_commit=3\nmeta_available=yes membership_stable=yes topology_converged=no serving_ready=no\nblocker group_not_serving group:group-1 authority_or_recent_lease_missing\nblocker group_runtime_not_converged group:group-1 current_projection_health_or_population_missing\nblocker node_runtime_not_ready node:1111111111111111111111111111111111111111 group=group-1;missing=population\nautomatic_failover group=group-1 state=suspect current_reason=heartbeat_expired suspect_elapsed_ms=1912 effective_threshold_ms=5000 blocked_reason=-\nstatus_explanation=creation completed but current runtime readiness is blocked\nnext_action=inspect blockers and Data-node sessions, then rerun cluster-status\nNOT READY\ncluster_state=created lifecycle_revision=2\nroot_operation=8ad5f3e4453e285c1a5d2a12bb208d90 genesis_commit=3\nmeta_available=yes membership_stable=yes topology_converged=no serving_ready=no\nblocker group_not_serving group:group-1 authority_or_recent_lease_missing\nblocker group_runtime_not_converged group:group-1 current_projection_health_or_population_missing\nblocker node_runtime_not_ready node:1111111111111111111111111111111111111111 group=group-1;missing=population\nautomatic_failover group=group-1 state=suspect current_reason=heartbeat_expired suspect_elapsed_ms=2904 effective_threshold_ms=5000 blocked_reason=-\nstatus_explanation=creation completed but current runtime readiness is blocked\nnext_action=inspect blockers and Data-node sessions, then rerun cluster-status\nNOT READY\ncluster_state=created lifecycle_revision=2\nroot_operation=8ad5f3e4453e285c1a5d2a12bb208d90 genesis_commit=3\nmeta_available=yes membership_stable=yes topology_converged=no serving_ready=no\nblocker group_not_serving group:group-1 authority_or_recent_lease_missing\nblocker group_runtime_not_converged group:group-1 current_projection_health_or_population_missing\nblocker node_runtime_not_ready node:1111111111111111111111111111111111111111 group=group-1;missing=population\nautomatic_failover group=group-1 state=suspect current_reason=heartbeat_expired suspect_elapsed_ms=3923 effective_threshold_ms=5000 blocked_reason=-\nstatus_explanation=creation completed but current runtime readiness is blocked\nnext_action=inspect blockers and Data-node sessions, then rerun cluster-status\nNOT READY\ncluster_state=created lifecycle_revision=2\nroot_operation=8ad5f3e4453e285c1a5d2a12bb208d90 genesis_commit=3\nmeta_available=yes membership_stable=yes topology_converged=no serving_ready=no\nblocker group_not_serving group:group-1 authority_or_recent_lease_missing\nblocker group_runtime_not_converged group:group-1 current_projection_health_or_population_missing\nblocker node_runtime_not_ready node:1111111111111111111111111111111111111111 group=group-1;missing=population\nautomatic_failover group=group-1 state=suspect current_reason=heartbeat_expired suspect_elapsed_ms=4915 effective_threshold_ms=5000 blocked_reason=-\nstatus_explanation=creation completed but current runtime readiness is blocked\nnext_action=inspect blockers and Data-node sessions, then rerun cluster-status\nNOT READY\ncluster_state=created lifecycle_revision=2\nroot_operation=8ad5f3e4453e285c1a5d2a12bb208d90 genesis_commit=3\nmeta_available=yes membership_stable=yes topology_converged=no serving_ready=no\nblocker group_not_serving group:group-1 authority_or_recent_lease_missing\nblocker group_runtime_not_converged group:group-1 current_projection_health_or_population_missing\nblocker node_runtime_not_ready node:1111111111111111111111111111111111111111 group=group-1;missing=session,projection,health,population\nautomatic_failover group=group-1 state=suspect current_reason=session_missing suspect_elapsed_ms=81 effective_threshold_ms=5000 blocked_reason=-\nstatus_explanation=creation completed but current runtime readiness is blocked\nnext_action=inspect blockers and Data-node sessions, then rerun cluster-status\nNOT READY\ncluster_state=created lifecycle_revision=2\nroot_operation=8ad5f3e4453e285c1a5d2a12bb208d90 genesis_commit=3\nmeta_available=yes membership_stable=yes topology_converged=yes serving_ready=no\nblocker group_not_serving group:group-1 authority_or_recent_lease_missing\nautomatic_failover group=group-1 state=blocked current_reason=- suspect_elapsed_ms=631 effective_threshold_ms=5000 blocked_reason=authority_handoff\nstatus_explanation=creation completed but current runtime readiness is blocked\nnext_action=inspect blockers and Data-node sessions, then rerun cluster-status\nREADY\ncluster_state=created lifecycle_revision=2\nroot_operation=8ad5f3e4453e285c1a5d2a12bb208d90 genesis_commit=3\nmeta_available=yes membership_stable=yes topology_converged=yes serving_ready=yes\nautomatic_failover group=group-1 state=healthy current_reason=- suspect_elapsed_ms=0 effective_threshold_ms=5000 blocked_reason=-\nstatus_explanation=creation and current runtime readiness are healthy\nnext_action=none",
+            "stderr": ""
+          },
+          {
+            "argv": [
+              "redis-cli",
+              "-c",
+              "-h",
+              "127.0.0.1",
+              "-p",
+              "6371",
+              "--raw",
+              "GET",
+              "greeting"
+            ],
+            "exitCode": 0,
+            "stdout": "hello from Lavik",
+            "stderr": ""
+          },
+          {
+            "argv": [
+              "bash",
+              "-euo",
+              "pipefail",
+              "/verification/snippets/stop.sh"
+            ],
+            "exitCode": 0,
+            "stdout": "",
+            "stderr": ""
+          }
+        ],
+        "initialStatus": {
+          "schema_version": 1,
+          "result": "ready",
+          "readiness_basis": "meta_observed_v1",
+          "cluster_state": "created",
+          "lifecycle_revision": "2",
+          "root_operation_id": "8ad5f3e4453e285c1a5d2a12bb208d90",
+          "genesis_commit_index": "3",
+          "cluster_create_phase": null,
+          "provisioning_failure_summary": null,
+          "meta_available": true,
+          "meta_membership_stable": true,
+          "topology_converged": true,
+          "serving_ready": true,
+          "cluster_ready": true,
+          "capture": {
+            "responder_id": "1",
+            "term": "1",
+            "config_index": "1",
+            "committed_index": "27",
+            "topology_epoch": "5"
+          },
+          "meta_members": [
+            {
+              "server_id": "1",
+              "leader": true,
+              "ctl_endpoint": "127.0.0.1:7201"
+            }
+          ],
+          "data_nodes": [
+            {
+              "node_id": "1111111111111111111111111111111111111111",
+              "role": "primary",
+              "retired": false,
+              "group_id": "group-1",
+              "current_session": true,
+              "projection_current": true,
+              "health_fresh": true,
+              "population_current": true,
+              "lease": "recently_granted"
+            }
+          ],
+          "groups": [
+            {
+              "group_id": "group-1",
+              "term": "1",
+              "owner_node_id": "1111111111111111111111111111111111111111",
+              "serving_ready": true,
+              "topology_converged": true,
+              "automatic_failover_state": "blocked",
+              "current_reason": null,
+              "suspect_elapsed_ms": "0",
+              "effective_threshold_ms": "5000",
+              "blocked_reason": "leadership_warmup"
+            }
+          ],
+          "slot_ranges": [
+            {
+              "first": "0",
+              "last": "16383",
+              "group_id": "group-1"
+            }
+          ],
+          "blockers": [],
+          "retry": null,
+          "status_explanation": "creation and current runtime readiness are healthy",
+          "next_action": "none"
+        },
+        "metrics": [
+          {
+            "port": 9101,
+            "samples": [
+              "lavik_commands_total 3",
+              "lavik_connected_clients 0",
+              "lavik_cluster_control_connected 1"
+            ]
+          }
+        ],
+        "metricCommand": {
+          "argv": [
+            "bash",
+            "-euo",
+            "pipefail",
+            "/verification/snippets/metrics-single.sh"
+          ],
+          "exitCode": 0,
+          "stderr": "",
+          "stdoutSha256": "867a4c957f580a43e9f96d2fba9ee5c32327012f3a98322d2f60d730dc0cf411"
+        },
+        "gracefulRestart": "passed"
+      }
+    },
+    {
+      "variant": "minimal",
+      "arch": "aarch64",
+      "filename": "lavik-v0.1.0-beta.1-linux-aarch64-minimal.tar.gz",
+      "sha256": "819df5f9f6c534f0fa988d1a9ec3531f1e6b0651527591a54e7235688bf8d984",
+      "imageId": "sha256:718b1fee4c76a51d9ae05fce4641109f1c27b9111b1256c9e4a269dda67203f2",
+      "dockerArgv": [
+        "docker",
+        "run",
+        "-d",
+        "--name",
+        "lavik-ops-277a45977c5c",
+        "--network=none",
+        "--add-host",
+        "prometheus:127.0.0.1",
+        "--read-only",
+        "--cap-drop=ALL",
+        "--security-opt=no-new-privileges",
+        "--security-opt=seccomp=unconfined",
+        "--memory=4g",
+        "--cpus=4",
+        "--pids-limit=256",
+        "--ulimit",
+        "memlock=536870912:536870912",
+        "--tmpfs",
+        "/tmp:rw,exec,nosuid,nodev,size=2g",
+        "-e",
+        "EXPECTED_COMMIT=3955b98d43b312324aa8d52775df52cfb111c0d0",
+        "-e",
+        "LAVIK_MONITOR_HOLD=1",
+        "sha256:718b1fee4c76a51d9ae05fce4641109f1c27b9111b1256c9e4a269dda67203f2",
+        "ha"
+      ],
+      "execution": {
+        "layout": "ha",
+        "platform": "Linux-7.0.12-linuxkit-aarch64-with-glibc2.39",
+        "sourceCommit": "3955b98d43b312324aa8d52775df52cfb111c0d0",
+        "status": "passed",
+        "steps": [
+          {
+            "argv": [
+              "bash",
+              "-euo",
+              "pipefail",
+              "/verification/snippets/versions.sh"
+            ],
+            "exitCode": 0,
+            "stdout": "lavik 0.1.0-beta.1\nlavik-meta 0.1.0-beta.1 (nuraft 0b01b185b46b8e482f6c384b636c35605121a41e)\nlavik-ctl 0.1.0-beta.1",
+            "stderr": ""
+          },
+          {
+            "argv": [
+              "/tmp/package/lavik-ctl",
+              "--help"
+            ],
+            "exitCode": 0,
+            "stdout": "",
+            "stderr": "Usage:\n  /tmp/package/lavik-ctl --socket PATH [--timeout-ms N] COMMAND [ARG...]\n  /tmp/package/lavik-ctl --addr IP:PORT [--tls-ca FILE --tls-cert FILE --tls-key FILE]\n     [--tls-server-name NAME] [--timeout-ms N] COMMAND [ARG...]\n  /tmp/package/lavik-ctl cluster-status (--socket PATH | --addr IP:PORT)\n     [--tls-ca FILE --tls-cert FILE --tls-key FILE]\n     [--allow-plaintext-admin] [--timeout-ms N] [--json]\n  /tmp/package/lavik-ctl cluster-create --manifest FILE (--socket PATH | --addr IP:PORT)\n     [--tls-ca FILE --tls-cert FILE --tls-key FILE]\n     [--allow-plaintext-admin] [--timeout-ms N] [--yes]\n  /tmp/package/lavik-ctl failover GROUP (--socket PATH | --addr IP:PORT)\n     [--tls-ca FILE --tls-cert FILE --tls-key FILE]\n     [--allow-plaintext-admin] [--timeout-ms N]\n     [--failover-timeout-ms N]\n\nRecovery: --socket PATH promote GROUP --node NODE --accept-data-loss\nSelect one readable recovered population when no automatic candidate exists.\nDirect commands are sent to the specified Meta node as one line.\nstatus reports that node's state; cluster-status discovers the leader\nand reports cluster readiness. cluster-create creates the v1 multi-\nData, multi-Group topology and returns after its Genesis commit. Use\ncluster-status to follow creation and serving readiness. Options may\nprecede\nany local cluster command.\nDurability recovery uses: abortop ID, archiveoperations SEQ..., then\nexportoperations and pruneoperations SEQ....\nExit status is 0 for an OK reply, 2 for an ERR reply, and 1 for a\nlocal, connection, TLS, or malformed-protocol failure.\ncluster-status exits 0 for READY, 2 for NOT READY, 3 for RETRYABLE,\nand 1 for fatal errors. TCP discovery requires mTLS or explicit\n--allow-plaintext-admin; --json applies only to cluster-status.\ncluster-create exits 0 after Genesis commit, 2 for an explicit\nMeta rejection, 3 for a possibly committed interruption/timeout, and\n1 for local manifest, confirmation, or pre-mutation transport errors.\nfailover exits 0 after request commit, 2 for an explicit rejection,\n3 for an uncertain proposal outcome, and 1 for local/transport errors known to occur before submission."
+          },
+          {
+            "argv": [
+              "/tmp/package/lavik-ctl",
+              "start"
+            ],
+            "exitCode": 1,
+            "stdout": "",
+            "stderr": "lavik-ctl: exactly one of --socket and --addr is required"
+          },
+          {
+            "argv": [
+              "bash",
+              "-euo",
+              "pipefail",
+              "/verification/snippets/ha-init.sh"
+            ],
+            "exitCode": 0,
+            "stdout": "",
+            "stderr": ""
+          },
+          {
+            "argv": [
+              "bash",
+              "-euo",
+              "pipefail",
+              "/verification/snippets/ha-start.sh"
+            ],
+            "exitCode": 0,
+            "stdout": "",
+            "stderr": ""
+          },
+          {
+            "argv": [
+              "bash",
+              "-euo",
+              "pipefail",
+              "/verification/snippets/wait-meta.sh"
+            ],
+            "exitCode": 0,
+            "stdout": "",
+            "stderr": ""
+          },
+          {
+            "argv": [
+              "bash",
+              "-euo",
+              "pipefail",
+              "/verification/snippets/create.sh"
+            ],
+            "exitCode": 0,
+            "stdout": "Cluster create plan (schema v1)\n  Meta member: 1 raft=tcp://127.0.0.1:7101 data-control=tcp://127.0.0.1:7301 ctl=tcp://127.0.0.1:7201\n  Meta member: 2 raft=tcp://127.0.0.1:7102 data-control=tcp://127.0.0.1:7302 ctl=tcp://127.0.0.1:7202\n  Meta member: 3 raft=tcp://127.0.0.1:7103 data-control=tcp://127.0.0.1:7303 ctl=tcp://127.0.0.1:7203\n  Slot layout: contiguous-even\n  Data node: 1111111111111111111111111111111111111111 @ tcp://127.0.0.1:6371\n  Data node: 2222222222222222222222222222222222222222 @ tcp://127.0.0.1:6372\n  Group: group-1 primary=1111111111111111111111111111111111111111 replicas=2222222222222222222222222222222222222222\n  Slots: 0-16383 -> group-1\nWARNING: existing data on all Data nodes will be erased.\nCluster create accepted: genesis committed=5 operation=e8e7304d67aee1ce29ae461f47062c63\nRun cluster-status to follow creation and runtime readiness.",
+            "stderr": ""
+          },
+          {
+            "argv": [
+              "bash",
+              "-euo",
+              "pipefail",
+              "/verification/snippets/wait-ready.sh"
+            ],
+            "exitCode": 0,
+            "stdout": "NOT READY\ncluster_state=creating lifecycle_revision=1\nroot_operation=e8e7304d67aee1ce29ae461f47062c63 genesis_commit=5\ncluster_create_phase=submitted\nmeta_available=yes membership_stable=yes topology_converged=yes serving_ready=no\nblocker cluster_create_active cluster non_terminal_cluster_create_operation_exists\nblocker data_unregistered node:1111111111111111111111111111111111111111 declared_identity_not_committed\nblocker data_unregistered node:2222222222222222222222222222222222222222 declared_identity_not_committed\nblocker meta_catching_up meta initial_meta_members_have_not_applied_create_barrier\nblocker slots_unassigned cluster coverage_is_not_0_through_16383\nstatus_explanation=Genesis is committed and the creation workflow is still running\nnext_action=wait and rerun cluster-status; inspect Meta logs if the phase stops advancing\nNOT READY\ncluster_state=creating lifecycle_revision=1\nroot_operation=e8e7304d67aee1ce29ae461f47062c63 genesis_commit=5\ncluster_create_phase=initialize-groups\nmeta_available=yes membership_stable=yes topology_converged=no serving_ready=yes\nblocker cluster_create_active cluster non_terminal_cluster_create_operation_exists\nblocker group_runtime_not_converged group:group-1 current_projection_health_or_population_missing\nblocker node_runtime_not_ready node:2222222222222222222222222222222222222222 group=group-1;missing=population\nautomatic_failover group=group-1 state=blocked current_reason=- suspect_elapsed_ms=0 effective_threshold_ms=5000 blocked_reason=indeterminate_evidence\nstatus_explanation=Genesis is committed and the creation workflow is still running\nnext_action=wait and rerun cluster-status; inspect Meta logs if the phase stops advancing\nNOT READY\ncluster_state=creating lifecycle_revision=1\nroot_operation=e8e7304d67aee1ce29ae461f47062c63 genesis_commit=5\ncluster_create_phase=initialize-groups\nmeta_available=yes membership_stable=yes topology_converged=no serving_ready=yes\nblocker cluster_create_active cluster non_terminal_cluster_create_operation_exists\nblocker group_runtime_not_converged group:group-1 current_projection_health_or_population_missing\nblocker node_runtime_not_ready node:2222222222222222222222222222222222222222 group=group-1;missing=population\nautomatic_failover group=group-1 state=blocked current_reason=- suspect_elapsed_ms=0 effective_threshold_ms=5000 blocked_reason=indeterminate_evidence\nstatus_explanation=Genesis is committed and the creation workflow is still running\nnext_action=wait and rerun cluster-status; inspect Meta logs if the phase stops advancing\nREADY\ncluster_state=created lifecycle_revision=2\nroot_operation=e8e7304d67aee1ce29ae461f47062c63 genesis_commit=5\nmeta_available=yes membership_stable=yes topology_converged=yes serving_ready=yes\nautomatic_failover group=group-1 state=blocked current_reason=- suspect_elapsed_ms=0 effective_threshold_ms=5000 blocked_reason=leadership_warmup\nstatus_explanation=creation and current runtime readiness are healthy\nnext_action=none",
+            "stderr": ""
+          },
+          {
+            "argv": [
+              "bash",
+              "-euo",
+              "pipefail",
+              "/verification/snippets/status.sh"
+            ],
+            "exitCode": 0,
+            "stdout": "{\"schema_version\":1,\"result\":\"ready\",\"readiness_basis\":\"meta_observed_v1\",\"cluster_state\":\"created\",\"lifecycle_revision\":\"2\",\"root_operation_id\":\"e8e7304d67aee1ce29ae461f47062c63\",\"genesis_commit_index\":\"5\",\"cluster_create_phase\":null,\"provisioning_failure_summary\":null,\"meta_available\":true,\"meta_membership_stable\":true,\"topology_converged\":true,\"serving_ready\":true,\"cluster_ready\":true,\"capture\":{\"responder_id\":\"1\",\"term\":\"1\",\"config_index\":\"1\",\"committed_index\":\"35\",\"topology_epoch\":\"6\"},\"meta_members\":[{\"server_id\":\"1\",\"leader\":true,\"ctl_endpoint\":\"127.0.0.1:7201\"},{\"server_id\":\"2\",\"leader\":false,\"ctl_endpoint\":\"127.0.0.1:7202\"},{\"server_id\":\"3\",\"leader\":false,\"ctl_endpoint\":\"127.0.0.1:7203\"}],\"data_nodes\":[{\"node_id\":\"1111111111111111111111111111111111111111\",\"role\":\"primary\",\"retired\":false,\"group_id\":\"group-1\",\"current_session\":true,\"projection_current\":true,\"health_fresh\":true,\"population_current\":true,\"lease\":\"recently_granted\"},{\"node_id\":\"2222222222222222222222222222222222222222\",\"role\":\"replica\",\"retired\":false,\"group_id\":\"group-1\",\"current_session\":true,\"projection_current\":true,\"health_fresh\":true,\"population_current\":true,\"lease\":\"unknown\"}],\"groups\":[{\"group_id\":\"group-1\",\"term\":\"1\",\"owner_node_id\":\"1111111111111111111111111111111111111111\",\"serving_ready\":true,\"topology_converged\":true,\"automatic_failover_state\":\"blocked\",\"current_reason\":null,\"suspect_elapsed_ms\":\"0\",\"effective_threshold_ms\":\"5000\",\"blocked_reason\":\"leadership_warmup\"}],\"slot_ranges\":[{\"first\":\"0\",\"last\":\"16383\",\"group_id\":\"group-1\"}],\"blockers\":[],\"retry\":null,\"status_explanation\":\"creation and current runtime readiness are healthy\",\"next_action\":\"none\"}",
+            "stderr": ""
+          },
+          {
+            "argv": [
+              "bash",
+              "-euo",
+              "pipefail",
+              "/verification/snippets/wait-follower.sh"
+            ],
+            "exitCode": 1,
+            "stdout": "",
+            "stderr": "# Replication\nrole:slave\nlavik_replication_state:syncing\nlavik_replication_failed_stopped:0\nlavik_replication_role_epoch:4\nlavik_replication_group_id:67726f75702d31\nlavik_replication_boot_id:ac08520d382a50acd988b4e88be10e2d69195b91\nlavik_replica_incarnation:67bf939ccf3fe5cd3e29ea04270059e776a26849\nlavik_function_catalog_generation:1\nlavik_function_catalog_crc64:0\nmaster_replid:d376e2a0779cd008024b9c460bd8a66cc2531c26\nmaster_replid2:0000000000000000000000000000000000000000\nmaster_repl_offset:1\nsecond_repl_offset:-1\nmaster_host:127.0.0.1\nmaster_port:6371\nmaster_link_status:down\nmaster_last_io_seconds_ago:119\nmaster_link_down_since_seconds:119\nslave_repl_offset:1\nslave_priority:100\nreplica_announced:1\nlavik_source_workers:1\nlavik_connected_flows:0\nslave_read_only:1\nmaster_sync_in_progress:1\n\nFollower is not synchronized; inspect its log and Meta observations."
+          },
+          {
+            "argv": [
+              "bash",
+              "-euo",
+              "pipefail",
+              "/verification/snippets/restart-follower.sh"
+            ],
+            "exitCode": 0,
+            "stdout": "",
+            "stderr": ""
+          },
+          {
+            "argv": [
+              "bash",
+              "-euo",
+              "pipefail",
+              "/verification/snippets/wait-follower.sh"
+            ],
+            "exitCode": 0,
+            "stdout": "# Replication\nrole:slave\nlavik_replication_state:online\nlavik_replication_failed_stopped:0\nlavik_replication_role_epoch:2\nlavik_replication_group_id:67726f75702d31\nlavik_replication_boot_id:11f10f7d2957bec2441a128485fe8628b2078242\nlavik_replica_incarnation:6438be3442703366ad9702ea3d65bd6dfa146452\nlavik_function_catalog_generation:2\nlavik_function_catalog_crc64:0\nmaster_replid:d376e2a0779cd008024b9c460bd8a66cc2531c26\nmaster_replid2:0000000000000000000000000000000000000000\nmaster_repl_offset:1\nsecond_repl_offset:-1\nmaster_host:127.0.0.1\nmaster_port:6371\nmaster_link_status:up\nmaster_last_io_seconds_ago:0\nmaster_link_down_since_seconds:0\nslave_repl_offset:1\nslave_priority:100\nreplica_announced:1\nlavik_source_workers:1\nlavik_connected_flows:1\nslave_read_only:1\nmaster_sync_in_progress:0",
+            "stderr": ""
+          },
+          {
+            "argv": [
+              "bash",
+              "-euo",
+              "pipefail",
+              "/verification/snippets/ha-client.sh"
+            ],
+            "exitCode": 0,
+            "stdout": "OK\n1\nhello from Lavik\nhello from Lavik\n0\n16383\n127.0.0.1\n6371\n1111111111111111111111111111111111111111\n127.0.0.1\n6372\n2222222222222222222222222222222222222222",
+            "stderr": ""
+          },
+          {
+            "argv": [
+              "bash",
+              "-euo",
+              "pipefail",
+              "/verification/snippets/inspect.sh"
+            ],
+            "exitCode": 0,
+            "stdout": "OK leader=1 id=1 committed=35 snapshot_idx=0 term=1 audit_policy=bounded-rotate audit_size=34 audit_capacity=65536 audit_dropped_total=0 audit_dropped_through=0\nOK leader=0 id=2 committed=35 snapshot_idx=0 term=1 audit_policy=bounded-rotate audit_size=34 audit_capacity=65536 audit_dropped_total=0 audit_dropped_through=0\nOK leader=0 id=3 committed=35 snapshot_idx=0 term=1 audit_policy=bounded-rotate audit_size=34 audit_capacity=65536 audit_dropped_total=0 audit_dropped_through=0",
+            "stderr": ""
+          },
+          {
+            "argv": [
+              "bash",
+              "-euo",
+              "pipefail",
+              "/verification/snippets/leader-reads.sh"
+            ],
+            "exitCode": 0,
+            "stdout": "OK candidates=1 node=2222222222222222222222222222222222222222,assignment=44ca020e8d847ea2cc147d74d056ee05,term=1,manifest=1,partition_epoch=1,history=076d1cad5150f9e467f2d01c0d85b4dc0817158d,storage_ready=true,population_ready=true,source_term=1,source_node=1111111111111111111111111111111111111111,source_history=d376e2a0779cd008024b9c460bd8a66cc2531c26\nOK version=1 content={\"kind\":\"automatic-uncontrolled-failover-v1\",\"suspect_after_ms\":5000}\nOK version=1 content={\"kind\":\"authority-lease-v1\",\"duration_ms\":5000}\nOK version=1 content={\"kind\":\"candidate-recovery-v1\",\"budget_ms\":2000}",
+            "stderr": ""
+          },
+          {
+            "argv": [
+              "bash",
+              "-euo",
+              "pipefail",
+              "/verification/snippets/failover.sh"
+            ],
+            "exitCode": 0,
+            "stdout": "Controlled failover accepted: commit=36 operation=281493cf5b74f477caa3bbf888f02353\nUse getop 281493cf5b74f477caa3bbf888f02353 to follow the terminal result.",
+            "stderr": ""
+          },
+          {
+            "argv": [
+              "bash",
+              "-euo",
+              "pipefail",
+              "/verification/snippets/follow-operation.sh"
+            ],
+            "exitCode": 0,
+            "stdout": "OK submitted",
+            "stderr": ""
+          },
+          {
+            "argv": [
+              "bash",
+              "-euo",
+              "pipefail",
+              "/verification/snippets/wait-ready.sh"
+            ],
+            "exitCode": 0,
+            "stdout": "NOT READY\ncluster_state=created lifecycle_revision=2\nroot_operation=e8e7304d67aee1ce29ae461f47062c63 genesis_commit=5\nmeta_available=yes membership_stable=yes topology_converged=no serving_ready=no\nblocker group_not_serving group:group-1 authority_or_recent_lease_missing\nblocker group_runtime_not_converged group:group-1 current_projection_health_or_population_missing\nblocker node_runtime_not_ready node:1111111111111111111111111111111111111111 group=group-1;missing=session,projection,health,population\nblocker node_runtime_not_ready node:2222222222222222222222222222222222222222 group=group-1;missing=session,projection,health,population\nautomatic_failover group=group-1 state=suspect current_reason=session_missing suspect_elapsed_ms=235 effective_threshold_ms=5000 blocked_reason=-\nstatus_explanation=creation completed but current runtime readiness is blocked\nnext_action=inspect blockers and Data-node sessions, then rerun cluster-status\nREADY\ncluster_state=created lifecycle_revision=2\nroot_operation=e8e7304d67aee1ce29ae461f47062c63 genesis_commit=5\nmeta_available=yes membership_stable=yes topology_converged=yes serving_ready=yes\nautomatic_failover group=group-1 state=healthy current_reason=- suspect_elapsed_ms=0 effective_threshold_ms=5000 blocked_reason=-\nstatus_explanation=creation and current runtime readiness are healthy\nnext_action=none",
+            "stderr": ""
+          },
+          {
+            "argv": [
+              "bash",
+              "-euo",
+              "pipefail",
+              "/verification/snippets/status.sh"
+            ],
+            "exitCode": 0,
+            "stdout": "{\"schema_version\":1,\"result\":\"ready\",\"readiness_basis\":\"meta_observed_v1\",\"cluster_state\":\"created\",\"lifecycle_revision\":\"2\",\"root_operation_id\":\"e8e7304d67aee1ce29ae461f47062c63\",\"genesis_commit_index\":\"5\",\"cluster_create_phase\":null,\"provisioning_failure_summary\":null,\"meta_available\":true,\"meta_membership_stable\":true,\"topology_converged\":true,\"serving_ready\":true,\"cluster_ready\":true,\"capture\":{\"responder_id\":\"1\",\"term\":\"1\",\"config_index\":\"1\",\"committed_index\":\"39\",\"topology_epoch\":\"7\"},\"meta_members\":[{\"server_id\":\"1\",\"leader\":true,\"ctl_endpoint\":\"127.0.0.1:7201\"},{\"server_id\":\"2\",\"leader\":false,\"ctl_endpoint\":\"127.0.0.1:7202\"},{\"server_id\":\"3\",\"leader\":false,\"ctl_endpoint\":\"127.0.0.1:7203\"}],\"data_nodes\":[{\"node_id\":\"1111111111111111111111111111111111111111\",\"role\":\"replica\",\"retired\":false,\"group_id\":\"group-1\",\"current_session\":true,\"projection_current\":true,\"health_fresh\":true,\"population_current\":true,\"lease\":\"unknown\"},{\"node_id\":\"2222222222222222222222222222222222222222\",\"role\":\"primary\",\"retired\":false,\"group_id\":\"group-1\",\"current_session\":true,\"projection_current\":true,\"health_fresh\":true,\"population_current\":true,\"lease\":\"recently_granted\"}],\"groups\":[{\"group_id\":\"group-1\",\"term\":\"2\",\"owner_node_id\":\"2222222222222222222222222222222222222222\",\"serving_ready\":true,\"topology_converged\":true,\"automatic_failover_state\":\"healthy\",\"current_reason\":null,\"suspect_elapsed_ms\":\"0\",\"effective_threshold_ms\":\"5000\",\"blocked_reason\":null}],\"slot_ranges\":[{\"first\":\"0\",\"last\":\"16383\",\"group_id\":\"group-1\"}],\"blockers\":[],\"retry\":null,\"status_explanation\":\"creation and current runtime readiness are healthy\",\"next_action\":\"none\"}",
+            "stderr": ""
+          },
+          {
+            "argv": [
+              "redis-cli",
+              "-c",
+              "-h",
+              "127.0.0.1",
+              "-p",
+              "6372",
+              "--raw",
+              "GET",
+              "greeting"
+            ],
+            "exitCode": 0,
+            "stdout": "hello from Lavik",
+            "stderr": ""
+          },
+          {
+            "argv": [
+              "redis-cli",
+              "-h",
+              "127.0.0.1",
+              "-p",
+              "6372",
+              "--raw"
+            ],
+            "exitCode": 0,
+            "stdout": "OK\n1",
+            "stderr": "",
+            "stdin": "SET crash-probe replicated\nWAIT 1 5000\n"
+          },
+          {
+            "argv": [
+              "bash",
+              "-euo",
+              "pipefail",
+              "/verification/snippets/stop.sh"
+            ],
+            "exitCode": 0,
+            "stdout": "",
+            "stderr": ""
+          },
+          {
+            "argv": [
+              "bash",
+              "-euo",
+              "pipefail",
+              "/verification/snippets/ha-start.sh"
+            ],
+            "exitCode": 0,
+            "stdout": "",
+            "stderr": ""
+          },
+          {
+            "argv": [
+              "bash",
+              "-euo",
+              "pipefail",
+              "/verification/snippets/wait-meta.sh"
+            ],
+            "exitCode": 0,
+            "stdout": "",
+            "stderr": ""
+          },
+          {
+            "argv": [
+              "bash",
+              "-euo",
+              "pipefail",
+              "/verification/snippets/wait-ready.sh"
+            ],
+            "exitCode": 0,
+            "stdout": "NOT READY\ncluster_state=created lifecycle_revision=2\nroot_operation=e8e7304d67aee1ce29ae461f47062c63 genesis_commit=5\nmeta_available=yes membership_stable=yes topology_converged=no serving_ready=no\nblocker group_not_serving group:group-1 authority_or_recent_lease_missing\nblocker group_runtime_not_converged group:group-1 current_projection_health_or_population_missing\nblocker node_runtime_not_ready node:1111111111111111111111111111111111111111 group=group-1;missing=session,projection,health,population\nblocker node_runtime_not_ready node:2222222222222222222222222222222222222222 group=group-1;missing=session,projection,health,population\nautomatic_failover group=group-1 state=blocked current_reason=- suspect_elapsed_ms=0 effective_threshold_ms=5000 blocked_reason=leadership_warmup\nstatus_explanation=creation completed but current runtime readiness is blocked\nnext_action=inspect blockers and Data-node sessions, then rerun cluster-status\nNOT READY\ncluster_state=created lifecycle_revision=2\nroot_operation=e8e7304d67aee1ce29ae461f47062c63 genesis_commit=5\nmeta_available=yes membership_stable=yes topology_converged=no serving_ready=no\nblocker group_not_serving group:group-1 authority_or_recent_lease_missing\nblocker group_runtime_not_converged group:group-1 current_projection_health_or_population_missing\nblocker node_runtime_not_ready node:1111111111111111111111111111111111111111 group=group-1;missing=population\nblocker node_runtime_not_ready node:2222222222222222222222222222222222222222 group=group-1;missing=population\nautomatic_failover group=group-1 state=blocked current_reason=- suspect_elapsed_ms=0 effective_threshold_ms=5000 blocked_reason=leadership_warmup\nstatus_explanation=creation completed but current runtime readiness is blocked\nnext_action=inspect blockers and Data-node sessions, then rerun cluster-status\nNOT READY\ncluster_state=created lifecycle_revision=2\nroot_operation=e8e7304d67aee1ce29ae461f47062c63 genesis_commit=5\nmeta_available=yes membership_stable=yes topology_converged=no serving_ready=no\nblocker group_not_serving group:group-1 authority_or_recent_lease_missing\nblocker group_runtime_not_converged group:group-1 current_projection_health_or_population_missing\nblocker node_runtime_not_ready node:1111111111111111111111111111111111111111 group=group-1;missing=population\nblocker node_runtime_not_ready node:2222222222222222222222222222222222222222 group=group-1;missing=population\nautomatic_failover group=group-1 state=blocked current_reason=- suspect_elapsed_ms=0 effective_threshold_ms=5000 blocked_reason=leadership_warmup\nstatus_explanation=creation completed but current runtime readiness is blocked\nnext_action=inspect blockers and Data-node sessions, then rerun cluster-status\nNOT READY\ncluster_state=created lifecycle_revision=2\nroot_operation=e8e7304d67aee1ce29ae461f47062c63 genesis_commit=5\nmeta_available=yes membership_stable=yes topology_converged=no serving_ready=no\nblocker group_not_serving group:group-1 authority_or_recent_lease_missing\nblocker group_runtime_not_converged group:group-1 current_projection_health_or_population_missing\nblocker node_runtime_not_ready node:1111111111111111111111111111111111111111 group=group-1;missing=population\nblocker node_runtime_not_ready node:2222222222222222222222222222222222222222 group=group-1;missing=population\nautomatic_failover group=group-1 state=blocked current_reason=- suspect_elapsed_ms=0 effective_threshold_ms=5000 blocked_reason=leadership_warmup\nstatus_explanation=creation completed but current runtime readiness is blocked\nnext_action=inspect blockers and Data-node sessions, then rerun cluster-status\nNOT READY\ncluster_state=created lifecycle_revision=2\nroot_operation=e8e7304d67aee1ce29ae461f47062c63 genesis_commit=5\nmeta_available=yes membership_stable=yes topology_converged=no serving_ready=no\nblocker group_not_serving group:group-1 authority_or_recent_lease_missing\nblocker group_runtime_not_converged group:group-1 current_projection_health_or_population_missing\nblocker node_runtime_not_ready node:1111111111111111111111111111111111111111 group=group-1;missing=population\nblocker node_runtime_not_ready node:2222222222222222222222222222222222222222 group=group-1;missing=population\nautomatic_failover group=group-1 state=blocked current_reason=- suspect_elapsed_ms=0 effective_threshold_ms=5000 blocked_reason=leadership_warmup\nstatus_explanation=creation completed but current runtime readiness is blocked\nnext_action=inspect blockers and Data-node sessions, then rerun cluster-status\nNOT READY\ncluster_state=created lifecycle_revision=2\nroot_operation=e8e7304d67aee1ce29ae461f47062c63 genesis_commit=5\nmeta_available=yes membership_stable=yes topology_converged=no serving_ready=no\nblocker group_not_serving group:group-1 authority_or_recent_lease_missing\nblocker group_runtime_not_converged group:group-1 current_projection_health_or_population_missing\nblocker node_runtime_not_ready node:1111111111111111111111111111111111111111 group=group-1;missing=population\nblocker node_runtime_not_ready node:2222222222222222222222222222222222222222 group=group-1;missing=population\nautomatic_failover group=group-1 state=blocked current_reason=- suspect_elapsed_ms=0 effective_threshold_ms=5000 blocked_reason=leadership_warmup\nstatus_explanation=creation completed but current runtime readiness is blocked\nnext_action=inspect blockers and Data-node sessions, then rerun cluster-status\nNOT READY\ncluster_state=created lifecycle_revision=2\nroot_operation=e8e7304d67aee1ce29ae461f47062c63 genesis_commit=5\nmeta_available=yes membership_stable=yes topology_converged=no serving_ready=no\nblocker group_not_serving group:group-1 authority_or_recent_lease_missing\nblocker group_runtime_not_converged group:group-1 current_projection_health_or_population_missing\nblocker node_runtime_not_ready node:1111111111111111111111111111111111111111 group=group-1;missing=population\nblocker node_runtime_not_ready node:2222222222222222222222222222222222222222 group=group-1;missing=population\nautomatic_failover group=group-1 state=blocked current_reason=- suspect_elapsed_ms=0 effective_threshold_ms=5000 blocked_reason=leadership_warmup\nstatus_explanation=creation completed but current runtime readiness is blocked\nnext_action=inspect blockers and Data-node sessions, then rerun cluster-status\nNOT READY\ncluster_state=created lifecycle_revision=2\nroot_operation=e8e7304d67aee1ce29ae461f47062c63 genesis_commit=5\nmeta_available=yes membership_stable=yes topology_converged=no serving_ready=no\nblocker group_not_serving group:group-1 authority_or_recent_lease_missing\nblocker group_runtime_not_converged group:group-1 current_projection_health_or_population_missing\nblocker node_runtime_not_ready node:1111111111111111111111111111111111111111 group=group-1;missing=population\nblocker node_runtime_not_ready node:2222222222222222222222222222222222222222 group=group-1;missing=population\nautomatic_failover group=group-1 state=blocked current_reason=- suspect_elapsed_ms=0 effective_threshold_ms=5000 blocked_reason=leadership_warmup\nstatus_explanation=creation completed but current runtime readiness is blocked\nnext_action=inspect blockers and Data-node sessions, then rerun cluster-status\nNOT READY\ncluster_state=created lifecycle_revision=2\nroot_operation=e8e7304d67aee1ce29ae461f47062c63 genesis_commit=5\nmeta_available=yes membership_stable=yes topology_converged=no serving_ready=no\nblocker group_not_serving group:group-1 authority_or_recent_lease_missing\nblocker group_runtime_not_converged group:group-1 current_projection_health_or_population_missing\nblocker node_runtime_not_ready node:1111111111111111111111111111111111111111 group=group-1;missing=population\nblocker node_runtime_not_ready node:2222222222222222222222222222222222222222 group=group-1;missing=population\nautomatic_failover group=group-1 state=blocked current_reason=- suspect_elapsed_ms=0 effective_threshold_ms=5000 blocked_reason=leadership_warmup\nstatus_explanation=creation completed but current runtime readiness is blocked\nnext_action=inspect blockers and Data-node sessions, then rerun cluster-status\nNOT READY\ncluster_state=created lifecycle_revision=2\nroot_operation=e8e7304d67aee1ce29ae461f47062c63 genesis_commit=5\nmeta_available=yes membership_stable=yes topology_converged=no serving_ready=no\nblocker group_not_serving group:group-1 authority_or_recent_lease_missing\nblocker group_runtime_not_converged group:group-1 current_projection_health_or_population_missing\nblocker node_runtime_not_ready node:1111111111111111111111111111111111111111 group=group-1;missing=population\nblocker node_runtime_not_ready node:2222222222222222222222222222222222222222 group=group-1;missing=population\nautomatic_failover group=group-1 state=blocked current_reason=- suspect_elapsed_ms=0 effective_threshold_ms=5000 blocked_reason=leadership_warmup\nstatus_explanation=creation completed but current runtime readiness is blocked\nnext_action=inspect blockers and Data-node sessions, then rerun cluster-status\nNOT READY\ncluster_state=created lifecycle_revision=2\nroot_operation=e8e7304d67aee1ce29ae461f47062c63 genesis_commit=5\nmeta_available=yes membership_stable=yes topology_converged=no serving_ready=no\nblocker group_not_serving group:group-1 authority_or_recent_lease_missing\nblocker group_runtime_not_converged group:group-1 current_projection_health_or_population_missing\nblocker node_runtime_not_ready node:1111111111111111111111111111111111111111 group=group-1;missing=population\nblocker node_runtime_not_ready node:2222222222222222222222222222222222222222 group=group-1;missing=population\nautomatic_failover group=group-1 state=blocked current_reason=- suspect_elapsed_ms=0 effective_threshold_ms=5000 blocked_reason=leadership_warmup\nstatus_explanation=creation completed but current runtime readiness is blocked\nnext_action=inspect blockers and Data-node sessions, then rerun cluster-status\nNOT READY\ncluster_state=created lifecycle_revision=2\nroot_operation=e8e7304d67aee1ce29ae461f47062c63 genesis_commit=5\nmeta_available=yes membership_stable=yes topology_converged=no serving_ready=no\nblocker group_not_serving group:group-1 authority_or_recent_lease_missing\nblocker group_runtime_not_converged group:group-1 current_projection_health_or_population_missing\nblocker node_runtime_not_ready node:1111111111111111111111111111111111111111 group=group-1;missing=population\nblocker node_runtime_not_ready node:2222222222222222222222222222222222222222 group=group-1;missing=population\nautomatic_failover group=group-1 state=suspect current_reason=heartbeat_expired suspect_elapsed_ms=1001 effective_threshold_ms=5000 blocked_reason=-\nstatus_explanation=creation completed but current runtime readiness is blocked\nnext_action=inspect blockers and Data-node sessions, then rerun cluster-status\nNOT READY\ncluster_state=created lifecycle_revision=2\nroot_operation=e8e7304d67aee1ce29ae461f47062c63 genesis_commit=5\nmeta_available=yes membership_stable=yes topology_converged=no serving_ready=no\nblocker group_not_serving group:group-1 authority_or_recent_lease_missing\nblocker group_runtime_not_converged group:group-1 current_projection_health_or_population_missing\nblocker node_runtime_not_ready node:1111111111111111111111111111111111111111 group=group-1;missing=population\nblocker node_runtime_not_ready node:2222222222222222222222222222222222222222 group=group-1;missing=population\nautomatic_failover group=group-1 state=suspect current_reason=heartbeat_expired suspect_elapsed_ms=2002 effective_threshold_ms=5000 blocked_reason=-\nstatus_explanation=creation completed but current runtime readiness is blocked\nnext_action=inspect blockers and Data-node sessions, then rerun cluster-status\nNOT READY\ncluster_state=created lifecycle_revision=2\nroot_operation=e8e7304d67aee1ce29ae461f47062c63 genesis_commit=5\nmeta_available=yes membership_stable=yes topology_converged=no serving_ready=no\nblocker group_not_serving group:group-1 authority_or_recent_lease_missing\nblocker group_runtime_not_converged group:group-1 current_projection_health_or_population_missing\nblocker node_runtime_not_ready node:1111111111111111111111111111111111111111 group=group-1;missing=population\nblocker node_runtime_not_ready node:2222222222222222222222222222222222222222 group=group-1;missing=population\nautomatic_failover group=group-1 state=suspect current_reason=heartbeat_expired suspect_elapsed_ms=3008 effective_threshold_ms=5000 blocked_reason=-\nstatus_explanation=creation completed but current runtime readiness is blocked\nnext_action=inspect blockers and Data-node sessions, then rerun cluster-status\nNOT READY\ncluster_state=created lifecycle_revision=2\nroot_operation=e8e7304d67aee1ce29ae461f47062c63 genesis_commit=5\nmeta_available=yes membership_stable=yes topology_converged=no serving_ready=no\nblocker group_not_serving group:group-1 authority_or_recent_lease_missing\nblocker group_runtime_not_converged group:group-1 current_projection_health_or_population_missing\nblocker node_runtime_not_ready node:1111111111111111111111111111111111111111 group=group-1;missing=population\nblocker node_runtime_not_ready node:2222222222222222222222222222222222222222 group=group-1;missing=population\nautomatic_failover group=group-1 state=suspect current_reason=heartbeat_expired suspect_elapsed_ms=3991 effective_threshold_ms=5000 blocked_reason=-\nstatus_explanation=creation completed but current runtime readiness is blocked\nnext_action=inspect blockers and Data-node sessions, then rerun cluster-status\nNOT READY\ncluster_state=created lifecycle_revision=2\nroot_operation=e8e7304d67aee1ce29ae461f47062c63 genesis_commit=5\nmeta_available=yes membership_stable=yes topology_converged=no serving_ready=no\nblocker group_not_serving group:group-1 authority_or_recent_lease_missing\nblocker group_runtime_not_converged group:group-1 current_projection_health_or_population_missing\nblocker node_runtime_not_ready node:1111111111111111111111111111111111111111 group=group-1;missing=session,projection,health,population\nblocker node_runtime_not_ready node:2222222222222222222222222222222222222222 group=group-1;missing=session,projection,health,population\nautomatic_failover group=group-1 state=blocked current_reason=- suspect_elapsed_ms=0 effective_threshold_ms=5000 blocked_reason=failover_transition\nstatus_explanation=creation completed but current runtime readiness is blocked\nnext_action=inspect blockers and Data-node sessions, then rerun cluster-status\nNOT READY\ncluster_state=created lifecycle_revision=2\nroot_operation=e8e7304d67aee1ce29ae461f47062c63 genesis_commit=5\nmeta_available=yes membership_stable=yes topology_converged=no serving_ready=no\nblocker group_not_serving group:group-1 authority_or_recent_lease_missing\nblocker group_runtime_not_converged group:group-1 current_projection_health_or_population_missing\nblocker node_runtime_not_ready node:1111111111111111111111111111111111111111 group=group-1;missing=population\nblocker node_runtime_not_ready node:2222222222222222222222222222222222222222 group=group-1;missing=population\nautomatic_failover group=group-1 state=blocked current_reason=- suspect_elapsed_ms=0 effective_threshold_ms=5000 blocked_reason=failover_transition\nstatus_explanation=creation completed but current runtime readiness is blocked\nnext_action=inspect blockers and Data-node sessions, then rerun cluster-status\nNOT READY\ncluster_state=created lifecycle_revision=2\nroot_operation=e8e7304d67aee1ce29ae461f47062c63 genesis_commit=5\nmeta_available=yes membership_stable=yes topology_converged=no serving_ready=no\nblocker group_not_serving group:group-1 authority_or_recent_lease_missing\nblocker group_runtime_not_converged group:group-1 current_projection_health_or_population_missing\nblocker node_runtime_not_ready node:2222222222222222222222222222222222222222 group=group-1;missing=population\nautomatic_failover group=group-1 state=blocked current_reason=- suspect_elapsed_ms=239 effective_threshold_ms=5000 blocked_reason=authority_handoff\nstatus_explanation=creation completed but current runtime readiness is blocked\nnext_action=inspect blockers and Data-node sessions, then rerun cluster-status\nREADY\ncluster_state=created lifecycle_revision=2\nroot_operation=e8e7304d67aee1ce29ae461f47062c63 genesis_commit=5\nmeta_available=yes membership_stable=yes topology_converged=yes serving_ready=yes\nautomatic_failover group=group-1 state=healthy current_reason=- suspect_elapsed_ms=0 effective_threshold_ms=5000 blocked_reason=-\nstatus_explanation=creation and current runtime readiness are healthy\nnext_action=none",
+            "stderr": ""
+          },
+          {
+            "argv": [
+              "redis-cli",
+              "-c",
+              "-h",
+              "127.0.0.1",
+              "-p",
+              "6371",
+              "--raw",
+              "GET",
+              "greeting"
+            ],
+            "exitCode": 0,
+            "stdout": "hello from Lavik",
+            "stderr": ""
+          },
+          {
+            "argv": [
+              "redis-cli",
+              "-h",
+              "127.0.0.1",
+              "-p",
+              "6371",
+              "--raw"
+            ],
+            "exitCode": 0,
+            "stdout": "OK\n1",
+            "stderr": "",
+            "stdin": "SET crash-probe replicated\nWAIT 1 5000\n"
+          },
+          {
+            "argv": [
+              "redis-cli",
+              "-c",
+              "-h",
+              "127.0.0.1",
+              "-p",
+              "6372",
+              "--raw",
+              "GET",
+              "crash-probe"
+            ],
+            "exitCode": 0,
+            "stdout": "replicated",
+            "stderr": ""
+          },
+          {
+            "argv": [
+              "bash",
+              "-euo",
+              "pipefail",
+              "/verification/snippets/stop.sh"
+            ],
+            "exitCode": 0,
+            "stdout": "",
+            "stderr": ""
+          }
+        ],
+        "initialStatus": {
+          "schema_version": 1,
+          "result": "ready",
+          "readiness_basis": "meta_observed_v1",
+          "cluster_state": "created",
+          "lifecycle_revision": "2",
+          "root_operation_id": "e8e7304d67aee1ce29ae461f47062c63",
+          "genesis_commit_index": "5",
+          "cluster_create_phase": null,
+          "provisioning_failure_summary": null,
+          "meta_available": true,
+          "meta_membership_stable": true,
+          "topology_converged": true,
+          "serving_ready": true,
+          "cluster_ready": true,
+          "capture": {
+            "responder_id": "1",
+            "term": "1",
+            "config_index": "1",
+            "committed_index": "35",
+            "topology_epoch": "6"
+          },
+          "meta_members": [
+            {
+              "server_id": "1",
+              "leader": true,
+              "ctl_endpoint": "127.0.0.1:7201"
+            },
+            {
+              "server_id": "2",
+              "leader": false,
+              "ctl_endpoint": "127.0.0.1:7202"
+            },
+            {
+              "server_id": "3",
+              "leader": false,
+              "ctl_endpoint": "127.0.0.1:7203"
+            }
+          ],
+          "data_nodes": [
+            {
+              "node_id": "1111111111111111111111111111111111111111",
+              "role": "primary",
+              "retired": false,
+              "group_id": "group-1",
+              "current_session": true,
+              "projection_current": true,
+              "health_fresh": true,
+              "population_current": true,
+              "lease": "recently_granted"
+            },
+            {
+              "node_id": "2222222222222222222222222222222222222222",
+              "role": "replica",
+              "retired": false,
+              "group_id": "group-1",
+              "current_session": true,
+              "projection_current": true,
+              "health_fresh": true,
+              "population_current": true,
+              "lease": "unknown"
+            }
+          ],
+          "groups": [
+            {
+              "group_id": "group-1",
+              "term": "1",
+              "owner_node_id": "1111111111111111111111111111111111111111",
+              "serving_ready": true,
+              "topology_converged": true,
+              "automatic_failover_state": "blocked",
+              "current_reason": null,
+              "suspect_elapsed_ms": "0",
+              "effective_threshold_ms": "5000",
+              "blocked_reason": "leadership_warmup"
+            }
+          ],
+          "slot_ranges": [
+            {
+              "first": "0",
+              "last": "16383",
+              "group_id": "group-1"
+            }
+          ],
+          "blockers": [],
+          "retry": null,
+          "status_explanation": "creation and current runtime readiness are healthy",
+          "next_action": "none"
+        },
+        "initialFollowerRecoveryNeeded": true,
+        "restartGuardNegatives": [
+          {
+            "case": "cli-unavailable",
+            "exitCode": 1,
+            "pidLookupReached": false
+          },
+          {
+            "case": "cli-not-ready",
+            "exitCode": 1,
+            "pidLookupReached": false
+          },
+          {
+            "case": "owner-not-serving",
+            "exitCode": 1,
+            "pidLookupReached": false
+          },
+          {
+            "case": "term-changed",
+            "exitCode": 1,
+            "pidLookupReached": false
+          },
+          {
+            "case": "transition-active",
+            "exitCode": 1,
+            "pidLookupReached": false
+          },
+          {
+            "case": "owner-stale",
+            "exitCode": 1,
+            "pidLookupReached": false
+          },
+          {
+            "case": "malformed",
+            "exitCode": 1,
+            "pidLookupReached": false
+          }
+        ],
+        "metrics": [
+          {
+            "port": 9101,
+            "samples": [
+              "lavik_commands_total 7",
+              "lavik_connected_clients 0",
+              "lavik_cluster_control_connected 1"
+            ]
+          },
+          {
+            "port": 9102,
+            "samples": [
+              "lavik_commands_total 2",
+              "lavik_connected_clients 0",
+              "lavik_cluster_control_connected 1"
+            ]
+          }
+        ],
+        "metricCommand": {
+          "argv": [
+            "bash",
+            "-euo",
+            "pipefail",
+            "/verification/snippets/metrics-ha.sh"
+          ],
+          "exitCode": 0,
+          "stderr": "",
+          "stdoutSha256": "8fdbbf14e4010e022725dc7486b728b6313c503923deaf18fa907fe829271b19"
+        },
+        "controlledFailover": {
+          "argv": [
+            "/tmp/package/lavik-ctl",
+            "--socket",
+            "/tmp/package/ha-beta1/meta-1/meta-admin.sock",
+            "getop",
+            "281493cf5b74f477caa3bbf888f02353"
+          ],
+          "exitCode": 0,
+          "stdout": "OK completed failover-completed",
+          "stderr": ""
+        },
+        "afterFailover": {
+          "schema_version": 1,
+          "result": "ready",
+          "readiness_basis": "meta_observed_v1",
+          "cluster_state": "created",
+          "lifecycle_revision": "2",
+          "root_operation_id": "e8e7304d67aee1ce29ae461f47062c63",
+          "genesis_commit_index": "5",
+          "cluster_create_phase": null,
+          "provisioning_failure_summary": null,
+          "meta_available": true,
+          "meta_membership_stable": true,
+          "topology_converged": true,
+          "serving_ready": true,
+          "cluster_ready": true,
+          "capture": {
+            "responder_id": "1",
+            "term": "1",
+            "config_index": "1",
+            "committed_index": "39",
+            "topology_epoch": "7"
+          },
+          "meta_members": [
+            {
+              "server_id": "1",
+              "leader": true,
+              "ctl_endpoint": "127.0.0.1:7201"
+            },
+            {
+              "server_id": "2",
+              "leader": false,
+              "ctl_endpoint": "127.0.0.1:7202"
+            },
+            {
+              "server_id": "3",
+              "leader": false,
+              "ctl_endpoint": "127.0.0.1:7203"
+            }
+          ],
+          "data_nodes": [
+            {
+              "node_id": "1111111111111111111111111111111111111111",
+              "role": "replica",
+              "retired": false,
+              "group_id": "group-1",
+              "current_session": true,
+              "projection_current": true,
+              "health_fresh": true,
+              "population_current": true,
+              "lease": "unknown"
+            },
+            {
+              "node_id": "2222222222222222222222222222222222222222",
+              "role": "primary",
+              "retired": false,
+              "group_id": "group-1",
+              "current_session": true,
+              "projection_current": true,
+              "health_fresh": true,
+              "population_current": true,
+              "lease": "recently_granted"
+            }
+          ],
+          "groups": [
+            {
+              "group_id": "group-1",
+              "term": "2",
+              "owner_node_id": "2222222222222222222222222222222222222222",
+              "serving_ready": true,
+              "topology_converged": true,
+              "automatic_failover_state": "healthy",
+              "current_reason": null,
+              "suspect_elapsed_ms": "0",
+              "effective_threshold_ms": "5000",
+              "blocked_reason": null
+            }
+          ],
+          "slot_ranges": [
+            {
+              "first": "0",
+              "last": "16383",
+              "group_id": "group-1"
+            }
+          ],
+          "blockers": [],
+          "retry": null,
+          "status_explanation": "creation and current runtime readiness are healthy",
+          "next_action": "none"
+        },
+        "gracefulRestart": "passed",
+        "automaticFailover": {
+          "signal": "SIGKILL",
+          "failedNode": "1111111111111111111111111111111111111111",
+          "status": {
+            "schema_version": 1,
+            "result": "not_ready",
+            "readiness_basis": "meta_observed_v1",
+            "cluster_state": "created",
+            "lifecycle_revision": "2",
+            "root_operation_id": "e8e7304d67aee1ce29ae461f47062c63",
+            "genesis_commit_index": "5",
+            "cluster_create_phase": null,
+            "provisioning_failure_summary": null,
+            "meta_available": true,
+            "meta_membership_stable": true,
+            "topology_converged": false,
+            "serving_ready": true,
+            "cluster_ready": false,
+            "capture": {
+              "responder_id": "1",
+              "term": "2",
+              "config_index": "40",
+              "committed_index": "50",
+              "topology_epoch": "9"
+            },
+            "meta_members": [
+              {
+                "server_id": "1",
+                "leader": true,
+                "ctl_endpoint": "127.0.0.1:7201"
+              },
+              {
+                "server_id": "2",
+                "leader": false,
+                "ctl_endpoint": "127.0.0.1:7202"
+              },
+              {
+                "server_id": "3",
+                "leader": false,
+                "ctl_endpoint": "127.0.0.1:7203"
+              }
+            ],
+            "data_nodes": [
+              {
+                "node_id": "1111111111111111111111111111111111111111",
+                "role": "replica",
+                "retired": false,
+                "group_id": "group-1",
+                "current_session": false,
+                "projection_current": false,
+                "health_fresh": false,
+                "population_current": false,
+                "lease": "unknown"
+              },
+              {
+                "node_id": "2222222222222222222222222222222222222222",
+                "role": "primary",
+                "retired": false,
+                "group_id": "group-1",
+                "current_session": true,
+                "projection_current": true,
+                "health_fresh": true,
+                "population_current": true,
+                "lease": "recently_granted"
+              }
+            ],
+            "groups": [
+              {
+                "group_id": "group-1",
+                "term": "4",
+                "owner_node_id": "2222222222222222222222222222222222222222",
+                "serving_ready": true,
+                "topology_converged": false,
+                "automatic_failover_state": "blocked",
+                "current_reason": null,
+                "suspect_elapsed_ms": "681",
+                "effective_threshold_ms": "5000",
+                "blocked_reason": "causal_lease_pending"
+              }
+            ],
+            "slot_ranges": [
+              {
+                "first": "0",
+                "last": "16383",
+                "group_id": "group-1"
+              }
+            ],
+            "blockers": [
+              {
+                "code": "group_runtime_not_converged",
+                "scope": "group:group-1",
+                "detail": "current_projection_health_or_population_missing"
+              },
+              {
+                "code": "node_runtime_not_ready",
+                "scope": "node:1111111111111111111111111111111111111111",
+                "detail": "group=group-1;missing=session,projection,health,population"
+              }
+            ],
+            "retry": null,
+            "status_explanation": "creation completed but current runtime readiness is blocked",
+            "next_action": "inspect blockers and Data-node sessions, then rerun cluster-status"
+          }
+        }
+      }
+    },
+    {
+      "variant": "standard",
+      "arch": "aarch64",
+      "filename": "lavik-v0.1.0-beta.1-linux-aarch64.tar.gz",
+      "sha256": "ef18c718ab681cc7543a5aadfc2fdc040327f423facdeade484a46a928c7e277",
+      "imageId": "sha256:b9bf2ffd914d12edab1c4623bc7589d674f45b5d1639e935f7ef839f534b065d",
+      "dockerArgv": [
+        "docker",
+        "run",
+        "-d",
+        "--name",
+        "lavik-ops-050862ac15dd",
+        "--network=none",
+        "--add-host",
+        "prometheus:127.0.0.1",
+        "--read-only",
+        "--cap-drop=ALL",
+        "--security-opt=no-new-privileges",
+        "--security-opt=seccomp=unconfined",
+        "--memory=4g",
+        "--cpus=4",
+        "--pids-limit=256",
+        "--ulimit",
+        "memlock=536870912:536870912",
+        "--tmpfs",
+        "/tmp:rw,exec,nosuid,nodev,size=2g",
+        "-e",
+        "EXPECTED_COMMIT=3955b98d43b312324aa8d52775df52cfb111c0d0",
+        "-e",
+        "LAVIK_MONITOR_HOLD=0",
+        "sha256:b9bf2ffd914d12edab1c4623bc7589d674f45b5d1639e935f7ef839f534b065d",
+        "single"
+      ],
+      "execution": {
+        "layout": "single",
+        "platform": "Linux-7.0.12-linuxkit-aarch64-with-glibc2.39",
+        "sourceCommit": "3955b98d43b312324aa8d52775df52cfb111c0d0",
+        "status": "passed",
+        "steps": [
+          {
+            "argv": [
+              "bash",
+              "-euo",
+              "pipefail",
+              "/verification/snippets/versions.sh"
+            ],
+            "exitCode": 0,
+            "stdout": "lavik 0.1.0-beta.1\nlavik-meta 0.1.0-beta.1 (nuraft 0b01b185b46b8e482f6c384b636c35605121a41e)\nlavik-ctl 0.1.0-beta.1",
+            "stderr": ""
+          },
+          {
+            "argv": [
+              "/tmp/package/lavik-ctl",
+              "--help"
+            ],
+            "exitCode": 0,
+            "stdout": "",
+            "stderr": "Usage:\n  /tmp/package/lavik-ctl --socket PATH [--timeout-ms N] COMMAND [ARG...]\n  /tmp/package/lavik-ctl --addr IP:PORT [--tls-ca FILE --tls-cert FILE --tls-key FILE]\n     [--tls-server-name NAME] [--timeout-ms N] COMMAND [ARG...]\n  /tmp/package/lavik-ctl cluster-status (--socket PATH | --addr IP:PORT)\n     [--tls-ca FILE --tls-cert FILE --tls-key FILE]\n     [--allow-plaintext-admin] [--timeout-ms N] [--json]\n  /tmp/package/lavik-ctl cluster-create --manifest FILE (--socket PATH | --addr IP:PORT)\n     [--tls-ca FILE --tls-cert FILE --tls-key FILE]\n     [--allow-plaintext-admin] [--timeout-ms N] [--yes]\n  /tmp/package/lavik-ctl failover GROUP (--socket PATH | --addr IP:PORT)\n     [--tls-ca FILE --tls-cert FILE --tls-key FILE]\n     [--allow-plaintext-admin] [--timeout-ms N]\n     [--failover-timeout-ms N]\n\nRecovery: --socket PATH promote GROUP --node NODE --accept-data-loss\nSelect one readable recovered population when no automatic candidate exists.\nDirect commands are sent to the specified Meta node as one line.\nstatus reports that node's state; cluster-status discovers the leader\nand reports cluster readiness. cluster-create creates the v1 multi-\nData, multi-Group topology and returns after its Genesis commit. Use\ncluster-status to follow creation and serving readiness. Options may\nprecede\nany local cluster command.\nDurability recovery uses: abortop ID, archiveoperations SEQ..., then\nexportoperations and pruneoperations SEQ....\nExit status is 0 for an OK reply, 2 for an ERR reply, and 1 for a\nlocal, connection, TLS, or malformed-protocol failure.\ncluster-status exits 0 for READY, 2 for NOT READY, 3 for RETRYABLE,\nand 1 for fatal errors. TCP discovery requires mTLS or explicit\n--allow-plaintext-admin; --json applies only to cluster-status.\ncluster-create exits 0 after Genesis commit, 2 for an explicit\nMeta rejection, 3 for a possibly committed interruption/timeout, and\n1 for local manifest, confirmation, or pre-mutation transport errors.\nfailover exits 0 after request commit, 2 for an explicit rejection,\n3 for an uncertain proposal outcome, and 1 for local/transport errors known to occur before submission."
+          },
+          {
+            "argv": [
+              "/tmp/package/lavik-ctl",
+              "start"
+            ],
+            "exitCode": 1,
+            "stdout": "",
+            "stderr": "lavik-ctl: exactly one of --socket and --addr is required"
+          },
+          {
+            "argv": [
+              "bash",
+              "-euo",
+              "pipefail",
+              "/verification/snippets/single-init.sh"
+            ],
+            "exitCode": 0,
+            "stdout": "",
+            "stderr": ""
+          },
+          {
+            "argv": [
+              "bash",
+              "-euo",
+              "pipefail",
+              "/verification/snippets/single-start.sh"
+            ],
+            "exitCode": 0,
+            "stdout": "",
+            "stderr": ""
+          },
+          {
+            "argv": [
+              "bash",
+              "-euo",
+              "pipefail",
+              "/verification/snippets/wait-meta.sh"
+            ],
+            "exitCode": 0,
+            "stdout": "",
+            "stderr": ""
+          },
+          {
+            "argv": [
+              "bash",
+              "-euo",
+              "pipefail",
+              "/verification/snippets/create.sh"
+            ],
+            "exitCode": 0,
+            "stdout": "Cluster create plan (schema v1)\n  Meta member: 1 raft=tcp://127.0.0.1:7101 data-control=tcp://127.0.0.1:7301 ctl=tcp://127.0.0.1:7201\n  Slot layout: contiguous-even\n  Data node: 1111111111111111111111111111111111111111 @ tcp://127.0.0.1:6371\n  Group: group-1 primary=1111111111111111111111111111111111111111 replicas=none\n  Slots: 0-16383 -> group-1\nWARNING: existing data on all Data nodes will be erased.\nCluster create accepted: genesis committed=3 operation=59bc64d31c99988ac0689ea1ed9f51f6\nRun cluster-status to follow creation and runtime readiness.",
+            "stderr": ""
+          },
+          {
+            "argv": [
+              "bash",
+              "-euo",
+              "pipefail",
+              "/verification/snippets/wait-ready.sh"
+            ],
+            "exitCode": 0,
+            "stdout": "NOT READY\ncluster_state=creating lifecycle_revision=1\nroot_operation=59bc64d31c99988ac0689ea1ed9f51f6 genesis_commit=3\ncluster_create_phase=wait-data-projection\nmeta_available=yes membership_stable=yes topology_converged=no serving_ready=no\nblocker cluster_create_active cluster non_terminal_cluster_create_operation_exists\nblocker data_unobserved node:1111111111111111111111111111111111111111 registered_node_has_not_contacted_this_leader\nblocker group_not_serving group:group-1 authority_or_recent_lease_missing\nblocker group_runtime_not_converged group:group-1 current_projection_health_or_population_missing\nblocker node_runtime_not_ready node:1111111111111111111111111111111111111111 group=group-1;missing=session,projection,health,population\nautomatic_failover group=group-1 state=blocked current_reason=- suspect_elapsed_ms=0 effective_threshold_ms=5000 blocked_reason=indeterminate_evidence\nstatus_explanation=Genesis is committed and the creation workflow is still running\nnext_action=wait and rerun cluster-status; inspect Meta logs if the phase stops advancing\nREADY\ncluster_state=created lifecycle_revision=2\nroot_operation=59bc64d31c99988ac0689ea1ed9f51f6 genesis_commit=3\nmeta_available=yes membership_stable=yes topology_converged=yes serving_ready=yes\nautomatic_failover group=group-1 state=blocked current_reason=- suspect_elapsed_ms=0 effective_threshold_ms=5000 blocked_reason=leadership_warmup\nstatus_explanation=creation and current runtime readiness are healthy\nnext_action=none",
+            "stderr": ""
+          },
+          {
+            "argv": [
+              "bash",
+              "-euo",
+              "pipefail",
+              "/verification/snippets/status.sh"
+            ],
+            "exitCode": 0,
+            "stdout": "{\"schema_version\":1,\"result\":\"ready\",\"readiness_basis\":\"meta_observed_v1\",\"cluster_state\":\"created\",\"lifecycle_revision\":\"2\",\"root_operation_id\":\"59bc64d31c99988ac0689ea1ed9f51f6\",\"genesis_commit_index\":\"3\",\"cluster_create_phase\":null,\"provisioning_failure_summary\":null,\"meta_available\":true,\"meta_membership_stable\":true,\"topology_converged\":true,\"serving_ready\":true,\"cluster_ready\":true,\"capture\":{\"responder_id\":\"1\",\"term\":\"1\",\"config_index\":\"1\",\"committed_index\":\"27\",\"topology_epoch\":\"5\"},\"meta_members\":[{\"server_id\":\"1\",\"leader\":true,\"ctl_endpoint\":\"127.0.0.1:7201\"}],\"data_nodes\":[{\"node_id\":\"1111111111111111111111111111111111111111\",\"role\":\"primary\",\"retired\":false,\"group_id\":\"group-1\",\"current_session\":true,\"projection_current\":true,\"health_fresh\":true,\"population_current\":true,\"lease\":\"recently_granted\"}],\"groups\":[{\"group_id\":\"group-1\",\"term\":\"1\",\"owner_node_id\":\"1111111111111111111111111111111111111111\",\"serving_ready\":true,\"topology_converged\":true,\"automatic_failover_state\":\"blocked\",\"current_reason\":null,\"suspect_elapsed_ms\":\"0\",\"effective_threshold_ms\":\"5000\",\"blocked_reason\":\"leadership_warmup\"}],\"slot_ranges\":[{\"first\":\"0\",\"last\":\"16383\",\"group_id\":\"group-1\"}],\"blockers\":[],\"retry\":null,\"status_explanation\":\"creation and current runtime readiness are healthy\",\"next_action\":\"none\"}",
+            "stderr": ""
+          },
+          {
+            "argv": [
+              "bash",
+              "-euo",
+              "pipefail",
+              "/verification/snippets/single-client.sh"
+            ],
+            "exitCode": 0,
+            "stdout": "OK\nhello from Lavik\ncluster_state:ok\ncluster_slots_assigned:16384\ncluster_slots_ok:16384\ncluster_slots_pfail:0\ncluster_slots_fail:0\ncluster_known_nodes:1\ncluster_size:1\ncluster_current_epoch:1\ncluster_my_epoch:1\ncluster_stats_messages_sent:0\ncluster_stats_messages_received:0",
+            "stderr": ""
+          },
+          {
+            "argv": [
+              "bash",
+              "-euo",
+              "pipefail",
+              "/verification/snippets/inspect.sh"
+            ],
+            "exitCode": 0,
+            "stdout": "OK leader=1 id=1 committed=27 snapshot_idx=0 term=1 audit_policy=bounded-rotate audit_size=26 audit_capacity=65536 audit_dropped_total=0 audit_dropped_through=0",
+            "stderr": ""
+          },
+          {
+            "argv": [
+              "bash",
+              "-euo",
+              "pipefail",
+              "/verification/snippets/leader-reads.sh"
+            ],
+            "exitCode": 0,
+            "stdout": "OK candidates=0\nOK version=1 content={\"kind\":\"automatic-uncontrolled-failover-v1\",\"suspect_after_ms\":5000}\nOK version=1 content={\"kind\":\"authority-lease-v1\",\"duration_ms\":5000}\nOK version=1 content={\"kind\":\"candidate-recovery-v1\",\"budget_ms\":2000}",
+            "stderr": ""
+          },
+          {
+            "argv": [
+              "bash",
+              "-euo",
+              "pipefail",
+              "/verification/snippets/stop.sh"
+            ],
+            "exitCode": 0,
+            "stdout": "",
+            "stderr": ""
+          },
+          {
+            "argv": [
+              "bash",
+              "-euo",
+              "pipefail",
+              "/verification/snippets/single-start.sh"
+            ],
+            "exitCode": 0,
+            "stdout": "",
+            "stderr": ""
+          },
+          {
+            "argv": [
+              "bash",
+              "-euo",
+              "pipefail",
+              "/verification/snippets/wait-meta.sh"
+            ],
+            "exitCode": 0,
+            "stdout": "",
+            "stderr": ""
+          },
+          {
+            "argv": [
+              "bash",
+              "-euo",
+              "pipefail",
+              "/verification/snippets/wait-ready.sh"
+            ],
+            "exitCode": 0,
+            "stdout": "NOT READY\ncluster_state=created lifecycle_revision=2\nroot_operation=59bc64d31c99988ac0689ea1ed9f51f6 genesis_commit=3\nmeta_available=yes membership_stable=yes topology_converged=no serving_ready=no\nblocker group_not_serving group:group-1 authority_or_recent_lease_missing\nblocker group_runtime_not_converged group:group-1 current_projection_health_or_population_missing\nblocker node_runtime_not_ready node:1111111111111111111111111111111111111111 group=group-1;missing=session,projection,health,population\nautomatic_failover group=group-1 state=blocked current_reason=- suspect_elapsed_ms=0 effective_threshold_ms=5000 blocked_reason=leadership_warmup\nstatus_explanation=creation completed but current runtime readiness is blocked\nnext_action=inspect blockers and Data-node sessions, then rerun cluster-status\nNOT READY\ncluster_state=created lifecycle_revision=2\nroot_operation=59bc64d31c99988ac0689ea1ed9f51f6 genesis_commit=3\nmeta_available=yes membership_stable=yes topology_converged=no serving_ready=no\nblocker group_not_serving group:group-1 authority_or_recent_lease_missing\nblocker group_runtime_not_converged group:group-1 current_projection_health_or_population_missing\nblocker node_runtime_not_ready node:1111111111111111111111111111111111111111 group=group-1;missing=population\nautomatic_failover group=group-1 state=blocked current_reason=- suspect_elapsed_ms=0 effective_threshold_ms=5000 blocked_reason=leadership_warmup\nstatus_explanation=creation completed but current runtime readiness is blocked\nnext_action=inspect blockers and Data-node sessions, then rerun cluster-status\nNOT READY\ncluster_state=created lifecycle_revision=2\nroot_operation=59bc64d31c99988ac0689ea1ed9f51f6 genesis_commit=3\nmeta_available=yes membership_stable=yes topology_converged=no serving_ready=no\nblocker group_not_serving group:group-1 authority_or_recent_lease_missing\nblocker group_runtime_not_converged group:group-1 current_projection_health_or_population_missing\nblocker node_runtime_not_ready node:1111111111111111111111111111111111111111 group=group-1;missing=population\nautomatic_failover group=group-1 state=blocked current_reason=- suspect_elapsed_ms=0 effective_threshold_ms=5000 blocked_reason=leadership_warmup\nstatus_explanation=creation completed but current runtime readiness is blocked\nnext_action=inspect blockers and Data-node sessions, then rerun cluster-status\nNOT READY\ncluster_state=created lifecycle_revision=2\nroot_operation=59bc64d31c99988ac0689ea1ed9f51f6 genesis_commit=3\nmeta_available=yes membership_stable=yes topology_converged=no serving_ready=no\nblocker group_not_serving group:group-1 authority_or_recent_lease_missing\nblocker group_runtime_not_converged group:group-1 current_projection_health_or_population_missing\nblocker node_runtime_not_ready node:1111111111111111111111111111111111111111 group=group-1;missing=population\nautomatic_failover group=group-1 state=blocked current_reason=- suspect_elapsed_ms=0 effective_threshold_ms=5000 blocked_reason=leadership_warmup\nstatus_explanation=creation completed but current runtime readiness is blocked\nnext_action=inspect blockers and Data-node sessions, then rerun cluster-status\nNOT READY\ncluster_state=created lifecycle_revision=2\nroot_operation=59bc64d31c99988ac0689ea1ed9f51f6 genesis_commit=3\nmeta_available=yes membership_stable=yes topology_converged=no serving_ready=no\nblocker group_not_serving group:group-1 authority_or_recent_lease_missing\nblocker group_runtime_not_converged group:group-1 current_projection_health_or_population_missing\nblocker node_runtime_not_ready node:1111111111111111111111111111111111111111 group=group-1;missing=population\nautomatic_failover group=group-1 state=blocked current_reason=- suspect_elapsed_ms=0 effective_threshold_ms=5000 blocked_reason=leadership_warmup\nstatus_explanation=creation completed but current runtime readiness is blocked\nnext_action=inspect blockers and Data-node sessions, then rerun cluster-status\nNOT READY\ncluster_state=created lifecycle_revision=2\nroot_operation=59bc64d31c99988ac0689ea1ed9f51f6 genesis_commit=3\nmeta_available=yes membership_stable=yes topology_converged=no serving_ready=no\nblocker group_not_serving group:group-1 authority_or_recent_lease_missing\nblocker group_runtime_not_converged group:group-1 current_projection_health_or_population_missing\nblocker node_runtime_not_ready node:1111111111111111111111111111111111111111 group=group-1;missing=population\nautomatic_failover group=group-1 state=blocked current_reason=- suspect_elapsed_ms=0 effective_threshold_ms=5000 blocked_reason=leadership_warmup\nstatus_explanation=creation completed but current runtime readiness is blocked\nnext_action=inspect blockers and Data-node sessions, then rerun cluster-status\nNOT READY\ncluster_state=created lifecycle_revision=2\nroot_operation=59bc64d31c99988ac0689ea1ed9f51f6 genesis_commit=3\nmeta_available=yes membership_stable=yes topology_converged=no serving_ready=no\nblocker group_not_serving group:group-1 authority_or_recent_lease_missing\nblocker group_runtime_not_converged group:group-1 current_projection_health_or_population_missing\nblocker node_runtime_not_ready node:1111111111111111111111111111111111111111 group=group-1;missing=population\nautomatic_failover group=group-1 state=blocked current_reason=- suspect_elapsed_ms=0 effective_threshold_ms=5000 blocked_reason=leadership_warmup\nstatus_explanation=creation completed but current runtime readiness is blocked\nnext_action=inspect blockers and Data-node sessions, then rerun cluster-status\nNOT READY\ncluster_state=created lifecycle_revision=2\nroot_operation=59bc64d31c99988ac0689ea1ed9f51f6 genesis_commit=3\nmeta_available=yes membership_stable=yes topology_converged=no serving_ready=no\nblocker group_not_serving group:group-1 authority_or_recent_lease_missing\nblocker group_runtime_not_converged group:group-1 current_projection_health_or_population_missing\nblocker node_runtime_not_ready node:1111111111111111111111111111111111111111 group=group-1;missing=population\nautomatic_failover group=group-1 state=blocked current_reason=- suspect_elapsed_ms=0 effective_threshold_ms=5000 blocked_reason=leadership_warmup\nstatus_explanation=creation completed but current runtime readiness is blocked\nnext_action=inspect blockers and Data-node sessions, then rerun cluster-status\nNOT READY\ncluster_state=created lifecycle_revision=2\nroot_operation=59bc64d31c99988ac0689ea1ed9f51f6 genesis_commit=3\nmeta_available=yes membership_stable=yes topology_converged=no serving_ready=no\nblocker group_not_serving group:group-1 authority_or_recent_lease_missing\nblocker group_runtime_not_converged group:group-1 current_projection_health_or_population_missing\nblocker node_runtime_not_ready node:1111111111111111111111111111111111111111 group=group-1;missing=population\nautomatic_failover group=group-1 state=blocked current_reason=- suspect_elapsed_ms=0 effective_threshold_ms=5000 blocked_reason=leadership_warmup\nstatus_explanation=creation completed but current runtime readiness is blocked\nnext_action=inspect blockers and Data-node sessions, then rerun cluster-status\nNOT READY\ncluster_state=created lifecycle_revision=2\nroot_operation=59bc64d31c99988ac0689ea1ed9f51f6 genesis_commit=3\nmeta_available=yes membership_stable=yes topology_converged=no serving_ready=no\nblocker group_not_serving group:group-1 authority_or_recent_lease_missing\nblocker group_runtime_not_converged group:group-1 current_projection_health_or_population_missing\nblocker node_runtime_not_ready node:1111111111111111111111111111111111111111 group=group-1;missing=population\nautomatic_failover group=group-1 state=blocked current_reason=- suspect_elapsed_ms=0 effective_threshold_ms=5000 blocked_reason=leadership_warmup\nstatus_explanation=creation completed but current runtime readiness is blocked\nnext_action=inspect blockers and Data-node sessions, then rerun cluster-status\nNOT READY\ncluster_state=created lifecycle_revision=2\nroot_operation=59bc64d31c99988ac0689ea1ed9f51f6 genesis_commit=3\nmeta_available=yes membership_stable=yes topology_converged=no serving_ready=no\nblocker group_not_serving group:group-1 authority_or_recent_lease_missing\nblocker group_runtime_not_converged group:group-1 current_projection_health_or_population_missing\nblocker node_runtime_not_ready node:1111111111111111111111111111111111111111 group=group-1;missing=population\nautomatic_failover group=group-1 state=suspect current_reason=heartbeat_expired suspect_elapsed_ms=0 effective_threshold_ms=5000 blocked_reason=-\nstatus_explanation=creation completed but current runtime readiness is blocked\nnext_action=inspect blockers and Data-node sessions, then rerun cluster-status\nNOT READY\ncluster_state=created lifecycle_revision=2\nroot_operation=59bc64d31c99988ac0689ea1ed9f51f6 genesis_commit=3\nmeta_available=yes membership_stable=yes topology_converged=no serving_ready=no\nblocker group_not_serving group:group-1 authority_or_recent_lease_missing\nblocker group_runtime_not_converged group:group-1 current_projection_health_or_population_missing\nblocker node_runtime_not_ready node:1111111111111111111111111111111111111111 group=group-1;missing=population\nautomatic_failover group=group-1 state=suspect current_reason=heartbeat_expired suspect_elapsed_ms=997 effective_threshold_ms=5000 blocked_reason=-\nstatus_explanation=creation completed but current runtime readiness is blocked\nnext_action=inspect blockers and Data-node sessions, then rerun cluster-status\nNOT READY\ncluster_state=created lifecycle_revision=2\nroot_operation=59bc64d31c99988ac0689ea1ed9f51f6 genesis_commit=3\nmeta_available=yes membership_stable=yes topology_converged=no serving_ready=no\nblocker group_not_serving group:group-1 authority_or_recent_lease_missing\nblocker group_runtime_not_converged group:group-1 current_projection_health_or_population_missing\nblocker node_runtime_not_ready node:1111111111111111111111111111111111111111 group=group-1;missing=population\nautomatic_failover group=group-1 state=suspect current_reason=heartbeat_expired suspect_elapsed_ms=2003 effective_threshold_ms=5000 blocked_reason=-\nstatus_explanation=creation completed but current runtime readiness is blocked\nnext_action=inspect blockers and Data-node sessions, then rerun cluster-status\nNOT READY\ncluster_state=created lifecycle_revision=2\nroot_operation=59bc64d31c99988ac0689ea1ed9f51f6 genesis_commit=3\nmeta_available=yes membership_stable=yes topology_converged=no serving_ready=no\nblocker group_not_serving group:group-1 authority_or_recent_lease_missing\nblocker group_runtime_not_converged group:group-1 current_projection_health_or_population_missing\nblocker node_runtime_not_ready node:1111111111111111111111111111111111111111 group=group-1;missing=population\nautomatic_failover group=group-1 state=suspect current_reason=heartbeat_expired suspect_elapsed_ms=3016 effective_threshold_ms=5000 blocked_reason=-\nstatus_explanation=creation completed but current runtime readiness is blocked\nnext_action=inspect blockers and Data-node sessions, then rerun cluster-status\nNOT READY\ncluster_state=created lifecycle_revision=2\nroot_operation=59bc64d31c99988ac0689ea1ed9f51f6 genesis_commit=3\nmeta_available=yes membership_stable=yes topology_converged=no serving_ready=no\nblocker group_not_serving group:group-1 authority_or_recent_lease_missing\nblocker group_runtime_not_converged group:group-1 current_projection_health_or_population_missing\nblocker node_runtime_not_ready node:1111111111111111111111111111111111111111 group=group-1;missing=population\nautomatic_failover group=group-1 state=suspect current_reason=heartbeat_expired suspect_elapsed_ms=4016 effective_threshold_ms=5000 blocked_reason=-\nstatus_explanation=creation completed but current runtime readiness is blocked\nnext_action=inspect blockers and Data-node sessions, then rerun cluster-status\nNOT READY\ncluster_state=created lifecycle_revision=2\nroot_operation=59bc64d31c99988ac0689ea1ed9f51f6 genesis_commit=3\nmeta_available=yes membership_stable=yes topology_converged=no serving_ready=no\nblocker group_not_serving group:group-1 authority_or_recent_lease_missing\nblocker group_runtime_not_converged group:group-1 current_projection_health_or_population_missing\nblocker node_runtime_not_ready node:1111111111111111111111111111111111111111 group=group-1;missing=session,projection,health,population\nautomatic_failover group=group-1 state=blocked current_reason=- suspect_elapsed_ms=0 effective_threshold_ms=5000 blocked_reason=failover_transition\nstatus_explanation=creation completed but current runtime readiness is blocked\nnext_action=inspect blockers and Data-node sessions, then rerun cluster-status\nNOT READY\ncluster_state=created lifecycle_revision=2\nroot_operation=59bc64d31c99988ac0689ea1ed9f51f6 genesis_commit=3\nmeta_available=yes membership_stable=yes topology_converged=no serving_ready=no\nblocker group_not_serving group:group-1 authority_or_recent_lease_missing\nblocker group_runtime_not_converged group:group-1 current_projection_health_or_population_missing\nblocker node_runtime_not_ready node:1111111111111111111111111111111111111111 group=group-1;missing=session,projection,health,population\nautomatic_failover group=group-1 state=suspect current_reason=session_missing suspect_elapsed_ms=159 effective_threshold_ms=5000 blocked_reason=-\nstatus_explanation=creation completed but current runtime readiness is blocked\nnext_action=inspect blockers and Data-node sessions, then rerun cluster-status\nNOT READY\ncluster_state=created lifecycle_revision=2\nroot_operation=59bc64d31c99988ac0689ea1ed9f51f6 genesis_commit=3\nmeta_available=yes membership_stable=yes topology_converged=yes serving_ready=no\nblocker group_not_serving group:group-1 authority_or_recent_lease_missing\nautomatic_failover group=group-1 state=blocked current_reason=- suspect_elapsed_ms=895 effective_threshold_ms=5000 blocked_reason=authority_handoff\nstatus_explanation=creation completed but current runtime readiness is blocked\nnext_action=inspect blockers and Data-node sessions, then rerun cluster-status\nREADY\ncluster_state=created lifecycle_revision=2\nroot_operation=59bc64d31c99988ac0689ea1ed9f51f6 genesis_commit=3\nmeta_available=yes membership_stable=yes topology_converged=yes serving_ready=yes\nautomatic_failover group=group-1 state=healthy current_reason=- suspect_elapsed_ms=0 effective_threshold_ms=5000 blocked_reason=-\nstatus_explanation=creation and current runtime readiness are healthy\nnext_action=none",
+            "stderr": ""
+          },
+          {
+            "argv": [
+              "redis-cli",
+              "-c",
+              "-h",
+              "127.0.0.1",
+              "-p",
+              "6371",
+              "--raw",
+              "GET",
+              "greeting"
+            ],
+            "exitCode": 0,
+            "stdout": "hello from Lavik",
+            "stderr": ""
+          },
+          {
+            "argv": [
+              "bash",
+              "-euo",
+              "pipefail",
+              "/verification/snippets/stop.sh"
+            ],
+            "exitCode": 0,
+            "stdout": "",
+            "stderr": ""
+          }
+        ],
+        "initialStatus": {
+          "schema_version": 1,
+          "result": "ready",
+          "readiness_basis": "meta_observed_v1",
+          "cluster_state": "created",
+          "lifecycle_revision": "2",
+          "root_operation_id": "59bc64d31c99988ac0689ea1ed9f51f6",
+          "genesis_commit_index": "3",
+          "cluster_create_phase": null,
+          "provisioning_failure_summary": null,
+          "meta_available": true,
+          "meta_membership_stable": true,
+          "topology_converged": true,
+          "serving_ready": true,
+          "cluster_ready": true,
+          "capture": {
+            "responder_id": "1",
+            "term": "1",
+            "config_index": "1",
+            "committed_index": "27",
+            "topology_epoch": "5"
+          },
+          "meta_members": [
+            {
+              "server_id": "1",
+              "leader": true,
+              "ctl_endpoint": "127.0.0.1:7201"
+            }
+          ],
+          "data_nodes": [
+            {
+              "node_id": "1111111111111111111111111111111111111111",
+              "role": "primary",
+              "retired": false,
+              "group_id": "group-1",
+              "current_session": true,
+              "projection_current": true,
+              "health_fresh": true,
+              "population_current": true,
+              "lease": "recently_granted"
+            }
+          ],
+          "groups": [
+            {
+              "group_id": "group-1",
+              "term": "1",
+              "owner_node_id": "1111111111111111111111111111111111111111",
+              "serving_ready": true,
+              "topology_converged": true,
+              "automatic_failover_state": "blocked",
+              "current_reason": null,
+              "suspect_elapsed_ms": "0",
+              "effective_threshold_ms": "5000",
+              "blocked_reason": "leadership_warmup"
+            }
+          ],
+          "slot_ranges": [
+            {
+              "first": "0",
+              "last": "16383",
+              "group_id": "group-1"
+            }
+          ],
+          "blockers": [],
+          "retry": null,
+          "status_explanation": "creation and current runtime readiness are healthy",
+          "next_action": "none"
+        },
+        "metrics": [
+          {
+            "port": 9101,
+            "samples": [
+              "lavik_commands_total 3",
+              "lavik_connected_clients 0",
+              "lavik_cluster_control_connected 1"
+            ]
+          }
+        ],
+        "metricCommand": {
+          "argv": [
+            "bash",
+            "-euo",
+            "pipefail",
+            "/verification/snippets/metrics-single.sh"
+          ],
+          "exitCode": 0,
+          "stderr": "",
+          "stdoutSha256": "8b04c41178b043938bae758637f17f7635dcabd1399015bf317bf51a6553a82c"
+        },
+        "gracefulRestart": "passed"
+      }
+    },
+    {
+      "variant": "standard",
+      "arch": "aarch64",
+      "filename": "lavik-v0.1.0-beta.1-linux-aarch64.tar.gz",
+      "sha256": "ef18c718ab681cc7543a5aadfc2fdc040327f423facdeade484a46a928c7e277",
+      "imageId": "sha256:b9bf2ffd914d12edab1c4623bc7589d674f45b5d1639e935f7ef839f534b065d",
+      "dockerArgv": [
+        "docker",
+        "run",
+        "-d",
+        "--name",
+        "lavik-ops-35d1130a27dd",
+        "--network=none",
+        "--add-host",
+        "prometheus:127.0.0.1",
+        "--read-only",
+        "--cap-drop=ALL",
+        "--security-opt=no-new-privileges",
+        "--security-opt=seccomp=unconfined",
+        "--memory=4g",
+        "--cpus=4",
+        "--pids-limit=256",
+        "--ulimit",
+        "memlock=536870912:536870912",
+        "--tmpfs",
+        "/tmp:rw,exec,nosuid,nodev,size=2g",
+        "-e",
+        "EXPECTED_COMMIT=3955b98d43b312324aa8d52775df52cfb111c0d0",
+        "-e",
+        "LAVIK_MONITOR_HOLD=0",
+        "sha256:b9bf2ffd914d12edab1c4623bc7589d674f45b5d1639e935f7ef839f534b065d",
+        "ha"
+      ],
+      "execution": {
+        "layout": "ha",
+        "platform": "Linux-7.0.12-linuxkit-aarch64-with-glibc2.39",
+        "sourceCommit": "3955b98d43b312324aa8d52775df52cfb111c0d0",
+        "status": "passed",
+        "steps": [
+          {
+            "argv": [
+              "bash",
+              "-euo",
+              "pipefail",
+              "/verification/snippets/versions.sh"
+            ],
+            "exitCode": 0,
+            "stdout": "lavik 0.1.0-beta.1\nlavik-meta 0.1.0-beta.1 (nuraft 0b01b185b46b8e482f6c384b636c35605121a41e)\nlavik-ctl 0.1.0-beta.1",
+            "stderr": ""
+          },
+          {
+            "argv": [
+              "/tmp/package/lavik-ctl",
+              "--help"
+            ],
+            "exitCode": 0,
+            "stdout": "",
+            "stderr": "Usage:\n  /tmp/package/lavik-ctl --socket PATH [--timeout-ms N] COMMAND [ARG...]\n  /tmp/package/lavik-ctl --addr IP:PORT [--tls-ca FILE --tls-cert FILE --tls-key FILE]\n     [--tls-server-name NAME] [--timeout-ms N] COMMAND [ARG...]\n  /tmp/package/lavik-ctl cluster-status (--socket PATH | --addr IP:PORT)\n     [--tls-ca FILE --tls-cert FILE --tls-key FILE]\n     [--allow-plaintext-admin] [--timeout-ms N] [--json]\n  /tmp/package/lavik-ctl cluster-create --manifest FILE (--socket PATH | --addr IP:PORT)\n     [--tls-ca FILE --tls-cert FILE --tls-key FILE]\n     [--allow-plaintext-admin] [--timeout-ms N] [--yes]\n  /tmp/package/lavik-ctl failover GROUP (--socket PATH | --addr IP:PORT)\n     [--tls-ca FILE --tls-cert FILE --tls-key FILE]\n     [--allow-plaintext-admin] [--timeout-ms N]\n     [--failover-timeout-ms N]\n\nRecovery: --socket PATH promote GROUP --node NODE --accept-data-loss\nSelect one readable recovered population when no automatic candidate exists.\nDirect commands are sent to the specified Meta node as one line.\nstatus reports that node's state; cluster-status discovers the leader\nand reports cluster readiness. cluster-create creates the v1 multi-\nData, multi-Group topology and returns after its Genesis commit. Use\ncluster-status to follow creation and serving readiness. Options may\nprecede\nany local cluster command.\nDurability recovery uses: abortop ID, archiveoperations SEQ..., then\nexportoperations and pruneoperations SEQ....\nExit status is 0 for an OK reply, 2 for an ERR reply, and 1 for a\nlocal, connection, TLS, or malformed-protocol failure.\ncluster-status exits 0 for READY, 2 for NOT READY, 3 for RETRYABLE,\nand 1 for fatal errors. TCP discovery requires mTLS or explicit\n--allow-plaintext-admin; --json applies only to cluster-status.\ncluster-create exits 0 after Genesis commit, 2 for an explicit\nMeta rejection, 3 for a possibly committed interruption/timeout, and\n1 for local manifest, confirmation, or pre-mutation transport errors.\nfailover exits 0 after request commit, 2 for an explicit rejection,\n3 for an uncertain proposal outcome, and 1 for local/transport errors known to occur before submission."
+          },
+          {
+            "argv": [
+              "/tmp/package/lavik-ctl",
+              "start"
+            ],
+            "exitCode": 1,
+            "stdout": "",
+            "stderr": "lavik-ctl: exactly one of --socket and --addr is required"
+          },
+          {
+            "argv": [
+              "bash",
+              "-euo",
+              "pipefail",
+              "/verification/snippets/ha-init.sh"
+            ],
+            "exitCode": 0,
+            "stdout": "",
+            "stderr": ""
+          },
+          {
+            "argv": [
+              "bash",
+              "-euo",
+              "pipefail",
+              "/verification/snippets/ha-start.sh"
+            ],
+            "exitCode": 0,
+            "stdout": "",
+            "stderr": ""
+          },
+          {
+            "argv": [
+              "bash",
+              "-euo",
+              "pipefail",
+              "/verification/snippets/wait-meta.sh"
+            ],
+            "exitCode": 0,
+            "stdout": "",
+            "stderr": ""
+          },
+          {
+            "argv": [
+              "bash",
+              "-euo",
+              "pipefail",
+              "/verification/snippets/create.sh"
+            ],
+            "exitCode": 0,
+            "stdout": "Cluster create plan (schema v1)\n  Meta member: 1 raft=tcp://127.0.0.1:7101 data-control=tcp://127.0.0.1:7301 ctl=tcp://127.0.0.1:7201\n  Meta member: 2 raft=tcp://127.0.0.1:7102 data-control=tcp://127.0.0.1:7302 ctl=tcp://127.0.0.1:7202\n  Meta member: 3 raft=tcp://127.0.0.1:7103 data-control=tcp://127.0.0.1:7303 ctl=tcp://127.0.0.1:7203\n  Slot layout: contiguous-even\n  Data node: 1111111111111111111111111111111111111111 @ tcp://127.0.0.1:6371\n  Data node: 2222222222222222222222222222222222222222 @ tcp://127.0.0.1:6372\n  Group: group-1 primary=1111111111111111111111111111111111111111 replicas=2222222222222222222222222222222222222222\n  Slots: 0-16383 -> group-1\nWARNING: existing data on all Data nodes will be erased.\nCluster create accepted: genesis committed=5 operation=6c8fce9222cd8e80d44bd8b6e0613a4c\nRun cluster-status to follow creation and runtime readiness.",
+            "stderr": ""
+          },
+          {
+            "argv": [
+              "bash",
+              "-euo",
+              "pipefail",
+              "/verification/snippets/wait-ready.sh"
+            ],
+            "exitCode": 0,
+            "stdout": "NOT READY\ncluster_state=creating lifecycle_revision=1\nroot_operation=6c8fce9222cd8e80d44bd8b6e0613a4c genesis_commit=5\ncluster_create_phase=submitted\nmeta_available=yes membership_stable=yes topology_converged=yes serving_ready=no\nblocker cluster_create_active cluster non_terminal_cluster_create_operation_exists\nblocker data_unregistered node:1111111111111111111111111111111111111111 declared_identity_not_committed\nblocker data_unregistered node:2222222222222222222222222222222222222222 declared_identity_not_committed\nblocker meta_catching_up meta initial_meta_members_have_not_applied_create_barrier\nblocker slots_unassigned cluster coverage_is_not_0_through_16383\nstatus_explanation=Genesis is committed and the creation workflow is still running\nnext_action=wait and rerun cluster-status; inspect Meta logs if the phase stops advancing\nNOT READY\ncluster_state=creating lifecycle_revision=1\nroot_operation=6c8fce9222cd8e80d44bd8b6e0613a4c genesis_commit=5\ncluster_create_phase=wait-data-projection\nmeta_available=yes membership_stable=yes topology_converged=no serving_ready=no\nblocker cluster_create_active cluster non_terminal_cluster_create_operation_exists\nblocker data_session_missing node:2222222222222222222222222222222222222222 observed_node_has_no_current_session\nblocker group_not_serving group:group-1 authority_or_recent_lease_missing\nblocker group_runtime_not_converged group:group-1 current_projection_health_or_population_missing\nblocker node_runtime_not_ready node:1111111111111111111111111111111111111111 group=group-1;missing=population\nblocker node_runtime_not_ready node:2222222222222222222222222222222222222222 group=group-1;missing=session,projection,health,population\nautomatic_failover group=group-1 state=blocked current_reason=- suspect_elapsed_ms=0 effective_threshold_ms=5000 blocked_reason=indeterminate_evidence\nstatus_explanation=Genesis is committed and the creation workflow is still running\nnext_action=wait and rerun cluster-status; inspect Meta logs if the phase stops advancing\nNOT READY\ncluster_state=creating lifecycle_revision=1\nroot_operation=6c8fce9222cd8e80d44bd8b6e0613a4c genesis_commit=5\ncluster_create_phase=initialize-groups\nmeta_available=yes membership_stable=yes topology_converged=no serving_ready=yes\nblocker cluster_create_active cluster non_terminal_cluster_create_operation_exists\nblocker group_runtime_not_converged group:group-1 current_projection_health_or_population_missing\nblocker node_runtime_not_ready node:2222222222222222222222222222222222222222 group=group-1;missing=population\nautomatic_failover group=group-1 state=blocked current_reason=- suspect_elapsed_ms=0 effective_threshold_ms=5000 blocked_reason=indeterminate_evidence\nstatus_explanation=Genesis is committed and the creation workflow is still running\nnext_action=wait and rerun cluster-status; inspect Meta logs if the phase stops advancing\nNOT READY\ncluster_state=created lifecycle_revision=2\nroot_operation=6c8fce9222cd8e80d44bd8b6e0613a4c genesis_commit=5\nmeta_available=yes membership_stable=yes topology_converged=no serving_ready=no\nblocker group_not_serving group:group-1 authority_or_recent_lease_missing\nblocker group_runtime_not_converged group:group-1 current_projection_health_or_population_missing\nblocker node_runtime_not_ready node:1111111111111111111111111111111111111111 group=group-1;missing=session,projection,health,population\nblocker node_runtime_not_ready node:2222222222222222222222222222222222222222 group=group-1;missing=session,projection,health,population\nautomatic_failover group=group-1 state=blocked current_reason=- suspect_elapsed_ms=0 effective_threshold_ms=5000 blocked_reason=leadership_warmup\nstatus_explanation=creation completed but current runtime readiness is blocked\nnext_action=inspect blockers and Data-node sessions, then rerun cluster-status\nREADY\ncluster_state=created lifecycle_revision=2\nroot_operation=6c8fce9222cd8e80d44bd8b6e0613a4c genesis_commit=5\nmeta_available=yes membership_stable=yes topology_converged=yes serving_ready=yes\nautomatic_failover group=group-1 state=blocked current_reason=- suspect_elapsed_ms=0 effective_threshold_ms=5000 blocked_reason=leadership_warmup\nstatus_explanation=creation and current runtime readiness are healthy\nnext_action=none",
+            "stderr": ""
+          },
+          {
+            "argv": [
+              "bash",
+              "-euo",
+              "pipefail",
+              "/verification/snippets/status.sh"
+            ],
+            "exitCode": 0,
+            "stdout": "{\"schema_version\":1,\"result\":\"ready\",\"readiness_basis\":\"meta_observed_v1\",\"cluster_state\":\"created\",\"lifecycle_revision\":\"2\",\"root_operation_id\":\"6c8fce9222cd8e80d44bd8b6e0613a4c\",\"genesis_commit_index\":\"5\",\"cluster_create_phase\":null,\"provisioning_failure_summary\":null,\"meta_available\":true,\"meta_membership_stable\":true,\"topology_converged\":true,\"serving_ready\":true,\"cluster_ready\":true,\"capture\":{\"responder_id\":\"2\",\"term\":\"1\",\"config_index\":\"1\",\"committed_index\":\"35\",\"topology_epoch\":\"6\"},\"meta_members\":[{\"server_id\":\"1\",\"leader\":false,\"ctl_endpoint\":\"127.0.0.1:7201\"},{\"server_id\":\"2\",\"leader\":true,\"ctl_endpoint\":\"127.0.0.1:7202\"},{\"server_id\":\"3\",\"leader\":false,\"ctl_endpoint\":\"127.0.0.1:7203\"}],\"data_nodes\":[{\"node_id\":\"1111111111111111111111111111111111111111\",\"role\":\"primary\",\"retired\":false,\"group_id\":\"group-1\",\"current_session\":true,\"projection_current\":true,\"health_fresh\":true,\"population_current\":true,\"lease\":\"recently_granted\"},{\"node_id\":\"2222222222222222222222222222222222222222\",\"role\":\"replica\",\"retired\":false,\"group_id\":\"group-1\",\"current_session\":true,\"projection_current\":true,\"health_fresh\":true,\"population_current\":true,\"lease\":\"unknown\"}],\"groups\":[{\"group_id\":\"group-1\",\"term\":\"1\",\"owner_node_id\":\"1111111111111111111111111111111111111111\",\"serving_ready\":true,\"topology_converged\":true,\"automatic_failover_state\":\"blocked\",\"current_reason\":null,\"suspect_elapsed_ms\":\"0\",\"effective_threshold_ms\":\"5000\",\"blocked_reason\":\"leadership_warmup\"}],\"slot_ranges\":[{\"first\":\"0\",\"last\":\"16383\",\"group_id\":\"group-1\"}],\"blockers\":[],\"retry\":null,\"status_explanation\":\"creation and current runtime readiness are healthy\",\"next_action\":\"none\"}",
+            "stderr": ""
+          },
+          {
+            "argv": [
+              "bash",
+              "-euo",
+              "pipefail",
+              "/verification/snippets/wait-follower.sh"
+            ],
+            "exitCode": 1,
+            "stdout": "",
+            "stderr": "# Replication\nrole:slave\nlavik_replication_state:syncing\nlavik_replication_failed_stopped:0\nlavik_replication_role_epoch:4\nlavik_replication_group_id:67726f75702d31\nlavik_replication_boot_id:03f3b12ab2228ed0b0f9e3d05252b01671b90578\nlavik_replica_incarnation:83ed87c0fbfc55499de4ea613ed90b65dba282ca\nlavik_function_catalog_generation:1\nlavik_function_catalog_crc64:0\nmaster_replid:914135c69fb53843e555dba4d3baccd64a5fd893\nmaster_replid2:0000000000000000000000000000000000000000\nmaster_repl_offset:1\nsecond_repl_offset:-1\nmaster_host:127.0.0.1\nmaster_port:6371\nmaster_link_status:down\nmaster_last_io_seconds_ago:119\nmaster_link_down_since_seconds:119\nslave_repl_offset:1\nslave_priority:100\nreplica_announced:1\nlavik_source_workers:1\nlavik_connected_flows:0\nslave_read_only:1\nmaster_sync_in_progress:1\n\nFollower is not synchronized; inspect its log and Meta observations."
+          },
+          {
+            "argv": [
+              "bash",
+              "-euo",
+              "pipefail",
+              "/verification/snippets/restart-follower.sh"
+            ],
+            "exitCode": 0,
+            "stdout": "",
+            "stderr": ""
+          },
+          {
+            "argv": [
+              "bash",
+              "-euo",
+              "pipefail",
+              "/verification/snippets/wait-follower.sh"
+            ],
+            "exitCode": 0,
+            "stdout": "# Replication\nrole:slave\nlavik_replication_state:online\nlavik_replication_failed_stopped:0\nlavik_replication_role_epoch:2\nlavik_replication_group_id:67726f75702d31\nlavik_replication_boot_id:bb80af6273b6330635128f01ed07da355da3359e\nlavik_replica_incarnation:ab6946a40ef8f1501b01c652868a5959e205bf2d\nlavik_function_catalog_generation:2\nlavik_function_catalog_crc64:0\nmaster_replid:914135c69fb53843e555dba4d3baccd64a5fd893\nmaster_replid2:0000000000000000000000000000000000000000\nmaster_repl_offset:1\nsecond_repl_offset:-1\nmaster_host:127.0.0.1\nmaster_port:6371\nmaster_link_status:up\nmaster_last_io_seconds_ago:0\nmaster_link_down_since_seconds:0\nslave_repl_offset:1\nslave_priority:100\nreplica_announced:1\nlavik_source_workers:1\nlavik_connected_flows:1\nslave_read_only:1\nmaster_sync_in_progress:0",
+            "stderr": ""
+          },
+          {
+            "argv": [
+              "bash",
+              "-euo",
+              "pipefail",
+              "/verification/snippets/ha-client.sh"
+            ],
+            "exitCode": 0,
+            "stdout": "OK\n1\nhello from Lavik\nhello from Lavik\n0\n16383\n127.0.0.1\n6371\n1111111111111111111111111111111111111111\n127.0.0.1\n6372\n2222222222222222222222222222222222222222",
+            "stderr": ""
+          },
+          {
+            "argv": [
+              "bash",
+              "-euo",
+              "pipefail",
+              "/verification/snippets/inspect.sh"
+            ],
+            "exitCode": 0,
+            "stdout": "OK leader=0 id=1 committed=35 snapshot_idx=0 term=1 audit_policy=bounded-rotate audit_size=34 audit_capacity=65536 audit_dropped_total=0 audit_dropped_through=0\nOK leader=1 id=2 committed=35 snapshot_idx=0 term=1 audit_policy=bounded-rotate audit_size=34 audit_capacity=65536 audit_dropped_total=0 audit_dropped_through=0\nOK leader=0 id=3 committed=35 snapshot_idx=0 term=1 audit_policy=bounded-rotate audit_size=34 audit_capacity=65536 audit_dropped_total=0 audit_dropped_through=0",
+            "stderr": ""
+          },
+          {
+            "argv": [
+              "bash",
+              "-euo",
+              "pipefail",
+              "/verification/snippets/leader-reads.sh"
+            ],
+            "exitCode": 0,
+            "stdout": "OK candidates=1 node=2222222222222222222222222222222222222222,assignment=a9888ff7d3170b9cbfaaaae8f0399b8c,term=1,manifest=1,partition_epoch=1,history=d26f170955b5287b849b948422024d05d4b3212d,storage_ready=true,population_ready=true,source_term=1,source_node=1111111111111111111111111111111111111111,source_history=914135c69fb53843e555dba4d3baccd64a5fd893\nOK version=1 content={\"kind\":\"automatic-uncontrolled-failover-v1\",\"suspect_after_ms\":5000}\nOK version=1 content={\"kind\":\"authority-lease-v1\",\"duration_ms\":5000}\nOK version=1 content={\"kind\":\"candidate-recovery-v1\",\"budget_ms\":2000}",
+            "stderr": ""
+          },
+          {
+            "argv": [
+              "bash",
+              "-euo",
+              "pipefail",
+              "/verification/snippets/failover.sh"
+            ],
+            "exitCode": 0,
+            "stdout": "Controlled failover accepted: commit=36 operation=2ed8988534123a1992aa9a9d49a5664b\nUse getop 2ed8988534123a1992aa9a9d49a5664b to follow the terminal result.",
+            "stderr": ""
+          },
+          {
+            "argv": [
+              "bash",
+              "-euo",
+              "pipefail",
+              "/verification/snippets/follow-operation.sh"
+            ],
+            "exitCode": 0,
+            "stdout": "OK submitted",
+            "stderr": ""
+          },
+          {
+            "argv": [
+              "bash",
+              "-euo",
+              "pipefail",
+              "/verification/snippets/wait-ready.sh"
+            ],
+            "exitCode": 0,
+            "stdout": "NOT READY\ncluster_state=created lifecycle_revision=2\nroot_operation=6c8fce9222cd8e80d44bd8b6e0613a4c genesis_commit=5\nmeta_available=yes membership_stable=yes topology_converged=no serving_ready=no\nblocker group_not_serving group:group-1 authority_or_recent_lease_missing\nblocker group_runtime_not_converged group:group-1 current_projection_health_or_population_missing\nblocker node_runtime_not_ready node:2222222222222222222222222222222222222222 group=group-1;missing=session,projection,health,population\nautomatic_failover group=group-1 state=suspect current_reason=session_missing suspect_elapsed_ms=239 effective_threshold_ms=5000 blocked_reason=-\nstatus_explanation=creation completed but current runtime readiness is blocked\nnext_action=inspect blockers and Data-node sessions, then rerun cluster-status\nNOT READY\ncluster_state=created lifecycle_revision=2\nroot_operation=6c8fce9222cd8e80d44bd8b6e0613a4c genesis_commit=5\nmeta_available=yes membership_stable=yes topology_converged=yes serving_ready=no\nblocker group_not_serving group:group-1 authority_or_recent_lease_missing\nautomatic_failover group=group-1 state=blocked current_reason=- suspect_elapsed_ms=825 effective_threshold_ms=5000 blocked_reason=authority_handoff\nstatus_explanation=creation completed but current runtime readiness is blocked\nnext_action=inspect blockers and Data-node sessions, then rerun cluster-status\nREADY\ncluster_state=created lifecycle_revision=2\nroot_operation=6c8fce9222cd8e80d44bd8b6e0613a4c genesis_commit=5\nmeta_available=yes membership_stable=yes topology_converged=yes serving_ready=yes\nautomatic_failover group=group-1 state=healthy current_reason=- suspect_elapsed_ms=0 effective_threshold_ms=5000 blocked_reason=-\nstatus_explanation=creation and current runtime readiness are healthy\nnext_action=none",
+            "stderr": ""
+          },
+          {
+            "argv": [
+              "bash",
+              "-euo",
+              "pipefail",
+              "/verification/snippets/status.sh"
+            ],
+            "exitCode": 0,
+            "stdout": "{\"schema_version\":1,\"result\":\"ready\",\"readiness_basis\":\"meta_observed_v1\",\"cluster_state\":\"created\",\"lifecycle_revision\":\"2\",\"root_operation_id\":\"6c8fce9222cd8e80d44bd8b6e0613a4c\",\"genesis_commit_index\":\"5\",\"cluster_create_phase\":null,\"provisioning_failure_summary\":null,\"meta_available\":true,\"meta_membership_stable\":true,\"topology_converged\":true,\"serving_ready\":true,\"cluster_ready\":true,\"capture\":{\"responder_id\":\"2\",\"term\":\"1\",\"config_index\":\"1\",\"committed_index\":\"39\",\"topology_epoch\":\"7\"},\"meta_members\":[{\"server_id\":\"1\",\"leader\":false,\"ctl_endpoint\":\"127.0.0.1:7201\"},{\"server_id\":\"2\",\"leader\":true,\"ctl_endpoint\":\"127.0.0.1:7202\"},{\"server_id\":\"3\",\"leader\":false,\"ctl_endpoint\":\"127.0.0.1:7203\"}],\"data_nodes\":[{\"node_id\":\"1111111111111111111111111111111111111111\",\"role\":\"replica\",\"retired\":false,\"group_id\":\"group-1\",\"current_session\":true,\"projection_current\":true,\"health_fresh\":true,\"population_current\":true,\"lease\":\"unknown\"},{\"node_id\":\"2222222222222222222222222222222222222222\",\"role\":\"primary\",\"retired\":false,\"group_id\":\"group-1\",\"current_session\":true,\"projection_current\":true,\"health_fresh\":true,\"population_current\":true,\"lease\":\"recently_granted\"}],\"groups\":[{\"group_id\":\"group-1\",\"term\":\"2\",\"owner_node_id\":\"2222222222222222222222222222222222222222\",\"serving_ready\":true,\"topology_converged\":true,\"automatic_failover_state\":\"healthy\",\"current_reason\":null,\"suspect_elapsed_ms\":\"0\",\"effective_threshold_ms\":\"5000\",\"blocked_reason\":null}],\"slot_ranges\":[{\"first\":\"0\",\"last\":\"16383\",\"group_id\":\"group-1\"}],\"blockers\":[],\"retry\":null,\"status_explanation\":\"creation and current runtime readiness are healthy\",\"next_action\":\"none\"}",
+            "stderr": ""
+          },
+          {
+            "argv": [
+              "redis-cli",
+              "-c",
+              "-h",
+              "127.0.0.1",
+              "-p",
+              "6372",
+              "--raw",
+              "GET",
+              "greeting"
+            ],
+            "exitCode": 0,
+            "stdout": "hello from Lavik",
+            "stderr": ""
+          },
+          {
+            "argv": [
+              "redis-cli",
+              "-h",
+              "127.0.0.1",
+              "-p",
+              "6372",
+              "--raw"
+            ],
+            "exitCode": 0,
+            "stdout": "OK\n1",
+            "stderr": "",
+            "stdin": "SET crash-probe replicated\nWAIT 1 5000\n"
+          },
+          {
+            "argv": [
+              "bash",
+              "-euo",
+              "pipefail",
+              "/verification/snippets/stop.sh"
+            ],
+            "exitCode": 0,
+            "stdout": "",
+            "stderr": ""
+          },
+          {
+            "argv": [
+              "bash",
+              "-euo",
+              "pipefail",
+              "/verification/snippets/ha-start.sh"
+            ],
+            "exitCode": 0,
+            "stdout": "",
+            "stderr": ""
+          },
+          {
+            "argv": [
+              "bash",
+              "-euo",
+              "pipefail",
+              "/verification/snippets/wait-meta.sh"
+            ],
+            "exitCode": 0,
+            "stdout": "",
+            "stderr": ""
+          },
+          {
+            "argv": [
+              "bash",
+              "-euo",
+              "pipefail",
+              "/verification/snippets/wait-ready.sh"
+            ],
+            "exitCode": 0,
+            "stdout": "NOT READY\ncluster_state=created lifecycle_revision=2\nroot_operation=6c8fce9222cd8e80d44bd8b6e0613a4c genesis_commit=5\nmeta_available=yes membership_stable=yes topology_converged=no serving_ready=no\nblocker group_not_serving group:group-1 authority_or_recent_lease_missing\nblocker group_runtime_not_converged group:group-1 current_projection_health_or_population_missing\nblocker node_runtime_not_ready node:1111111111111111111111111111111111111111 group=group-1;missing=session,projection,health,population\nblocker node_runtime_not_ready node:2222222222222222222222222222222222222222 group=group-1;missing=session,projection,health,population\nautomatic_failover group=group-1 state=blocked current_reason=- suspect_elapsed_ms=0 effective_threshold_ms=5000 blocked_reason=leadership_warmup\nstatus_explanation=creation completed but current runtime readiness is blocked\nnext_action=inspect blockers and Data-node sessions, then rerun cluster-status\nNOT READY\ncluster_state=created lifecycle_revision=2\nroot_operation=6c8fce9222cd8e80d44bd8b6e0613a4c genesis_commit=5\nmeta_available=yes membership_stable=yes topology_converged=no serving_ready=no\nblocker group_not_serving group:group-1 authority_or_recent_lease_missing\nblocker group_runtime_not_converged group:group-1 current_projection_health_or_population_missing\nblocker node_runtime_not_ready node:1111111111111111111111111111111111111111 group=group-1;missing=population\nblocker node_runtime_not_ready node:2222222222222222222222222222222222222222 group=group-1;missing=population\nautomatic_failover group=group-1 state=blocked current_reason=- suspect_elapsed_ms=0 effective_threshold_ms=5000 blocked_reason=leadership_warmup\nstatus_explanation=creation completed but current runtime readiness is blocked\nnext_action=inspect blockers and Data-node sessions, then rerun cluster-status\nNOT READY\ncluster_state=created lifecycle_revision=2\nroot_operation=6c8fce9222cd8e80d44bd8b6e0613a4c genesis_commit=5\nmeta_available=yes membership_stable=yes topology_converged=no serving_ready=no\nblocker group_not_serving group:group-1 authority_or_recent_lease_missing\nblocker group_runtime_not_converged group:group-1 current_projection_health_or_population_missing\nblocker node_runtime_not_ready node:1111111111111111111111111111111111111111 group=group-1;missing=population\nblocker node_runtime_not_ready node:2222222222222222222222222222222222222222 group=group-1;missing=population\nautomatic_failover group=group-1 state=blocked current_reason=- suspect_elapsed_ms=0 effective_threshold_ms=5000 blocked_reason=leadership_warmup\nstatus_explanation=creation completed but current runtime readiness is blocked\nnext_action=inspect blockers and Data-node sessions, then rerun cluster-status\nNOT READY\ncluster_state=created lifecycle_revision=2\nroot_operation=6c8fce9222cd8e80d44bd8b6e0613a4c genesis_commit=5\nmeta_available=yes membership_stable=yes topology_converged=no serving_ready=no\nblocker group_not_serving group:group-1 authority_or_recent_lease_missing\nblocker group_runtime_not_converged group:group-1 current_projection_health_or_population_missing\nblocker node_runtime_not_ready node:1111111111111111111111111111111111111111 group=group-1;missing=population\nblocker node_runtime_not_ready node:2222222222222222222222222222222222222222 group=group-1;missing=population\nautomatic_failover group=group-1 state=blocked current_reason=- suspect_elapsed_ms=0 effective_threshold_ms=5000 blocked_reason=leadership_warmup\nstatus_explanation=creation completed but current runtime readiness is blocked\nnext_action=inspect blockers and Data-node sessions, then rerun cluster-status\nNOT READY\ncluster_state=created lifecycle_revision=2\nroot_operation=6c8fce9222cd8e80d44bd8b6e0613a4c genesis_commit=5\nmeta_available=yes membership_stable=yes topology_converged=no serving_ready=no\nblocker group_not_serving group:group-1 authority_or_recent_lease_missing\nblocker group_runtime_not_converged group:group-1 current_projection_health_or_population_missing\nblocker node_runtime_not_ready node:1111111111111111111111111111111111111111 group=group-1;missing=population\nblocker node_runtime_not_ready node:2222222222222222222222222222222222222222 group=group-1;missing=population\nautomatic_failover group=group-1 state=blocked current_reason=- suspect_elapsed_ms=0 effective_threshold_ms=5000 blocked_reason=leadership_warmup\nstatus_explanation=creation completed but current runtime readiness is blocked\nnext_action=inspect blockers and Data-node sessions, then rerun cluster-status\nNOT READY\ncluster_state=created lifecycle_revision=2\nroot_operation=6c8fce9222cd8e80d44bd8b6e0613a4c genesis_commit=5\nmeta_available=yes membership_stable=yes topology_converged=no serving_ready=no\nblocker group_not_serving group:group-1 authority_or_recent_lease_missing\nblocker group_runtime_not_converged group:group-1 current_projection_health_or_population_missing\nblocker node_runtime_not_ready node:1111111111111111111111111111111111111111 group=group-1;missing=population\nblocker node_runtime_not_ready node:2222222222222222222222222222222222222222 group=group-1;missing=population\nautomatic_failover group=group-1 state=blocked current_reason=- suspect_elapsed_ms=0 effective_threshold_ms=5000 blocked_reason=leadership_warmup\nstatus_explanation=creation completed but current runtime readiness is blocked\nnext_action=inspect blockers and Data-node sessions, then rerun cluster-status\nNOT READY\ncluster_state=created lifecycle_revision=2\nroot_operation=6c8fce9222cd8e80d44bd8b6e0613a4c genesis_commit=5\nmeta_available=yes membership_stable=yes topology_converged=no serving_ready=no\nblocker group_not_serving group:group-1 authority_or_recent_lease_missing\nblocker group_runtime_not_converged group:group-1 current_projection_health_or_population_missing\nblocker node_runtime_not_ready node:1111111111111111111111111111111111111111 group=group-1;missing=population\nblocker node_runtime_not_ready node:2222222222222222222222222222222222222222 group=group-1;missing=population\nautomatic_failover group=group-1 state=blocked current_reason=- suspect_elapsed_ms=0 effective_threshold_ms=5000 blocked_reason=leadership_warmup\nstatus_explanation=creation completed but current runtime readiness is blocked\nnext_action=inspect blockers and Data-node sessions, then rerun cluster-status\nNOT READY\ncluster_state=created lifecycle_revision=2\nroot_operation=6c8fce9222cd8e80d44bd8b6e0613a4c genesis_commit=5\nmeta_available=yes membership_stable=yes topology_converged=no serving_ready=no\nblocker group_not_serving group:group-1 authority_or_recent_lease_missing\nblocker group_runtime_not_converged group:group-1 current_projection_health_or_population_missing\nblocker node_runtime_not_ready node:1111111111111111111111111111111111111111 group=group-1;missing=population\nblocker node_runtime_not_ready node:2222222222222222222222222222222222222222 group=group-1;missing=population\nautomatic_failover group=group-1 state=blocked current_reason=- suspect_elapsed_ms=0 effective_threshold_ms=5000 blocked_reason=leadership_warmup\nstatus_explanation=creation completed but current runtime readiness is blocked\nnext_action=inspect blockers and Data-node sessions, then rerun cluster-status\nNOT READY\ncluster_state=created lifecycle_revision=2\nroot_operation=6c8fce9222cd8e80d44bd8b6e0613a4c genesis_commit=5\nmeta_available=yes membership_stable=yes topology_converged=no serving_ready=no\nblocker group_not_serving group:group-1 authority_or_recent_lease_missing\nblocker group_runtime_not_converged group:group-1 current_projection_health_or_population_missing\nblocker node_runtime_not_ready node:1111111111111111111111111111111111111111 group=group-1;missing=population\nblocker node_runtime_not_ready node:2222222222222222222222222222222222222222 group=group-1;missing=population\nautomatic_failover group=group-1 state=blocked current_reason=- suspect_elapsed_ms=0 effective_threshold_ms=5000 blocked_reason=leadership_warmup\nstatus_explanation=creation completed but current runtime readiness is blocked\nnext_action=inspect blockers and Data-node sessions, then rerun cluster-status\nNOT READY\ncluster_state=created lifecycle_revision=2\nroot_operation=6c8fce9222cd8e80d44bd8b6e0613a4c genesis_commit=5\nmeta_available=yes membership_stable=yes topology_converged=no serving_ready=no\nblocker group_not_serving group:group-1 authority_or_recent_lease_missing\nblocker group_runtime_not_converged group:group-1 current_projection_health_or_population_missing\nblocker node_runtime_not_ready node:1111111111111111111111111111111111111111 group=group-1;missing=population\nblocker node_runtime_not_ready node:2222222222222222222222222222222222222222 group=group-1;missing=population\nautomatic_failover group=group-1 state=blocked current_reason=- suspect_elapsed_ms=0 effective_threshold_ms=5000 blocked_reason=leadership_warmup\nstatus_explanation=creation completed but current runtime readiness is blocked\nnext_action=inspect blockers and Data-node sessions, then rerun cluster-status\nNOT READY\ncluster_state=created lifecycle_revision=2\nroot_operation=6c8fce9222cd8e80d44bd8b6e0613a4c genesis_commit=5\nmeta_available=yes membership_stable=yes topology_converged=no serving_ready=no\nblocker group_not_serving group:group-1 authority_or_recent_lease_missing\nblocker group_runtime_not_converged group:group-1 current_projection_health_or_population_missing\nblocker node_runtime_not_ready node:1111111111111111111111111111111111111111 group=group-1;missing=population\nblocker node_runtime_not_ready node:2222222222222222222222222222222222222222 group=group-1;missing=population\nautomatic_failover group=group-1 state=blocked current_reason=- suspect_elapsed_ms=0 effective_threshold_ms=5000 blocked_reason=leadership_warmup\nstatus_explanation=creation completed but current runtime readiness is blocked\nnext_action=inspect blockers and Data-node sessions, then rerun cluster-status\nNOT READY\ncluster_state=created lifecycle_revision=2\nroot_operation=6c8fce9222cd8e80d44bd8b6e0613a4c genesis_commit=5\nmeta_available=yes membership_stable=yes topology_converged=no serving_ready=no\nblocker group_not_serving group:group-1 authority_or_recent_lease_missing\nblocker group_runtime_not_converged group:group-1 current_projection_health_or_population_missing\nblocker node_runtime_not_ready node:1111111111111111111111111111111111111111 group=group-1;missing=population\nblocker node_runtime_not_ready node:2222222222222222222222222222222222222222 group=group-1;missing=population\nautomatic_failover group=group-1 state=suspect current_reason=heartbeat_expired suspect_elapsed_ms=986 effective_threshold_ms=5000 blocked_reason=-\nstatus_explanation=creation completed but current runtime readiness is blocked\nnext_action=inspect blockers and Data-node sessions, then rerun cluster-status\nNOT READY\ncluster_state=created lifecycle_revision=2\nroot_operation=6c8fce9222cd8e80d44bd8b6e0613a4c genesis_commit=5\nmeta_available=yes membership_stable=yes topology_converged=no serving_ready=no\nblocker group_not_serving group:group-1 authority_or_recent_lease_missing\nblocker group_runtime_not_converged group:group-1 current_projection_health_or_population_missing\nblocker node_runtime_not_ready node:1111111111111111111111111111111111111111 group=group-1;missing=population\nblocker node_runtime_not_ready node:2222222222222222222222222222222222222222 group=group-1;missing=population\nautomatic_failover group=group-1 state=suspect current_reason=heartbeat_expired suspect_elapsed_ms=1969 effective_threshold_ms=5000 blocked_reason=-\nstatus_explanation=creation completed but current runtime readiness is blocked\nnext_action=inspect blockers and Data-node sessions, then rerun cluster-status\nNOT READY\ncluster_state=created lifecycle_revision=2\nroot_operation=6c8fce9222cd8e80d44bd8b6e0613a4c genesis_commit=5\nmeta_available=yes membership_stable=yes topology_converged=no serving_ready=no\nblocker group_not_serving group:group-1 authority_or_recent_lease_missing\nblocker group_runtime_not_converged group:group-1 current_projection_health_or_population_missing\nblocker node_runtime_not_ready node:1111111111111111111111111111111111111111 group=group-1;missing=population\nblocker node_runtime_not_ready node:2222222222222222222222222222222222222222 group=group-1;missing=population\nautomatic_failover group=group-1 state=suspect current_reason=heartbeat_expired suspect_elapsed_ms=2978 effective_threshold_ms=5000 blocked_reason=-\nstatus_explanation=creation completed but current runtime readiness is blocked\nnext_action=inspect blockers and Data-node sessions, then rerun cluster-status\nNOT READY\ncluster_state=created lifecycle_revision=2\nroot_operation=6c8fce9222cd8e80d44bd8b6e0613a4c genesis_commit=5\nmeta_available=yes membership_stable=yes topology_converged=no serving_ready=no\nblocker group_not_serving group:group-1 authority_or_recent_lease_missing\nblocker group_runtime_not_converged group:group-1 current_projection_health_or_population_missing\nblocker node_runtime_not_ready node:1111111111111111111111111111111111111111 group=group-1;missing=population\nblocker node_runtime_not_ready node:2222222222222222222222222222222222222222 group=group-1;missing=population\nautomatic_failover group=group-1 state=suspect current_reason=heartbeat_expired suspect_elapsed_ms=3996 effective_threshold_ms=5000 blocked_reason=-\nstatus_explanation=creation completed but current runtime readiness is blocked\nnext_action=inspect blockers and Data-node sessions, then rerun cluster-status\nNOT READY\ncluster_state=created lifecycle_revision=2\nroot_operation=6c8fce9222cd8e80d44bd8b6e0613a4c genesis_commit=5\nmeta_available=yes membership_stable=yes topology_converged=no serving_ready=no\nblocker group_not_serving group:group-1 authority_or_recent_lease_missing\nblocker group_runtime_not_converged group:group-1 current_projection_health_or_population_missing\nblocker node_runtime_not_ready node:1111111111111111111111111111111111111111 group=group-1;missing=population\nblocker node_runtime_not_ready node:2222222222222222222222222222222222222222 group=group-1;missing=population\nautomatic_failover group=group-1 state=suspect current_reason=heartbeat_expired suspect_elapsed_ms=4977 effective_threshold_ms=5000 blocked_reason=-\nstatus_explanation=creation completed but current runtime readiness is blocked\nnext_action=inspect blockers and Data-node sessions, then rerun cluster-status\nNOT READY\ncluster_state=created lifecycle_revision=2\nroot_operation=6c8fce9222cd8e80d44bd8b6e0613a4c genesis_commit=5\nmeta_available=yes membership_stable=yes topology_converged=no serving_ready=no\nblocker group_not_serving group:group-1 authority_or_recent_lease_missing\nblocker group_runtime_not_converged group:group-1 current_projection_health_or_population_missing\nblocker node_runtime_not_ready node:1111111111111111111111111111111111111111 group=group-1;missing=population\nblocker node_runtime_not_ready node:2222222222222222222222222222222222222222 group=group-1;missing=population\nautomatic_failover group=group-1 state=blocked current_reason=- suspect_elapsed_ms=0 effective_threshold_ms=5000 blocked_reason=failover_transition\nstatus_explanation=creation completed but current runtime readiness is blocked\nnext_action=inspect blockers and Data-node sessions, then rerun cluster-status\nNOT READY\ncluster_state=created lifecycle_revision=2\nroot_operation=6c8fce9222cd8e80d44bd8b6e0613a4c genesis_commit=5\nmeta_available=yes membership_stable=yes topology_converged=no serving_ready=no\nblocker group_not_serving group:group-1 authority_or_recent_lease_missing\nblocker group_runtime_not_converged group:group-1 current_projection_health_or_population_missing\nblocker node_runtime_not_ready node:1111111111111111111111111111111111111111 group=group-1;missing=session,projection,health,population\nblocker node_runtime_not_ready node:2222222222222222222222222222222222222222 group=group-1;missing=population\nautomatic_failover group=group-1 state=suspect current_reason=session_missing suspect_elapsed_ms=756 effective_threshold_ms=5000 blocked_reason=-\nstatus_explanation=creation completed but current runtime readiness is blocked\nnext_action=inspect blockers and Data-node sessions, then rerun cluster-status\nNOT READY\ncluster_state=created lifecycle_revision=2\nroot_operation=6c8fce9222cd8e80d44bd8b6e0613a4c genesis_commit=5\nmeta_available=yes membership_stable=yes topology_converged=no serving_ready=yes\nblocker group_runtime_not_converged group:group-1 current_projection_health_or_population_missing\nblocker node_runtime_not_ready node:2222222222222222222222222222222222222222 group=group-1;missing=population\nautomatic_failover group=group-1 state=healthy current_reason=- suspect_elapsed_ms=0 effective_threshold_ms=5000 blocked_reason=-\nstatus_explanation=creation completed but current runtime readiness is blocked\nnext_action=inspect blockers and Data-node sessions, then rerun cluster-status\nREADY\ncluster_state=created lifecycle_revision=2\nroot_operation=6c8fce9222cd8e80d44bd8b6e0613a4c genesis_commit=5\nmeta_available=yes membership_stable=yes topology_converged=yes serving_ready=yes\nautomatic_failover group=group-1 state=healthy current_reason=- suspect_elapsed_ms=0 effective_threshold_ms=5000 blocked_reason=-\nstatus_explanation=creation and current runtime readiness are healthy\nnext_action=none",
+            "stderr": ""
+          },
+          {
+            "argv": [
+              "redis-cli",
+              "-c",
+              "-h",
+              "127.0.0.1",
+              "-p",
+              "6371",
+              "--raw",
+              "GET",
+              "greeting"
+            ],
+            "exitCode": 0,
+            "stdout": "hello from Lavik",
+            "stderr": ""
+          },
+          {
+            "argv": [
+              "redis-cli",
+              "-h",
+              "127.0.0.1",
+              "-p",
+              "6371",
+              "--raw"
+            ],
+            "exitCode": 0,
+            "stdout": "OK\n1",
+            "stderr": "",
+            "stdin": "SET crash-probe replicated\nWAIT 1 5000\n"
+          },
+          {
+            "argv": [
+              "redis-cli",
+              "-c",
+              "-h",
+              "127.0.0.1",
+              "-p",
+              "6372",
+              "--raw",
+              "GET",
+              "crash-probe"
+            ],
+            "exitCode": 0,
+            "stdout": "replicated",
+            "stderr": ""
+          },
+          {
+            "argv": [
+              "bash",
+              "-euo",
+              "pipefail",
+              "/verification/snippets/stop.sh"
+            ],
+            "exitCode": 0,
+            "stdout": "",
+            "stderr": ""
+          }
+        ],
+        "initialStatus": {
+          "schema_version": 1,
+          "result": "ready",
+          "readiness_basis": "meta_observed_v1",
+          "cluster_state": "created",
+          "lifecycle_revision": "2",
+          "root_operation_id": "6c8fce9222cd8e80d44bd8b6e0613a4c",
+          "genesis_commit_index": "5",
+          "cluster_create_phase": null,
+          "provisioning_failure_summary": null,
+          "meta_available": true,
+          "meta_membership_stable": true,
+          "topology_converged": true,
+          "serving_ready": true,
+          "cluster_ready": true,
+          "capture": {
+            "responder_id": "2",
+            "term": "1",
+            "config_index": "1",
+            "committed_index": "35",
+            "topology_epoch": "6"
+          },
+          "meta_members": [
+            {
+              "server_id": "1",
+              "leader": false,
+              "ctl_endpoint": "127.0.0.1:7201"
+            },
+            {
+              "server_id": "2",
+              "leader": true,
+              "ctl_endpoint": "127.0.0.1:7202"
+            },
+            {
+              "server_id": "3",
+              "leader": false,
+              "ctl_endpoint": "127.0.0.1:7203"
+            }
+          ],
+          "data_nodes": [
+            {
+              "node_id": "1111111111111111111111111111111111111111",
+              "role": "primary",
+              "retired": false,
+              "group_id": "group-1",
+              "current_session": true,
+              "projection_current": true,
+              "health_fresh": true,
+              "population_current": true,
+              "lease": "recently_granted"
+            },
+            {
+              "node_id": "2222222222222222222222222222222222222222",
+              "role": "replica",
+              "retired": false,
+              "group_id": "group-1",
+              "current_session": true,
+              "projection_current": true,
+              "health_fresh": true,
+              "population_current": true,
+              "lease": "unknown"
+            }
+          ],
+          "groups": [
+            {
+              "group_id": "group-1",
+              "term": "1",
+              "owner_node_id": "1111111111111111111111111111111111111111",
+              "serving_ready": true,
+              "topology_converged": true,
+              "automatic_failover_state": "blocked",
+              "current_reason": null,
+              "suspect_elapsed_ms": "0",
+              "effective_threshold_ms": "5000",
+              "blocked_reason": "leadership_warmup"
+            }
+          ],
+          "slot_ranges": [
+            {
+              "first": "0",
+              "last": "16383",
+              "group_id": "group-1"
+            }
+          ],
+          "blockers": [],
+          "retry": null,
+          "status_explanation": "creation and current runtime readiness are healthy",
+          "next_action": "none"
+        },
+        "initialFollowerRecoveryNeeded": true,
+        "restartGuardNegatives": [
+          {
+            "case": "cli-unavailable",
+            "exitCode": 1,
+            "pidLookupReached": false
+          },
+          {
+            "case": "cli-not-ready",
+            "exitCode": 1,
+            "pidLookupReached": false
+          },
+          {
+            "case": "owner-not-serving",
+            "exitCode": 1,
+            "pidLookupReached": false
+          },
+          {
+            "case": "term-changed",
+            "exitCode": 1,
+            "pidLookupReached": false
+          },
+          {
+            "case": "transition-active",
+            "exitCode": 1,
+            "pidLookupReached": false
+          },
+          {
+            "case": "owner-stale",
+            "exitCode": 1,
+            "pidLookupReached": false
+          },
+          {
+            "case": "malformed",
+            "exitCode": 1,
+            "pidLookupReached": false
+          }
+        ],
+        "metrics": [
+          {
+            "port": 9101,
+            "samples": [
+              "lavik_commands_total 7",
+              "lavik_connected_clients 0",
+              "lavik_cluster_control_connected 1"
+            ]
+          },
+          {
+            "port": 9102,
+            "samples": [
+              "lavik_commands_total 2",
+              "lavik_connected_clients 0",
+              "lavik_cluster_control_connected 1"
+            ]
+          }
+        ],
+        "metricCommand": {
+          "argv": [
+            "bash",
+            "-euo",
+            "pipefail",
+            "/verification/snippets/metrics-ha.sh"
+          ],
+          "exitCode": 0,
+          "stderr": "",
+          "stdoutSha256": "6745aa07b2440611c2342e7712ea93a970114cda89f753b76a65a35eb1fadb39"
+        },
+        "controlledFailover": {
+          "argv": [
+            "/tmp/package/lavik-ctl",
+            "--socket",
+            "/tmp/package/ha-beta1/meta-2/meta-admin.sock",
+            "getop",
+            "2ed8988534123a1992aa9a9d49a5664b"
+          ],
+          "exitCode": 0,
+          "stdout": "OK completed failover-completed",
+          "stderr": ""
+        },
+        "afterFailover": {
+          "schema_version": 1,
+          "result": "ready",
+          "readiness_basis": "meta_observed_v1",
+          "cluster_state": "created",
+          "lifecycle_revision": "2",
+          "root_operation_id": "6c8fce9222cd8e80d44bd8b6e0613a4c",
+          "genesis_commit_index": "5",
+          "cluster_create_phase": null,
+          "provisioning_failure_summary": null,
+          "meta_available": true,
+          "meta_membership_stable": true,
+          "topology_converged": true,
+          "serving_ready": true,
+          "cluster_ready": true,
+          "capture": {
+            "responder_id": "2",
+            "term": "1",
+            "config_index": "1",
+            "committed_index": "39",
+            "topology_epoch": "7"
+          },
+          "meta_members": [
+            {
+              "server_id": "1",
+              "leader": false,
+              "ctl_endpoint": "127.0.0.1:7201"
+            },
+            {
+              "server_id": "2",
+              "leader": true,
+              "ctl_endpoint": "127.0.0.1:7202"
+            },
+            {
+              "server_id": "3",
+              "leader": false,
+              "ctl_endpoint": "127.0.0.1:7203"
+            }
+          ],
+          "data_nodes": [
+            {
+              "node_id": "1111111111111111111111111111111111111111",
+              "role": "replica",
+              "retired": false,
+              "group_id": "group-1",
+              "current_session": true,
+              "projection_current": true,
+              "health_fresh": true,
+              "population_current": true,
+              "lease": "unknown"
+            },
+            {
+              "node_id": "2222222222222222222222222222222222222222",
+              "role": "primary",
+              "retired": false,
+              "group_id": "group-1",
+              "current_session": true,
+              "projection_current": true,
+              "health_fresh": true,
+              "population_current": true,
+              "lease": "recently_granted"
+            }
+          ],
+          "groups": [
+            {
+              "group_id": "group-1",
+              "term": "2",
+              "owner_node_id": "2222222222222222222222222222222222222222",
+              "serving_ready": true,
+              "topology_converged": true,
+              "automatic_failover_state": "healthy",
+              "current_reason": null,
+              "suspect_elapsed_ms": "0",
+              "effective_threshold_ms": "5000",
+              "blocked_reason": null
+            }
+          ],
+          "slot_ranges": [
+            {
+              "first": "0",
+              "last": "16383",
+              "group_id": "group-1"
+            }
+          ],
+          "blockers": [],
+          "retry": null,
+          "status_explanation": "creation and current runtime readiness are healthy",
+          "next_action": "none"
+        },
+        "gracefulRestart": "passed",
+        "automaticFailover": {
+          "signal": "SIGKILL",
+          "failedNode": "1111111111111111111111111111111111111111",
+          "status": {
+            "schema_version": 1,
+            "result": "not_ready",
+            "readiness_basis": "meta_observed_v1",
+            "cluster_state": "created",
+            "lifecycle_revision": "2",
+            "root_operation_id": "6c8fce9222cd8e80d44bd8b6e0613a4c",
+            "genesis_commit_index": "5",
+            "cluster_create_phase": null,
+            "provisioning_failure_summary": null,
+            "meta_available": true,
+            "meta_membership_stable": true,
+            "topology_converged": false,
+            "serving_ready": true,
+            "cluster_ready": false,
+            "capture": {
+              "responder_id": "2",
+              "term": "2",
+              "config_index": "40",
+              "committed_index": "50",
+              "topology_epoch": "9"
+            },
+            "meta_members": [
+              {
+                "server_id": "1",
+                "leader": false,
+                "ctl_endpoint": "127.0.0.1:7201"
+              },
+              {
+                "server_id": "2",
+                "leader": true,
+                "ctl_endpoint": "127.0.0.1:7202"
+              },
+              {
+                "server_id": "3",
+                "leader": false,
+                "ctl_endpoint": "127.0.0.1:7203"
+              }
+            ],
+            "data_nodes": [
+              {
+                "node_id": "1111111111111111111111111111111111111111",
+                "role": "replica",
+                "retired": false,
+                "group_id": "group-1",
+                "current_session": false,
+                "projection_current": false,
+                "health_fresh": false,
+                "population_current": false,
+                "lease": "unknown"
+              },
+              {
+                "node_id": "2222222222222222222222222222222222222222",
+                "role": "primary",
+                "retired": false,
+                "group_id": "group-1",
+                "current_session": true,
+                "projection_current": true,
+                "health_fresh": true,
+                "population_current": true,
+                "lease": "recently_granted"
+              }
+            ],
+            "groups": [
+              {
+                "group_id": "group-1",
+                "term": "4",
+                "owner_node_id": "2222222222222222222222222222222222222222",
+                "serving_ready": true,
+                "topology_converged": false,
+                "automatic_failover_state": "healthy",
+                "current_reason": null,
+                "suspect_elapsed_ms": "0",
+                "effective_threshold_ms": "5000",
+                "blocked_reason": null
+              }
+            ],
+            "slot_ranges": [
+              {
+                "first": "0",
+                "last": "16383",
+                "group_id": "group-1"
+              }
+            ],
+            "blockers": [
+              {
+                "code": "group_runtime_not_converged",
+                "scope": "group:group-1",
+                "detail": "current_projection_health_or_population_missing"
+              },
+              {
+                "code": "node_runtime_not_ready",
+                "scope": "node:1111111111111111111111111111111111111111",
+                "detail": "group=group-1;missing=session,projection,health,population"
+              }
+            ],
+            "retry": null,
+            "status_explanation": "creation completed but current runtime readiness is blocked",
+            "next_action": "inspect blockers and Data-node sessions, then rerun cluster-status"
+          }
+        }
+      }
+    }
+  ],
+  "monitoring": {
+    "status": "passed",
+    "downloadUmask": "077",
+    "credentialsMode": "0600",
+    "upstreamFiles": {
+      "README.md": "4e6db4593821ca206a6d60bae094c8709160e828c87b06095d592d5d6dc60b50",
+      "compose.yaml": "e0c7711fbcebe8d9d09712de88dec29ca7d72f1218eee14ef44f1ac35c3d8a4f",
+      "prometheus/prometheus.yml": "ef9038db3a772cb30be706650bcffb97b52e6594d0d235eaa6202be00592f96b",
+      "grafana/dashboards/lavik-overview.json": "87f6bec1db82f5a1e7e021d3f0839b8771506d27e9c821b77da605bed71d946f",
+      "grafana/provisioning/datasources/prometheus.yaml": "397167c92d303cde794a4b3716a8a8d9bbbae73dd8aa31ed27dd408065013b86",
+      "grafana/provisioning/dashboards/lavik.yaml": "ed32df38a4899fd7bcfacbae0b99afb46e3f7a407a752edf49f3e54c8045adc6"
+    },
+    "composeVersion": "5.5.0",
+    "networkScope": "Published Linux host-network override validated; runtime uses one isolated Docker network namespace in place of host networking. No host ports exposed.",
+    "grafanaHealth": {
+      "database": "ok",
+      "version": "13.1.0",
+      "commit": "b309c9bb3b81a748c3a75289236a27309ed2566a"
+    },
+    "dashboard": {
+      "uid": "lavik-overview",
+      "title": "Lavik Overview",
+      "panels": 21
+    },
+    "datasourceHealth": {
+      "details": {
+        "application": "Prometheus",
+        "features": {
+          "rulerApiEnabled": false
+        }
+      },
+      "message": "Successfully queried the Prometheus API.",
+      "status": "OK"
+    },
+    "targets": [
+      {
+        "scrapeUrl": "http://127.0.0.1:9102/metrics",
+        "health": "up",
+        "lastError": ""
+      },
+      {
+        "scrapeUrl": "http://127.0.0.1:9101/metrics",
+        "health": "up",
+        "lastError": ""
+      }
+    ],
+    "upQuery": [
+      {
+        "metric": {
+          "__name__": "up",
+          "instance": "127.0.0.1:9102",
+          "job": "lavik",
+          "service": "lavik"
+        },
+        "value": [
+          1790352040.985,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "up",
+          "instance": "127.0.0.1:9101",
+          "job": "lavik",
+          "service": "lavik"
+        },
+        "value": [
+          1790352040.985,
+          "1"
+        ]
+      }
+    ],
+    "targetRefresh": [
+      {
+        "requested": [
+          "127.0.0.1:9101"
+        ],
+        "generatorStatus": "exited",
+        "generatorExitCode": 0,
+        "targets": [
+          {
+            "scrapeUrl": "http://127.0.0.1:9101/metrics",
+            "health": "up",
+            "lastError": ""
+          }
+        ]
+      },
+      {
+        "requested": [
+          "127.0.0.1:9101",
+          "127.0.0.1:9102"
+        ],
+        "generatorStatus": "exited",
+        "generatorExitCode": 0,
+        "targets": [
+          {
+            "scrapeUrl": "http://127.0.0.1:9101/metrics",
+            "health": "up",
+            "lastError": ""
+          },
+          {
+            "scrapeUrl": "http://127.0.0.1:9102/metrics",
+            "health": "up",
+            "lastError": ""
+          }
+        ]
+      }
+    ],
+    "images": {
+      "prometheus": [
+        "prom/prometheus@sha256:e4254400b85610324913f0dc4acf92603d9984e7519414c5a12811aa6146acc3"
+      ],
+      "grafana": [
+        "grafana/grafana@sha256:121a7a9ece6dc10b969f1f96eed64b4f07dfac0d0b8abc070f7cb83bbde86f63"
+      ],
+      "busybox": [
+        "busybox@sha256:bdf57e528e45e4433820e045b29b4597825a1c9e38353532d90a01445013f82e"
+      ]
+    }
+  }
+}

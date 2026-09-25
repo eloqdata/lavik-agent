@@ -3,6 +3,7 @@ import { articles, articlePath } from "../../../../packages/content/repository";
 import { manualRoutes } from "../../../../packages/manual/repository";
 import { useCases } from "../../../../packages/use-cases/content";
 import { blogTopics } from "../../../../packages/blog/topics";
+import { operationsRoutes } from "../../../../packages/operations/repository";
 export const dynamic = "force-static";
 export default function sitemap(): MetadataRoute.Sitemap {
   const paths = ["en", "zh-CN"].flatMap((locale) =>
@@ -27,6 +28,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ...["en", "zh-CN"].flatMap((locale) =>
       useCases.map((entry) => ({
         url: `https://lavik.dev/${locale}/use-cases/${entry.slug}/`,
+      })),
+    ),
+    ...["en", "zh-CN"].flatMap((locale) =>
+      operationsRoutes().map((route) => ({
+        url: `https://lavik.dev/${locale}/${route}/`,
       })),
     ),
     ...["en", "zh-CN"].flatMap((locale) =>

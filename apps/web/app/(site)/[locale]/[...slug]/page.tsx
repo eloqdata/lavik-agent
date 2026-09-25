@@ -36,6 +36,11 @@ import { DocsSidebar } from "../../../../components/docs-sidebar";
 import { UseCasePage, UseCasesHome } from "../../../../components/use-cases";
 import { useCases } from "../../../../../../packages/use-cases/content";
 import { QuickStartSetup } from "../../../../components/quick-start";
+import { OperationsPage } from "../../../../components/operations";
+import {
+  operationsGuides,
+  operationsRoutes,
+} from "../../../../../../packages/operations/repository";
 import { blogTopics } from "../../../../../../packages/blog/topics";
 import {
   BlogIndex,
@@ -69,6 +74,7 @@ export function generateStaticParams({
       })),
     ...indexRoutes.map((route) => ({ slug: route.split("/") })),
     ...manualRoutes().map((route) => ({ slug: route.split("/") })),
+    ...operationsRoutes().map((route) => ({ slug: route.split("/") })),
     ...useCases.map((entry) => ({ slug: ["use-cases", entry.slug] })),
     ...blogTopics.map((entry) => ({ slug: ["blog", "topic", entry.id] })),
   ];
@@ -84,6 +90,9 @@ export async function generateMetadata({
       ? useCases.find((entry) => entry.slug === slug[1])
       : undefined;
   const parsedLocale = localeSchema.parse(locale);
+  const operatorGuide = operationsGuides.find(
+    (g) => slug.join("/") === `docs/0.1.0/${g.id}`,
+  );
   const topic =
     slug.length === 3 && slug[0] === "blog" && slug[1] === "topic"
       ? blogTopics.find((entry) => entry.id === slug[2])
@@ -105,6 +114,7 @@ export async function generateMetadata({
     title:
       (topic ? `${topic.label[parsedLocale]} | Lavik Blog` : undefined) ??
       useCase?.title[parsedLocale] ??
+      operatorGuide?.title[parsedLocale] ??
       article?.title ??
       manualTitle(slug.join("/"), localeSchema.parse(locale)) ??
       titles[slug[0]]?.[locale === "en" ? 0 : 1],
@@ -115,6 +125,7 @@ export async function generateMetadata({
           : `阅读 Lavik 博客的${topic.label[parsedLocale]}文章。`
         : undefined) ??
       useCase?.summary[parsedLocale] ??
+      operatorGuide?.summary[parsedLocale] ??
       article?.summary ??
       (slug[0] === "download"
         ? locale === "en"
@@ -150,6 +161,11 @@ export default async function Page({
   if (route === "community") return <CommunityPage locale={locale} />;
   if (route === "docs" || route === "docs/0.1.0")
     return <DocsHome locale={locale} />;
+  const operatorGuide = operationsGuides.find(
+    (g) => route === `docs/0.1.0/${g.id}`,
+  );
+  if (operatorGuide)
+    return <OperationsPage locale={locale} guide={operatorGuide} />;
   if (manualTitle(route, locale))
     return <ManualPage route={route} locale={locale} />;
   const pages = articles().filter((a) => a.locale === locale);

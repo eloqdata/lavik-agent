@@ -1,0 +1,31 @@
+# Run from the extracted v0.1.0-beta.1 package directory.
+export LAVIK_BIN_DIR="$(pwd -P)"
+export LAVIK_ROOT="$LAVIK_BIN_DIR/single-beta1"
+# Initialization is for a new, empty directory only.
+test ! -e "$LAVIK_ROOT" || { echo "Already exists: $LAVIK_ROOT" >&2; exit 1; }
+umask 077
+mkdir -p "$LAVIK_ROOT"
+for i in 1; do mkdir "$LAVIK_ROOT/meta-$i"; done
+for i in 1; do
+  mkdir "$LAVIK_ROOT/data-$i"
+  fallocate -l 512M "$LAVIK_ROOT/data-$i/lavik.data"
+done
+cat > "$LAVIK_ROOT/cluster.toml" <<'TOML'
+schema_version = 1
+slot_strategy = "contiguous-even"
+
+[[meta_members]]
+id = 1
+raft_endpoint = "tcp://127.0.0.1:7101"
+data_control_endpoint = "tcp://127.0.0.1:7301"
+ctl_endpoint = "tcp://127.0.0.1:7201"
+
+[[data_nodes]]
+id = "1111111111111111111111111111111111111111"
+client_endpoint = "tcp://127.0.0.1:6371"
+
+[[groups]]
+id = "group-1"
+primary = "1111111111111111111111111111111111111111"
+replicas = []
+TOML

@@ -9,6 +9,7 @@ import {
   manualClients,
 } from "../../../packages/manual/repository";
 import { DocsNavigation, type DocLink } from "./docs-navigation";
+import { operationsGuides } from "../../../packages/operations/repository";
 
 export function DocsSidebar({
   locale,
@@ -34,6 +35,20 @@ export function DocsSidebar({
           href: `${root}/quick-start/`,
         },
       ],
+    },
+    {
+      title: zh ? "部署与运维" : "Deploy & operate",
+      links: operationsGuides.map((g) => ({
+        title:
+          g.layout === "single"
+            ? zh
+              ? "lavik-ctl：单节点"
+              : "lavik-ctl: single node"
+            : zh
+              ? "lavik-ctl：主从 HA"
+              : "lavik-ctl: primary–follower HA",
+        href: `${root}/${g.id}/`,
+      })),
     },
     {
       title: zh ? "使用 Lavik" : "Build with Lavik",
@@ -82,6 +97,15 @@ export function DocsSidebar({
   for (const group of groups)
     for (const link of group.links)
       indexed.set(link.href, { ...link, kind: group.title });
+  for (const guide of operationsGuides) {
+    const href = `${root}/${guide.id}/`;
+    indexed.set(href, {
+      title: guide.title[locale],
+      href,
+      keywords: `${guide.summary[locale]} Grafana Prometheus ${guide.sections.map((s) => s.title[locale]).join(" ")}`,
+      kind: zh ? "部署与运维" : "Deploy & operate",
+    });
+  }
   for (const article of articles().filter(
     (a) => a.locale === locale && (a.kind === "docs" || a.kind === "faq"),
   )) {

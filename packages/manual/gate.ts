@@ -5,6 +5,10 @@ import { isDeepStrictEqual } from "node:util";
 import { release } from "../content/repository";
 import { downloadEvidenceErrors } from "../content/downloads";
 import {
+  operationsEvidenceErrors,
+  operationsReviewedFiles,
+} from "../operations/repository";
+import {
   quickStartEvidenceErrors,
   quickStartVerificationFiles,
 } from "../quick-start/evidence";
@@ -352,6 +356,7 @@ export const manualReviewedPaths = () =>
         ].includes(f),
     ),
     "packages/content/downloads.ts",
+    ...operationsReviewedFiles(),
     "packages/quick-start/evidence.ts",
     ...quickStartVerificationFiles.filter(
       (f) => f !== "verification/recipes.json",
@@ -455,6 +460,7 @@ export function manualPublicationErrors({ requireReview = true } = {}) {
     });
     errors.push(...downloadEvidenceErrors());
     errors.push(...quickStartEvidenceErrors());
+    errors.push(...operationsEvidenceErrors());
     errors.push(...useCaseEvidenceErrors());
     if (
       inventory.commit !== release.commit ||

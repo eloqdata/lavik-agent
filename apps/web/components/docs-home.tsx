@@ -7,6 +7,7 @@ import {
 } from "../../../packages/manual/repository";
 import { requireReviewedManual } from "../../../packages/manual/gate";
 import { DocsSidebar } from "./docs-sidebar";
+import { operationsGuides } from "../../../packages/operations/repository";
 
 export function DocsHome({ locale }: { locale: Locale }) {
   const zh = locale === "zh-CN";
@@ -163,6 +164,19 @@ export function DocsHome({ locale }: { locale: Locale }) {
           </div>
         </section>
         <section className="docs-upstream" aria-labelledby="operations">
+          <h2>
+            {zh
+              ? "使用 lavik-ctl 部署与管理"
+              : "Deploy and manage with lavik-ctl"}
+          </h2>
+          <div className="docs-guide-list">
+            {operationsGuides.map((guide) => (
+              <Link key={guide.id} href={`${root}/${guide.id}/`}>
+                <h3>{guide.title[locale]} →</h3>
+                <p>{guide.summary[locale]}</p>
+              </Link>
+            ))}
+          </div>
           <h2 id="operations">
             {zh ? "继续阅读：运维指南" : "Go further: operations guides"}
           </h2>

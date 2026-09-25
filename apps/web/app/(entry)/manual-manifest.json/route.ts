@@ -1,5 +1,6 @@
 import { requireReviewedManual } from "../../../../../packages/manual/gate";
 import { manualRoutes } from "../../../../../packages/manual/repository";
+import { operationsRoutes } from "../../../../../packages/operations/repository";
 export const dynamic = "force-static";
 export function GET() {
   const publication = requireReviewedManual();
@@ -10,5 +11,8 @@ export function GET() {
     bundleHash: publication.bundleHash,
     reviewedAt: publication.reviewedAt,
     routes: manualRoutes().length * 2,
+    operatorGuides: ["en", "zh-CN"].flatMap((locale) =>
+      operationsRoutes().map((route) => `/${locale}/${route}/`),
+    ),
   });
 }

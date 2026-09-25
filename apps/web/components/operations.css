@@ -1,0 +1,75 @@
+.operations-toc {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px 24px;
+  padding: 22px;
+  margin: 28px 0 36px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--soft);
+  font-size: 14px;
+  font-weight: 600;
+}
+.operations-section {
+  scroll-margin-top: 28px;
+  margin-bottom: 46px;
+}
+.operations-guide .copy-code {
+  margin: 22px 0;
+}
+.operations-table {
+  max-width: 100%;
+  overflow-x: auto;
+  margin: 24px 0;
+}
+.operations-table table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+.operations-table th,
+.operations-table td {
+  padding: 14px;
+  border-bottom: 1px solid var(--line);
+  text-align: left;
+  vertical-align: top;
+}
+.operations-table th {
+  background: var(--soft);
+  color: var(--ink);
+}
+.operations-evidence {
+  border: 1px solid var(--line);
+  padding: 24px;
+  border-radius: 8px;
+  font-size: 14px;
+  line-height: 1.8;
+}
+.operations-evidence summary {
+  cursor: pointer;
+  font-weight: 600;
+  margin-top: 18px;
+}
+.operations-evidence a {
+  overflow-wrap: anywhere;
+}
+.operations-next {
+  display: grid;
+  gap: 8px;
+  margin-top: 32px;
+  padding: 24px;
+  background: var(--soft);
+  border-radius: 8px;
+}
+.operations-next span {
+  font-size: 13px;
+}
+@media (max-width: 640px) {
+  .operations-toc {
+    grid-template-columns: 1fr;
+  }
+  .operations-table th,
+  .operations-table td {
+    padding: 10px;
+  }
+}
