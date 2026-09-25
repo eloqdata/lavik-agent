@@ -39,10 +39,37 @@ def start_server(log):
     proc.wait()
     raise RuntimeError('Lavik did not become ready in 15 seconds')
 
+def stop_server(proc):
+    # The published foreground command deliberately does not replace the user's
+    # shell with exec. Signal the binary, then let Bash reap it and report status.
+    children = Path(f'/proc/{proc.pid}/task/{proc.pid}/children').read_text().split()
+    targets = [int(pid) for pid in children
+               if Path(f'/proc/{pid}/exe').resolve() == Path.cwd() / 'lavik']
+    if not targets and Path(f'/proc/{proc.pid}/exe').resolve() == Path.cwd() / 'lavik':
+        targets = [proc.pid]
+    if len(targets) != 1:
+        raise RuntimeError('Expected exactly one foreground Lavik process')
+    os.kill(targets[0], signal.SIGTERM)
+    if proc.wait(timeout=30) != 0:
+        raise RuntimeError('Unclean shutdown')
+
 try:
-    result['binaryVersion'] = execute(['lavik', '--version'])
-    result['sourceCommit'] = Path('/opt/lavik/REVISION').read_text().strip()
-    result['packageVersion'] = Path('/opt/lavik/VERSION').read_text().strip()
+    # Keep the shared image's PATH for other manual harnesses. Only this recipe
+    # models a fresh unpacked package, where users must enter its directory and
+    # invoke ./lavik explicitly. Matrix containers already start in that folder.
+    if not Path('lavik').is_file() and Path('/opt/lavik/lavik').is_file():
+        os.chdir('/opt/lavik')
+    os.environ['PATH'] = os.pathsep.join(
+        entry for entry in os.environ['PATH'].split(os.pathsep)
+        if Path(entry).resolve() != Path.cwd()
+    )
+    result['binaryVersion'] = execute(['./lavik', '--version'])
+    if subprocess.run(['bash', '-c', 'command -v lavik'], capture_output=True).returncode == 0:
+        raise RuntimeError('Test must not hide missing executable paths with a preconfigured PATH')
+    result['executableOnPath'] = False
+    result['workingDirectory'] = str(Path.cwd())
+    result['sourceCommit'] = Path('REVISION').read_text().strip()
+    result['packageVersion'] = Path('VERSION').read_text().strip()
     if result['sourceCommit'] != os.environ['EXPECTED_COMMIT']:
         raise RuntimeError('Package commit does not match the release lock')
     if result['packageVersion'].lstrip('v') != os.environ['EXPECTED_RELEASE']:
@@ -60,16 +87,12 @@ try:
                 raise AssertionError(f"Expected {step['expected']!r}, received {actual!r}")
         # Check a graceful restart separately; this is not a crash-durability test.
         execute(['redis-cli', '--raw', 'SET', 'verification:restart', 'retained'])
-        server.send_signal(signal.SIGTERM)
-        if server.wait(timeout=30) != 0:
-            raise RuntimeError('Unclean shutdown')
+        stop_server(server)
         server = start_server(log)
         if execute(['redis-cli', '--raw', 'GET', 'verification:restart']) != 'retained':
             raise AssertionError('Value missing after graceful restart')
         result['gracefulRestart'] = 'passed'
-        server.send_signal(signal.SIGTERM)
-        if server.wait(timeout=30) != 0:
-            raise RuntimeError('Unclean final shutdown')
+        stop_server(server)
         result['status'] = 'passed'
 except Exception as error:
     result['error'] = str(error)

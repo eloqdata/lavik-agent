@@ -5,8 +5,8 @@
   "kind": "blog",
   "slug": "lavik-spdk-performance-and-capacity",
   "title": "评估 Lavik Beta：SPDK 吞吐、尾延迟与容量成本",
-  "summary": "解读 9 月 18 日的千万键基准，区分标准包 SPDK 性能实测、x86_64 minimal 功能验证与成本假设，并给出实际选型路径。",
-  "updatedAt": "2026-09-20",
+  "summary": "解读 9 月 18 日的千万键基准，区分标准包 SPDK 性能实测、ARM64 Minimal 功能验证与成本假设，并给出实际选型路径。",
+  "updatedAt": "2026-09-25",
   "blocks": [
     {
       "type": "paragraph",
@@ -92,7 +92,7 @@
     },
     {
       "type": "paragraph",
-      "text": "上方示例在 2026 年 9 月 20 日的实际执行记录来自同版本的 Linux x86_64 minimal 二进制，平台为 Linux 6.17.0-1022-azure、glibc 2.39。PING、SET、GET、HSET、HGET 依次返回 PONG、OK、hello from Lavik、1、Ada，正常停机后的重启检查也通过。minimal 使用内核 TCP/io_uring，不含 SPDK；这验证的是该 x86_64 环境下的示例功能，不是 ARM64 执行证据，也不是上述 SPDK 性能、断电恢复能力或 SLA 的验证。",
+      "text": "示例的执行记录标明了此次冒烟测试使用的确切 Minimal beta 软件包、源码修订和 Linux 平台。Lavik 从包含二进制文件的目录启动，不依赖 PATH。PING、SET、GET、HSET、HGET 依次返回 PONG、OK、hello from Lavik、1、Ada；额外写入的值也通过了正常停机后的重启检查。这验证的是记录中的内核 TCP / io_uring 环境，不代表上述 SPDK 性能测试或断电恢复验证。",
       "sources": [
         "build",
         "storage"

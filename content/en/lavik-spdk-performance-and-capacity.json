@@ -6,7 +6,7 @@
   "slug": "lavik-spdk-performance-and-capacity",
   "title": "Lavik beta: SPDK performance and capacity economics",
   "summary": "Understand the September 18 benchmark, verify basic commands, and model capacity savings without mistaking them for deployment-wide savings.",
-  "updatedAt": "2026-09-20",
+  "updatedAt": "2026-09-25",
   "blocks": [
     {
       "type": "paragraph",
@@ -75,7 +75,7 @@
     },
     {
       "type": "paragraph",
-      "text": "The September 20, 2026 execution record below passed on the pinned x86_64 minimal beta package. Its platform is x86_64, and artifact SHA-256 8a3e66f313e7…daa77 matches the pinned x86_64 minimal archive. The release, source revision, recipe hash e473c28b9da9… and harness hash ad785c9b0633… also match the pins. The five actual replies were PONG, OK, “hello from Lavik”, 1 and Ada.",
+      "text": "The execution record below identifies the exact Minimal beta package, source revision and Linux platform used for this smoke test. Lavik starts from the extracted binary directory without a PATH entry. The five actual replies were PONG, OK, “hello from Lavik”, 1 and Ada; a separate value also survived a graceful shutdown and restart. This validates the recorded kernel TCP / io_uring environment, not the published SPDK performance benchmark or power-loss recovery.",
       "sources": [
         "build",
         "readme"

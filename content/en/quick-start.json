@@ -4,32 +4,21 @@
   "version": "0.1.0",
   "kind": "docs",
   "slug": "quick-start",
-  "title": "Run your first commands",
-  "summary": "Start a private demo instance and verify its replies against the pinned beta package.",
-  "updatedAt": "2026-09-19",
+  "title": "Quick start: from download to your first keys",
+  "summary": "Download Minimal or Standard, start Lavik from its extracted directory, and connect with redis-cli. No service setup required.",
+  "updatedAt": "2026-09-25",
   "blocks": [
     {
-      "type": "claim",
-      "claimId": "platform"
-    },
-    {
       "type": "heading",
-      "text": "Use a versioned package"
+      "text": "2. Start and connect"
     },
     {
       "type": "paragraph",
-      "text": "Download the minimal package for your CPU architecture from the linked release. Verify its SHA-256 checksum before extracting it. Put its directory on PATH so the lavik command resolves to that package. Install redis-cli using your Linux distribution’s package manager.",
-      "sources": [
-        "build",
-        "release"
-      ]
-    },
-    {
-      "type": "paragraph",
-      "text": "The example uses an isolated 512 MiB file and binds only to 127.0.0.1. Keep the server running in the first terminal while executing client commands in a second terminal. Stop it with Ctrl-C when finished. The temporary path is for a disposable example.",
+      "text": "The same startup script works with Minimal and Standard. It uses kernel TCP / io_uring, a disposable 512 MiB file, and the loopback address 127.0.0.1:6379. The two workers each have a 64 MiB registered-buffer budget. Leave this terminal running while you connect from a second terminal.",
       "sources": [
         "readme",
-        "build"
+        "build",
+        "storage"
       ]
     },
     {
@@ -38,12 +27,49 @@
     },
     {
       "type": "heading",
-      "text": "What this check establishes"
+      "text": "3. Stop and restart"
     },
     {
       "type": "paragraph",
-      "text": "The recorded verification runs the displayed startup script and client commands against the exact release package. It also checks that a separate value survives a graceful shutdown and restart. This is a functional smoke test on the recorded Linux environment; it is not a performance measurement or a power-loss test.",
+      "text": "Press Ctrl-C in the server terminal to stop Lavik. To restart, run the same startup script from the same extracted package directory. The script keeps the existing data file instead of allocating it again. The example uses /tmp/lavik-example for disposable data; /tmp can be cleared by the operating system. Choose persistent storage before storing anything you need to keep.",
       "sources": [
+        "readme",
+        "storage"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "Why ./lavik, rather than lavik?"
+    },
+    {
+      "type": "paragraph",
+      "text": "Extracting an archive does not add its folder to your shell’s PATH. ./lavik explicitly runs the binary in the current directory. A systemd service is optional process management; it does not fix command lookup. Keep using ./lavik here. For an eventual service, use an absolute executable path and a persistent data location rather than this demo directory.",
+      "sources": [
+        "readme",
+        "build"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "If startup fails"
+    },
+    {
+      "type": "paragraph",
+      "text": "If ./lavik is not found, return to the extracted directory shown in step 1. A GLIBC or shared-library error usually means the OS runtime or Standard dependencies do not match the package requirements. io_uring initialization errors require checking the Linux kernel and sandbox restrictions. If port 6379 is in use, stop your own conflicting demo or choose another port for both the server and redis-cli.",
+      "sources": [
+        "build",
+        "readme"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "What was actually verified"
+    },
+    {
+      "type": "paragraph",
+      "text": "The displayed startup script and client commands are executed against the exact beta package in Linux Docker, starting in the extracted binary directory with no Lavik entry on PATH. The verification also checks a separate value after a graceful shutdown and restart. The package checks cover Minimal and Standard using kernel TCP / io_uring. They do not exercise an SPDK NVMe device, measure performance, or simulate power loss.",
+      "sources": [
+        "readme",
         "build",
         "storage"
       ]

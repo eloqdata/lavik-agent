@@ -27,7 +27,8 @@ test("eight bilingual engineering articles are discoverable and show their curre
           ),
         }),
       ).toBeVisible();
-    await expect(list.locator("time").first()).toHaveText("2026-09-21");
+    const dates = await list.locator("time").allTextContents();
+    expect(dates).toEqual([...dates].sort().reverse());
   }
   for (const article of pages) {
     const route = `/${article.locale}/blog/${article.slug}/`;

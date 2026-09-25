@@ -1,0 +1,412 @@
+{
+  "reviewedAt": "2026-09-25T14:28:00.820Z",
+  "reviewer": {
+    "role": "reviewer",
+    "model": "gpt-6-astra",
+    "provider": "openai",
+    "authentication": "chatgpt",
+    "reasoning": "high",
+    "startedAt": "2026-09-25T14:27:22.254Z",
+    "finishedAt": "2026-09-25T14:28:00.820Z",
+    "promptSha256": "4bdb4b4bbcf848dd90f8418c287b760ca7840cc53c5e81c45ed5da23b0b3a53a",
+    "outputSha256": "cd22eed137bd1015cb9e8a60babf7ac7e19cbf0d379b7920bc0605f598ad892d"
+  },
+  "review": {
+    "decision": "pass",
+    "findings": [
+      {
+        "severity": "note",
+        "message": "All three blockers are resolved: the Chinese summary identifies ARM64 Minimal, both performance editions describe only displayed receipt metadata, and both shared prerequisites explicitly require redis-cli with installation instructions."
+      },
+      {
+        "severity": "note",
+        "message": "The Docker correction preserves /opt/lavik on PATH and /tmp as the working directory for other harnesses. The recipe runner selects the extracted binary directory and removes it from its own PATH. Supplied fresh receipts support both recipe entrypoints, ARM64 Minimal/Standard startup and graceful restart, four-package installer/version checks, and 217 manual command cases against the same rebuilt shared image. No x86-64 runtime verification is inferred."
+      },
+      {
+        "severity": "note",
+        "message": "Targeted follow-up inspected every supplied changed file, article delta and fresh receipt. Prior checks are inherited only through the supplied byte-identical checked hashes; no new primary-source reading or test execution is claimed. Cumulative approval covers all four editions and changed code, permitting new immutable publications and the exact incremental manual approval bound to the supplied currentFiles hash map."
+      }
+    ],
+    "articles": [
+      {
+        "id": "lavik-spdk-performance-and-capacity",
+        "locale": "en",
+        "verdict": "pass",
+        "findings": [],
+        "checkedSourceIds": [
+          "readme",
+          "benchmark-spdk",
+          "build",
+          "storage",
+          "benchmark-spdk-data",
+          "tiering-cost"
+        ]
+      },
+      {
+        "id": "quick-start",
+        "locale": "en",
+        "verdict": "pass",
+        "findings": [],
+        "checkedSourceIds": [
+          "readme",
+          "build",
+          "storage"
+        ]
+      },
+      {
+        "id": "lavik-spdk-performance-and-capacity",
+        "locale": "zh-CN",
+        "verdict": "pass",
+        "findings": [],
+        "checkedSourceIds": [
+          "readme",
+          "storage",
+          "benchmark-spdk",
+          "release",
+          "benchmark-spdk-data",
+          "build",
+          "tiering-cost",
+          "architecture"
+        ]
+      },
+      {
+        "id": "quick-start",
+        "locale": "zh-CN",
+        "verdict": "pass",
+        "findings": [],
+        "checkedSourceIds": [
+          "readme",
+          "build",
+          "storage"
+        ]
+      }
+    ]
+  },
+  "precedingReview": {
+    "reviewer": {
+      "role": "reviewer",
+      "model": "gpt-6-astra",
+      "provider": "openai",
+      "authentication": "chatgpt",
+      "reasoning": "high",
+      "startedAt": "2026-09-25T14:20:00.770Z",
+      "finishedAt": "2026-09-25T14:21:11.349Z",
+      "promptSha256": "fddedf2d485c688b726d2e275652262d75083bf88bebcde051ddc5f95a63a8a7",
+      "outputSha256": "3423808e5ab12f02f690e7c3e1f7959146751baa3f642e518427c877032d1845"
+    },
+    "review": {
+      "decision": "changes_required",
+      "findings": [
+        {
+          "severity": "blocking",
+          "message": "The Chinese performance article summary still describes “x86_64 minimal 功能验证”. The replacement runtime receipt is ARM64; x86-64 received only emulated installer/version checks. Update the summary to match this evidence."
+        },
+        {
+          "severity": "blocking",
+          "message": "Both performance editions now say the displayed execution record identifies script hashes, but content-v2.tsx renders only receipt.output, which contains none. Display artifactSha256, recipeHash and harnessHash, or revise the paragraphs to describe only the metadata actually shown."
+        },
+        {
+          "severity": "blocking",
+          "message": "The shared basic-commands prerequisites omit installing redis-cli. Both performance editions render this recipe without QuickStartSetup, so readers receive client commands without the required dependency instructions. Restore the dependency prerequisite or link both editions to the complete quick-start installation steps."
+        },
+        {
+          "severity": "note",
+          "message": "Reviewed supplied source text, code and recorded Docker outputs only; no tests were executed. The supplied hash maps retain all baseline-bound files. Unchanged command/client fixtures and unrelated content retain prior approval; new publication and incremental manual approval remain pending these fixes."
+        }
+      ],
+      "articles": [
+        {
+          "id": "lavik-spdk-performance-and-capacity",
+          "locale": "en",
+          "verdict": "revise",
+          "findings": [
+            "Correct the assertion that the displayed execution record includes script hashes, or render those receipt fields.",
+            "Provide redis-cli installation prerequisites through the shared recipe or a quick-start link."
+          ],
+          "checkedSourceIds": [
+            "readme",
+            "benchmark-spdk",
+            "build",
+            "storage",
+            "benchmark-spdk-data",
+            "tiering-cost"
+          ]
+        },
+        {
+          "id": "quick-start",
+          "locale": "en",
+          "verdict": "pass",
+          "findings": [],
+          "checkedSourceIds": [
+            "readme",
+            "build",
+            "storage"
+          ]
+        },
+        {
+          "id": "lavik-spdk-performance-and-capacity",
+          "locale": "zh-CN",
+          "verdict": "revise",
+          "findings": [
+            "Replace the stale x86_64 minimal runtime wording in the summary with wording consistent with the ARM64 receipt.",
+            "Correct the assertion that the displayed execution record includes script hashes, or render those receipt fields.",
+            "Provide redis-cli installation prerequisites through the shared recipe or a quick-start link."
+          ],
+          "checkedSourceIds": [
+            "readme",
+            "storage",
+            "benchmark-spdk",
+            "release",
+            "benchmark-spdk-data",
+            "build",
+            "tiering-cost",
+            "architecture"
+          ]
+        },
+        {
+          "id": "quick-start",
+          "locale": "zh-CN",
+          "verdict": "pass",
+          "findings": [],
+          "checkedSourceIds": [
+            "readme",
+            "build",
+            "storage"
+          ]
+        }
+      ]
+    },
+    "unchangedSourceHashes": [
+      {
+        "metadata": {
+          "id": "readme",
+          "title": "Project overview",
+          "path": "evidence/sources/readme.txt",
+          "upstreamPath": "README.md",
+          "url": "https://github.com/eloqdata/lavik/blob/3955b98d43b312324aa8d52775df52cfb111c0d0/README.md",
+          "sha256": "641102ed79197f74df38d3ab79a0f19b2d71e2e2c96a79bc91d99361f71fae57"
+        },
+        "contentHash": "641102ed79197f74df38d3ab79a0f19b2d71e2e2c96a79bc91d99361f71fae57",
+        "previousInspection": [
+          "en/lavik-spdk-performance-and-capacity",
+          "en/quick-start",
+          "zh-CN/lavik-spdk-performance-and-capacity",
+          "zh-CN/quick-start"
+        ]
+      },
+      {
+        "metadata": {
+          "id": "benchmark-spdk",
+          "title": "Lavik 0.1.0 beta SPDK comparison",
+          "path": "evidence/sources/benchmark-spdk.txt",
+          "upstreamPath": "perf_reports/lavik-v0.1.0-beta.1-spdk-vs-peers-2026-09-18/README.md",
+          "url": "https://github.com/eloqdata/lavik/blob/a6acc2c41612f4480b5f1f53ee48c369220970e9/perf_reports/lavik-v0.1.0-beta.1-spdk-vs-peers-2026-09-18/README.md",
+          "sha256": "fb1b18a0b73155b5f218d0398b0d780ee734bfb1a4002f8c9c50fd8f4a8e3992"
+        },
+        "contentHash": "fb1b18a0b73155b5f218d0398b0d780ee734bfb1a4002f8c9c50fd8f4a8e3992",
+        "previousInspection": [
+          "en/lavik-spdk-performance-and-capacity",
+          "zh-CN/lavik-spdk-performance-and-capacity"
+        ]
+      },
+      {
+        "metadata": {
+          "id": "build",
+          "title": "Platform and packaging",
+          "path": "evidence/sources/build.txt",
+          "upstreamPath": "docs/operations/building-and-packaging.md",
+          "url": "https://github.com/eloqdata/lavik/blob/3955b98d43b312324aa8d52775df52cfb111c0d0/docs/operations/building-and-packaging.md",
+          "sha256": "fe256abda34a8d0ca4648c1ccf784c34534f30954eb4734ba0d879e3b38ae4d9"
+        },
+        "contentHash": "fe256abda34a8d0ca4648c1ccf784c34534f30954eb4734ba0d879e3b38ae4d9",
+        "previousInspection": [
+          "en/lavik-spdk-performance-and-capacity",
+          "en/quick-start",
+          "zh-CN/lavik-spdk-performance-and-capacity",
+          "zh-CN/quick-start"
+        ]
+      },
+      {
+        "metadata": {
+          "id": "storage",
+          "title": "Storage and recovery",
+          "path": "evidence/sources/storage.txt",
+          "upstreamPath": "docs/architecture/04-storage-and-recovery.md",
+          "url": "https://github.com/eloqdata/lavik/blob/3955b98d43b312324aa8d52775df52cfb111c0d0/docs/architecture/04-storage-and-recovery.md",
+          "sha256": "4399aed3218262576e9361bd44a7a931ba8f6d3db7d48cdd86365f66e8e07b07"
+        },
+        "contentHash": "4399aed3218262576e9361bd44a7a931ba8f6d3db7d48cdd86365f66e8e07b07",
+        "previousInspection": [
+          "en/lavik-spdk-performance-and-capacity",
+          "en/quick-start",
+          "zh-CN/lavik-spdk-performance-and-capacity",
+          "zh-CN/quick-start"
+        ]
+      },
+      {
+        "metadata": {
+          "id": "benchmark-spdk-data",
+          "title": "SPDK comparison: 10M-key measurements",
+          "path": "evidence/sources/benchmark-spdk-data.txt",
+          "upstreamPath": "perf_reports/lavik-v0.1.0-beta.1-spdk-vs-peers-2026-09-18/memory-results.csv",
+          "url": "https://github.com/eloqdata/lavik/blob/a6acc2c41612f4480b5f1f53ee48c369220970e9/perf_reports/lavik-v0.1.0-beta.1-spdk-vs-peers-2026-09-18/memory-results.csv",
+          "sha256": "b2b19a631628d5dcbffb382de40b2468577832a3f9e9bd8019ba7e3c48eb5a9e"
+        },
+        "contentHash": "b2b19a631628d5dcbffb382de40b2468577832a3f9e9bd8019ba7e3c48eb5a9e",
+        "previousInspection": [
+          "en/lavik-spdk-performance-and-capacity",
+          "zh-CN/lavik-spdk-performance-and-capacity"
+        ]
+      },
+      {
+        "metadata": {
+          "id": "tiering-cost",
+          "title": "Storage-tier report and historical cost estimates",
+          "path": "evidence/sources/tiering-cost.txt",
+          "upstreamPath": "perf_reports/lavik-vs-dragonfly-tiering-2026-08-11/README.md",
+          "url": "https://github.com/eloqdata/lavik/blob/3955b98d43b312324aa8d52775df52cfb111c0d0/perf_reports/lavik-vs-dragonfly-tiering-2026-08-11/README.md",
+          "sha256": "489490a32fa6e2351dfb48ea64ee27ec1dbc110f62b249a0b0ad866698a5f04b"
+        },
+        "contentHash": "489490a32fa6e2351dfb48ea64ee27ec1dbc110f62b249a0b0ad866698a5f04b",
+        "previousInspection": [
+          "en/lavik-spdk-performance-and-capacity",
+          "zh-CN/lavik-spdk-performance-and-capacity"
+        ]
+      },
+      {
+        "metadata": {
+          "id": "release",
+          "title": "Release packaging workflow",
+          "path": "evidence/sources/release.txt",
+          "upstreamPath": ".github/workflows/release.yml",
+          "url": "https://github.com/eloqdata/lavik/blob/3955b98d43b312324aa8d52775df52cfb111c0d0/.github/workflows/release.yml",
+          "sha256": "6574f459d55f37548a6f3dbe736a19c9a17ecdb764d494eed055ad3697b0a851"
+        },
+        "contentHash": "6574f459d55f37548a6f3dbe736a19c9a17ecdb764d494eed055ad3697b0a851",
+        "previousInspection": [
+          "zh-CN/lavik-spdk-performance-and-capacity"
+        ]
+      },
+      {
+        "metadata": {
+          "id": "architecture",
+          "title": "System architecture",
+          "path": "evidence/sources/architecture.txt",
+          "upstreamPath": "docs/architecture/01-overview.md",
+          "url": "https://github.com/eloqdata/lavik/blob/3955b98d43b312324aa8d52775df52cfb111c0d0/docs/architecture/01-overview.md",
+          "sha256": "7ab316c93c1fa3851c62668576dd3e8058c12ba7ac285e37fb4df03464bf8498"
+        },
+        "contentHash": "7ab316c93c1fa3851c62668576dd3e8058c12ba7ac285e37fb4df03464bf8498",
+        "previousInspection": [
+          "zh-CN/lavik-spdk-performance-and-capacity"
+        ]
+      }
+    ]
+  },
+  "inputFileHashes": {
+    "apps/web/app/(site)/[locale]/[...slug]/page.tsx": "bbfd518f9894079fc741fea6ddf36d0783805658c31f076ceac8f9814ea41d4a",
+    "apps/web/components/content-v2.tsx": "10625d7f35e370b987d0ad2ba9bb0f5a6860dfd58e6cd263eac48647edeacb41",
+    "apps/web/components/content.tsx": "818c8c373213bb4df0675f157025e911eecd868b9f8b06db6992ea55573602d9",
+    "apps/web/components/copy-code.tsx": "97d9360c361baa6c13dbbc2beb925eee72db4a13350ce641fae7c367a37220fb",
+    "apps/web/components/quick-start-installer.tsx": "2a02e61ad6d11a52c1ae94d26eaeaa534b07258d373ba4dbefb22ef9437ce4b9",
+    "apps/web/components/quick-start.css": "799509f88da9f86477da26c9968d868467d9539a5f8b66d142e4ef39357a57b3",
+    "apps/web/components/quick-start.tsx": "d82b7b51e3163a4a2ac200a012c5bc26365c78a24a771a6dd169bc6afae97ef4",
+    "content/downloads/0.1.0.json": "75aa38b3a97f6ec1449ba58c7f3b04b26b5ed827b26d483ef0a4e20c73ce378e",
+    "docs/quick-start-verification.md": "c4eaaa774d5da08828c0217106488814efd75de4875a23ba580db6f200e5a80d",
+    "evidence/quick-start/0.1.0/verification.json": "939a84cf585fc8998db93d63c403dd3f16ab03533e2d3edc37a1e3f6e8416167",
+    "packages/admin/publish.ts": "60e210045c10a883a7241d22c08d1173fce0830a68b67c6e809478f50411b471",
+    "packages/content/downloads.ts": "9cec8b6be183ae5b6ab6fefd69e38a7dafe2d580c13490c85a07479d21ff414d",
+    "packages/content/gate.ts": "49f80baf1b27e6cfb15bef606f5e90d33623fc0a815bbed9358197cc57560f4b",
+    "packages/content/publication-context.ts": "891797f984021eea2801c49902a03c37d9868d2a552795098a5a8218b837ccaa",
+    "packages/content/repository.ts": "88b42573bf53298c5848ae2c92942273c6399d9830d2bd19c8f0796f54756617",
+    "packages/content/schema.ts": "bd5c72072c127d29736c4faad2f1a8b5a20b57abc2c959622eb0613deb1697cc",
+    "packages/manual/gate.ts": "f896b60e6ca8504dc971efc5318ac2607d6c42abe5295589a0d27c8faddf4743",
+    "packages/quick-start/content.ts": "4f4cf846a56024b0806e7e65922b5dcfe7cd113796b7143b339133852af52016",
+    "packages/quick-start/evidence.ts": "891acd1d33ff490b97ff97334bd242bf0a63dd4560c7d99e519de4bf7a3f12aa",
+    "scripts/verify-quick-start.ts": "e93377a9e51f004464436d4ac2662382fce27ba153b8583b31c2e6fbfad45d51",
+    "tests/browser/blog-series.spec.ts": "f7c15e3699d4c7ab1050379e0ff6692d8e487839ec9b07d4e62377db0894c88d",
+    "tests/browser/quick-start.spec.ts": "0e34641c7b5f27217cd91ef65fd534281aa24e78075ad84984caedab34351df1",
+    "tests/quick-start.test.ts": "616c3347d90ef4f1860bccf82a462c89808ecf483f6fac596650306e3a03c789",
+    "verification/Dockerfile": "16e337e9f5607fbe251a1006b0962427ae5e9887138a77d3ea555d50431e9853",
+    "verification/quick-start/Dockerfile": "9d4d8e124d3902966f240cfba1cee7502738dffcad68f7365eeefb61ef17968c",
+    "verification/recipes.json": "0f6e8e46cf50adc283221878de8d78163a5923841c692b226e5f747bc8ed403a",
+    "verification/run.py": "1dbd6aeb0a04f526026222e2ceb01f984c9dced02ae286109495e5d06ddca68b",
+    "verification/start.sh": "f5b2f4f757919e83f43d28ecdf2016ab98e3a653cb0320363a537e018d6d6e9b"
+  },
+  "publications": [
+    {
+      "schemaVersion": 1,
+      "taskId": "5913d83b-17a6-40c0-9b82-2f9a24bdfb6a",
+      "artifactHash": "a2bfb9babf60282035ba78b3f1be4fa3ae8541c5e0e6186fb9b957a6a11c039d",
+      "editions": [
+        {
+          "locale": "en",
+          "id": "quick-start",
+          "contentHash": "32e0b996c18b9a9860dbd46ace96ded10d9e3ba6fc6c2a8aee84d5e0a399d466",
+          "path": "/en/docs/0.1.0/quick-start/",
+          "receiptHashes": {
+            "basic-commands": "517f7947e3801207a5de35d0c5c6be8c0da17347aabf60a251cbfea4ddace351"
+          }
+        },
+        {
+          "locale": "zh-CN",
+          "id": "quick-start",
+          "contentHash": "806e4930e86cc0fc3aea086e1669ea2d8fa934f8a08b2c1ee6e0fd7e2ac9c55b",
+          "path": "/zh-CN/docs/0.1.0/quick-start/",
+          "receiptHashes": {
+            "basic-commands": "517f7947e3801207a5de35d0c5c6be8c0da17347aabf60a251cbfea4ddace351"
+          }
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "taskId": "38282661-ce15-408e-b203-3cf5786b2cdc",
+      "artifactHash": "0c60c927c98024fe4c1da02720c6ea8ed6795b3dcbb20da4f1326f201f9c9c4f",
+      "editions": [
+        {
+          "locale": "en",
+          "id": "lavik-spdk-performance-and-capacity",
+          "contentHash": "cd3a78c32c6cebe6e96016810fdbe76227d9bc6a9769396df19b41cc80e0c9b0",
+          "path": "/en/blog/lavik-spdk-performance-and-capacity/",
+          "receiptHashes": {
+            "basic-commands": "517f7947e3801207a5de35d0c5c6be8c0da17347aabf60a251cbfea4ddace351"
+          }
+        },
+        {
+          "locale": "zh-CN",
+          "id": "lavik-spdk-performance-and-capacity",
+          "contentHash": "56989b67f1b007cae792ec486d0043e063c6cf3099de7452db942ec679c8d3b1",
+          "path": "/zh-CN/blog/lavik-spdk-performance-and-capacity/",
+          "receiptHashes": {
+            "basic-commands": "517f7947e3801207a5de35d0c5c6be8c0da17347aabf60a251cbfea4ddace351"
+          }
+        }
+      ]
+    }
+  ],
+  "manual": {
+    "scope": "incremental",
+    "previousBundleHash": "445c8852337d458be51ea10a94a6bb2f01950b15eed4a07d9603109690af78ae",
+    "bundleHash": "6026356d33263474b46fe8a6f74b8b208b51ed1e92d8820caa8b8a83434c8c07",
+    "changedFiles": [
+      "apps/web/app/(site)/[locale]/[...slug]/page.tsx",
+      "apps/web/components/quick-start-installer.tsx",
+      "apps/web/components/quick-start.css",
+      "apps/web/components/quick-start.tsx",
+      "docs/quick-start-verification.md",
+      "evidence/quick-start/0.1.0/verification.json",
+      "packages/manual/gate.ts",
+      "packages/quick-start/content.ts",
+      "packages/quick-start/evidence.ts",
+      "scripts/verify-quick-start.ts",
+      "tests/browser/quick-start.spec.ts",
+      "tests/quick-start.test.ts",
+      "verification/Dockerfile",
+      "verification/quick-start/Dockerfile",
+      "verification/recipes.json",
+      "verification/run.py",
+      "verification/start.sh"
+    ]
+  }
+}

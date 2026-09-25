@@ -6,21 +6,21 @@
       "zh-CN": "读写第一组键"
     },
     "prerequisites": {
-      "en": "Install the pinned minimal package and redis-cli on compatible Linux. In one terminal, run the startup script below. In another, run these commands against the private demo instance.",
-      "zh-CN": "在兼容的 Linux 上安装锁定版本的 minimal 软件包和 redis-cli。在一个终端运行下方启动脚本，在另一个终端对这个独立演示实例执行命令。"
+      "en": "Install the selected Linux package and redis-cli first (on Ubuntu/Debian: sudo apt-get install redis-tools). Works with Minimal and Standard. In terminal 1, change into the extracted package directory containing ./lavik, then paste this Bash script. Keep it running; use terminal 2 for the client commands. Starting Lavik requires no PATH change, root privileges, or systemd service.",
+      "zh-CN": "先安装所选 Linux 软件包和 redis-cli（Ubuntu/Debian：sudo apt-get install redis-tools）。适用于 Minimal 和 Standard。在终端 1 进入解压后包含 ./lavik 的软件包目录，再粘贴下面的 Bash 脚本并保持运行。在终端 2 执行客户端命令。启动 Lavik 无需修改 PATH、使用 root 权限或配置 systemd 服务。"
     },
     "steps": [
       {
-        "argv": [
-          "redis-cli",
-          "--raw",
-          "PING"
-        ],
+        "argv": ["redis-cli", "-h", "127.0.0.1", "-p", "6379", "--raw", "PING"],
         "expected": "PONG"
       },
       {
         "argv": [
           "redis-cli",
+          "-h",
+          "127.0.0.1",
+          "-p",
+          "6379",
           "--raw",
           "SET",
           "greeting",
@@ -31,6 +31,10 @@
       {
         "argv": [
           "redis-cli",
+          "-h",
+          "127.0.0.1",
+          "-p",
+          "6379",
           "--raw",
           "GET",
           "greeting"
@@ -40,6 +44,10 @@
       {
         "argv": [
           "redis-cli",
+          "-h",
+          "127.0.0.1",
+          "-p",
+          "6379",
           "--raw",
           "HSET",
           "user:42",
@@ -51,6 +59,10 @@
       {
         "argv": [
           "redis-cli",
+          "-h",
+          "127.0.0.1",
+          "-p",
+          "6379",
           "--raw",
           "HGET",
           "user:42",

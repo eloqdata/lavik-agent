@@ -35,6 +35,7 @@ import { DocsHome } from "../../../../components/docs-home";
 import { DocsSidebar } from "../../../../components/docs-sidebar";
 import { UseCasePage, UseCasesHome } from "../../../../components/use-cases";
 import { useCases } from "../../../../../../packages/use-cases/content";
+import { QuickStartSetup } from "../../../../components/quick-start";
 import { blogTopics } from "../../../../../../packages/blog/topics";
 import {
   BlogIndex,
@@ -221,7 +222,11 @@ export default async function Page({
           {article.kind === "release" || article.id === "quick-start" ? (
             <div className="download-box">
               <a
-                href={`https://github.com/eloqdata/lavik/releases/tag/${release.tag}`}
+                href={
+                  article.id === "quick-start"
+                    ? `/${locale}/download/`
+                    : `https://github.com/eloqdata/lavik/releases/tag/${release.tag}`
+                }
               >
                 {zh ? "查看发布包与校验和" : "Release packages & checksums"} ↗
               </a>
@@ -229,6 +234,9 @@ export default async function Page({
                 {zh ? "当前固定版本" : "Pinned release"}: {release.tag}
               </p>
             </div>
+          ) : null}
+          {article.id === "quick-start" ? (
+            <QuickStartSetup locale={locale} />
           ) : null}
           {articleReview(article).rendererVersion === 2 ? (
             <VerifiedArticleBody

@@ -4,32 +4,21 @@
   "version": "0.1.0",
   "kind": "docs",
   "slug": "quick-start",
-  "title": "运行第一组命令",
-  "summary": "启动独立演示实例，并验证锁定测试版本的命令响应。",
-  "updatedAt": "2026-09-19",
+  "title": "快速开始：下载并运行第一组命令",
+  "summary": "下载 Minimal 或 Standard，从解压目录启动 Lavik，再使用 redis-cli 连接。无需先配置系统服务。",
+  "updatedAt": "2026-09-25",
   "blocks": [
     {
-      "type": "claim",
-      "claimId": "platform"
-    },
-    {
       "type": "heading",
-      "text": "使用明确版本的软件包"
+      "text": "2. 启动并连接"
     },
     {
       "type": "paragraph",
-      "text": "从下方发布链接下载适合 CPU 架构的 minimal 软件包。解压前验证 SHA-256 校验和，将软件包目录加入 PATH，确保 lavik 命令指向该版本。使用 Linux 发行版的包管理器安装 redis-cli。",
-      "sources": [
-        "build",
-        "release"
-      ]
-    },
-    {
-      "type": "paragraph",
-      "text": "示例使用独立的 512 MiB 文件，并仅绑定 127.0.0.1。在第一个终端保持服务器运行，在第二个终端执行客户端命令。完成后按 Ctrl-C 停止服务。临时路径仅用于可丢弃的演示数据。",
+      "text": "下面的启动脚本同时适用于 Minimal 和 Standard，使用内核 TCP / io_uring、可丢弃的 512 MiB 文件及回环地址 127.0.0.1:6379。两个工作线程各使用 64 MiB 注册缓冲区预算。保持此终端运行，再从第二个终端连接。",
       "sources": [
         "readme",
-        "build"
+        "build",
+        "storage"
       ]
     },
     {
@@ -38,12 +27,49 @@
     },
     {
       "type": "heading",
-      "text": "这些验证能证明什么"
+      "text": "3. 停止与重启"
     },
     {
       "type": "paragraph",
-      "text": "验证记录使用确切的发布包运行页面展示的启动脚本和客户端命令，还检查一个额外的值能否在正常关闭并重启后保留。这是记录环境下的功能冒烟测试，不是性能测试或断电测试。",
+      "text": "在服务器终端按 Ctrl-C 停止 Lavik。重启时，在相同的软件包目录再次执行启动脚本。脚本会保留已有数据文件，不会重复分配。示例使用 /tmp/lavik-example 保存可丢弃数据，操作系统可能清理 /tmp；需要保留的数据应放在持久存储中。",
       "sources": [
+        "readme",
+        "storage"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "为什么要用 ./lavik？"
+    },
+    {
+      "type": "paragraph",
+      "text": "解压软件包不会把该目录加入 shell 的 PATH。./lavik 明确运行当前目录中的二进制文件。systemd 用于管理服务进程，并不能解决命令路径查找。此处直接使用 ./lavik 即可；以后配置系统服务时，应使用可执行文件的绝对路径和持久数据目录，而不是这个演示目录。",
+      "sources": [
+        "readme",
+        "build"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "启动失败时"
+    },
+    {
+      "type": "paragraph",
+      "text": "如果找不到 ./lavik，请回到步骤 1 显示的解压目录。GLIBC 或共享库错误通常表示系统运行库或 Standard 依赖不满足软件包要求。io_uring 初始化错误需要检查 Linux 内核和沙箱限制。如果 6379 端口已占用，请停止自己的冲突演示实例，或同时修改服务器和 redis-cli 的端口。",
+      "sources": [
+        "build",
+        "readme"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "实际验证了什么"
+    },
+    {
+      "type": "paragraph",
+      "text": "显示的启动脚本和客户端命令在 Linux Docker 中使用确切 beta 软件包执行，起点为包含二进制文件的目录，PATH 中没有 Lavik。验证还检查额外写入的值能否在正常关闭并重启后保留。软件包检查覆盖 Minimal 和 Standard 的内核 TCP / io_uring 路径，不包含 SPDK NVMe 设备测试、性能测量或断电模拟。",
+      "sources": [
+        "readme",
         "build",
         "storage"
       ]

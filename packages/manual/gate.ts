@@ -5,6 +5,10 @@ import { isDeepStrictEqual } from "node:util";
 import { release } from "../content/repository";
 import { downloadEvidenceErrors } from "../content/downloads";
 import {
+  quickStartEvidenceErrors,
+  quickStartVerificationFiles,
+} from "../quick-start/evidence";
+import {
   useCaseEvidenceErrors,
   useCaseEvidenceFiles,
   scenarioFiles,
@@ -348,6 +352,17 @@ export const manualReviewedPaths = () =>
         ].includes(f),
     ),
     "packages/content/downloads.ts",
+    "packages/quick-start/evidence.ts",
+    ...quickStartVerificationFiles.filter(
+      (f) => f !== "verification/recipes.json",
+    ),
+    "apps/web/components/quick-start.tsx",
+    "apps/web/components/quick-start-installer.tsx",
+    "apps/web/components/quick-start.css",
+    "evidence/quick-start/0.1.0/verification.json",
+    "tests/quick-start.test.ts",
+    "tests/browser/quick-start.spec.ts",
+    "docs/quick-start-verification.md",
     "content/downloads/0.1.0.json",
     "scripts/verify-downloads.ts",
     "verification/downloads/Dockerfile",
@@ -439,6 +454,7 @@ export function manualPublicationErrors({ requireReview = true } = {}) {
       clientResults: clients,
     });
     errors.push(...downloadEvidenceErrors());
+    errors.push(...quickStartEvidenceErrors());
     errors.push(...useCaseEvidenceErrors());
     if (
       inventory.commit !== release.commit ||

@@ -1,5 +1,5 @@
 FROM ubuntu:24.04@sha256:b3cc40b72b93588182b5410f723c7aaf142363311c2aa993d8a453ddcbb3ae15
-RUN apt-get update && apt-get install -y --no-install-recommends python3 redis-tools ca-certificates \
+RUN apt-get update && apt-get install -y --no-install-recommends python3 redis-tools ca-certificates libnuma1 libuuid1 \
     && rm -rf /var/lib/apt/lists/*
 ARG ARCHIVE_SHA256
 ARG HARNESS_SHA256
