@@ -28,16 +28,16 @@ export function DocsHome({ locale }: { locale: Locale }) {
       href: `${root}/install-docker/`,
       label: "02",
       text: zh
-        ? "构建 beta.1 镜像，以持久化卷运行独立实例。"
-        : "Build a beta.1 image and run a standalone instance with a persistent volume.",
+        ? "拉取官方 beta.1 镜像，以持久化卷运行独立实例。"
+        : "Pull the official beta.1 image and run a standalone instance with a persistent volume.",
     },
     {
       title: zh ? "使用 Docker Compose 安装" : "Install With Docker Compose",
       href: `${root}/install-docker-compose/`,
       label: "03",
       text: zh
-        ? "使用 Compose 管理启动、健康检查与重启。"
-        : "Manage startup, health checks and restarts with Compose.",
+        ? "运行三个 Meta 节点及 Data 主从节点，体验复制、故障转移与恢复。"
+        : "Run three Meta voters and a Data primary–follower pair with replication, failover and recovery.",
     },
   ];
   return (

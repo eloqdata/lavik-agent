@@ -1,0 +1,60 @@
+{
+  "review": {
+    "decision": "pass",
+    "findings": [
+      {
+        "severity": "note",
+        "message": "EN/zh-CN instructions consistently describe the official standalone image and three-Meta, primary/follower Compose cluster. Supplied commands match upstream flags and preserve volumes during replacement/recovery. Network, role changes, readiness and destructive-reset limitations are actionable; internal audit sections remain hidden."
+      },
+      {
+        "severity": "note",
+        "message": "Packaging commit a1770a78… is correctly distinguished from beta.1 Minimal binary revision 3955b98d…. Supplied sources and ARM64 smoke evidence support persistence, replication, controlled failover and recovery. No blocking issue found."
+      },
+      {
+        "severity": "note",
+        "message": "Review limited to supplied changes; no tools, credentials or tests used. Upstream byte identity and registry manifests are coordinator-reported. Runtime evidence covers ARM64, not native AMD64; production build/browser checks remain pending as stated."
+      }
+    ]
+  },
+  "reviewer": {
+    "role": "reviewer",
+    "model": "gpt-6-astra",
+    "provider": "openai",
+    "authentication": "chatgpt",
+    "reasoning": "high",
+    "startedAt": "2026-09-26T04:32:16.582Z",
+    "finishedAt": "2026-09-26T04:32:51.329Z",
+    "promptSha256": "81524593fd15dc3c3a510bed23a8acd069057ae2416aa7edf3d5eda9d1ec8cc5",
+    "outputSha256": "06bed33b328787fec5c00c37fd9b4ceb8cebaa1aa72560f7e9e66b4e351dee89"
+  },
+  "previousBundleHash": "5a00c9b293567eb47969d478ff96c0a516ef85b0b5056e128b62938426fac3e7",
+  "bundleHash": "cf4eeb0f0218fccabb6370f77208e53890a3943b49f39e2c5214a5afe4f58e41",
+  "changed": [
+    "apps/web/components/docs-home.tsx",
+    "apps/web/components/user-guide.tsx",
+    "evidence/docker-images/0.1.0/verification.json",
+    "packages/docs/guides.json",
+    "packages/docs/repository.ts",
+    "packages/manual/gate.ts",
+    "scripts/verify-docker-images.py",
+    "tests/browser/docs-navigation.spec.ts",
+    "tests/onboarding.test.ts",
+    "verification/docker-images/examples/compose-connect.sh",
+    "verification/docker-images/examples/compose-download.sh",
+    "verification/docker-images/examples/compose-failover.sh",
+    "verification/docker-images/examples/compose-restart.sh",
+    "verification/docker-images/examples/single-connect.sh",
+    "verification/docker-images/examples/single-restart.sh",
+    "verification/docker-images/examples/single-start.sh",
+    "verification/docker-images/upstream/.dockerignore",
+    "verification/docker-images/upstream/Dockerfile",
+    "verification/docker-images/upstream/README.md",
+    "verification/docker-images/upstream/bootstrap-cluster.py",
+    "verification/docker-images/upstream/cluster.toml",
+    "verification/docker-images/upstream/compose.yaml",
+    "verification/docker-images/upstream/docker-entrypoint.sh",
+    "verification/docker-images/upstream/fetch-release.sh",
+    "verification/docker-images/upstream/release.sha256",
+    "verification/docker-images/upstream/smoke-test.py"
+  ]
+}

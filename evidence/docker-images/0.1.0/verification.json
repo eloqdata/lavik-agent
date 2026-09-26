@@ -1,0 +1,65 @@
+{
+  "status": "passed",
+  "checkedAt": "2026-09-26T04:31:04.897332+00:00",
+  "packagingCommit": "a1770a78b52e0bb9ec32e20b92af6282e73efabd",
+  "sourceCommit": "3955b98d43b312324aa8d52775df52cfb111c0d0",
+  "version": "0.1.0-beta.1",
+  "platform": "linux/arm64",
+  "images": [
+    {
+      "tag": "eloqdata/lavik:0.1.0-beta.1",
+      "imageId": "sha256:8b61eb493c42c469990d41122e63eb2b22bd25aa22fd6a660e56169bde569bfc",
+      "repoDigests": [
+        "eloqdata/lavik@sha256:8b61eb493c42c469990d41122e63eb2b22bd25aa22fd6a660e56169bde569bfc"
+      ],
+      "architecture": "arm64",
+      "version": "lavik 0.1.0-beta.1",
+      "revision": "3955b98d43b312324aa8d52775df52cfb111c0d0",
+      "binarySha256": "8306b37ddf05023f85166a6aa2192b7084757e8defd342b602e6470244aca887"
+    },
+    {
+      "tag": "eloqdata/lavik:0.1.0-beta.1-cluster",
+      "imageId": "sha256:41d224e388773c61b273726a418bb30c4d7b47fbdfd41592b1dc48513663ee14",
+      "repoDigests": [
+        "eloqdata/lavik@sha256:41d224e388773c61b273726a418bb30c4d7b47fbdfd41592b1dc48513663ee14"
+      ],
+      "architecture": "arm64",
+      "version": "lavik 0.1.0-beta.1",
+      "revision": "3955b98d43b312324aa8d52775df52cfb111c0d0",
+      "binarySha256": "8306b37ddf05023f85166a6aa2192b7084757e8defd342b602e6470244aca887"
+    }
+  ],
+  "fileHashes": {
+    "verification/docker-images/examples/compose-connect.sh": "759539c01895a61cba46079274e5cb5257b6776b5a73008dceedd87e7d220abc",
+    "verification/docker-images/examples/compose-download.sh": "77e842563ba94c86caf95797296399fedd52799e493dc7793be408dba9f8917c",
+    "verification/docker-images/examples/compose-failover.sh": "c4f5a61da0d99c0c7a17307cb8a1021c493aebd6990271d508403bf1c7e5d49a",
+    "verification/docker-images/examples/compose-restart.sh": "b28dbe69bfbdbde1a3dda89030bcb23b4e4e93040730cefe7fc90ec145ec70b6",
+    "verification/docker-images/examples/single-connect.sh": "353b18a3ddfe904acddefe5e0a95466ef4d78dbb90ead01f450128096b5dc395",
+    "verification/docker-images/examples/single-restart.sh": "0ef1aa41adc9b95026993ddb3906a0a04b37172df127f0debde6aa987ee75a25",
+    "verification/docker-images/examples/single-start.sh": "3ad47c96dc6c638dc0b1f0ae23ed2a6f63571244eafb8b38fe742c5a6bcba97b",
+    "verification/docker-images/upstream/.dockerignore": "3d7bf1ecb6d9515a38e3366d7591fba935592d24563257d4363a67f5fe516f58",
+    "verification/docker-images/upstream/Dockerfile": "11f35167b5d0c02dd25606f53b73cc985461b5332a533637010fbfeb68997dda",
+    "verification/docker-images/upstream/README.md": "062d6233aa0d5b13c75e85d81edcb727db1f5ed4df14207cee17399310ff1f26",
+    "verification/docker-images/upstream/bootstrap-cluster.py": "f91e4f7d4e85164490c56722e3f3f5a45dd5ee2bc4948c5b266e01fb91d5e2a0",
+    "verification/docker-images/upstream/cluster.toml": "21b5185a037e6f6fffb8b66e56cdc2590fc7baca690e0d5cfdfbfa22a2c015b1",
+    "verification/docker-images/upstream/compose.yaml": "d7596518dfef1f89cb09c1ee02f3e53c2f24c8e6c0e574667d9bfe2ee803ea48",
+    "verification/docker-images/upstream/docker-entrypoint.sh": "5b958ec5fea44e7c7f3404d39ca6204841caf6435e01d8e34d786e8b5e24ae52",
+    "verification/docker-images/upstream/fetch-release.sh": "bc983aa5978fde3a9b1b847d77760fc26fd9e53e8ec37f0a62f1b0234ca7d5f7",
+    "verification/docker-images/upstream/release.sha256": "278849e4676a444ec9821803deaee051d65781c0430c7a946fd6a16efb38803e",
+    "verification/docker-images/upstream/smoke-test.py": "fe0ded9993b7b073da5d3a93d6679b76db29642cd9f8af28830c0c9db08787fd",
+    "scripts/verify-docker-images.py": "4d6096ce3f5c80ffd95e7ce469e1d8b488b45981177f30f8035dfecfe4f4b8d4"
+  },
+  "checks": [
+    "standalone recovery preserves data and allocation",
+    "cluster bootstrap",
+    "cluster READY",
+    "follower receives writes",
+    "follower promoted by lavik-ctl",
+    "old primary follows new primary",
+    "bootstrap accepts recovered state",
+    "recovered cluster READY",
+    "cluster recovery preserves Genesis and data, and serves writes"
+  ],
+  "stdout": "PASS: standalone PING\nPASS: standalone PING\nPASS: standalone recovery preserves data and allocation\nPASS: cluster bootstrap\nPASS: cluster READY\nPASS: follower receives writes\nPASS: follower promoted by lavik-ctl\nPASS: old primary follows new primary\nPASS: bootstrap accepts recovered state\nPASS: recovered cluster READY\nPASS: recovered node retains replicated data\nPASS: recovered node retains replicated data\nPASS: cluster recovery preserves Genesis and data, and serves writes\nAll Docker release smoke checks passed.\n",
+  "scope": "Native local Docker; published images; single-node replacement, allocation preservation, primary/follower replication, controlled failover and full Compose recovery. No native AMD64 runtime, multi-host HA, SPDK, auth/TLS or throughput certification."
+}

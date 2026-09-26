@@ -6,121 +6,136 @@
       "zh-CN": "使用 Docker 安装"
     },
     "summary": {
-      "en": "Build and run Lavik 0.1.0-beta.1 with persistent container storage.",
-      "zh-CN": "构建并运行 Lavik 0.1.0-beta.1 容器，使用持久化存储。"
+      "en": "Start a standalone Lavik server with the official 0.1.0-beta.1 Docker image, connect with redis-cli, and keep your data across container replacements.",
+      "zh-CN": "使用官方 0.1.0-beta.1 Docker 镜像启动单机 Lavik，通过 redis-cli 连接，并在替换容器时保留数据。"
     },
     "sections": [
       {
         "id": "requirements",
         "title": {
           "en": "Before You Start",
-          "zh-CN": "开始之前"
+          "zh-CN": "准备工作"
         },
         "blocks": [
           {
             "type": "paragraph",
             "text": {
-              "en": "Run native Linux/amd64 or Linux/arm64 with a Linux 6.1+ kernel and io_uring enabled. Docker Desktop uses its Linux VM; allocate at least 2 CPUs and 2 GiB to that VM for this example. Do not use x86 emulation on an ARM Mac for the io_uring runtime. These examples build a local image from the Minimal beta.1 release, using kernel TCP and io_uring.",
-              "zh-CN": "使用原生 Linux/amd64 或 Linux/arm64，Linux 内核至少为 6.1，并启用 io_uring。Docker Desktop 使用 Linux 虚拟机；本示例请为虚拟机至少分配 2 个 CPU 和 2 GiB 内存。ARM Mac 上不要通过 x86 模拟运行 io_uring。示例使用 Minimal beta.1 发布包构建本地镜像，采用内核 TCP 和 io_uring。"
+              "en": "Install Docker Engine or Docker Desktop. The official eloqdata/lavik:0.1.0-beta.1 image supports Linux AMD64 and ARM64; Docker Desktop on Apple Silicon uses ARM64 natively. It packages the Minimal release with kernel TCP and io_uring. SPDK/DPDK are not included. Use Install With Binary for the Standard package and SPDK setup.",
+              "zh-CN": "安装 Docker Engine 或 Docker Desktop。官方 eloqdata/lavik:0.1.0-beta.1 镜像支持 Linux AMD64 和 ARM64；Apple Silicon 上的 Docker Desktop 使用原生 ARM64。镜像包含 Minimal 版本，使用内核 TCP 和 io_uring，不包含 SPDK/DPDK。如需 Standard 包和 SPDK 配置，请参阅二进制安装。"
             }
           },
           {
             "type": "paragraph",
             "text": {
-              "en": "The example reserves a 512 MiB data file and caps retained memory at 512 MiB. Choose capacity for your workload before the first start; never truncate an existing data file. The named volume holds both data and logs. Removing that volume deletes the database. Keep backups outside the volume.",
-              "zh-CN": "示例预分配 512 MiB 数据文件，并将保留内存上限设为 512 MiB。首次启动前按工作负载选择容量；绝不要截断已有数据文件。命名卷保存数据和日志。删除卷会删除数据库，备份应另行保存。"
-            }
-          },
-          {
-            "type": "paragraph",
-            "text": {
-              "en": "Host ports bind to 127.0.0.1. This local evaluation has no password; do not expose it publicly. seccomp:unconfined permits io_uring where Docker’s default profile blocks it, and relaxes syscall filtering. The container still runs as a non-root user, drops capabilities and prevents privilege escalation. For shared or production hosts, use a reviewed io_uring-capable seccomp policy and configure authentication/TLS before allowing remote clients.",
-              "zh-CN": "宿主端口绑定 127.0.0.1。本地评估示例未设置密码，不要公开暴露端口。seccomp:unconfined 允许使用默认 Docker 策略可能禁止的 io_uring，同时放宽系统调用过滤。容器仍以非 root 用户运行、移除 capabilities 并禁止提权。共享或生产主机应使用经过审查且支持 io_uring 的 seccomp 策略，并在允许远程连接之前配置认证和 TLS。"
+              "en": "The Linux host or Docker VM must support io_uring. The example uses seccomp=unconfined to allow it and runs as UID/GID 10001:10001 without privileged mode. Reserve free disk space for the initial 1 GiB data file. Port 6379 must be free; use 127.0.0.1:16379:6379 instead if another Redis or Lavik instance is running.",
+              "zh-CN": "Linux 主机或 Docker 虚拟机必须支持 io_uring。示例通过 seccomp=unconfined 放行，并以 UID/GID 10001:10001 运行，无需特权模式。请为初始 1 GiB 数据文件预留磁盘空间。6379 端口必须空闲；若已有 Redis 或 Lavik，可改为 127.0.0.1:16379:6379。"
             }
           },
           {
             "type": "link",
             "text": {
-              "en": "Release Packages & Requirements",
-              "zh-CN": "发布包与平台要求"
+              "en": "Install With Binary",
+              "zh-CN": "使用二进制安装"
             },
-            "href": "/{locale}/download/"
-          }
-        ]
-      },
-      {
-        "id": "image",
-        "title": {
-          "en": "Create The Image Files",
-          "zh-CN": "创建镜像文件"
-        },
-        "blocks": [
-          {
-            "type": "paragraph",
-            "text": {
-              "en": "Create a new working directory. Save the following two files as Dockerfile and start.sh. The build selects your native architecture and checks the release archive against its SHA-256 checksum. It is a locally built image, not an assumed public Lavik image tag.",
-              "zh-CN": "创建新的工作目录，将下面两个文件保存为 Dockerfile 和 start.sh。构建过程选择原生架构，并校验发布包的 SHA-256。这是本地构建的镜像。"
-            }
-          },
-          {
-            "type": "file",
-            "name": "Dockerfile"
-          },
-          {
-            "type": "file",
-            "name": "start.sh"
+            "href": "/{locale}/docs/0.1.0/quick-start/"
           }
         ]
       },
       {
         "id": "start",
         "title": {
-          "en": "Build And Start",
-          "zh-CN": "构建与启动"
+          "en": "Start Lavik",
+          "zh-CN": "启动 Lavik"
         },
         "blocks": [
           {
             "type": "paragraph",
             "text": {
-              "en": "Run these commands in the directory containing the two files. The names lavik-beta1 and lavik-beta1-data must not belong to another installation. The first PING may run before startup completes: check docker logs and retry until it returns PONG before issuing SET and GET. Expected replies are PONG, OK and hello from Lavik.",
-              "zh-CN": "在包含这两个文件的目录执行。lavik-beta1 和 lavik-beta1-data 不能属于其他部署。启动完成前首次 PING 可能失败；查看 docker logs 并重试，直到返回 PONG，再执行 SET 和 GET。预期依次返回 PONG、OK、hello from Lavik。"
+              "en": "Run these commands in your terminal. No Dockerfile, source build, or host-installed Lavik binary is needed. The image includes redis-cli. Use a fresh named volume for your first installation.",
+              "zh-CN": "在终端执行以下命令，无需 Dockerfile、源码编译或在宿主机安装 Lavik。镜像已包含 redis-cli。首次安装请使用新的命名卷。"
             }
           },
           {
-            "type": "file",
-            "name": "docker-run.sh"
+            "type": "docker-file",
+            "name": "single-start.sh"
+          },
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "The listener is published only on localhost. On macOS, connect through this published port, not a Docker bridge address. These commands are for local use without authentication; configure authentication and TLS before exposing Lavik remotely.",
+              "zh-CN": "监听端口仅发布到本机回环地址。macOS 请使用发布的端口，不要连接 Docker 网桥地址。这些命令用于不启用认证的本地使用；远程开放前请配置认证和 TLS。"
+            }
           }
         ]
       },
       {
-        "id": "manage",
+        "id": "connect",
         "title": {
-          "en": "Logs, Metrics And Restart",
-          "zh-CN": "日志、指标与重启"
+          "en": "Connect and Write Data",
+          "zh-CN": "连接并写入数据"
         },
         "blocks": [
           {
             "type": "paragraph",
             "text": {
-              "en": "Use docker logs lavik-beta1 for startup diagnostics. Metrics are available at http://127.0.0.1:9100/metrics. Use docker stop --time 60 lavik-beta1, then docker start lavik-beta1 to restart without replacing the data volume. After startup, GET greeting should return the saved value. To remove only the container, stop it first and use docker rm lavik-beta1; keep lavik-beta1-data and reuse it on the next docker run.",
-              "zh-CN": "使用 docker logs lavik-beta1 查看启动日志。指标地址为 http://127.0.0.1:9100/metrics。执行 docker stop --time 60 lavik-beta1，再执行 docker start lavik-beta1，可保留数据卷重启。启动后 GET greeting 应返回已保存的值。如仅需移除容器，请先停止，再执行 docker rm lavik-beta1；保留 lavik-beta1-data，在下次 docker run 时复用。"
+              "en": "Allow a short startup wait. PING should return PONG, SET should return OK, and GET should return lavik. If startup is still in progress, check the logs and retry PING. A host-installed client can also connect with redis-cli -h 127.0.0.1 -p 6379 (or your chosen host port).",
+              "zh-CN": "启动需要短暂等待。PING 应返回 PONG，SET 返回 OK，GET 返回 lavik。如果仍在启动，请检查日志并重试 PING。宿主机客户端也可使用 redis-cli -h 127.0.0.1 -p 6379（或您选择的宿主机端口）连接。"
+            }
+          },
+          {
+            "type": "docker-file",
+            "name": "single-connect.sh"
+          }
+        ]
+      },
+      {
+        "id": "storage",
+        "title": {
+          "en": "Configure Storage and Workers",
+          "zh-CN": "配置存储与工作线程"
+        },
+        "blocks": [
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "The entrypoint preallocates /data/lavik.data to 1 GiB on first start and uses two workers. Add -e LAVIK_DATA_SIZE=4G and -e LAVIK_THREADS=4 before the image name to change the defaults. Changing LAVIK_DATA_SIZE does not resize or truncate an existing data file. File logs and storage stay in the lavik-data volume. Never attach one data volume to two running servers.",
+              "zh-CN": "入口脚本在首次启动时预分配 1 GiB 的 /data/lavik.data，并使用两个工作线程。在镜像名之前添加 -e LAVIK_DATA_SIZE=4G 和 -e LAVIK_THREADS=4 可修改默认值。修改 LAVIK_DATA_SIZE 不会调整或截断已有数据文件。日志和数据保存在 lavik-data 卷中，切勿将同一数据卷挂载给两个同时运行的服务。"
+            }
+          },
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "Additional server flags go after the image name; explicit long options override the matching defaults. Bind-mounted data directories must be writable by UID 10001. Supplying --data-file makes you responsible for preallocating that file. For a mounted Redis-style configuration, use lavik /etc/lavik/lavik.conf after the image name; that configuration owns the listener, storage, and all other settings.",
+              "zh-CN": "额外服务参数放在镜像名之后；显式长选项会覆盖对应默认值。绑定挂载的数据目录必须允许 UID 10001 写入。指定 --data-file 后，需要自行预分配该文件。如挂载 Redis 风格的配置文件，在镜像名后使用 lavik /etc/lavik/lavik.conf；此时监听地址、存储及其他设置全部由配置文件负责。"
+            }
+          }
+        ]
+      },
+      {
+        "id": "restart",
+        "title": {
+          "en": "Restart and Preserve Data",
+          "zh-CN": "重启并保留数据"
+        },
+        "blocks": [
+          {
+            "type": "docker-file",
+            "name": "single-restart.sh"
+          },
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "To replace the container, run docker stop -t 60 lavik, then docker rm lavik, and repeat the start command with the same lavik-data volume. Removing the container keeps the named volume. Deleting the volume deletes your database; do not remove it for a restart or upgrade.",
+              "zh-CN": "替换容器时，先执行 docker stop -t 60 lavik，再执行 docker rm lavik，然后使用相同的 lavik-data 卷重新运行启动命令。删除容器会保留命名卷；删除卷则会删除数据库，重启或升级时不要删除卷。"
             }
           },
           {
             "type": "link",
             "text": {
-              "en": "Run With Docker Compose",
-              "zh-CN": "使用 Docker Compose 运行"
+              "en": "Run a Primary–Follower Cluster With Docker Compose",
+              "zh-CN": "使用 Docker Compose 运行主从集群"
             },
             "href": "/{locale}/docs/0.1.0/install-docker-compose/"
-          },
-          {
-            "type": "link",
-            "text": {
-              "en": "Configure Grafana Monitoring",
-              "zh-CN": "配置 Grafana 监控"
-            },
-            "href": "/{locale}/docs/0.1.0/lavik-ctl-single-node/#monitoring"
           }
         ]
       }
@@ -133,71 +148,36 @@
       "zh-CN": "使用 Docker Compose 安装"
     },
     "summary": {
-      "en": "Manage a persistent Lavik service with Docker Compose.",
-      "zh-CN": "使用 Docker Compose 管理持久化 Lavik 服务。"
+      "en": "Run the official beta.1 Compose example: three Meta voters, one Data primary, and one Data follower. Try native replication, controlled failover, and recovery with persistent volumes.",
+      "zh-CN": "运行官方 beta.1 Compose 示例：三个 Meta 投票节点、一个 Data 主节点和一个 Data 从节点，体验原生复制、受控故障转移和持久卷恢复。"
     },
     "sections": [
       {
         "id": "requirements",
         "title": {
           "en": "Before You Start",
-          "zh-CN": "开始之前"
+          "zh-CN": "准备工作"
         },
         "blocks": [
           {
             "type": "paragraph",
             "text": {
-              "en": "Run native Linux/amd64 or Linux/arm64 with a Linux 6.1+ kernel and io_uring enabled. Docker Desktop uses its Linux VM; allocate at least 2 CPUs and 2 GiB to that VM for this example. Do not use x86 emulation on an ARM Mac for the io_uring runtime. These examples build a local image from the Minimal beta.1 release, using kernel TCP and io_uring.",
-              "zh-CN": "使用原生 Linux/amd64 或 Linux/arm64，Linux 内核至少为 6.1，并启用 io_uring。Docker Desktop 使用 Linux 虚拟机；本示例请为虚拟机至少分配 2 个 CPU 和 2 GiB 内存。ARM Mac 上不要通过 x86 模拟运行 io_uring。示例使用 Minimal beta.1 发布包构建本地镜像，采用内核 TCP 和 io_uring。"
+              "en": "Install Docker with Compose v2. Reserve at least 4 GiB for the Docker VM and several GiB of free disk space. Both Linux AMD64 and ARM64 images are available. The cluster image eloqdata/lavik:0.1.0-beta.1-cluster contains Data, Meta, lavik-ctl, redis-cli, and the bootstrap helper, using the Minimal release with kernel TCP and io_uring. It does not include SPDK/DPDK or Lavik Admin.",
+              "zh-CN": "安装 Docker 和 Compose v2。为 Docker 虚拟机预留至少 4 GiB 内存及数 GiB 可用磁盘空间。镜像支持 Linux AMD64 和 ARM64。集群镜像 eloqdata/lavik:0.1.0-beta.1-cluster 包含 Data、Meta、lavik-ctl、redis-cli 和初始化工具，使用 Minimal 版本的内核 TCP 和 io_uring，不含 SPDK/DPDK 或 Lavik Admin。"
             }
           },
           {
             "type": "paragraph",
             "text": {
-              "en": "Use Docker Compose v2. Stop the plain Docker example before starting this service: both use host ports 6379 and 9100. Compose uses a separate project volume; it does not automatically reuse lavik-beta1-data.",
-              "zh-CN": "使用 Docker Compose v2。先停止普通 Docker 示例：两者占用相同的宿主端口 6379 和 9100。Compose 使用独立项目卷，不会自动复用 lavik-beta1-data。"
+              "en": "This is a local evaluation cluster on one Docker host, not protection against host failure. It uses beta.1’s NuRaft Meta implementation. Start with fresh volumes; do not reuse volumes from the newer source-built Admin quick start. All 16,384 slots initially belong to one primary, with native replication to its follower. Meta manages their roles.",
+              "zh-CN": "这是在一台 Docker 主机上运行的本地评估集群，无法抵御主机故障。它使用 beta.1 的 NuRaft Meta 实现。请使用新卷，不要复用较新源码版 Admin 快速入门的卷。全部 16,384 个槽最初归属一个主节点，通过原生复制同步至从节点，角色由 Meta 管理。"
             }
           },
           {
             "type": "paragraph",
             "text": {
-              "en": "Host ports bind to 127.0.0.1. This local evaluation has no password; do not expose it publicly. seccomp:unconfined permits io_uring where Docker’s default profile blocks it, and relaxes syscall filtering. The container still runs as a non-root user, drops capabilities and prevents privilege escalation. For shared or production hosts, use a reviewed io_uring-capable seccomp policy and configure authentication/TLS before allowing remote clients.",
-              "zh-CN": "宿主端口绑定 127.0.0.1。本地评估示例未设置密码，不要公开暴露端口。seccomp:unconfined 允许使用默认 Docker 策略可能禁止的 io_uring，同时放宽系统调用过滤。容器仍以非 root 用户运行、移除 capabilities 并禁止提权。共享或生产主机应使用经过审查且支持 io_uring 的 seccomp 策略，并在允许远程连接之前配置认证和 TLS。"
-            }
-          }
-        ]
-      },
-      {
-        "id": "files",
-        "title": {
-          "en": "Prepare The Project",
-          "zh-CN": "准备项目文件"
-        },
-        "blocks": [
-          {
-            "type": "link",
-            "text": {
-              "en": "Copy Dockerfile And start.sh From The Docker Guide",
-              "zh-CN": "从 Docker 指南复制 Dockerfile 和 start.sh"
-            },
-            "href": "/{locale}/docs/0.1.0/install-docker/#image"
-          },
-          {
-            "type": "paragraph",
-            "text": {
-              "en": "In that same new project directory, save the following as compose.yaml. Keep the project name consistent across commands so Compose reuses the same volume.",
-              "zh-CN": "在同一新项目目录，将以下内容保存为 compose.yaml。各命令保持项目名一致，以便复用相同的数据卷。"
-            }
-          },
-          {
-            "type": "file",
-            "name": "compose.yaml"
-          },
-          {
-            "type": "paragraph",
-            "text": {
-              "en": "The example reserves a 512 MiB data file and caps retained memory at 512 MiB. Choose capacity for your workload before the first start; never truncate an existing data file. The named volume holds both data and logs. Removing that volume deletes the database. Keep backups outside the volume.",
-              "zh-CN": "示例预分配 512 MiB 数据文件，并将保留内存上限设为 512 MiB。首次启动前按工作负载选择容量；绝不要截断已有数据文件。命名卷保存数据和日志。删除卷会删除数据库，备份应另行保存。"
+              "en": "The fixed bridge subnet 172.30.92.0/24 must be unused. Run only one copy of this example per Docker daemon. If necessary, change the addresses consistently in both compose.yaml and cluster.toml before the first startup. The containers run as UID/GID 10001:10001; seccomp=unconfined allows io_uring without privileged mode.",
+              "zh-CN": "固定网桥子网 172.30.92.0/24 必须未被占用。每个 Docker 守护进程仅运行一份此示例。需要调整时，请在首次启动前同时修改 compose.yaml 和 cluster.toml 中的地址，保持一致。容器以 UID/GID 10001:10001 运行，通过 seccomp=unconfined 允许 io_uring，无需特权模式。"
             }
           }
         ]
@@ -205,45 +185,114 @@
       {
         "id": "start",
         "title": {
-          "en": "Start And Connect",
-          "zh-CN": "启动与连接"
+          "en": "Download and Start the Cluster",
+          "zh-CN": "下载并启动集群"
         },
         "blocks": [
           {
             "type": "paragraph",
             "text": {
-              "en": "Run docker compose -p lavik-beta1 up -d --build --wait. Wait for the service to become healthy, then use docker compose -p lavik-beta1 exec -T lavik redis-cli PING. It should return PONG. Use the same exec prefix with SET greeting \"hello from Lavik\" and GET greeting. The container health check verifies that the service answers PING; it does not assess application latency or capacity.",
-              "zh-CN": "执行 docker compose -p lavik-beta1 up -d --build --wait，等待服务变为 healthy，再执行 docker compose -p lavik-beta1 exec -T lavik redis-cli PING，应返回 PONG。用相同 exec 前缀执行 SET greeting \"hello from Lavik\" 和 GET greeting。健康检查确认服务响应 PING，不衡量应用延迟或容量。"
+              "en": "Download the matching Compose file and manifest into a new directory. These links pin the dockerimages branch snapshot for beta.1; no repository clone or build is needed. Keep both files together, and run all subsequent Compose commands from this directory.",
+              "zh-CN": "将配套的 Compose 文件和清单下载到新目录。链接固定到 dockerimages 分支中适用于 beta.1 的快照，无需克隆仓库或编译。两个文件必须放在同一目录，后续 Compose 命令均在该目录中执行。"
+            }
+          },
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "The initial primary publishes localhost:6379 and the initial follower localhost:6380. If occupied, run export LAVIK_PRIMARY_PORT=16779 LAVIK_FOLLOWER_PORT=16780 before the commands below and retain those settings for subsequent Compose commands. LAVIK_DATA_SIZE defaults to 1G per Data node and LAVIK_THREADS to 2.",
+              "zh-CN": "初始主节点发布 localhost:6379，从节点发布 localhost:6380。如果端口被占用，请先执行 export LAVIK_PRIMARY_PORT=16779 LAVIK_FOLLOWER_PORT=16780，并在后续 Compose 命令中保留这些设置。每个 Data 节点的 LAVIK_DATA_SIZE 默认为 1G，LAVIK_THREADS 默认为 2。"
+            }
+          },
+          {
+            "type": "docker-file",
+            "name": "compose-download.sh"
+          },
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "Wait for “Cluster is READY (one primary, one follower).” and a successful bootstrap exit. Ctrl-C stops following the logs without stopping the containers. Per-container health checks only show process availability; use cluster-status to check cluster_ready and the current owner. If bootstrap fails, inspect docker compose logs bootstrap and cluster status before taking action; never delete volumes to repair uncertain state.",
+              "zh-CN": "等待日志显示 “Cluster is READY (one primary, one follower).” 且 bootstrap 成功退出。Ctrl-C 只停止跟踪日志，不会停止容器。容器健康检查仅表示进程可用，请使用 cluster-status 检查 cluster_ready 和当前主节点。若初始化失败，先检查 docker compose logs bootstrap 及集群状态，不要通过删除卷来修复不确定的状态。"
             }
           }
         ]
       },
       {
-        "id": "manage",
+        "id": "connect",
         "title": {
-          "en": "Operate The Service",
-          "zh-CN": "管理服务"
+          "en": "Connect and Check Replication",
+          "zh-CN": "连接并检查复制"
+        },
+        "blocks": [
+          {
+            "type": "docker-file",
+            "name": "compose-connect.sh"
+          },
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "SET returns OK and GET returns lavik. The follower read sends READONLY and GET on the same connection; retry after replication catches up if the value has not arrived. The service names primary and follower describe initial roles, which can change.",
+              "zh-CN": "SET 返回 OK，GET 返回 lavik。从节点读取会在同一连接上发送 READONLY 和 GET；若值尚未同步，请等待复制追上后重试。primary 和 follower 服务名仅描述初始角色，实际角色可能发生变化。"
+            }
+          },
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "The cluster advertises Docker-internal addresses. Cluster-aware clients that follow MOVED redirects must run on the Compose network; the exec commands above do so. On macOS, host clients can connect directly through published ports but cannot follow redirects to bridge addresses. A remote deployment needs addresses reachable by every node and client, plus authentication and TLS. This example publishes Data ports only on loopback, does not publish Meta ports, and uses plaintext inside the Docker network.",
+              "zh-CN": "集群通告 Docker 内部地址。需要跟随 MOVED 重定向的集群客户端必须在 Compose 网络内运行，上述 exec 命令满足此条件。macOS 上的宿主机客户端可直连发布端口，但无法跟随指向网桥地址的重定向。远程部署需要所有节点和客户端都能访问的地址，以及认证和 TLS。本示例仅向回环地址发布 Data 端口，不发布 Meta 端口，Docker 网络内使用明文通信。"
+            }
+          }
+        ]
+      },
+      {
+        "id": "failover",
+        "title": {
+          "en": "Try Controlled Failover",
+          "zh-CN": "体验受控故障转移"
         },
         "blocks": [
           {
             "type": "paragraph",
             "text": {
-              "en": "Use docker compose -p lavik-beta1 ps and docker compose -p lavik-beta1 logs --tail 100 lavik to inspect the service. Use docker compose -p lavik-beta1 restart lavik for a graceful restart. docker compose -p lavik-beta1 down removes containers and the project network but retains the database volume; repeat up -d --wait to restore the service. Do not add --volumes or -v unless you intend to delete the database. Keep the same project directory and project name.",
-              "zh-CN": "使用 docker compose -p lavik-beta1 ps 和 docker compose -p lavik-beta1 logs --tail 100 lavik 检查服务。使用 docker compose -p lavik-beta1 restart lavik 正常重启。docker compose -p lavik-beta1 down 删除容器和项目网络，但保留数据库卷；再次执行 up -d --wait 恢复服务。除非确实要删除数据库，否则不要加 --volumes 或 -v。保持项目目录和项目名一致。"
+              "en": "After the cluster is ready and replication has caught up, use the shipped lavik-ctl to transfer ownership of group-1. Inspect cluster-status afterward. redis-cli -c can follow the redirect from the old primary because it runs inside the Compose network.",
+              "zh-CN": "集群就绪且复制追上后，使用镜像内的 lavik-ctl 转移 group-1 的主节点所有权，随后检查 cluster-status。redis-cli -c 在 Compose 网络内部运行，因此可以跟随旧主节点返回的重定向。"
+            }
+          },
+          {
+            "type": "docker-file",
+            "name": "compose-failover.sh"
+          }
+        ]
+      },
+      {
+        "id": "restart",
+        "title": {
+          "en": "Stop and Recover the Cluster",
+          "zh-CN": "停止并恢复集群"
+        },
+        "blocks": [
+          {
+            "type": "docker-file",
+            "name": "compose-restart.sh"
+          },
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "Each of the two Data nodes and three Meta nodes has its own named volume. docker compose down preserves these five volumes. On startup, Meta loads its durable topology; bootstrap initializes only an uninitialized cluster and otherwise waits for recovery. It does not reapply the original role assignments. Automatic failover during recovery can change the owner, so discover it with cluster-status rather than relying on service names.",
+              "zh-CN": "两个 Data 节点和三个 Meta 节点各自拥有命名卷，docker compose down 会保留这五个卷。再次启动时，Meta 加载持久化拓扑；bootstrap 仅初始化尚未初始化的集群，否则等待恢复，不会重新强制应用最初的角色分配。恢复期间自动故障转移可能改变主节点，请通过 cluster-status 查询，不要依赖服务名。"
             }
           },
           {
             "type": "paragraph",
             "text": {
-              "en": "This is a standalone service, not a high-availability cluster. For Meta-managed primary/follower deployment, use the separate cluster guide.",
-              "zh-CN": "这是独立服务，不是高可用集群。Meta 管理的主从部署请使用独立集群指南。"
+              "en": "Only for an intentional complete reset: docker compose down --volumes permanently deletes all five database volumes. Never add --volumes for a routine restart or upgrade. Changing LAVIK_DATA_SIZE does not resize existing files.",
+              "zh-CN": "仅在明确要完全重置时使用 docker compose down --volumes，它会永久删除全部五个数据库卷。日常重启或升级切勿添加 --volumes。修改 LAVIK_DATA_SIZE 不会调整已有数据文件的大小。"
             }
           },
           {
             "type": "link",
             "text": {
-              "en": "Primary–Follower HA",
-              "zh-CN": "主从高可用"
+              "en": "Manage a Primary–Follower Cluster and Set Up Grafana",
+              "zh-CN": "管理主从集群并配置 Grafana"
             },
             "href": "/{locale}/docs/0.1.0/lavik-ctl-ha-cluster/"
           }

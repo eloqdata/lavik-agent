@@ -1,4 +1,8 @@
-import { onboardingErrors, onboardingReviewedFiles } from "../docs/repository";
+import {
+  dockerImageErrors,
+  onboardingErrors,
+  onboardingReviewedFiles,
+} from "../docs/repository";
 import fs from "node:fs";
 import path from "node:path";
 import { createHash } from "node:crypto";
@@ -464,6 +468,7 @@ export function manualPublicationErrors({ requireReview = true } = {}) {
     errors.push(...quickStartEvidenceErrors());
     errors.push(...operationsEvidenceErrors());
     errors.push(...onboardingErrors());
+    errors.push(...dockerImageErrors());
     errors.push(...useCaseEvidenceErrors());
     if (
       inventory.commit !== release.commit ||

@@ -90,3 +90,38 @@ test("user documentation exposes complete guides without internal audit sections
   await expect(page.locator("article")).toContainText("LOADING");
   await expect(page.locator("article")).toContainText("standalone");
 });
+
+test("official Docker installation snippets copy correctly in both languages", async ({
+  page,
+  context,
+}) => {
+  await context.grantPermissions(["clipboard-read", "clipboard-write"]);
+  for (const locale of ["en", "zh-CN"]) {
+    await page.goto(`/${locale}/docs/0.1.0/install-docker/`);
+    await expect(page.locator("#start pre")).toContainText(
+      "docker pull eloqdata/lavik:0.1.0-beta.1",
+    );
+    await page.locator("#start button").click();
+    expect(await page.evaluate(() => navigator.clipboard.readText())).toContain(
+      "-v lavik-data:/data",
+    );
+    await page.goto(`/${locale}/docs/0.1.0/install-docker-compose/`);
+    await expect(page.locator("#start pre")).toContainText(
+      "a1770a78b52e0bb9ec32e20b92af6282e73efabd",
+    );
+    await expect(page.locator("#connect pre")).toContainText("READONLY");
+    await expect(page.locator("#failover pre")).toContainText(
+      "lavik-ctl failover group-1",
+    );
+    await expect(page.locator("#restart pre")).toContainText(
+      "docker compose down --timeout 60",
+    );
+    await expect(page.locator("#restart pre")).not.toContainText("--volumes");
+    await page.setViewportSize({ width: 375, height: 900 });
+    expect(
+      await page.evaluate(
+        () => document.documentElement.scrollWidth <= innerWidth,
+      ),
+    ).toBe(true);
+  }
+});
