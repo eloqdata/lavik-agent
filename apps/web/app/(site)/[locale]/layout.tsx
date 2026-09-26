@@ -1,3 +1,8 @@
+import { websiteStructuredData } from "../../../../../packages/seo/site";
+import { StructuredData } from "../../../components/structured-data";
+import { Analytics } from "../../../components/analytics";
+import { Suspense } from "react";
+import { articles } from "../../../../../packages/content/repository";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Header, Footer } from "../../../components/site";
@@ -13,7 +18,7 @@ export function generateStaticParams() {
 export const metadata: Metadata = {
   metadataBase: new URL("https://lavik.dev"),
   title: {
-    default: "Lavik — Faster than Redis. Capacity on NVMe SSD.",
+    default: "Lavik — Redis-compatible storage on NVMe SSD",
     template: "%s · Lavik",
   },
   description:
@@ -32,6 +37,18 @@ export default async function Layout({
   return (
     <html lang={parsed.data}>
       <body>
+        <StructuredData data={websiteStructuredData} />
+        <Suspense fallback={null}>
+          <Analytics
+            campaignIds={[
+              ...new Set(
+                articles()
+                  .filter((a) => a.kind === "blog")
+                  .map((a) => a.id),
+              ),
+            ]}
+          />
+        </Suspense>
         <a href="#main" className="skip-link">
           {parsed.data === "en" ? "Skip to content" : "跳至正文"}
         </a>

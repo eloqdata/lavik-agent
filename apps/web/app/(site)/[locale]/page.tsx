@@ -1,3 +1,8 @@
+import {
+  pageMetadata,
+  pageStructuredData,
+} from "../../../../../packages/seo/site";
+import { StructuredData } from "../../../components/structured-data";
 import Link from "next/link";
 import type { Metadata } from "next";
 import {
@@ -29,24 +34,8 @@ export async function generateMetadata({
   params,
 }: {
   params: Promise<{ locale: string }>;
-}): Promise<Metadata> {
-  const { locale } = await params;
-  return {
-    title: {
-      absolute:
-        locale === "en"
-          ? `Lavik — Faster than Redis. ${capacityRatio}× lower capacity cost.`
-          : `Lavik — 比 Redis 更快，容量成本降至 1/${capacityRatio}。`,
-    },
-    description:
-      locale === "en"
-        ? "Faster than Redis in the published SPDK GET/SET benchmark. A 20:1 DRAM/NVMe SSD price ratio means 95% lower value-capacity cost. Open source under Apache 2.0."
-        : "在已发布的 SPDK GET/SET 基准测试中比 Redis 更快。按 DRAM/NVMe SSD 单价比 20:1，值容量成本降低 95%。Apache 2.0 开源。",
-    alternates: {
-      canonical: `/${locale}/`,
-      languages: { en: "/en/", "zh-CN": "/zh-CN/" },
-    },
-  };
+}) {
+  return pageMetadata(localeSchema.parse((await params).locale), "");
 }
 export default async function Home({
   params,
@@ -59,6 +48,7 @@ export default async function Home({
   const [lavik] = rows;
   return (
     <main id="main">
+      <StructuredData data={pageStructuredData(locale, "")} />
       <section className="hero">
         <div className="container hero-grid">
           <div className="hero-copy">
@@ -94,6 +84,11 @@ export default async function Home({
               {zh
                 ? "用 NVMe SSD 替代昂贵的 DRAM 来存储值。Lavik 为 Redis / Valkey 工作负载带来全新的成本结构：熟悉的 Redis 接口、实测百万级 QPS，以及随 SSD 扩展的数据容量。"
                 : "Replace expensive DRAM with NVMe SSD for your values. Lavik gives Redis / Valkey workloads a new cost structure: familiar Redis clients, a measured million requests per second, and capacity that grows with SSDs."}
+            </p>
+            <p className="hero-scope">
+              {zh
+                ? "“更快”指已发布 SPDK GET/SET 测试中的峰值吞吐量；容量成本比较按 DRAM/NVMe SSD 每 GiB 单价比 20:1 计算值数据，索引内存及服务器成本另计。"
+                : "Faster in the published SPDK GET/SET peak-throughput tests. The 20× comparison covers value capacity at a 20:1 DRAM/NVMe SSD price per GiB; index memory and server costs are additional."}
             </p>
             <div className="actions">
               <Link

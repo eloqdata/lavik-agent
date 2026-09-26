@@ -1,4 +1,10 @@
 import {
+  analyticsEventSchema,
+  AnalyticsStore,
+} from "../../packages/marketing/analytics";
+export { AnalyticsStore };
+import { publicDimensions } from "../../packages/marketing/dimensions";
+import {
   verifyAdmin,
   verifyRunner,
   validateMutation,
@@ -23,6 +29,14 @@ const disabled = () =>
 type Env = AuthConfig &
   DispatchConfig & {
     ASSETS: Fetcher;
+    ANALYTICS_REPORT_TOKEN?: string;
+    ANALYTICS_STORE?: {
+      idFromName(name: string): unknown;
+      get(id: unknown): Fetcher;
+    };
+    ANALYTICS_RATE_LIMIT?: {
+      limit(options: { key: string }): Promise<{ success: boolean }>;
+    };
     ADMIN_STORE: {
       idFromName(name: string): unknown;
       get(id: unknown): Fetcher;
@@ -61,6 +75,71 @@ export class AdminStore {
 }
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
+    const analyticsPath = new URL(request.url).pathname;
+    if (analyticsPath.startsWith("/api/analytics/")) {
+      if (!env.ANALYTICS_STORE)
+        return json({ error: "Analytics is unavailable" }, 503);
+      const store = env.ANALYTICS_STORE.get(
+        env.ANALYTICS_STORE.idFromName("lavik-marketing-v1"),
+      );
+      if (
+        analyticsPath === "/api/analytics/report" &&
+        request.method === "GET"
+      ) {
+        if (
+          !(await verifyRunner(request, {
+            RUNNER_TOKEN: env.ANALYTICS_REPORT_TOKEN,
+          }))
+        )
+          return json({ error: "Report authentication required" }, 401);
+        return store.fetch(request);
+      }
+      if (analyticsPath !== "/api/analytics/event" || request.method !== "POST")
+        return json({ error: "Not found" }, 404);
+      const origin = new URL(request.url).origin;
+      if (
+        request.headers.get("Origin") !== origin ||
+        request.headers.get("Sec-Fetch-Site") !== "same-origin"
+      )
+        return json({ error: "Same-origin browser request required" }, 403);
+      if (
+        !request.headers.get("Content-Type")?.startsWith("application/json") ||
+        Number(request.headers.get("Content-Length") ?? 0) > 2048
+      )
+        return json({ error: "Invalid event body" }, 400);
+      if (
+        env.ANALYTICS_RATE_LIMIT &&
+        !(
+          await env.ANALYTICS_RATE_LIMIT.limit({
+            key: request.headers.get("CF-Connecting-IP") ?? "unknown",
+          })
+        ).success
+      )
+        return new Response(null, { status: 429 });
+      const body = await request.text();
+      if (new TextEncoder().encode(body).length > 2048)
+        return json({ error: "Event too large" }, 413);
+      try {
+        const parsed = analyticsEventSchema.safeParse(JSON.parse(body));
+        if (!parsed.success) return json({ error: "Invalid event" }, 400);
+        let normalized;
+        try {
+          normalized = await publicDimensions(env.ASSETS, parsed.data);
+        } catch {
+          return json({ error: "Attribution registry unavailable" }, 503);
+        }
+        if (!normalized) return json({ error: "Unknown public page" }, 400);
+        return store.fetch(
+          new Request(request.url, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(normalized),
+          }),
+        );
+      } catch {
+        return json({ error: "Invalid JSON" }, 400);
+      }
+    }
     const community = communityRedirect(request);
     if (community) return community;
     const path = new URL(request.url).pathname;

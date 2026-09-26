@@ -69,7 +69,15 @@ export function codexInvocationBudget(
   role: "writer" | "reviewer",
   additionalReviewReason?: string,
   additionalBatchReviewReason?: string,
+  authorizedCorrectiveReviewReason?: string,
 ) {
+  if (authorizedCorrectiveReviewReason?.trim()) {
+    if (role !== "reviewer" || authorizedCorrectiveReviewReason.length > 120)
+      throw new Error(
+        "An owner-authorized corrective extension requires a reviewer and a short recorded reason.",
+      );
+    return { roleLimit: 5, totalLimit: 5 };
+  }
   if (additionalBatchReviewReason?.trim()) {
     if (role !== "reviewer" || additionalBatchReviewReason.length > 120)
       throw new Error(
@@ -90,12 +98,14 @@ export async function runLocalCodex(options: {
   schema: unknown;
   additionalReviewReason?: string;
   additionalBatchReviewReason?: string;
+  authorizedCorrectiveReviewReason?: string;
 }) {
   const task = path.resolve(options.taskDirectory);
   await fs.mkdir(task, { recursive: true, mode: 0o700 });
   // Four total attempts, normally at most two per role. A specifically
   // requested third review can use an unused writer slot; it does not expand
-  // the total budget. An explicit batch follow-up allows one additional call,
+  // the total budget. An explicitly owner-authorized corrective extension caps
+  // reviewer and total attempts at five. An explicit batch follow-up allows one additional call,
   // up to four reviewer calls and five total, with its reason in the receipt.
   // No automatic retries or quota recovery are enabled. Exclusive creation also
   // prevents two coordinators from silently consuming the same task budget.
@@ -104,6 +114,7 @@ export async function runLocalCodex(options: {
     options.role,
     options.additionalReviewReason,
     options.additionalBatchReviewReason,
+    options.authorizedCorrectiveReviewReason,
   );
   for (let attempt = 1; attempt <= limit; attempt++) {
     const candidate = path.join(task, `${options.role}-${attempt}`);
@@ -120,7 +131,7 @@ export async function runLocalCodex(options: {
       `Local task ${options.role} invocation budget exhausted (${limit}).`,
     );
   const attempts = (await fs.readdir(task)).filter((entry) =>
-    /^(writer|reviewer)-[1-4]$/.test(entry),
+    /^(writer|reviewer)-[1-5]$/.test(entry),
   );
   if (attempts.length > totalLimit)
     throw new Error(
@@ -206,6 +217,12 @@ export async function runLocalCodex(options: {
       : {}),
     ...(options.additionalBatchReviewReason
       ? { additionalBatchReviewReason: options.additionalBatchReviewReason }
+      : {}),
+    ...(options.authorizedCorrectiveReviewReason
+      ? {
+          authorizedCorrectiveReviewReason:
+            options.authorizedCorrectiveReviewReason,
+        }
       : {}),
     startedAt,
     finishedAt: new Date().toISOString(),

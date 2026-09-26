@@ -50,6 +50,28 @@ test("subscription launcher strips API keys, Azure endpoints and publishing cred
     { PATH: "/bin", HOME: "/home/test", NODE_ENV: "production" },
   );
 });
+test("owner-authorized corrective extension refuses a sixth review without model access", async () => {
+  const directory = await fs.mkdtemp(
+    path.join(os.tmpdir(), "lavik-corrective-budget-"),
+  );
+  try {
+    for (let i = 1; i <= 5; i++)
+      await fs.mkdir(path.join(directory, `reviewer-${i}`));
+    await assert.rejects(
+      runLocalCodex({
+        role: "reviewer",
+        taskDirectory: directory,
+        prompt: "Never sent",
+        schema: {},
+        authorizedCorrectiveReviewReason:
+          "Explicit owner authorization fixture",
+      }),
+      /invocation budget exhausted \(5\)/,
+    );
+  } finally {
+    await fs.rm(directory, { recursive: true, force: true });
+  }
+});
 
 test("writer and reviewer force ChatGPT and ignore global provider settings", () => {
   for (const role of ["writer", "reviewer"] as const) {

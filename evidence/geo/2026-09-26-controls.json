@@ -1,0 +1,82 @@
+{
+  "cloudflare": {
+    "checkedAt": "2026-09-26T12:42:15.603Z",
+    "results": [
+      {
+        "path": "/bot_management",
+        "status": 200,
+        "data": {
+          "result": {
+            "enable_js": false,
+            "fight_mode": false,
+            "ai_bots_protection": "disabled",
+            "content_bots_protection": "disabled",
+            "crawler_protection": "disabled",
+            "ai_training": "disabled",
+            "ai_search": "disabled",
+            "ai_user": "disabled",
+            "is_robots_txt_managed": false,
+            "bot_preference_sync_enabled": false,
+            "cf_robots_variant": "policy_only",
+            "ai_bots_migration_opt_out": false,
+            "using_latest_model": true
+          },
+          "success": true,
+          "errors": [],
+          "messages": []
+        }
+      },
+      {
+        "path": "/rulesets",
+        "status": 200,
+        "data": {
+          "result": [
+            {
+              "description": "Created by the Cloudflare security team, this ruleset provides normalization on the URL path",
+              "id": "70339d97bdb34195bbf054b1ebe81f76",
+              "kind": "managed",
+              "last_updated": "2024-08-01T17:37:11.538019Z",
+              "name": "Cloudflare Normalization Ruleset",
+              "phase": "http_request_sanitize",
+              "version": "6"
+            },
+            {
+              "description": "Created by the Cloudflare security team, this ruleset is designed to provide protection for free zones",
+              "id": "77454fe2d30c4220b5701f6fdfb893ba",
+              "kind": "managed",
+              "last_updated": "2026-08-17T16:24:51.912839Z",
+              "name": "Cloudflare Managed Free Ruleset",
+              "phase": "http_request_firewall_managed",
+              "source": "firewall_managed",
+              "version": "74"
+            },
+            {
+              "description": "Automatic mitigation of HTTP-based DDoS attacks. Cloudflare routinely adds signatures to address new attack vectors. Additional configuration allows you to customize the sensitivity of each rule and the performed mitigation action.",
+              "id": "4d21379b4f9f4bb088e0729962c8b3cf",
+              "kind": "managed",
+              "last_updated": "2026-09-24T09:49:14.038221Z",
+              "name": "DDoS L7 ruleset",
+              "phase": "ddos_l7",
+              "version": "3425"
+            }
+          ],
+          "success": true,
+          "errors": [],
+          "messages": []
+        }
+      }
+    ]
+  },
+  "google": {
+    "domain": "lavik.dev",
+    "ownership": "verified",
+    "method": "DNS TXT",
+    "sitemap": "https://lavik.dev/sitemap.xml",
+    "submitted": "2026-09-26",
+    "status": "Success",
+    "discoveredPages": 564,
+    "note": "Read from Search Console; discovery is not a claim all URLs are indexed.",
+    "checkedAt": "2026-09-26T12:42:15.603Z"
+  },
+  "limits": "Cloudflare configuration and a Google sitemap read are observed; real AI crawler requests and future AI citations have not been independently verified."
+}

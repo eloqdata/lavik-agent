@@ -1,3 +1,6 @@
+import { pageInfo } from "../../../../packages/seo/site";
+import { changedAt } from "../../../../packages/seo/dates";
+import type { Locale } from "../../../../packages/content/schema";
 import { userGuideRoutes } from "../../../../packages/docs/repository";
 import type { MetadataRoute } from "next";
 import { articles, articlePath } from "../../../../packages/content/repository";
@@ -17,14 +20,21 @@ export default function sitemap(): MetadataRoute.Sitemap {
       "releases/",
       "download/",
       "community/",
+      "about/",
+      "privacy/",
       "docs/0.1.0/",
     ].map((route) => `/${locale}/${route}`),
   );
-  return [
+  const entries: MetadataRoute.Sitemap = [
     ...["en", "zh-CN"].flatMap((locale) =>
-      blogTopics.map((topic) => ({
-        url: `https://lavik.dev/${locale}/blog/topic/${topic.id}/`,
-      })),
+      blogTopics
+        .filter(
+          (topic) =>
+            !pageInfo(locale as Locale, `blog/topic/${topic.id}`).emptyTopic,
+        )
+        .map((topic) => ({
+          url: `https://lavik.dev/${locale}/blog/topic/${topic.id}/`,
+        })),
     ),
     ...["en", "zh-CN"].flatMap((locale) =>
       useCases.map((entry) => ({
@@ -47,4 +57,37 @@ export default function sitemap(): MetadataRoute.Sitemap {
       lastModified: a.updatedAt,
     })),
   ];
+  return entries.map((entry) => {
+    const url = new URL(entry.url),
+      parts = url.pathname.split("/").filter(Boolean),
+      locale = parts[0],
+      route = parts.slice(1).join("/");
+    const source = route.startsWith("docs/0.1.0/commands")
+      ? "content/manual/0.1.0/catalog.json"
+      : route.startsWith("docs/0.1.0/clients")
+        ? "verification/manual/clients/catalog.json"
+        : route.startsWith("use-cases")
+          ? "packages/use-cases/content.ts"
+          : operationsRoutes().includes(route)
+            ? "content/operations/0.1.0/guides.json"
+            : route.startsWith("docs/")
+              ? "packages/docs/guides.json"
+              : route === ""
+                ? "apps/web/app/(site)/[locale]/page.tsx"
+                : "apps/web/app/(site)/[locale]/[...slug]/page.tsx";
+    return {
+      ...entry,
+      ...(entry.lastModified
+        ? {}
+        : changedAt(source)
+          ? { lastModified: changedAt(source) }
+          : {}),
+      alternates: {
+        languages: {
+          en: `https://lavik.dev/en/${route ? `${route}/` : ""}`,
+          "zh-CN": `https://lavik.dev/zh-CN/${route ? `${route}/` : ""}`,
+        },
+      },
+    };
+  });
 }

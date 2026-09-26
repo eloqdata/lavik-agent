@@ -1,4 +1,10 @@
 import {
+  pageMetadata,
+  pageStructuredData,
+} from "../../../../../../packages/seo/site";
+import { StructuredData } from "../../../../components/structured-data";
+import { ProjectPage } from "../../../../components/project-page";
+import {
   userGuides,
   userGuideRoutes,
 } from "../../../../../../packages/docs/repository";
@@ -64,6 +70,8 @@ const indexRoutes = [
   "community",
   "docs",
   "docs/0.1.0",
+  "about",
+  "privacy",
 ];
 export const dynamicParams = false;
 export function generateStaticParams({
@@ -91,67 +99,24 @@ export async function generateMetadata({
   params: Promise<{ locale: string; slug: string[] }>;
 }): Promise<Metadata> {
   const { locale, slug } = await params;
-  const useCase =
-    slug[0] === "use-cases"
-      ? useCases.find((entry) => entry.slug === slug[1])
-      : undefined;
-  const parsedLocale = localeSchema.parse(locale);
-  const operatorGuide = [...operationsGuides, ...userGuides].find(
-    (g) => slug.join("/") === `docs/0.1.0/${g.id}`,
-  );
-  const topic =
-    slug.length === 3 && slug[0] === "blog" && slug[1] === "topic"
-      ? blogTopics.find((entry) => entry.id === slug[2])
-      : undefined;
-  const article = articles().find(
-    (a) => articlePath(a) === `/${locale}/${slug.join("/")}/`,
-  );
-  const titles: Record<string, string[]> = {
-    benchmarks: ["Benchmarks", "基准测试"],
-    cost: ["Capacity economics", "容量经济性"],
-    "use-cases": ["Use cases", "使用场景"],
-    blog: ["Blog", "博客"],
-    download: ["Download", "下载"],
-    community: ["Community", "社区"],
-    docs: ["Documentation", "文档"],
-    releases: ["Releases", "版本说明"],
-  };
-  return {
-    title:
-      (topic ? `${topic.label[parsedLocale]} | Lavik Blog` : undefined) ??
-      useCase?.title[parsedLocale] ??
-      operatorGuide?.title[parsedLocale] ??
-      article?.title ??
-      manualTitle(slug.join("/"), localeSchema.parse(locale)) ??
-      titles[slug[0]]?.[locale === "en" ? 0 : 1],
-    description:
-      (topic
-        ? parsedLocale === "en"
-          ? `Explore ${topic.label.en.toLowerCase()} on the Lavik blog.`
-          : `阅读 Lavik 博客的${topic.label[parsedLocale]}文章。`
-        : undefined) ??
-      useCase?.summary[parsedLocale] ??
-      operatorGuide?.summary[parsedLocale] ??
-      article?.summary ??
-      (slug[0] === "download"
-        ? locale === "en"
-          ? "Download Lavik 0.1.0 beta for Linux x86-64 and ARM64. Standard and Minimal packages, requirements, and SHA-256 checksums."
-          : "下载适用于 Linux x86-64 和 ARM64 的 Lavik 0.1.0 beta，查看 Standard / Minimal 发布包、系统要求和 SHA-256 校验和。"
-        : slug[0] === "community"
-          ? locale === "en"
-            ? "Join Lavik Community on Slack, Discord, and GitHub. Get involved in an Apache 2.0 open-source key-value store."
-            : "加入 Slack、Discord 和 GitHub 上的 Lavik Community，一起构建 Apache 2.0 开源键值存储。"
-          : undefined),
-    alternates: {
-      canonical: `/${locale}/${slug.join("/") === "docs" ? "docs/0.1.0" : slug.join("/")}/`,
-      languages: {
-        en: `/en/${slug.join("/")}/`,
-        "zh-CN": `/zh-CN/${slug.join("/")}/`,
-      },
-    },
-  };
+  return pageMetadata(localeSchema.parse(locale), slug.join("/"));
 }
 export default async function Page({
+  params,
+}: {
+  params: Promise<{ locale: string; slug: string[] }>;
+}) {
+  const { locale, slug } = await params;
+  return (
+    <>
+      <StructuredData
+        data={pageStructuredData(localeSchema.parse(locale), slug.join("/"))}
+      />
+      <PageContent params={params} />
+    </>
+  );
+}
+async function PageContent({
   params,
 }: {
   params: Promise<{ locale: string; slug: string[] }>;
@@ -160,6 +125,8 @@ export default async function Page({
     locale = localeSchema.parse(resolved.locale),
     zh = locale === "zh-CN";
   const route = resolved.slug.join("/");
+  if (route === "about" || route === "privacy")
+    return <ProjectPage locale={locale} kind={route} />;
   if (route === "use-cases") return <UseCasesHome locale={locale} />;
   const useCase = useCases.find((entry) => route === `use-cases/${entry.slug}`);
   if (useCase) return <UseCasePage locale={locale} entry={useCase} />;
@@ -220,8 +187,10 @@ export default async function Page({
           <div className="article-meta">
             {article.kind === "blog" ? (
               <>
-                {zh ? "工程与设计" : "Engineering & design"} ·{" "}
-                {article.updatedAt}
+                <Link href={`/${locale}/about/`}>
+                  {zh ? "Lavik 项目" : "Lavik project"}
+                </Link>{" "}
+                · {article.updatedAt}
                 {article.sourceRevision ? (
                   <>
                     {" "}
@@ -298,7 +267,25 @@ export default async function Page({
         </p>
         <BenchmarkChart rows={benchmarkRows()} locale={locale} />
         <div className="prose">
-          <h2>{zh ? "实验环境" : "The experiment"}</h2>
+          <p>
+            {zh
+              ? "在这个 1 KiB 实验中，Lavik SPDK 的峰值 GET 和 SET 吞吐量均高于 Redis 和 Valkey。延迟列对应各系统的吞吐量峰值，不能代替你的应用 SLO 测试。"
+              : "In this 1 KiB experiment, Lavik SPDK achieved higher peak GET and SET throughput than Redis and Valkey. The latency columns correspond to each system’s throughput peak; evaluate your application’s SLO separately."}
+          </p>
+          <p>
+            <a href="/benchmarks/spdk-2026-09-18.csv" download>
+              {zh ? "下载原始结果 CSV" : "Download the source results (CSV)"}
+            </a>{" "}
+            ·{" "}
+            <Link href={`/${locale}/cost/`}>
+              {zh ? "计算容量成本" : "Calculate capacity cost"}
+            </Link>{" "}
+            ·{" "}
+            <Link href={`/${locale}/docs/0.1.0/compatibility/`}>
+              {zh ? "检查兼容性" : "Check compatibility"}
+            </Link>
+          </p>
+          <h2 id="methodology">{zh ? "实验环境" : "The experiment"}</h2>
           <p>{currentBenchmark.scope[locale]}</p>
           <p>
             {zh
@@ -350,6 +337,23 @@ export default async function Page({
             {zh
               ? "Lavik 仍需要内存保存索引和运行时状态。CPU、副本、可用容量和运维成本也要纳入完整对比。下方模型展示这些因素如何改变总体比值。"
               : "Lavik still needs memory for indexes and runtime state. CPU, replicas, usable capacity, and operations also enter a complete comparison. The model below shows how those factors affect the overall ratio."}
+          </p>
+        </div>
+        <div className="prose">
+          <h2 id="worked-example">
+            {zh
+              ? "1 TiB 值数据的容量示例"
+              : "A worked example: 1 TiB of value payload"}
+          </h2>
+          <p>
+            {zh
+              ? "假设每 GiB DRAM 和 NVMe SSD 的容量价格分别为 20 和 1 个成本单位。1 TiB 等于 1,024 GiB：仅值容量的 DRAM 成本为 20,480 个单位，NVMe SSD 为 1,024 个单位，节省 19,456 个单位（95%）。这些是解释比例的假设单位，不是硬件报价；索引内存、副本和共享服务器成本需另行加入。"
+              : "Assume DRAM and NVMe SSD capacity prices of 20 and 1 cost units per GiB. One TiB is 1,024 GiB: value capacity alone costs 20,480 units in DRAM or 1,024 units on NVMe SSD, saving 19,456 units (95%). These are illustrative units, not hardware quotes; add index memory, replicas, and shared server costs separately."}
+          </p>
+          <p>
+            {zh
+              ? "使用下面的模型，调整索引内存和共同成本，查看部署成本比值如何变化。"
+              : "Use the model below to see how index memory and shared costs change the deployment cost ratio."}
           </p>
         </div>
         <CostCalculator locale={locale} />

@@ -1,10 +1,13 @@
 # Next increments
 
-**Current priority:** migrate content work to the [local Codex team](local-agent-team.md).
-Hosted Admin and API-backed writing workflows are disabled to control model
-spending. The public site and ordinary GitHub deployment remain active. Complete
-the subscription-only local runner and verified website publication before adding
-more marketing channels or unattended scheduling.
+**September 26 update:** the subscription-only local writer, independent reviewer,
+Docker verification, website publisher, two-day blog schedule, and weekly
+Cloudflare channel reports are implemented. See
+[marketing operations](marketing-operations.md) for controls and limits. Hosted
+Admin and API-backed writing remain disabled. The next increments are supported
+platform adapters, upstream source refresh, and feedback informed by actual traffic.
+The sections below retain the broader roadmap; their completed website and manual
+work should not be treated as a new implementation queue.
 
 The website, real command verifier, bilingual blog campaign pipeline and private
 four-role admin console are implemented. The console's Access application and

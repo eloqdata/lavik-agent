@@ -1,9 +1,13 @@
 # Local Codex content team
 
-Design dated September 21, 2026. The hosted Admin and API-backed GitHub writing
-workflows are disabled. This document specifies their local replacement; the
-local queue, Codex adapter and dashboard described here are not implemented yet.
-The public website and ordinary GitHub-to-Cloudflare deployment remain active.
+Design dated September 21, 2026; implementation update September 26. The hosted
+Admin and API-backed GitHub writing workflows remain disabled. The subscription
+adapter, Docker verification, independent review, website publisher, two-day blog
+schedule, and weekly channel reporting are implemented. See
+[marketing operations](marketing-operations.md) for current commands and limits.
+The initial coordinator uses locked, atomic JSON state rather than SQLite; the
+dashboard, tool server, upstream watcher, and platform adapters below remain design
+work. The public website and GitHub-to-Cloudflare deployment remain active.
 
 ## Decision
 

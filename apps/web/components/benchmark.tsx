@@ -54,6 +54,35 @@ export function BenchmarkChart({
           <small>p99 {command === "get" ? row.getP99 : row.setP99} ms</small>
         </div>
       ))}
+      <div className="table-scroll">
+        <table className="benchmark-data">
+          <caption>
+            {locale === "en"
+              ? "Complete peak-throughput comparison"
+              : "完整峰值吞吐量对比"}
+          </caption>
+          <thead>
+            <tr>
+              <th scope="col">{locale === "en" ? "System" : "系统"}</th>
+              <th scope="col">GET QPS</th>
+              <th scope="col">GET p99</th>
+              <th scope="col">SET QPS</th>
+              <th scope="col">SET p99</th>
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map((row) => (
+              <tr key={row.name}>
+                <th scope="row">{row.name}</th>
+                <td>{row.get.toLocaleString("en-US")}</td>
+                <td>{row.getP99} ms</td>
+                <td>{row.set.toLocaleString("en-US")}</td>
+                <td>{row.setP99} ms</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }

@@ -11,12 +11,26 @@
     "ADMIN_EMAIL": "Zhanghuan929@gmail.com",
   },
   "durable_objects": {
-    "bindings": [{ "name": "ADMIN_STORE", "class_name": "AdminStore" }],
+    "bindings": [
+      { "name": "ADMIN_STORE", "class_name": "AdminStore" },
+      { "name": "ANALYTICS_STORE", "class_name": "AnalyticsStore" },
+    ],
   },
-  "migrations": [{ "tag": "admin-v1", "new_sqlite_classes": ["AdminStore"] }],
+  "migrations": [
+    { "tag": "admin-v1", "new_sqlite_classes": ["AdminStore"] },
+    { "tag": "analytics-v1", "new_sqlite_classes": ["AnalyticsStore"] },
+  ],
+  "ratelimits": [
+    {
+      "name": "ANALYTICS_RATE_LIMIT",
+      "namespace_id": "1001",
+      "simple": { "limit": 60, "period": 60 },
+    },
+  ],
   "assets": {
     "binding": "ASSETS",
     "run_worker_first": [
+      "/api/analytics/*",
       "/admin",
       "/admin/*",
       "/api/admin/*",

@@ -74,6 +74,9 @@ export function Footer({ locale }: { locale: Locale }) {
             {zh ? "版本说明" : "Releases"}
           </Link>
           <Link href={`/${locale}/faq/evaluation/`}>FAQ</Link>
+          <Link href={`/${locale}/about/`}>{zh ? "关于" : "About"}</Link>
+          <Link href={`/${locale}/privacy/`}>{zh ? "隐私" : "Privacy"}</Link>
+          <a href={`/${locale}/feed.xml`}>RSS</a>
           <a href="https://github.com/eloqdata/lavik/blob/main/LICENSE">
             Apache 2.0
           </a>
