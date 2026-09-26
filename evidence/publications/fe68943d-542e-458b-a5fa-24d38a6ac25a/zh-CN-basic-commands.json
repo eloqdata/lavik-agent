@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "recipeId": "basic-commands",
+  "recipeHash": "1740e7c83b709e0fd9bc2180dab87854e947d809f8dff212548aefa7ddbc14dc",
+  "sourceCommit": "3955b98d43b312324aa8d52775df52cfb111c0d0",
+  "release": "0.1.0-beta.1",
+  "artifactSha256": "819df5f9f6c534f0fa988d1a9ec3531f1e6b0651527591a54e7235688bf8d984",
+  "imageId": "sha256:582bb509e89b930f687b459bda308329be5c2db4476f686492f637450a735751",
+  "harnessHash": "d4e48b6119b303fa95f0d7780cf79207ef05ef4426fd00a27dceeced1ddabd5c",
+  "status": "passed",
+  "startedAt": "2026-09-26T13:40:56.135Z",
+  "completedAt": "2026-09-26T13:40:58.655Z",
+  "platform": "Linux-7.0.12-linuxkit-aarch64-with-glibc2.39",
+  "output": "{\"recipeId\": \"basic-commands\", \"platform\": \"Linux-7.0.12-linuxkit-aarch64-with-glibc2.39\", \"steps\": [{\"argv\": [\"redis-cli\", \"-h\", \"127.0.0.1\", \"-p\", \"6379\", \"--raw\", \"PING\"], \"expected\": \"PONG\", \"actual\": \"PONG\"}, {\"argv\": [\"redis-cli\", \"-h\", \"127.0.0.1\", \"-p\", \"6379\", \"--raw\", \"SET\", \"greeting\", \"hello from Lavik\"], \"expected\": \"OK\", \"actual\": \"OK\"}, {\"argv\": [\"redis-cli\", \"-h\", \"127.0.0.1\", \"-p\", \"6379\", \"--raw\", \"GET\", \"greeting\"], \"expected\": \"hello from Lavik\", \"actual\": \"hello from Lavik\"}, {\"argv\": [\"redis-cli\", \"-h\", \"127.0.0.1\", \"-p\", \"6379\", \"--raw\", \"HSET\", \"user:42\", \"name\", \"Ada\"], \"expected\": \"1\", \"actual\": \"1\"}, {\"argv\": [\"redis-cli\", \"-h\", \"127.0.0.1\", \"-p\", \"6379\", \"--raw\", \"HGET\", \"user:42\", \"name\"], \"expected\": \"Ada\", \"actual\": \"Ada\"}], \"status\": \"passed\", \"binaryVersion\": \"lavik 0.1.0-beta.1\", \"executableOnPath\": false, \"workingDirectory\": \"/opt/lavik\", \"sourceCommit\": \"3955b98d43b312324aa8d52775df52cfb111c0d0\", \"packageVersion\": \"v0.1.0-beta.1\", \"gracefulRestart\": \"passed\"}\n"
+}

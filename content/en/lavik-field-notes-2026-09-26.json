@@ -1,0 +1,143 @@
+{
+  "id": "lavik-field-notes-2026-09-26",
+  "locale": "en",
+  "version": "0.1.0",
+  "kind": "blog",
+  "slug": "lavik-field-notes-2026-09-26",
+  "title": "Plan cache growth by counting keys, not just terabytes",
+  "summary": "A worked capacity model shows why moving values to NVMe changes the budget without removing index memory, reclamation headroom, or shared server costs.",
+  "updatedAt": "2026-09-26",
+  "topics": [
+    "best-practise",
+    "architecture"
+  ],
+  "blocks": [
+    {
+      "type": "paragraph",
+      "text": "A growing Redis cache can need more capacity for two different reasons: existing values get larger, or the application retains more keys. Those growth paths put different pressure on Lavik. Its compact key index remains in DRAM while values live on storage, making NVMe useful for expanding value capacity. A practical sizing model therefore needs separate forecasts for key count and value bytes. This article concerns the Apache 2.0 beta release, 0.1.0-beta.1.",
+      "sources": [
+        "readme",
+        "storage"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "The same payload can require a different memory budget"
+    },
+    {
+      "type": "paragraph",
+      "text": "Start with three quantities: live key count, average value size, and effective index memory per key. Multiplying the first two estimates logical value bytes; multiplying key count by the third estimates index memory. Neither result is a complete server budget. Lavik also retains runtime state and I/O buffers, and storage contains record metadata, older versions awaiting reclamation, and reserved capacity.",
+      "sources": [
+        "storage"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "Consider a hypothetical String cache growing from 50 million to one billion keys, with every value exactly 1 KiB. Logical value bytes grow from 51.2 GB to 1,024 GB: a 20× increase. Assume, solely for this planning exercise, an effective index cost of 64 bytes per key. The corresponding index allowance grows from 3.2 GB to 64 GB. These are decimal GB; the 64-byte assumption is not a measured Lavik footprint or a sizing guarantee.",
+      "sources": [
+        "storage"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "Now change the application design: store the same 1,024 GB of values as two billion keys with 512-byte values. Under the same hypothetical index assumption, the index allowance becomes 128 GB, even though value capacity has not changed. A value-only forecast would miss that doubling. Real index requirements depend on key representation, optional state such as expiration, and index capacity; collection layouts introduce additional considerations. Measure the effective footprint with the keys and data structures your application actually uses.",
+      "sources": [
+        "storage"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "The 20× figure describes only the ratio between the example's two logical value populations. It does not establish 20× savings, 20× usable device capacity, measured total cost, or equivalent SLAs. The example also makes no claim that either population fits a particular server. Turning it into a deployment estimate requires adding memory and storage allowances and checking workload performance.",
+      "sources": [
+        "storage",
+        "tiering-cost"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "Budget for the busiest worker and for delayed reclamation"
+    },
+    {
+      "type": "paragraph",
+      "text": "Aggregate free memory can hide a local limit. Lavik divides its configured retained-memory budget into fixed worker shares; a worker cannot borrow another worker's unused balance, and retained state is admitted up to 90% of each share. Hash slots map to workers, so key placement matters alongside total key count. A capacity trial should record worker distribution as well as aggregate memory. The configured memory limit bounds accumulating retained state, not instantaneous process RSS.",
+      "sources": [
+        "storage"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "Storage headroom needs a lifecycle model too. An overwrite appends a new version, and the old durable version remains charged until the replacement flush completes. Obsolete space becomes available only after reclamation completes. Expiration can leave a tombstone and its index entry behind; entry removal enables index shrinking, which proceeds incrementally. Consequently, live value bytes, retained index memory, and available storage can fall at different times after an expiration wave.",
+      "sources": [
+        "storage"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "For a cache with heavy turnover, make sustained overwrite and expiration traffic part of the capacity trial. Observe available blocks, retained memory, RSS, pending flushes, and reclamation activity while maintaining the intended live population. This is a proposed evaluation, not a reported test result. Its purpose is to discover whether the deployment can keep reclaiming space at the required traffic rate before deciding how much headroom to reserve.",
+      "sources": [
+        "storage"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "Charge shared costs to the whole deployment"
+    },
+    {
+      "type": "paragraph",
+      "text": "Value storage is one line in the budget. CPU, DRAM, network capacity, replicas, recovery capacity, and operating work belong to the deployment that serves those values. A larger logical dataset can spread shared server costs across more bytes only while the required performance and recovery behavior remain acceptable. The historical cost estimates in the supplied storage-tier report compare a managed instance with a self-managed VM; they explicitly do not establish full TCO.",
+      "sources": [
+        "architecture",
+        "storage",
+        "tiering-cost"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "The calculator below illustrates how capacity assumptions affect a modeled cost ratio. Its three controls set the DRAM/SSD capacity-price ratio, Lavik memory as a percentage of payload capacity, and shared costs as a percentage of Redis payload memory cost. It fixes storage amplification at 1 and assumes equal replica counts and no compression. The defaults are illustrative; separate absolute prices and reclamation headroom belong in your own deployment worksheet, and this model is not measured total cost.",
+      "sources": [
+        "tiering-cost"
+      ]
+    },
+    {
+      "type": "calculation",
+      "calculationId": "capacity-economics"
+    },
+    {
+      "type": "paragraph",
+      "text": "Treat benchmark results as evidence for a candidate configuration, rather than a conversion factor from terabytes to server count. The September 18 SPDK report measured one billion 1 KiB values on six NVMe devices with 16 Lavik workers. Its storage-group points used 60-second windows, uniform random GET or overwriting SET, and pipeline depth one. It includes 22 new Lavik points and 124 reused peer-control points across both dataset groups. Those measurements do not establish sustained TTL-heavy capacity, equal crash durability, or an SLA for the hypothetical cache above.",
+      "sources": [
+        "benchmark-spdk"
+      ]
+    },
+    {
+      "type": "claim",
+      "claimId": "durability"
+    },
+    {
+      "type": "heading",
+      "text": "Turn the example into a capacity worksheet"
+    },
+    {
+      "type": "paragraph",
+      "text": "Record your current and projected key counts, value-size distribution, key lengths, TTL behavior, and command mix. Replace the hypothetical 64-byte index allowance with an observed footprint from a representative population, then add runtime memory and storage headroom separately. Evaluate recovery and replication requirements before attaching deployment costs. Lavik's broad Redis compatibility remains command- and behavior-specific, so include application semantics in that evaluation.",
+      "sources": [
+        "readme",
+        "storage",
+        "architecture"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "Begin with the basic command recipe below on a suitable Linux host, then use a disposable representative dataset for the capacity work. The recipe is an interface check; it cannot validate a memory model or establish production capacity. Published packages target x86_64 and ARM64 and require Linux 6.1 or newer with usable io_uring and compatible glibc. Minimal packages use kernel TCP and io_uring; the SPDK benchmark configuration requires Standard.",
+      "sources": [
+        "build",
+        "readme",
+        "benchmark-spdk"
+      ]
+    },
+    {
+      "type": "recipe",
+      "recipeId": "basic-commands"
+    }
+  ]
+}
