@@ -2,8 +2,8 @@
   "version": "0.1.0",
   "release": "0.1.0-beta.1",
   "sourceCommit": "3955b98d43b312324aa8d52775df52cfb111c0d0",
-  "bundleHash": "093ae8c967cf312c0f67a14aefb44e1b9c06b8ef3effb0e48c94db1b3e6627d9",
-  "reviewedAt": "2026-09-26T13:27:11.551Z",
+  "bundleHash": "e1345aab7a8aaaa13a362ff4bad192207f9d497d92f84ac87313fcd282df910d",
+  "reviewedAt": "2026-09-26T13:48:49.928Z",
   "reviewedFiles": {
     ".github/workflows/ci.yml": "f274fe57bc56f4386f5020a0f357a0ec46ec5a91e61610971176b4752a7b4997",
     ".gitignore": "ac3b6ad1580d7cd27927552974932d97072eff8f466f08df436a4c3e356f548b",
@@ -207,9 +207,9 @@
     "tests/admin-browser/admin.spec.ts": "cf36e2b46e571a1d15b949f925b4abe49768bdfc2b071031308e270f3bdd3d2e",
     "tests/admin.test.ts": "1d60012b9d873f7a4c43737492098e723f7524e32a1eb5524ee6fcfb036fc061",
     "tests/apt.test.ts": "2a6409ddc8d38d998ee61edfc65189afab96010faf896d2044dd9aa62d634eb6",
-    "tests/blog-presentation.test.ts": "bc218446be7bb93079cae7501f4b2c999577f6f6f2c48692464585a11d68b9b8",
+    "tests/blog-presentation.test.ts": "461783d5137204445d9c0945e1b891aff300ceb6ea2152a181f551b7a92582ee",
     "tests/blog-series.test.ts": "cd026340abae37a4c9c823af8e9588a5311e2524ba7e10b0dc567d281427fc0e",
-    "tests/browser/blog-navigation.spec.ts": "bd54041bafd80acf75bfe7a1833b6a7f3aea93b845946c79df50440278eb92d7",
+    "tests/browser/blog-navigation.spec.ts": "cc7723c12d69ef979e53743e7bf613927cbc3e3119caffd46f31ff397a467626",
     "tests/browser/blog-series.spec.ts": "f7c15e3699d4c7ab1050379e0ff6692d8e487839ec9b07d4e62377db0894c88d",
     "tests/browser/discovery.spec.ts": "536edefdd9f334803652587918c6a450fbcc79180699b192e2cd84a405dbc768",
     "tests/browser/docs-navigation.spec.ts": "28d77038efd86130752668859503e2d2bdb221ed666ce63df901a07423b1e5a7",
@@ -323,19 +323,7 @@
     "findings": [
       {
         "severity": "note",
-        "message": "The generated writer schema replaces oneOf with nested anyOf, retains disjoint literal-tagged block branches, requires every declared property, and forbids additional properties. No structured-output compatibility blocker is apparent."
-      },
-      {
-        "severity": "note",
-        "message": "Existing field constraints, block validation, and downstream content checks remain intact. Topics are required; kind is restricted to blog. Strict omission of publishedAt and sourceRevision prevents writer-invented publication provenance."
-      },
-      {
-        "severity": "note",
-        "message": "Both new files join manualReviewedPaths and therefore the existing file-hash and bundle-hash checks. Existing dependencies remain covered. Unchanged prior approvals are preserved; these changes do not alter authentication, publication, scheduling, or invocation budgets."
-      },
-      {
-        "severity": "note",
-        "message": "With writer-1 retained in the same task directory, only writer-2 remains; further writer calls fail before invocation. Original reviewer and total limits remain enforced. This is a supplied-text review: no tools or tests were run, hashes were not independently recomputed, and the reported full repository check remains pending."
+        "message": "The exact correction sorts complete expected filenames, matching the actual route filenames’ ordering, including post/post-followup. It resolves the prior blocker without introducing a new material blocker. Prior acceptance of unchanged test logic and the deployed baseline is preserved. Reviewed supplied source only; no tests were run. Required prepublication checks remain outstanding."
       }
     ]
   },
@@ -345,17 +333,51 @@
     "provider": "openai",
     "authentication": "chatgpt",
     "reasoning": "high",
-    "startedAt": "2026-09-26T13:26:50.690Z",
-    "finishedAt": "2026-09-26T13:27:11.551Z",
-    "promptSha256": "0ac754f9a32d67913a21bb8dba1159cc037231a56f30ff62f89275f3fd410f1a",
-    "outputSha256": "1d1bb3c8425ea620ac34adc4246da3cc7b7308de2755c5542a9785999c58cf38"
+    "startedAt": "2026-09-26T13:48:34.359Z",
+    "finishedAt": "2026-09-26T13:48:49.928Z",
+    "promptSha256": "910b655c73eef11da2c13c619b65d942f786c9f9d261d35a45fdbfd155cc3f07",
+    "outputSha256": "e8adbc89c4d1e3d6cc4cc9ccd337010bb0e3d131d6191e2ecf80d9a64fd1127b"
   },
-  "reviewScope": "incremental-writer-schema",
-  "previousBundleHash": "80a348846f6ab2fa5d19f3889801c3c2ba117fb338989477da022cf80de56104",
+  "reviewScope": "incremental-blog-growth-tests",
+  "previousBundleHash": "093ae8c967cf312c0f67a14aefb44e1b9c06b8ef3effb0e48c94db1b3e6627d9",
   "reviewedChanges": [
-    "packages/manual/gate.ts",
-    "packages/marketing/blog-schema.ts",
-    "scripts/blog-task.ts",
-    "tests/marketing-schema.test.ts"
-  ]
+    "tests/blog-presentation.test.ts",
+    "tests/browser/blog-navigation.spec.ts"
+  ],
+  "previousInspection": {
+    "review": {
+      "decision": "changes_required",
+      "findings": [
+        {
+          "severity": "blocking",
+          "message": "In tests/blog-presentation.test.ts, sort the expected filenames after appending `.svg`: `ids.map((id) => `${id}.svg`).sort()`. Sorting IDs first produces a different order for valid IDs such as `post` and `post-followup`, causing exact route membership to fail as the collection grows even when routes are correct."
+        },
+        {
+          "severity": "note",
+          "message": "Otherwise, the patch preserves bilingual uniqueness, cover uniqueness, SVG safety, classification, and navigation checks, with expectations derived from content declarations. Unchanged approvals remain preserved. Review used supplied text only; no tools or tests were run."
+        }
+      ]
+    },
+    "reviewer": {
+      "role": "reviewer",
+      "model": "gpt-6-astra",
+      "provider": "openai",
+      "authentication": "chatgpt",
+      "reasoning": "high",
+      "startedAt": "2026-09-26T13:45:30.096Z",
+      "finishedAt": "2026-09-26T13:45:55.238Z",
+      "promptSha256": "c00e967995fcb9ea90e6fefb6809c06df1f3d5c1e68fbd7c0c30b3be38f32f69",
+      "outputSha256": "04db945efed89679f4a2ee59b5a1e4681234e3787e4fdb9cd4befe8adceef9d3"
+    },
+    "files": [
+      {
+        "file": "tests/blog-presentation.test.ts",
+        "sha256": "f3cf22344d53d24632402b3794a7b0a3b6e6d537c81bc093020998b997d6f0bb"
+      },
+      {
+        "file": "tests/browser/blog-navigation.spec.ts",
+        "sha256": "cc7723c12d69ef979e53743e7bf613927cbc3e3119caffd46f31ff397a467626"
+      }
+    ]
+  }
 }

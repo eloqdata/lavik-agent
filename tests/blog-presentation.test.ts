@@ -16,8 +16,23 @@ import {
 
 test("every existing blog has a unique cover shared by both language editions", async () => {
   const posts = articles().filter((a) => a.kind === "blog");
-  assert.equal(posts.length, 20);
-  assert.equal(generateStaticParams().length, 10);
+  const ids = [...new Set(posts.map((article) => article.id))].sort();
+  assert.ok(ids.length > 0, "The blog inventory must not be empty");
+  for (const id of ids)
+    assert.deepEqual(
+      posts
+        .filter((article) => article.id === id)
+        .map((article) => article.locale)
+        .sort(),
+      ["en", "zh-CN"],
+      `${id} must have exactly one edition in each language`,
+    );
+  assert.deepEqual(
+    generateStaticParams()
+      .map(({ file }) => file)
+      .sort(),
+    ids.map((id) => `${id}.svg`).sort(),
+  );
   const covers = new Set<string>();
   for (const article of posts.filter((a) => a.locale === "en")) {
     const presentation = blogPresentation(article);
@@ -39,7 +54,7 @@ test("every existing blog has a unique cover shared by both language editions", 
     );
     covers.add(svg);
   }
-  assert.equal(covers.size, 10);
+  assert.equal(covers.size, ids.length);
   assert.equal(
     (
       await GET(new Request("https://lavik.dev/blog-covers/missing.svg"), {

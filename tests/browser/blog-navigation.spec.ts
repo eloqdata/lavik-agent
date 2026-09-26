@@ -1,4 +1,11 @@
 import { test, expect } from "@playwright/test";
+import fs from "node:fs";
+import { articles } from "../../packages/content/repository.ts";
+import { blogTopics } from "../../packages/blog/topics.ts";
+
+const legacyPresentation = JSON.parse(
+  fs.readFileSync("content/blog-presentation.json", "utf8"),
+) as Record<string, { topics: string[] }>;
 
 test("blog covers, recent posts and topic filters work in both languages", async ({
   page,
@@ -6,8 +13,21 @@ test("blog covers, recent posts and topic filters work in both languages", async
 }) => {
   let englishCovers: string[] = [];
   for (const locale of ["en", "zh-CN"]) {
+    const posts = articles().filter(
+      (article) => article.kind === "blog" && article.locale === locale,
+    );
+    expect(posts.length).toBeGreaterThan(0);
     await page.goto(`/${locale}/blog/`);
-    await expect(page.locator(".blog-card")).toHaveCount(10);
+    await expect(page.locator(".blog-card")).toHaveCount(posts.length);
+    expect(
+      await page
+        .locator(".blog-card-link")
+        .evaluateAll((links) =>
+          links.map((link) => link.getAttribute("href")!).sort(),
+        ),
+    ).toEqual(
+      posts.map((article) => `/${locale}/blog/${article.slug}/`).sort(),
+    );
     await expect(page.locator(".blog-recent a")).toHaveCount(5);
     await expect(page.locator(".blog-topics a")).toHaveCount(5);
     const covers = await page
@@ -15,7 +35,10 @@ test("blog covers, recent posts and topic filters work in both languages", async
       .evaluateAll((imgs) =>
         imgs.map((img) => img.getAttribute("src")!).sort(),
       );
-    expect(new Set(covers).size).toBe(10);
+    expect(covers).toEqual(
+      posts.map((article) => `/blog-covers/${article.id}.svg`).sort(),
+    );
+    expect(new Set(covers).size).toBe(posts.length);
     if (locale === "en") {
       englishCovers = covers;
       for (const cover of covers) {
@@ -32,13 +55,15 @@ test("blog covers, recent posts and topic filters work in both languages", async
         )
         .toBe(1200);
     }
-    for (const [topic, count] of [
-      ["architecture", 8],
-      ["benchmark", 2],
-      ["use-case", 0],
-      ["best-practise", 1],
-      ["news", 0],
-    ] as const) {
+    for (const { id: topic } of blogTopics) {
+      const expectedPosts = posts.filter((article) =>
+        (
+          article.topics ??
+          legacyPresentation[article.id]?.topics ??
+          []
+        ).includes(topic),
+      );
+      const count = expectedPosts.length;
       await page
         .locator(`.blog-topics a[href="/${locale}/blog/topic/${topic}/"]`)
         .click();
@@ -46,6 +71,17 @@ test("blog covers, recent posts and topic filters work in both languages", async
         new RegExp(`/${locale}/blog/topic/${topic}/$`),
       );
       await expect(page.locator(".blog-card")).toHaveCount(count);
+      expect(
+        await page
+          .locator(".blog-card-link")
+          .evaluateAll((links) =>
+            links.map((link) => link.getAttribute("href")!).sort(),
+          ),
+      ).toEqual(
+        expectedPosts
+          .map((article) => `/${locale}/blog/${article.slug}/`)
+          .sort(),
+      );
       await expect(
         page.locator(".blog-topics a[aria-current=page]"),
       ).toHaveAttribute("href", `/${locale}/blog/topic/${topic}/`);

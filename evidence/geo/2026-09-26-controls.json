@@ -78,5 +78,129 @@
     "note": "Read from Search Console; discovery is not a claim all URLs are indexed.",
     "checkedAt": "2026-09-26T12:42:15.603Z"
   },
-  "limits": "Cloudflare configuration and a Google sitemap read are observed; real AI crawler requests and future AI citations have not been independently verified."
+  "limits": "Cloudflare configuration and a Google sitemap read are observed; real AI crawler requests and future AI citations have not been independently verified.",
+  "postDeployment": {
+    "checkedAt": "2026-09-26T13:41:42.092711+00:00",
+    "deployment": {
+      "revision": "692351fe9dcb436d049e1671476c67c4c2e2c37b",
+      "status": "passed",
+      "checkedPages": 564,
+      "discoveryAssets": 6
+    },
+    "workflow": "https://github.com/eloqdata/lavik-agent/actions/runs/36245313095",
+    "cloudflarePublicCrawlRule": {
+      "description": "",
+      "id": "88503a2c7b0d4f66a933de7dd9addaae",
+      "kind": "zone",
+      "last_updated": "2026-09-26T13:30:07.651825Z",
+      "name": "default",
+      "phase": "http_config_settings",
+      "rules": [
+        {
+          "action": "set_config",
+          "action_parameters": {
+            "bic": false
+          },
+          "description": "Public discovery: allow non-browser crawlers",
+          "enabled": true,
+          "expression": "(http.host eq \"lavik.dev\" and http.request.method in {\"GET\" \"HEAD\"} and (starts_with(http.request.uri.path, \"/en/\") or starts_with(http.request.uri.path, \"/zh-CN/\") or http.request.uri.path in {\"/\" \"/robots.txt\" \"/sitemap.xml\" \"/llms.txt\" \"/BingSiteAuth.xml\" \"/8a123d680953dd302f83622c2f8f2c64.txt\" \"/discovery-manifest.json\" \"/publication-manifest.json\" \"/manual-manifest.json\" \"/campaign-links.json\"}))",
+          "id": "3fb1975f9966414499c0fb65de9b6e4a",
+          "last_updated": "2026-09-26T13:30:07.651825Z",
+          "ref": "3fb1975f9966414499c0fb65de9b6e4a",
+          "version": "1"
+        }
+      ],
+      "version": "1"
+    },
+    "indexNow": {
+      "revision": "96eac76c5960befc7975970265cbbd18e9d6ed0b",
+      "at": "2026-09-26T13:31:13.347Z",
+      "httpStatus": 200,
+      "response": "",
+      "status": "accepted"
+    },
+    "indexNowSubmittedUrls": 564,
+    "liveBrowser": {
+      "checkedAt": "2026-09-26T13:34:05.707Z",
+      "width": {
+        "viewport": 375,
+        "document": 375
+      },
+      "events": [
+        {
+          "status": 204,
+          "body": {
+            "event": "visit",
+            "path": "/en/",
+            "source": "diagnostic",
+            "medium": "none",
+            "campaign": "untagged"
+          }
+        },
+        {
+          "status": 204,
+          "body": {
+            "event": "pageview",
+            "path": "/en/",
+            "source": "diagnostic",
+            "medium": "none",
+            "campaign": "untagged"
+          }
+        },
+        {
+          "status": 204,
+          "body": {
+            "event": "pageview",
+            "path": "/en/privacy/",
+            "source": "diagnostic",
+            "medium": "none",
+            "campaign": "untagged"
+          }
+        }
+      ]
+    },
+    "liveEndpoints": {
+      "checkedAt": "2026-09-26T13:24:58.949Z",
+      "result": [
+        {
+          "path": "BingSiteAuth.xml",
+          "status": 200
+        },
+        {
+          "path": "llms.txt",
+          "status": 200
+        },
+        {
+          "path": "api/analytics/report",
+          "status": 401
+        },
+        {
+          "path": "api/runner/work",
+          "status": 410
+        },
+        {
+          "path": "diagnostic analytics event",
+          "status": 204
+        }
+      ]
+    },
+    "bing": {
+      "site": "https://lavik.dev/",
+      "sitemap": "https://lavik.dev/sitemap.xml",
+      "submitted": "2026-09-26",
+      "status": "Processing",
+      "sitemapsWithErrors": 0,
+      "sitemapsWithWarnings": 0,
+      "note": "Read from the signed-in Bing Sitemaps page after accepted submission; no indexing claim."
+    },
+    "google": {
+      "ownership": "verified by DNS TXT",
+      "sitemapStatus": "Success",
+      "discoveredPages": 564
+    },
+    "remainingObservations": [
+      "Actual index coverage and AI citations must be observed over time.",
+      "Weekly channel conclusions require new traffic; there is no historical backfill."
+    ]
+  }
 }
