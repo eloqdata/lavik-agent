@@ -2,8 +2,8 @@
   "version": "0.1.0",
   "release": "0.1.0-beta.1",
   "sourceCommit": "3955b98d43b312324aa8d52775df52cfb111c0d0",
-  "bundleHash": "80a348846f6ab2fa5d19f3889801c3c2ba117fb338989477da022cf80de56104",
-  "reviewedAt": "2026-09-26T13:13:41.117Z",
+  "bundleHash": "093ae8c967cf312c0f67a14aefb44e1b9c06b8ef3effb0e48c94db1b3e6627d9",
+  "reviewedAt": "2026-09-26T13:27:11.551Z",
   "reviewedFiles": {
     ".github/workflows/ci.yml": "f274fe57bc56f4386f5020a0f357a0ec46ec5a91e61610971176b4752a7b4997",
     ".gitignore": "ac3b6ad1580d7cd27927552974932d97072eff8f466f08df436a4c3e356f548b",
@@ -134,10 +134,11 @@
     "packages/docs/repository.ts": "658fdb37602d23771860ce2f78a20f8e465a47554bd5a80bbea9243a1fd12a68",
     "packages/local/codex.ts": "118152ba3c21e8f085b4bfb62bbecc732e90dba3ac1199d4fdf63be0dc6f6865",
     "packages/local/review-packet.ts": "7ea1e1433b39d7210866c51c827129805c14b61661eb1ef261ee7b24c451c769",
-    "packages/manual/gate.ts": "7354dd2aa444e25d6b01c9b12b97f4898949675facf41a932d1a275a8508595c",
+    "packages/manual/gate.ts": "008ea51f30f5e735e1f08d923703cc7224bb92f578acc5c673ba41773245091a",
     "packages/manual/repository.ts": "f0e002a916864d820e6fe5a13095ef4e06f288836fd14fc6a79af08904fd4ed2",
     "packages/marketing/analytics.ts": "fcc461f2f4b54b0608e8f104a90dfc2662c3b90a3cb2ee553df72a05aa0a7177",
     "packages/marketing/attribution.ts": "d5a188216b613cd10ba91dab38d6682841026c79c74ba5fac8e2c7e3cb2e6989",
+    "packages/marketing/blog-schema.ts": "eea21fc1da698eeb152abe9f68a9d36b36c9e460d1cd7a6bf8e3d975cadf199e",
     "packages/marketing/deployment.ts": "97e8b5d8113eec53ee39a251f0c5cc71668099351dc9492af30df88099fc5ad0",
     "packages/marketing/dimensions.ts": "9e1c5c3d832dd752b565518d5a4981a697aa18b6d23ebd02fa89e241206bff41",
     "packages/marketing/process-lock.ts": "00387d924029e3cb0e6b522e5e5d8e0798844444df5442d13871830432a51fae",
@@ -176,7 +177,7 @@
     "policies/reviewer.md": "66e9d6096d33eab0e43d5f4f291cc7b2d30da8d4099435099e586f70d644c2c7",
     "policies/writer.md": "7fe9af79bd307702e5aa2f53aa49b113a016726ce04d7671071454ffc8e5095d",
     "scripts/audit-seo.py": "9068f4bf250d6c92b6dba2b14a5e50475462c84a84ba0a39c3971a7834970c3a",
-    "scripts/blog-task.ts": "ae3ab4f414336472f6e766cd42f189109617e94c818dbc1d0380dbc66c84e141",
+    "scripts/blog-task.ts": "7898a0f69ea39f69f49870828f77d0026519baf23e950ad52263e9309f4d86e8",
     "scripts/build-apt.sh": "0c780b73253668d68b8e69630caef386d60c7a85968d4b21a83df724aeff8981",
     "scripts/build-discovery.ts": "5b639641a7120463154355e962a6c1cad19055df6ea51760294e94901dfb6962",
     "scripts/check-content.ts": "627b01291a63620b5326d0996b782d9d922ba7d95aeabff43625e2c5fae4219f",
@@ -225,6 +226,7 @@
     "tests/manual.test.ts": "f54e20238cf85847135450b21988d723c2ff3869fadabfa53887ae331260a78a",
     "tests/marketing-deployment.test.ts": "4846923e80affa2b5126fa5f1b04a95b895db0a76307df470379ca2d509c5d55",
     "tests/marketing-process.test.ts": "1f5ea4939cba99f94caa8fde51753fbdbbf37a3fa9da3c6e76d78dc05c1d8528",
+    "tests/marketing-schema.test.ts": "caecd0dd73fae7575278903226031ab76079f01faa441e7d753a3884fdea908e",
     "tests/marketing.test.ts": "cf2b7b3b9a51c374a821f0d81356db31b6df3ae258747d4703b5a5ab0106c79e",
     "tests/onboarding.test.ts": "fad24b227e71beaffe7170a1135fd2783ed62b9ff822ddd4bf932a3b61faa292",
     "tests/openai.test.ts": "f66b753ae2ea65117045eb787333d969575f7aa12f4cd2af882f13e6e817e4f7",
@@ -321,15 +323,19 @@
     "findings": [
       {
         "severity": "note",
-        "message": "The rule removes the chart grid item's automatic min-content width, allowing it to fit both desktop fractional tracks and the mobile single-column layout. The existing .table-scroll wrapper contains horizontal table overflow while preserving readable, nonwrapping cells."
+        "message": "The generated writer schema replaces oneOf with nested anyOf, retains disjoint literal-tagged block branches, requires every declared property, and forbids additional properties. No structured-output compatibility blocker is apparent."
       },
       {
         "severity": "note",
-        "message": "The direct-child selector limits the change to charts inside .benchmark-grid. No material regression is apparent in the supplied source; typography, data, controls, and standalone chart styling remain unchanged. Unchanged prior approvals remain preserved."
+        "message": "Existing field constraints, block validation, and downstream content checks remain intact. Topics are required; kind is restricted to blog. Strict omission of publishedAt and sourceRevision prevents writer-invented publication provenance."
       },
       {
         "severity": "note",
-        "message": "Supplied-text review only; no tools or tests were run. The injected-CSS measurements support the correction, but the fresh actual build and complete browser suite must pass before deployment."
+        "message": "Both new files join manualReviewedPaths and therefore the existing file-hash and bundle-hash checks. Existing dependencies remain covered. Unchanged prior approvals are preserved; these changes do not alter authentication, publication, scheduling, or invocation budgets."
+      },
+      {
+        "severity": "note",
+        "message": "With writer-1 retained in the same task directory, only writer-2 remains; further writer calls fail before invocation. Original reviewer and total limits remain enforced. This is a supplied-text review: no tools or tests were run, hashes were not independently recomputed, and the reported full repository check remains pending."
       }
     ]
   },
@@ -339,14 +345,17 @@
     "provider": "openai",
     "authentication": "chatgpt",
     "reasoning": "high",
-    "startedAt": "2026-09-26T13:13:22.860Z",
-    "finishedAt": "2026-09-26T13:13:41.117Z",
-    "promptSha256": "d3ef07d8cf93fba82c1d62f063bf00252ba4a70813d799eca5cc4fccaa42335f",
-    "outputSha256": "45bcf6c8f61dc98e1167f6906825bbf67b9b5867292619a0c671008f945f2b3a"
+    "startedAt": "2026-09-26T13:26:50.690Z",
+    "finishedAt": "2026-09-26T13:27:11.551Z",
+    "promptSha256": "0ac754f9a32d67913a21bb8dba1159cc037231a56f30ff62f89275f3fd410f1a",
+    "outputSha256": "1d1bb3c8425ea620ac34adc4246da3cc7b7308de2755c5542a9785999c58cf38"
   },
-  "reviewScope": "incremental-css-only",
-  "previousBundleHash": "b9e4b3d9834551403d54587c3c1f4199071976276c36db4b0a46d722821cbc2e",
+  "reviewScope": "incremental-writer-schema",
+  "previousBundleHash": "80a348846f6ab2fa5d19f3889801c3c2ba117fb338989477da022cf80de56104",
   "reviewedChanges": [
-    "apps/web/app/styles.css"
+    "packages/manual/gate.ts",
+    "packages/marketing/blog-schema.ts",
+    "scripts/blog-task.ts",
+    "tests/marketing-schema.test.ts"
   ]
 }

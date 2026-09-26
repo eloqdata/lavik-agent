@@ -2,12 +2,9 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { randomUUID } from "node:crypto";
 import { z } from "zod";
+import { blogDraftSchema as draftSchema } from "../packages/marketing/blog-schema.ts";
 import { runLocalCodex } from "../packages/local/codex.ts";
-import {
-  articleSchema,
-  reviewSchema,
-  type Article,
-} from "../packages/content/schema.ts";
+import { reviewSchema, type Article } from "../packages/content/schema.ts";
 import {
   articles,
   articlePath,
@@ -80,9 +77,6 @@ await fs.writeFile(
   JSON.stringify(receipt, null, 2) + "\n",
   { mode: 0o600 },
 );
-const draftSchema = z
-  .object({ articles: articleSchema.array().length(2) })
-  .strict();
 const reviewerSchema = z
   .object({ en: reviewSchema, "zh-CN": reviewSchema })
   .strict();

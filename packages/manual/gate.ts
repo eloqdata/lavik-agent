@@ -350,6 +350,8 @@ export const manualReviewedPaths = () =>
     "tests/review-packet.test.ts",
     "tests/local-codex.test.ts",
     "packages/marketing/deployment.ts",
+    "packages/marketing/blog-schema.ts",
+    "tests/marketing-schema.test.ts",
     "playwright.admin.config.ts",
     "playwright.config.ts",
     "policies/manual-reviewer.md",
