@@ -6,6 +6,12 @@ const text = z
   .object({ en: z.string().min(1), "zh-CN": z.string().min(1) })
   .strict();
 const block = z.discriminatedUnion("type", [
+  z
+    .object({
+      type: z.literal("apt-file"),
+      name: z.enum(["install.sh", "standard.sh", "start.sh", "manage.sh"]),
+    })
+    .strict(),
   z.object({ type: z.literal("paragraph"), text }).strict(),
   z
     .object({
@@ -40,6 +46,7 @@ const block = z.discriminatedUnion("type", [
 const schema = z
   .object({
     id: z.enum([
+      "install-packages",
       "install-docker",
       "install-docker-compose",
       "migrate-redis",

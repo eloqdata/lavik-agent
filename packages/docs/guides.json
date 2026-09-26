@@ -1,5 +1,196 @@
 [
   {
+    "id": "install-packages",
+    "title": {
+      "en": "Install From Packages",
+      "zh-CN": "从软件包安装"
+    },
+    "summary": {
+      "en": "Install Lavik 0.1.0-beta.1 from the signed lavik.dev APT repository on Ubuntu 24.04. Choose Minimal or Standard, then start a persistent single-node service with systemd.",
+      "zh-CN": "在 Ubuntu 24.04 上通过 lavik.dev 的签名 APT 仓库安装 Lavik 0.1.0-beta.1，选择 Minimal 或 Standard，并通过 systemd 启动持久化单机服务。"
+    },
+    "sections": [
+      {
+        "id": "requirements",
+        "title": {
+          "en": "Before You Start",
+          "zh-CN": "准备工作"
+        },
+        "blocks": [
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "Use Ubuntu 24.04 (noble) on AMD64 or ARM64, with Linux 6.1 or newer and io_uring enabled. Other Ubuntu or Debian releases are not supported by this repository yet; do not substitute their codenames in the source entry. The service commands require a host booted with systemd. For Docker, use the Docker installation guide instead.",
+              "zh-CN": "使用 AMD64 或 ARM64 架构的 Ubuntu 24.04（noble），要求 Linux 6.1 或更高版本并启用 io_uring。此仓库暂不支持其他 Ubuntu 或 Debian 版本，请勿在源配置中替换为其他发行版代号。服务命令需要主机由 systemd 启动；如需 Docker，请参阅 Docker 安装指南。"
+            }
+          },
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "Reserve at least 1 GiB of free disk space for the initial data file, plus space for logs and growth. The default service listens only on 127.0.0.1:6379, uses two workers and a 512 MiB configured memory budget, and starts only when you enable it. Stop any existing Redis or Lavik service using that port, or change the Lavik port before startup.",
+              "zh-CN": "至少为初始数据文件预留 1 GiB 磁盘空间，并为日志及数据增长保留空间。默认服务仅监听 127.0.0.1:6379，使用两个工作线程，配置的内存预算为 512 MiB，只有手动启用后才会启动。请先停止占用该端口的 Redis 或 Lavik 服务，或在启动前修改 Lavik 端口。"
+            }
+          }
+        ]
+      },
+      {
+        "id": "install",
+        "title": {
+          "en": "Add the Repository and Install Minimal",
+          "zh-CN": "添加仓库并安装 Minimal"
+        },
+        "blocks": [
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "Run these commands with sudo access. The repository is managed with aptly and served over HTTPS by lavik.dev. APT verifies signed release metadata and package checksums using a repository-specific key. The Debian version 0.1.0~beta.1-1 means upstream 0.1.0-beta.1, packaging revision 1; the tilde keeps this prerelease below the final 0.1.0 release.",
+              "zh-CN": "以具有 sudo 权限的用户运行以下命令。仓库由 aptly 管理，通过 lavik.dev 的 HTTPS 提供服务。APT 使用专属密钥验证签名元数据和软件包校验和。Debian 版本号 0.1.0~beta.1-1 表示上游 0.1.0-beta.1、打包修订版 1；波浪号使预发布版本的排序低于最终 0.1.0 版本。"
+            }
+          },
+          {
+            "type": "apt-file",
+            "name": "install.sh"
+          },
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "The lavik package is Minimal: kernel TCP and io_uring, without SPDK/DPDK. It installs lavik, lavik-meta and lavik-ctl into /usr/bin, so commands work from any directory. lavik --version should print lavik 0.1.0-beta.1. The package includes a standalone service, not an automatically initialized Meta cluster.",
+              "zh-CN": "lavik 软件包对应 Minimal：使用内核 TCP 和 io_uring，不含 SPDK/DPDK。它将 lavik、lavik-meta 和 lavik-ctl 安装到 /usr/bin，可在任意目录直接运行。lavik --version 应输出 lavik 0.1.0-beta.1。软件包附带单机服务，不会自动初始化 Meta 集群。"
+            }
+          },
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "Repository signing-key fingerprint: CB38 CDB9 9DC0 5B6A 4E7F 6A9E E3CC E7BD 0D92 E252. The key is scoped by Signed-By to this source; no global apt-key import or trusted=yes is needed.",
+              "zh-CN": "仓库签名密钥指纹：CB38 CDB9 9DC0 5B6A 4E7F 6A9E E3CC E7BD 0D92 E252。密钥通过 Signed-By 仅关联此软件源，无需全局 apt-key 导入或 trusted=yes。"
+            }
+          }
+        ]
+      },
+      {
+        "id": "standard",
+        "title": {
+          "en": "Choose Standard Instead",
+          "zh-CN": "选择 Standard"
+        },
+        "blocks": [
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "For SPDK/DPDK-capable binaries, install lavik-standard instead of lavik after adding the same repository. The variants are mutually exclusive because they provide the same commands. Standard requires x86-64-v2 on AMD64 or ARMv8-A with CRC32 on ARM64. APT installs its libnuma and libuuid runtime dependencies.",
+              "zh-CN": "如果需要支持 SPDK/DPDK 的二进制文件，在添加相同仓库后安装 lavik-standard，而非 lavik。两种软件包提供相同命令，因此不能共存。Standard 在 AMD64 上要求 x86-64-v2，在 ARM64 上要求 ARMv8-A 和 CRC32。APT 会安装其 libnuma 和 libuuid 运行时依赖。"
+            }
+          },
+          {
+            "type": "apt-file",
+            "name": "standard.sh"
+          },
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "Installing Standard does not enable SPDK automatically: the bundled service still uses kernel TCP and io_uring. SPDK requires separate hugepage, device ownership and startup configuration. Before changing variants on an existing server, back up the database, stop the service, and plan a maintenance window; review APT’s removal prompt.",
+              "zh-CN": "安装 Standard 不会自动启用 SPDK：附带服务仍使用内核 TCP 和 io_uring。SPDK 需要另外配置大页、设备归属和启动参数。已有服务切换软件包前，请备份数据库、停止服务并安排维护窗口，确认 APT 的移除提示。"
+            }
+          },
+          {
+            "type": "link",
+            "text": {
+              "en": "Standard and SPDK Setup",
+              "zh-CN": "Standard 与 SPDK 配置"
+            },
+            "href": "/{locale}/docs/0.1.0/quick-start/"
+          }
+        ]
+      },
+      {
+        "id": "start",
+        "title": {
+          "en": "Start Lavik and Connect",
+          "zh-CN": "启动并连接 Lavik"
+        },
+        "blocks": [
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "The service runs as the dedicated lavik user. On first startup it preallocates /var/lib/lavik/data; existing data is never truncated. After a short startup wait, PING returns PONG, SET returns OK, and GET returns lavik.",
+              "zh-CN": "服务以专用 lavik 用户运行。首次启动会预分配 /var/lib/lavik/data，已有数据不会被截断。等待服务启动后，PING 返回 PONG，SET 返回 OK，GET 返回 lavik。"
+            }
+          },
+          {
+            "type": "apt-file",
+            "name": "start.sh"
+          },
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "The default listener has no password and is restricted to localhost. Configure authentication, TLS and network access controls before making it reachable remotely. For advanced server options, inspect lavik --help and use a systemd override with the appropriate startup command; the packaged defaults are a local starting point.",
+              "zh-CN": "默认监听不设密码，但仅限本机访问。远程开放前，请配置认证、TLS 和网络访问控制。高级服务参数可通过 lavik --help 查看，并在 systemd 覆盖配置中设置相应启动命令；软件包默认值用于本地起步。"
+            }
+          }
+        ]
+      },
+      {
+        "id": "configure",
+        "title": {
+          "en": "Configure and Manage the Service",
+          "zh-CN": "配置与管理服务"
+        },
+        "blocks": [
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "Edit /etc/default/lavik with sudo to set LAVIK_BIND, LAVIK_PORT, LAVIK_THREADS and LAVIK_DATA_SIZE, then restart the service. LAVIK_DATA_SIZE controls only initial allocation; changing it does not grow or shrink an existing database file. Treat the 512 MiB memory setting in /usr/lib/lavik/start as a starter configuration; use a systemd ExecStart override for a larger workload rather than editing package-owned scripts.",
+              "zh-CN": "使用 sudo 编辑 /etc/default/lavik，可设置 LAVIK_BIND、LAVIK_PORT、LAVIK_THREADS 和 LAVIK_DATA_SIZE，然后重启服务。LAVIK_DATA_SIZE 仅控制首次分配，修改它不会扩大或缩小已有数据库文件。/usr/lib/lavik/start 中的 512 MiB 内存设置是入门配置；更大负载请使用 systemd ExecStart 覆盖，而不要直接修改软件包脚本。"
+            }
+          },
+          {
+            "type": "apt-file",
+            "name": "manage.sh"
+          },
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "Data lives in /var/lib/lavik and file logs in /var/log/lavik. Configuration changes in /etc/default/lavik are preserved by Debian’s conffile handling. Upgrading an already-running service can restart it, so back up first and use a maintenance window. apt-get remove or apt-get purge stops and removes the package but deliberately retains the database, logs and service user. Deleting those data directories is a separate destructive action.",
+              "zh-CN": "数据位于 /var/lib/lavik，文件日志位于 /var/log/lavik。Debian 的配置文件机制会保留 /etc/default/lavik 中的修改。升级正在运行的服务可能触发重启，请先备份并安排维护窗口。apt-get remove 或 apt-get purge 会停止并移除软件包，但会保留数据库、日志和服务用户。删除这些数据目录是独立的破坏性操作。"
+            }
+          },
+          {
+            "type": "link",
+            "text": {
+              "en": "Manage a Primary–Follower Cluster",
+              "zh-CN": "管理主从集群"
+            },
+            "href": "/{locale}/docs/0.1.0/lavik-ctl-ha-cluster/"
+          }
+        ]
+      },
+      {
+        "id": "troubleshooting",
+        "title": {
+          "en": "Troubleshooting",
+          "zh-CN": "故障排查"
+        },
+        "blocks": [
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "For NO_PUBKEY or a signature error, recheck the key download and Signed-By path; do not disable signature verification. “Unable to locate package” usually means the source was not added successfully or apt-get update failed. For startup failures, inspect journalctl and /var/log/lavik, check port conflicts, free disk space, data directory ownership, and whether the kernel permits io_uring. In a container without systemd as PID 1, use the dedicated Docker image instead of systemctl.",
+              "zh-CN": "出现 NO_PUBKEY 或签名错误时，请检查密钥下载及 Signed-By 路径，不要禁用签名验证。“Unable to locate package” 通常表示源未成功添加或 apt-get update 失败。启动失败时，请检查 journalctl 和 /var/log/lavik，并排查端口冲突、磁盘空间、数据目录归属以及内核是否允许 io_uring。若容器中 PID 1 不是 systemd，请使用专用 Docker 镜像，而非 systemctl。"
+            }
+          },
+          {
+            "type": "link",
+            "text": {
+              "en": "Install With Docker",
+              "zh-CN": "使用 Docker 安装"
+            },
+            "href": "/{locale}/docs/0.1.0/install-docker/"
+          }
+        ]
+      }
+    ]
+  },
+  {
     "id": "install-docker",
     "title": {
       "en": "Install With Docker",

@@ -58,9 +58,10 @@ test("user documentation exposes complete guides without internal audit sections
   request,
 }) => {
   const manifest = await (await request.get("/manual-manifest.json")).json();
-  expect(manifest.userGuides).toHaveLength(8);
+  expect(manifest.userGuides).toHaveLength(10);
   for (const locale of ["en", "zh-CN"])
     for (const route of [
+      "install-packages",
       "install-docker",
       "install-docker-compose",
       "migrate-redis",
@@ -123,5 +124,35 @@ test("official Docker installation snippets copy correctly in both languages", a
         () => document.documentElement.scrollWidth <= innerWidth,
       ),
     ).toBe(true);
+  }
+});
+
+test("package guide exposes signed APT and service commands in both languages", async ({
+  page,
+}) => {
+  for (const locale of ["en", "zh-CN"]) {
+    await page.goto(`/${locale}/docs/0.1.0/install-packages/`);
+    await expect(page.locator("#install pre")).toContainText(
+      "Signed-By: /etc/apt/keyrings/lavik.asc",
+    );
+    await expect(page.locator("#install pre")).toContainText(
+      "lavik=0.1.0~beta.1-1",
+    );
+    await expect(page.locator("#standard pre")).toContainText(
+      "lavik-standard=0.1.0~beta.1-1",
+    );
+    await expect(page.locator("#start pre")).toContainText(
+      "systemctl enable --now lavik",
+    );
+    await expect(
+      page.locator(".docs-nav-group a[aria-current=page]"),
+    ).toBeVisible();
+    await page.setViewportSize({ width: 375, height: 900 });
+    expect(
+      await page.evaluate(
+        () => document.documentElement.scrollWidth <= innerWidth,
+      ),
+    ).toBe(true);
+    await page.setViewportSize({ width: 1440, height: 1000 });
   }
 });

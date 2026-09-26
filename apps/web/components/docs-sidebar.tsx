@@ -28,6 +28,10 @@ export function DocsSidebar({
         { title: zh ? "文档首页" : "Documentation Home", href: `${root}/` },
         { title: zh ? "Lavik 概览" : "About Lavik", href: `${root}/overview/` },
         {
+          title: zh ? "从软件包安装" : "Install From Packages",
+          href: `${root}/install-packages/`,
+        },
+        {
           title: zh ? "使用二进制安装" : "Install With Binary",
           href: `${root}/quick-start/`,
         },

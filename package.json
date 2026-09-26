@@ -13,7 +13,7 @@
     "verify:clients": "python3 scripts/verify-manual.py clients",
     "manual:review": "node --import tsx scripts/review-manual.ts",
     "dev": "next dev apps/web",
-    "build": "npm run content:check && next build apps/web",
+    "build": "npm run content:check && next build apps/web && node --import tsx scripts/stage-apt.ts",
     "typecheck": "tsc --noEmit",
     "test": "node --import tsx --test --test-concurrency=1 tests/*.test.ts",
     "content:check": "node --import tsx scripts/check-content.ts",

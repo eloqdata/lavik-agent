@@ -63,9 +63,11 @@ export function UserGuidePage({
                     <CopyCode
                       locale={locale}
                       code={readText(
-                        block.type === "docker-file"
-                          ? `verification/docker-images/examples/${block.name}`
-                          : `verification/onboarding/${block.name}`,
+                        block.type === "apt-file"
+                          ? `packaging/apt/examples/${block.name}`
+                          : block.type === "docker-file"
+                            ? `verification/docker-images/examples/${block.name}`
+                            : `verification/onboarding/${block.name}`,
                       ).trim()}
                     />
                   </div>

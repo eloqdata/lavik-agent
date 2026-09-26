@@ -25,6 +25,8 @@ jobs:
       # CI validates its own platform without changing reviewed publication receipts.
       - run: npm run verify:examples -- --output-dir .cache/ci-verification
       - run: npm run check
+      - name: Verify signed APT installation on native AMD64
+        run: python3 scripts/verify-apt.py apps/web/out/apt .cache/ci-verification/apt.json
       - run: npx playwright install --with-deps chromium
       - run: npm run test:browser
       - run: npm run test:admin

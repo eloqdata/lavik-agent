@@ -1,0 +1,36 @@
+{
+  "status": "passed",
+  "checkedAt": "2026-09-26T05:22:53.393133+00:00",
+  "source": ".cache/apt-staged",
+  "release": "0.1.0-beta.1",
+  "version": "0.1.0~beta.1-1",
+  "sourceCommit": "3955b98d43b312324aa8d52775df52cfb111c0d0",
+  "fingerprint": "CB38CDB99DC05B6A4E7F6A9EE3CCE7BD0D92E252",
+  "artifactSha256": "dbe25b1161d8e05c42701bbd142ace56805dca52f1355bce1527b347e090f60f",
+  "imageId": "sha256:b3cc40b72b93588182b5410f723c7aaf142363311c2aa993d8a453ddcbb3ae15",
+  "architecture": "arm64",
+  "checks": [
+    "PASS: lavik signed-install version service-unit write restart allocation conffile purge-reinstall",
+    "PASS: lavik-standard signed-install version service-unit write restart allocation conffile purge-reinstall",
+    "PASS: invalid signing key rejected"
+  ],
+  "fileHashes": {
+    "packaging/apt/Dockerfile": "d0d1fdc59356f6c6528bf0a899b34ac7867c6c6fb687b29e73d03f4443883e8d",
+    "packaging/apt/build.py": "0bed8deb88540912894aa736708b35debecf464962d88cff9644b2be7744897c",
+    "packaging/apt/examples/install.sh": "6308a440d4240000460d1f9a64d2d6a6aa6af63084c4d7ab0151ec2d4cb4e131",
+    "packaging/apt/examples/manage.sh": "fee18915684736b9b23f84f59ad557630e650fbab9188be60aa807c2e27b4721",
+    "packaging/apt/examples/standard.sh": "613814a2282cc12959b84d29efc6d6ef5ad3807165139a252392b1ea6b626481",
+    "packaging/apt/examples/start.sh": "6dcfd4a2407c664a5c9456db90bbaa8b260bcb83ef3b2295af2ea27a43cc79a3",
+    "packaging/apt/templates/default": "f7564ed5b8765ba5fbee4f7d05baa1ba2d14f5e901a810f1dc46c272151b6f1f",
+    "packaging/apt/templates/lavik.service": "7cf7c74b6e22a42eb62e6a46bab621eb7139f36ac50ed3e9861edfaf0fde7fd0",
+    "packaging/apt/templates/postinst": "7229b17d5be2b0847e0a9b67370e702375b211f5b071c6071685d2a1720ac880",
+    "packaging/apt/templates/postrm": "ee41bd58af3d72e53b422c2be26b22f7ad727b78f021f4d521c604624461f771",
+    "packaging/apt/templates/prerm": "4159590d7fc96a7205a1e8b87dc7ef15c4216b054c6e16bf6b3f158e8c416434",
+    "packaging/apt/templates/start": "08c2eb58a9396990c5038c933ee75f8bbce26185065830bb6d1092786d61fda6",
+    "packaging/apt/test-install.sh": "c093592487aed4987ba19832b64537971fc7c2b5cad38bc066561d5d095a6d95",
+    "scripts/build-apt.sh": "0c780b73253668d68b8e69630caef386d60c7a85968d4b21a83df724aeff8981",
+    "scripts/stage-apt.ts": "b8cf5c0cc65fe13b4d1133113e838445231c3346c066802cae307cd72bb84b0c",
+    "scripts/verify-apt.py": "3d90ad86ab3cbd937b83e200916f06d6a0ea855c897f0dc60a4898e4acbb0ce6"
+  },
+  "scope": "Native Ubuntu 24.04 Docker; both package variants; signed APT install, unit static validation and exact ExecStart as service user, commands, graceful restart, allocation and conffile preservation, purge/reinstall recovery, invalid-key rejection. Container does not boot systemd; service-manager enable/restart not runtime-certified. No SPDK hardware or multi-host testing."
+}

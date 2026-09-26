@@ -1,0 +1,25 @@
+[Unit]
+Description=Lavik key-value store
+Documentation=https://lavik.dev/en/docs/0.1.0/install-packages/
+After=network.target
+
+[Service]
+Type=simple
+User=lavik
+Group=lavik
+EnvironmentFile=/etc/default/lavik
+ExecStart=/usr/lib/lavik/start
+Restart=on-failure
+RestartSec=3
+TimeoutStopSec=60
+LimitNOFILE=65536
+LimitMEMLOCK=536870912
+UMask=0077
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectHome=true
+ProtectSystem=strict
+ReadWritePaths=/var/lib/lavik /var/log/lavik
+
+[Install]
+WantedBy=multi-user.target

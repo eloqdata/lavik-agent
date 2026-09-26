@@ -16,9 +16,17 @@ export function DocsHome({ locale }: { locale: Locale }) {
   const clients = manualClients();
   const cards = [
     {
+      title: zh ? "从软件包安装" : "Install From Packages",
+      href: `${root}/install-packages/`,
+      label: "01",
+      text: zh
+        ? "使用签名 APT 仓库安装 Ubuntu 软件包，并通过 systemd 管理单机服务。"
+        : "Install signed Ubuntu packages and manage your standalone server with systemd.",
+    },
+    {
       title: zh ? "使用二进制安装" : "Install With Binary",
       href: `${root}/quick-start/`,
-      label: "01",
+      label: "02",
       text: zh
         ? "选择 Minimal 或 Standard 发布包，直接在 Linux 上启动。"
         : "Choose a Minimal or Standard release package and start on Linux.",
@@ -26,7 +34,7 @@ export function DocsHome({ locale }: { locale: Locale }) {
     {
       title: zh ? "使用 Docker 安装" : "Install With Docker",
       href: `${root}/install-docker/`,
-      label: "02",
+      label: "03",
       text: zh
         ? "拉取官方 beta.1 镜像，以持久化卷运行独立实例。"
         : "Pull the official beta.1 image and run a standalone instance with a persistent volume.",
@@ -34,7 +42,7 @@ export function DocsHome({ locale }: { locale: Locale }) {
     {
       title: zh ? "使用 Docker Compose 安装" : "Install With Docker Compose",
       href: `${root}/install-docker-compose/`,
-      label: "03",
+      label: "04",
       text: zh
         ? "运行三个 Meta 节点及 Data 主从节点，体验复制、故障转移与恢复。"
         : "Run three Meta voters and a Data primary–follower pair with replication, failover and recovery.",

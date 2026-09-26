@@ -1,3 +1,4 @@
+import { aptEvidenceErrors, aptReviewedFiles } from "../apt/repository";
 import {
   dockerImageErrors,
   onboardingErrors,
@@ -363,6 +364,7 @@ export const manualReviewedPaths = () =>
     "packages/content/downloads.ts",
     ...operationsReviewedFiles(),
     ...onboardingReviewedFiles(),
+    ...aptReviewedFiles(),
     "packages/quick-start/evidence.ts",
     ...quickStartVerificationFiles.filter(
       (f) => f !== "verification/recipes.json",
@@ -469,6 +471,7 @@ export function manualPublicationErrors({ requireReview = true } = {}) {
     errors.push(...operationsEvidenceErrors());
     errors.push(...onboardingErrors());
     errors.push(...dockerImageErrors());
+    errors.push(...aptEvidenceErrors());
     errors.push(...useCaseEvidenceErrors());
     if (
       inventory.commit !== release.commit ||

@@ -1,0 +1,15 @@
+#!/bin/sh
+set -e
+if [ "$1" = configure ]; then
+  getent group lavik >/dev/null || addgroup --system lavik
+  getent passwd lavik >/dev/null || adduser --system --ingroup lavik \
+    --home /var/lib/lavik --no-create-home --disabled-login lavik
+  install -d -o lavik -g lavik -m 0750 /var/lib/lavik /var/log/lavik
+  # Track unit enablement paths without enabling a fresh installation.
+  deb-systemd-helper update-state lavik.service >/dev/null || true
+  if [ -d /run/systemd/system ]; then
+    systemctl daemon-reload
+    # Upgrade an already-running service; do not start a fresh installation.
+    deb-systemd-invoke try-restart lavik.service || true
+  fi
+fi

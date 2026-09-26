@@ -1,0 +1,19 @@
+#!/bin/sh
+set -eu
+umask 077
+# Allocate atomically and never truncate an existing database, including symlinks.
+data=/var/lib/lavik/data
+if [ ! -e "$data" ] && [ ! -L "$data" ]; then
+  allocation=$(mktemp /var/lib/lavik/.allocate.XXXXXX)
+  trap 'rm -f "$allocation"' EXIT HUP INT TERM
+  fallocate -l "${LAVIK_DATA_SIZE:-1G}" "$allocation"
+  ln "$allocation" "$data"
+  rm -f "$allocation"
+  trap - EXIT HUP INT TERM
+fi
+exec /usr/bin/lavik --bind "${LAVIK_BIND:-127.0.0.1}" \
+  --port "${LAVIK_PORT:-6379}" --metrics-port 0 \
+  --network kernel --storage uring --threads "${LAVIK_THREADS:-2}" \
+  --no-pin-workers --registered-buffer-mb-per-worker 64 \
+  --max-memory 512MiB --shutdown-checkpoint \
+  --data-file "$data" --log-dir /var/log/lavik

@@ -1,0 +1,37 @@
+{
+  "review": {
+    "decision": "pass",
+    "findings": [
+      {
+        "severity": "note",
+        "message": "Both prior notes are addressed: Standard installation preserves APT’s confirmation prompt, and systemd enablement tracking supports purge cleanup without enabling fresh installs or deleting retained data. Supplied tests cover offline enablement and symlink removal. No material blocker found in this increment."
+      },
+      {
+        "severity": "note",
+        "message": "Review used supplied text only; no tools or tests were run independently. The refreshed receipt matches the artifact hash and changed lifecycle files. Native AMD64 CI, production build/browser checks, publication and live HTTPS verification remain pending; running-systemd behavior remains uncertified."
+      }
+    ]
+  },
+  "reviewer": {
+    "role": "reviewer",
+    "model": "gpt-6-astra",
+    "provider": "openai",
+    "authentication": "chatgpt",
+    "reasoning": "high",
+    "startedAt": "2026-09-26T05:23:09.918Z",
+    "finishedAt": "2026-09-26T05:23:30.398Z",
+    "promptSha256": "d4fda919b0fc36b548a49bd8ab378451c65cbf73c6de39e2c5e43bda752e17e1",
+    "outputSha256": "4554365b69eb19ba3f7e3ccec621b3d6fbcf70b84703c1d29af1a62a36ad015d"
+  },
+  "previousBundleHash": "5bef981c64058044cfdc24ea9f3f1741c7f7820c86e2bbeda99a8ddc8bb2d112",
+  "bundleHash": "d7b775641c06d71e22f24e1a2ca95310134eaee91e2afb8a6c54c4dd5306775a",
+  "changed": [
+    "docs/apt-publishing.md",
+    "evidence/apt/0.1.0/verification.json",
+    "packages/apt/manifest.json",
+    "packaging/apt/examples/standard.sh",
+    "packaging/apt/templates/postinst",
+    "packaging/apt/templates/postrm",
+    "packaging/apt/test-install.sh"
+  ]
+}
