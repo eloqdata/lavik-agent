@@ -1,0 +1,472 @@
+[
+  {
+    "id": "install-docker",
+    "title": {
+      "en": "Install With Docker",
+      "zh-CN": "使用 Docker 安装"
+    },
+    "summary": {
+      "en": "Build and run Lavik 0.1.0-beta.1 with persistent container storage.",
+      "zh-CN": "构建并运行 Lavik 0.1.0-beta.1 容器，使用持久化存储。"
+    },
+    "sections": [
+      {
+        "id": "requirements",
+        "title": {
+          "en": "Before You Start",
+          "zh-CN": "开始之前"
+        },
+        "blocks": [
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "Run native Linux/amd64 or Linux/arm64 with a Linux 6.1+ kernel and io_uring enabled. Docker Desktop uses its Linux VM; allocate at least 2 CPUs and 2 GiB to that VM for this example. Do not use x86 emulation on an ARM Mac for the io_uring runtime. These examples build a local image from the Minimal beta.1 release, using kernel TCP and io_uring.",
+              "zh-CN": "使用原生 Linux/amd64 或 Linux/arm64，Linux 内核至少为 6.1，并启用 io_uring。Docker Desktop 使用 Linux 虚拟机；本示例请为虚拟机至少分配 2 个 CPU 和 2 GiB 内存。ARM Mac 上不要通过 x86 模拟运行 io_uring。示例使用 Minimal beta.1 发布包构建本地镜像，采用内核 TCP 和 io_uring。"
+            }
+          },
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "The example reserves a 512 MiB data file and caps retained memory at 512 MiB. Choose capacity for your workload before the first start; never truncate an existing data file. The named volume holds both data and logs. Removing that volume deletes the database. Keep backups outside the volume.",
+              "zh-CN": "示例预分配 512 MiB 数据文件，并将保留内存上限设为 512 MiB。首次启动前按工作负载选择容量；绝不要截断已有数据文件。命名卷保存数据和日志。删除卷会删除数据库，备份应另行保存。"
+            }
+          },
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "Host ports bind to 127.0.0.1. This local evaluation has no password; do not expose it publicly. seccomp:unconfined permits io_uring where Docker’s default profile blocks it, and relaxes syscall filtering. The container still runs as a non-root user, drops capabilities and prevents privilege escalation. For shared or production hosts, use a reviewed io_uring-capable seccomp policy and configure authentication/TLS before allowing remote clients.",
+              "zh-CN": "宿主端口绑定 127.0.0.1。本地评估示例未设置密码，不要公开暴露端口。seccomp:unconfined 允许使用默认 Docker 策略可能禁止的 io_uring，同时放宽系统调用过滤。容器仍以非 root 用户运行、移除 capabilities 并禁止提权。共享或生产主机应使用经过审查且支持 io_uring 的 seccomp 策略，并在允许远程连接之前配置认证和 TLS。"
+            }
+          },
+          {
+            "type": "link",
+            "text": {
+              "en": "Release Packages & Requirements",
+              "zh-CN": "发布包与平台要求"
+            },
+            "href": "/{locale}/download/"
+          }
+        ]
+      },
+      {
+        "id": "image",
+        "title": {
+          "en": "Create The Image Files",
+          "zh-CN": "创建镜像文件"
+        },
+        "blocks": [
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "Create a new working directory. Save the following two files as Dockerfile and start.sh. The build selects your native architecture and checks the release archive against its SHA-256 checksum. It is a locally built image, not an assumed public Lavik image tag.",
+              "zh-CN": "创建新的工作目录，将下面两个文件保存为 Dockerfile 和 start.sh。构建过程选择原生架构，并校验发布包的 SHA-256。这是本地构建的镜像。"
+            }
+          },
+          {
+            "type": "file",
+            "name": "Dockerfile"
+          },
+          {
+            "type": "file",
+            "name": "start.sh"
+          }
+        ]
+      },
+      {
+        "id": "start",
+        "title": {
+          "en": "Build And Start",
+          "zh-CN": "构建与启动"
+        },
+        "blocks": [
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "Run these commands in the directory containing the two files. The names lavik-beta1 and lavik-beta1-data must not belong to another installation. The first PING may run before startup completes: check docker logs and retry until it returns PONG before issuing SET and GET. Expected replies are PONG, OK and hello from Lavik.",
+              "zh-CN": "在包含这两个文件的目录执行。lavik-beta1 和 lavik-beta1-data 不能属于其他部署。启动完成前首次 PING 可能失败；查看 docker logs 并重试，直到返回 PONG，再执行 SET 和 GET。预期依次返回 PONG、OK、hello from Lavik。"
+            }
+          },
+          {
+            "type": "file",
+            "name": "docker-run.sh"
+          }
+        ]
+      },
+      {
+        "id": "manage",
+        "title": {
+          "en": "Logs, Metrics And Restart",
+          "zh-CN": "日志、指标与重启"
+        },
+        "blocks": [
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "Use docker logs lavik-beta1 for startup diagnostics. Metrics are available at http://127.0.0.1:9100/metrics. Use docker stop --time 60 lavik-beta1, then docker start lavik-beta1 to restart without replacing the data volume. After startup, GET greeting should return the saved value. To remove only the container, stop it first and use docker rm lavik-beta1; keep lavik-beta1-data and reuse it on the next docker run.",
+              "zh-CN": "使用 docker logs lavik-beta1 查看启动日志。指标地址为 http://127.0.0.1:9100/metrics。执行 docker stop --time 60 lavik-beta1，再执行 docker start lavik-beta1，可保留数据卷重启。启动后 GET greeting 应返回已保存的值。如仅需移除容器，请先停止，再执行 docker rm lavik-beta1；保留 lavik-beta1-data，在下次 docker run 时复用。"
+            }
+          },
+          {
+            "type": "link",
+            "text": {
+              "en": "Run With Docker Compose",
+              "zh-CN": "使用 Docker Compose 运行"
+            },
+            "href": "/{locale}/docs/0.1.0/install-docker-compose/"
+          },
+          {
+            "type": "link",
+            "text": {
+              "en": "Configure Grafana Monitoring",
+              "zh-CN": "配置 Grafana 监控"
+            },
+            "href": "/{locale}/docs/0.1.0/lavik-ctl-single-node/#monitoring"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "install-docker-compose",
+    "title": {
+      "en": "Install With Docker Compose",
+      "zh-CN": "使用 Docker Compose 安装"
+    },
+    "summary": {
+      "en": "Manage a persistent Lavik service with Docker Compose.",
+      "zh-CN": "使用 Docker Compose 管理持久化 Lavik 服务。"
+    },
+    "sections": [
+      {
+        "id": "requirements",
+        "title": {
+          "en": "Before You Start",
+          "zh-CN": "开始之前"
+        },
+        "blocks": [
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "Run native Linux/amd64 or Linux/arm64 with a Linux 6.1+ kernel and io_uring enabled. Docker Desktop uses its Linux VM; allocate at least 2 CPUs and 2 GiB to that VM for this example. Do not use x86 emulation on an ARM Mac for the io_uring runtime. These examples build a local image from the Minimal beta.1 release, using kernel TCP and io_uring.",
+              "zh-CN": "使用原生 Linux/amd64 或 Linux/arm64，Linux 内核至少为 6.1，并启用 io_uring。Docker Desktop 使用 Linux 虚拟机；本示例请为虚拟机至少分配 2 个 CPU 和 2 GiB 内存。ARM Mac 上不要通过 x86 模拟运行 io_uring。示例使用 Minimal beta.1 发布包构建本地镜像，采用内核 TCP 和 io_uring。"
+            }
+          },
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "Use Docker Compose v2. Stop the plain Docker example before starting this service: both use host ports 6379 and 9100. Compose uses a separate project volume; it does not automatically reuse lavik-beta1-data.",
+              "zh-CN": "使用 Docker Compose v2。先停止普通 Docker 示例：两者占用相同的宿主端口 6379 和 9100。Compose 使用独立项目卷，不会自动复用 lavik-beta1-data。"
+            }
+          },
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "Host ports bind to 127.0.0.1. This local evaluation has no password; do not expose it publicly. seccomp:unconfined permits io_uring where Docker’s default profile blocks it, and relaxes syscall filtering. The container still runs as a non-root user, drops capabilities and prevents privilege escalation. For shared or production hosts, use a reviewed io_uring-capable seccomp policy and configure authentication/TLS before allowing remote clients.",
+              "zh-CN": "宿主端口绑定 127.0.0.1。本地评估示例未设置密码，不要公开暴露端口。seccomp:unconfined 允许使用默认 Docker 策略可能禁止的 io_uring，同时放宽系统调用过滤。容器仍以非 root 用户运行、移除 capabilities 并禁止提权。共享或生产主机应使用经过审查且支持 io_uring 的 seccomp 策略，并在允许远程连接之前配置认证和 TLS。"
+            }
+          }
+        ]
+      },
+      {
+        "id": "files",
+        "title": {
+          "en": "Prepare The Project",
+          "zh-CN": "准备项目文件"
+        },
+        "blocks": [
+          {
+            "type": "link",
+            "text": {
+              "en": "Copy Dockerfile And start.sh From The Docker Guide",
+              "zh-CN": "从 Docker 指南复制 Dockerfile 和 start.sh"
+            },
+            "href": "/{locale}/docs/0.1.0/install-docker/#image"
+          },
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "In that same new project directory, save the following as compose.yaml. Keep the project name consistent across commands so Compose reuses the same volume.",
+              "zh-CN": "在同一新项目目录，将以下内容保存为 compose.yaml。各命令保持项目名一致，以便复用相同的数据卷。"
+            }
+          },
+          {
+            "type": "file",
+            "name": "compose.yaml"
+          },
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "The example reserves a 512 MiB data file and caps retained memory at 512 MiB. Choose capacity for your workload before the first start; never truncate an existing data file. The named volume holds both data and logs. Removing that volume deletes the database. Keep backups outside the volume.",
+              "zh-CN": "示例预分配 512 MiB 数据文件，并将保留内存上限设为 512 MiB。首次启动前按工作负载选择容量；绝不要截断已有数据文件。命名卷保存数据和日志。删除卷会删除数据库，备份应另行保存。"
+            }
+          }
+        ]
+      },
+      {
+        "id": "start",
+        "title": {
+          "en": "Start And Connect",
+          "zh-CN": "启动与连接"
+        },
+        "blocks": [
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "Run docker compose -p lavik-beta1 up -d --build --wait. Wait for the service to become healthy, then use docker compose -p lavik-beta1 exec -T lavik redis-cli PING. It should return PONG. Use the same exec prefix with SET greeting \"hello from Lavik\" and GET greeting. The container health check verifies that the service answers PING; it does not assess application latency or capacity.",
+              "zh-CN": "执行 docker compose -p lavik-beta1 up -d --build --wait，等待服务变为 healthy，再执行 docker compose -p lavik-beta1 exec -T lavik redis-cli PING，应返回 PONG。用相同 exec 前缀执行 SET greeting \"hello from Lavik\" 和 GET greeting。健康检查确认服务响应 PING，不衡量应用延迟或容量。"
+            }
+          }
+        ]
+      },
+      {
+        "id": "manage",
+        "title": {
+          "en": "Operate The Service",
+          "zh-CN": "管理服务"
+        },
+        "blocks": [
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "Use docker compose -p lavik-beta1 ps and docker compose -p lavik-beta1 logs --tail 100 lavik to inspect the service. Use docker compose -p lavik-beta1 restart lavik for a graceful restart. docker compose -p lavik-beta1 down removes containers and the project network but retains the database volume; repeat up -d --wait to restore the service. Do not add --volumes or -v unless you intend to delete the database. Keep the same project directory and project name.",
+              "zh-CN": "使用 docker compose -p lavik-beta1 ps 和 docker compose -p lavik-beta1 logs --tail 100 lavik 检查服务。使用 docker compose -p lavik-beta1 restart lavik 正常重启。docker compose -p lavik-beta1 down 删除容器和项目网络，但保留数据库卷；再次执行 up -d --wait 恢复服务。除非确实要删除数据库，否则不要加 --volumes 或 -v。保持项目目录和项目名一致。"
+            }
+          },
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "This is a standalone service, not a high-availability cluster. For Meta-managed primary/follower deployment, use the separate cluster guide.",
+              "zh-CN": "这是独立服务，不是高可用集群。Meta 管理的主从部署请使用独立集群指南。"
+            }
+          },
+          {
+            "type": "link",
+            "text": {
+              "en": "Primary–Follower HA",
+              "zh-CN": "主从高可用"
+            },
+            "href": "/{locale}/docs/0.1.0/lavik-ctl-ha-cluster/"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "migrate-redis",
+    "title": {
+      "en": "Migrate From Redis",
+      "zh-CN": "从 Redis 迁移"
+    },
+    "summary": {
+      "en": "Move a standalone Redis dataset to a standalone Lavik instance using replication and a controlled write pause.",
+      "zh-CN": "通过复制及受控暂停写入，将独立 Redis 数据集迁移到独立 Lavik 实例。"
+    },
+    "sections": [
+      {
+        "id": "prepare",
+        "title": {
+          "en": "Plan The Migration",
+          "zh-CN": "规划迁移"
+        },
+        "blocks": [
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "Use a fresh standalone Lavik target with enough disk and memory for the source dataset. Attaching a source can replace destination data. Do not use a Meta-managed / --cluster-enabled target: beta.1 rejects Redis replication in that mode. Take a source backup and rehearse the complete move before the production cutover.",
+              "zh-CN": "使用全新的独立 Lavik 目标实例，并确保磁盘和内存容量充足。连接源端可能替换目标数据。不要使用 Meta 管理或 --cluster-enabled 目标：beta.1 在此模式下拒绝 Redis 复制。备份源数据，并在生产切换之前演练完整迁移。"
+            }
+          },
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "Beta.1 imports RDB versions 1–11 and logical databases 0–15. A newer Redis release or an unsupported encoding can prevent full synchronization. Self-describing Module 2 and Function-library records may be skipped with a warning; older or unknown formats can be rejected. Inventory these separately and recreate only features supported by Lavik. Unsupported incremental commands stop replication. Check your command set, scripts, TTLs, ACL requirements and client settings. Use a length-delimited full-sync stream: configure repl-diskless-sync no on each Redis source through your normal configuration process. Coordinate that source-side change with its owner and account for RDB disk space and fork overhead.",
+              "zh-CN": "beta.1 导入 RDB 版本 1–11，逻辑数据库范围为 0–15。较新的 Redis 版本或不支持的编码可能阻止全量同步。自描述的 Module 2 及 Function 库记录可能在警告后被跳过；较早或未知格式可能被拒绝。请单独盘点，并仅重建 Lavik 支持的功能。不支持的增量命令会停止复制。核对命令、脚本、TTL、ACL 需求及客户端设置。使用带长度的全量同步流：通过正常配置流程，在每个 Redis 源端配置 repl-diskless-sync no。与源端负责人协调此变更，并预留 RDB 磁盘空间和 fork 开销。"
+            }
+          },
+          {
+            "type": "link",
+            "text": {
+              "en": "Check Command And Client Compatibility",
+              "zh-CN": "检查命令及客户端兼容性"
+            },
+            "href": "/{locale}/docs/0.1.0/compatibility/"
+          }
+        ]
+      },
+      {
+        "id": "attach",
+        "title": {
+          "en": "Attach The Redis Source",
+          "zh-CN": "连接 Redis 源端"
+        },
+        "blocks": [
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "The command examples assume private, trusted endpoints with no authentication for a rehearsal. Set LAVIK_HOST, LAVIK_PORT, REDIS_HOST and REDIS_PORT to the actual endpoints. Lavik must be able to reach Redis directly; localhost refers to Lavik’s own host or container. Configure upstream credentials and TLS before attaching authenticated sources; never put passwords in copied terminal commands or expose an unauthenticated instance publicly.",
+              "zh-CN": "命令示例用于可信私有网络、无认证的演练环境。将 LAVIK_HOST、LAVIK_PORT、REDIS_HOST、REDIS_PORT 设置为实际地址。Lavik 必须能直接访问 Redis；localhost 指 Lavik 自己的主机或容器。连接已启用认证的源端之前，先配置上游凭据和 TLS；不要把密码放在复制的终端命令中，也不要公开暴露无认证实例。"
+            }
+          },
+          {
+            "type": "file",
+            "name": "attach-redis.sh"
+          },
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "Watch INFO replication and the Lavik logs until master_link_status is up and master_sync_in_progress is 0. Perform real reads as well. A process restart requests a new FULLRESYNC; Redis offsets are not crash-persisted in beta.1. Do not route production traffic to a target still synchronizing.",
+              "zh-CN": "查看 INFO replication 及 Lavik 日志，直到 master_link_status 为 up 且 master_sync_in_progress 为 0，并进行实际读取。进程重启会请求新的 FULLRESYNC；beta.1 不会持久化 Redis 复制偏移量。不要把生产流量路由到仍在同步的目标。"
+            }
+          }
+        ]
+      },
+      {
+        "id": "cutover",
+        "title": {
+          "en": "Catch Up And Cut Over",
+          "zh-CN": "追平与切换"
+        },
+        "blocks": [
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "An OK response acknowledges the role change; it does not mean the copy is complete. Keep the target attached until initial sync finishes and normal reads work. Pause every source writer, including scheduled jobs. Capture each source’s replication offset after the write pause, identify the Lavik replica connection, and confirm its ACK reaches that captured watermark. Replication PINGs and expiration traffic can continue advancing offsets. Compare representative values, data types, key counts and TTLs. Cluster sources require this check independently for every primary. Do not detach during LOADING: an incomplete load can be discarded. If a stream fails or any data type is missing, keep the source authoritative and fix the problem before cutover.",
+              "zh-CN": "OK 只确认角色变更，不表示复制完成。保持连接，直到初始同步完成且正常读取可用。暂停所有源端写入，包括定时任务。暂停写入后，记录每个源端的复制偏移量，识别 Lavik 副本连接，并确认其 ACK 达到所记录的位点。复制 PING 和过期流量可能继续推进偏移量。核对代表性值、数据类型、键数量和 TTL。集群的每个主节点都需独立检查。不要在 LOADING 期间脱离：不完整的加载可能被丢弃。流失败或缺少任何数据类型时，继续以源端为准，解决问题后再切换。"
+            }
+          },
+          {
+            "type": "file",
+            "name": "detach.sh"
+          },
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "After ROLE reports master, point applications at the Lavik endpoint and resume writes there. Run a small application read/write check before restoring full traffic. Keep Redis fenced against writes. Rollback is a routing change only before Lavik accepts new writes; afterwards reconcile or replay those writes before returning to Redis. REPLICAOF is not a bidirectional migration or a zero-data-loss guarantee.",
+              "zh-CN": "ROLE 返回 master 后，将应用切换到 Lavik 地址，并在 Lavik 恢复写入。全面恢复流量之前，先运行少量应用读写检查。保持 Redis 禁写。只有在 Lavik 尚未接收新写入之前，回滚才只是路由切换；之后若要返回 Redis，必须先对账或重放新增写入。REPLICAOF 不是双向迁移，也不保证零数据丢失。"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "migrate-redis-cluster",
+    "title": {
+      "en": "Migrate From Redis Cluster",
+      "zh-CN": "从 Redis Cluster 迁移"
+    },
+    "summary": {
+      "en": "Consolidate a stable Redis Cluster dataset into standalone Lavik, with one replication stream per source primary.",
+      "zh-CN": "为每个源端主节点建立复制流，将稳定的 Redis Cluster 数据集汇入独立 Lavik。"
+    },
+    "sections": [
+      {
+        "id": "prepare",
+        "title": {
+          "en": "Choose The Target Topology",
+          "zh-CN": "选择目标拓扑"
+        },
+        "blocks": [
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "Use a fresh standalone Lavik target with enough disk and memory for the source dataset. Attaching a source can replace destination data. Do not use a Meta-managed / --cluster-enabled target: beta.1 rejects Redis replication in that mode. Take a source backup and rehearse the complete move before the production cutover.",
+              "zh-CN": "使用全新的独立 Lavik 目标实例，并确保磁盘和内存容量充足。连接源端可能替换目标数据。不要使用 Meta 管理或 --cluster-enabled 目标：beta.1 在此模式下拒绝 Redis 复制。备份源数据，并在生产切换之前演练完整迁移。"
+            }
+          },
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "This workflow consolidates source shards into one standalone Lavik instance; it does not preserve Redis Cluster node IDs or turn the destination into a Meta-managed Lavik cluster. Configure a standalone client for the new endpoint at cutover. If you need a Meta-managed destination instead, plan a separate application-level transfer into a freshly created Lavik topology.",
+              "zh-CN": "此流程将源分片汇入一个独立 Lavik 实例，不保留 Redis Cluster 节点 ID，也不会将目标变成 Meta 管理的 Lavik 集群。切换时为新地址配置独立模式客户端。如需 Meta 管理的目标，应规划独立的应用级数据转移，将数据写入新建的 Lavik 拓扑。"
+            }
+          },
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "Beta.1 imports RDB versions 1–11 and logical databases 0–15. A newer Redis release or an unsupported encoding can prevent full synchronization. Self-describing Module 2 and Function-library records may be skipped with a warning; older or unknown formats can be rejected. Inventory these separately and recreate only features supported by Lavik. Unsupported incremental commands stop replication. Check your command set, scripts, TTLs, ACL requirements and client settings. Use a length-delimited full-sync stream: configure repl-diskless-sync no on each Redis source through your normal configuration process. Coordinate that source-side change with its owner and account for RDB disk space and fork overhead.",
+              "zh-CN": "beta.1 导入 RDB 版本 1–11，逻辑数据库范围为 0–15。较新的 Redis 版本或不支持的编码可能阻止全量同步。自描述的 Module 2 及 Function 库记录可能在警告后被跳过；较早或未知格式可能被拒绝。请单独盘点，并仅重建 Lavik 支持的功能。不支持的增量命令会停止复制。核对命令、脚本、TTL、ACL 需求及客户端设置。使用带长度的全量同步流：通过正常配置流程，在每个 Redis 源端配置 repl-diskless-sync no。与源端负责人协调此变更，并预留 RDB 磁盘空间和 fork 开销。"
+            }
+          }
+        ]
+      },
+      {
+        "id": "topology",
+        "title": {
+          "en": "Freeze The Slot Layout",
+          "zh-CN": "固定槽位布局"
+        },
+        "blocks": [
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "Inventory every slot-owning primary from CLUSTER NODES and require complete, non-overlapping coverage of slots 0–16383. Resolve failures and migrating/importing slots before starting. Suspend resharding and automatic scale operations for the migration window. A stable primary failover retaining exactly the same slots can be discovered; a changed slot layout is not merged automatically and can stop all source sessions. Restore a stable layout and reattach all required primaries before continuing.",
+              "zh-CN": "从 CLUSTER NODES 盘点每个持有槽的主节点，要求完整且不重叠地覆盖 0–16383 槽。开始之前解决故障及 migrating/importing 状态。在迁移窗口暂停重分片和自动扩缩容。保持完全相同槽集合的主节点故障切换可被发现；槽布局变化不会自动合并，可能停止所有源会话。恢复稳定布局，并重新连接全部所需主节点后再继续。"
+            }
+          }
+        ]
+      },
+      {
+        "id": "attach",
+        "title": {
+          "en": "Attach Every Primary",
+          "zh-CN": "连接每个主节点"
+        },
+        "blocks": [
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "The command examples assume private, trusted endpoints with no authentication for a rehearsal. Set LAVIK_HOST, LAVIK_PORT, REDIS_HOST and REDIS_PORT to the actual endpoints. Lavik must be able to reach Redis directly; localhost refers to Lavik’s own host or container. Configure upstream credentials and TLS before attaching authenticated sources; never put passwords in copied terminal commands or expose an unauthenticated instance publicly.",
+              "zh-CN": "命令示例用于可信私有网络、无认证的演练环境。将 LAVIK_HOST、LAVIK_PORT、REDIS_HOST、REDIS_PORT 设置为实际地址。Lavik 必须能直接访问 Redis；localhost 指 Lavik 自己的主机或容器。连接已启用认证的源端之前，先配置上游凭据和 TLS；不要把密码放在复制的终端命令中，也不要公开暴露无认证实例。"
+            }
+          },
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "The example below shows three source primaries. Define REDIS_HOST_2 / REDIS_PORT_2 and REDIS_HOST_3 / REDIS_PORT_3 as well, and repeat ADDREPLICAOF for additional primaries. All primaries must advertise reachable addresses and the same frozen slot layout. The target remains LOADING until all advertised slot-owning primaries are registered and synchronized. Do not attach replicas or overlapping sources.",
+              "zh-CN": "以下示例有三个源端主节点。另行定义 REDIS_HOST_2 / REDIS_PORT_2 及 REDIS_HOST_3 / REDIS_PORT_3；更多主节点需继续执行 ADDREPLICAOF。所有主节点须公布可达地址及相同的固定槽布局。全部持槽主节点注册并同步完成之前，目标保持 LOADING。不要连接副本或槽集合重叠的源端。"
+            }
+          },
+          {
+            "type": "file",
+            "name": "attach-cluster.sh"
+          },
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "Inspect the per-source entries in INFO replication and verify keys from every source primary. The overall link state or one successful GET is insufficient. If Lavik restarts, replay the complete source attachment sequence; runtime additions and Redis replication cursors are not persisted.",
+              "zh-CN": "检查 INFO replication 的每个源端条目，并验证来自每个源主节点的键。仅检查总体连接状态或成功读取一个键是不够的。Lavik 重启后，应重放完整的源端连接顺序；运行时新增源端及 Redis 复制游标不会持久化。"
+            }
+          }
+        ]
+      },
+      {
+        "id": "cutover",
+        "title": {
+          "en": "Catch Up And Cut Over",
+          "zh-CN": "追平与切换"
+        },
+        "blocks": [
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "An OK response acknowledges the role change; it does not mean the copy is complete. Keep the target attached until initial sync finishes and normal reads work. Pause every source writer, including scheduled jobs. Capture each source’s replication offset after the write pause, identify the Lavik replica connection, and confirm its ACK reaches that captured watermark. Replication PINGs and expiration traffic can continue advancing offsets. Compare representative values, data types, key counts and TTLs. Cluster sources require this check independently for every primary. Do not detach during LOADING: an incomplete load can be discarded. If a stream fails or any data type is missing, keep the source authoritative and fix the problem before cutover.",
+              "zh-CN": "OK 只确认角色变更，不表示复制完成。保持连接，直到初始同步完成且正常读取可用。暂停所有源端写入，包括定时任务。暂停写入后，记录每个源端的复制偏移量，识别 Lavik 副本连接，并确认其 ACK 达到所记录的位点。复制 PING 和过期流量可能继续推进偏移量。核对代表性值、数据类型、键数量和 TTL。集群的每个主节点都需独立检查。不要在 LOADING 期间脱离：不完整的加载可能被丢弃。流失败或缺少任何数据类型时，继续以源端为准，解决问题后再切换。"
+            }
+          },
+          {
+            "type": "file",
+            "name": "detach.sh"
+          },
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "After ROLE reports master, point applications at the Lavik endpoint and resume writes there. Run a small application read/write check before restoring full traffic. Keep Redis fenced against writes. Rollback is a routing change only before Lavik accepts new writes; afterwards reconcile or replay those writes before returning to Redis. REPLICAOF is not a bidirectional migration or a zero-data-loss guarantee.",
+              "zh-CN": "ROLE 返回 master 后，将应用切换到 Lavik 地址，并在 Lavik 恢复写入。全面恢复流量之前，先运行少量应用读写检查。保持 Redis 禁写。只有在 Lavik 尚未接收新写入之前，回滚才只是路由切换；之后若要返回 Redis，必须先对账或重放新增写入。REPLICAOF 不是双向迁移，也不保证零数据丢失。"
+            }
+          }
+        ]
+      }
+    ]
+  }
+]

@@ -64,9 +64,13 @@ test("both languages, benchmark interaction, and real verification output", asyn
     fullPage: true,
   });
   await page.goto("/en/docs/0.1.0/quick-start/");
-  await page.getByText("View actual execution record").click();
-  await expect(page.locator(".recipe .verification")).toContainText(
-    '"gracefulRestart": "passed"',
+  await expect(
+    page.locator(
+      ".recipe .verification, .source-list, .quick-start-verification",
+    ),
+  ).toHaveCount(0);
+  await expect(page.locator(".recipe pre").first()).toContainText(
+    "./lavik --bind",
   );
   await page
     .getByRole("link", { name: "Switch to Simplified Chinese" })

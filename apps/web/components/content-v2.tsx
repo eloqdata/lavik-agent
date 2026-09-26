@@ -1,5 +1,5 @@
 // Renderer v2 binds the displayed command record to the reviewed article.
-// The original renderer remains frozen for existing reviewed publications.
+// Documentation hides audit details; publication validation still checks receipts.
 import {
   claims,
   readText,
@@ -19,10 +19,12 @@ export function RecipeBlock({
   id,
   locale,
   receipt,
+  showEvidence = true,
 }: {
   id: string;
   locale: Locale;
   receipt: Receipt;
+  showEvidence?: boolean;
 }) {
   const recipe = recipes.find((r) => r.id === id)!;
   const zh = locale === "zh-CN";
@@ -54,24 +56,26 @@ export function RecipeBlock({
             .join("\n\n")}
         </code>
       </pre>
-      <details className="verification">
-        <summary>
-          {receipt.status === "passed" ? "✓" : "!"}{" "}
-          {zh ? "查看实际执行记录" : "View actual execution record"}
-        </summary>
-        <p>
-          {receipt.release} · {receipt.platform} ·{" "}
-          {receipt.completedAt.slice(0, 10)}
-        </p>
-        <p>
-          {zh
-            ? "此记录验证功能行为，不验证 NVMe 性能、断电持久性或 SLA。"
-            : "This record checks functional behavior, not NVMe performance, power-loss durability, or an SLA."}
-        </p>
-        <pre>
-          <code>{JSON.stringify(JSON.parse(receipt.output), null, 2)}</code>
-        </pre>
-      </details>
+      {showEvidence && (
+        <details className="verification">
+          <summary>
+            {receipt.status === "passed" ? "✓" : "!"}{" "}
+            {zh ? "查看实际执行记录" : "View actual execution record"}
+          </summary>
+          <p>
+            {receipt.release} · {receipt.platform} ·{" "}
+            {receipt.completedAt.slice(0, 10)}
+          </p>
+          <p>
+            {zh
+              ? "此记录验证功能行为，不验证 NVMe 性能、断电持久性或 SLA。"
+              : "This record checks functional behavior, not NVMe performance, power-loss durability, or an SLA."}
+          </p>
+          <pre>
+            <code>{JSON.stringify(JSON.parse(receipt.output), null, 2)}</code>
+          </pre>
+        </details>
+      )}
     </section>
   );
 }
@@ -82,6 +86,7 @@ export function ArticleBody({
   article: Article;
   receipts: Receipt[];
 }) {
+  const showEvidence = !["docs", "faq"].includes(article.kind);
   const used = new Set<string>();
   for (const block of article.blocks) {
     if (block.type === "paragraph") block.sources.forEach((id) => used.add(id));
@@ -122,42 +127,45 @@ export function ArticleBody({
               key={i}
               id={block.recipeId}
               locale={article.locale}
+              showEvidence={showEvidence}
               receipt={receipts.find((r) => r.recipeId === block.recipeId)!}
             />
           );
         })}
       </div>
-      <aside className="source-list">
-        <h2>
-          {article.locale === "en" ? "Sources for this page" : "本页资料来源"}
-        </h2>
-        <p>
-          {article.locale === "en" ? "Source snapshot" : "资料快照"}:{" "}
-          {article.sourceRevision ? "" : `${release.tag} · `}
-          <a
-            href={`https://github.com/eloqdata/lavik/tree/${article.sourceRevision ?? release.commit}`}
-          >
-            {(article.sourceRevision ?? release.commit).slice(0, 7)}
-          </a>
-        </p>
-        {article.sourceRevision ? (
+      {showEvidence && (
+        <aside className="source-list">
+          <h2>
+            {article.locale === "en" ? "Sources for this page" : "本页资料来源"}
+          </h2>
           <p>
-            {article.locale === "en"
-              ? "Engineering notes based on this repository snapshot. Consult the versioned manual for the downloadable beta's verified behavior."
-              : "本文工程分析基于此仓库快照。下载的 beta 版本已验证行为请查阅版本化手册。"}
+            {article.locale === "en" ? "Source snapshot" : "资料快照"}:{" "}
+            {article.sourceRevision ? "" : `${release.tag} · `}
+            <a
+              href={`https://github.com/eloqdata/lavik/tree/${article.sourceRevision ?? release.commit}`}
+            >
+              {(article.sourceRevision ?? release.commit).slice(0, 7)}
+            </a>
           </p>
-        ) : null}
-        <ul>
-          {[...used].map((id) => {
-            const source = sources.find((s) => s.id === id)!;
-            return (
-              <li key={id}>
-                <a href={source.url}>{source.title} ↗</a>
-              </li>
-            );
-          })}
-        </ul>
-      </aside>
+          {article.sourceRevision ? (
+            <p>
+              {article.locale === "en"
+                ? "Engineering notes based on this repository snapshot. Consult the versioned manual for the downloadable beta's verified behavior."
+                : "本文工程分析基于此仓库快照。下载的 beta 版本已验证行为请查阅版本化手册。"}
+            </p>
+          ) : null}
+          <ul>
+            {[...used].map((id) => {
+              const source = sources.find((s) => s.id === id)!;
+              return (
+                <li key={id}>
+                  <a href={source.url}>{source.title} ↗</a>
+                </li>
+              );
+            })}
+          </ul>
+        </aside>
+      )}
     </>
   );
 }

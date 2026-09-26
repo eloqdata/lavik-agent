@@ -12,7 +12,6 @@ import {
   manualClients,
   manualTitle,
   type VerifiedStep,
-  type EvidenceBase,
 } from "../../../packages/manual/repository";
 import { CommandSearch } from "./command-search";
 import { requireReviewedManual } from "../../../packages/manual/gate";
@@ -73,63 +72,6 @@ function exampleTranscript(steps: VerifiedStep[]) {
     .join("\n");
 }
 
-function EvidenceDetails({
-  report,
-  locale,
-  kind,
-}: {
-  report: EvidenceBase;
-  locale: Locale;
-  kind: "commands" | "clients";
-}) {
-  const zh = locale === "zh-CN";
-  return (
-    <details>
-      <summary>
-        {zh
-          ? "测试环境与可复现证据"
-          : "Test environment & reproducible evidence"}
-      </summary>
-      <div className="manual-sources">
-        <p>
-          {zh ? "验证时间" : "Verified"}: {report.finishedAt} · Docker / Linux{" "}
-          {report.architecture} · {report.binaryVersion}
-        </p>
-        <p>
-          {zh ? "存储与连接" : "Storage & connection"}: io_uring ·{" "}
-          {zh
-            ? "临时文件、2 个工作线程、单机、明文 TCP、密码认证。此测试不衡量 NVMe 性能。"
-            : "temporary file, 2 workers, standalone, plaintext TCP, password authentication. This test does not measure NVMe performance."}
-        </p>
-        <p>
-          {zh ? "固定源码" : "Pinned source"}:{" "}
-          <a
-            href={`https://github.com/eloqdata/lavik/tree/${report.sourceCommit}`}
-          >
-            {report.sourceCommit}
-          </a>
-        </p>
-        <p>
-          {zh ? "二进制 SHA-256" : "Binary SHA-256"}:{" "}
-          <code>{report.binarySha256}</code>
-        </p>
-        <p>
-          {zh ? "镜像" : "Image"}: <code>{report.imageId}</code>
-        </p>
-        <a
-          href={`https://github.com/eloqdata/lavik-agent/blob/main/evidence/manual/0.1.0/${kind}.json`}
-        >
-          {zh ? "完整测试记录" : "Full test receipt"}
-        </a>
-        {" · "}
-        <a href="https://github.com/eloqdata/lavik-agent/tree/main/verification/manual">
-          {zh ? "可执行测试" : "Executable tests"}
-        </a>
-      </div>
-    </details>
-  );
-}
-
 export function ManualPage({
   route,
   locale,
@@ -186,10 +128,7 @@ export function ManualPage({
           ) : null}
         </div>
         <h1>{title}</h1>
-        <div className="article-meta">
-          {release.tag} · {zh ? "Docker 实测" : "Tested in Docker"} ·{" "}
-          {commands.finishedAt.slice(0, 10)}
-        </div>
+        <div className="article-meta">{release.tag}</div>
 
         {route === "docs/0.1.0/commands" ? (
           <>
@@ -217,8 +156,8 @@ export function ManualPage({
             </div>
             <div className="manual-scope">
               {zh
-                ? "覆盖的是页面列出的具体调用与结果。注册一个命令不代表支持其所有选项。ADDREPLICAOF 目前仅测试了拒绝 NO ONE；集群、故障转移和生产 SLA 不在本次验证范围内。"
-                : "Coverage applies to the calls and replies shown on each page. A registered command may not support every option. ADDREPLICAOF currently has a rejection test for NO ONE only; cluster behavior, failover and production SLAs are outside this verification."}
+                ? "请使用本版本文档列出的参数形式。在启用客户端可选功能或更改部署拓扑之前，先检查兼容性。"
+                : "Use the argument forms documented for this release. Check compatibility before enabling optional client features or changing deployment topology."}
             </div>
             <CommandSearch
               locale={locale}
@@ -271,20 +210,6 @@ export function ManualPage({
                 ? "CLIENT TRACKING ON 和 COMMAND INFO get 也返回不支持的子命令错误。请检查客户端默认功能和连接时发送的命令。"
                 : "CLIENT TRACKING ON and COMMAND INFO get also return unsupported-subcommand errors. Check the commands and optional features your client sends during connection setup."}
             </p>
-            <EvidenceDetails
-              report={commands}
-              locale={locale}
-              kind="commands"
-            />
-            <p className="manual-sources">
-              {zh ? "文档组织参考" : "Documentation organization reference"}:{" "}
-              <a href="https://valkey.io/docs/">Valkey docs</a> ·{" "}
-              <a href="https://valkey.io/commands/">Valkey command reference</a>
-              .{" "}
-              {zh
-                ? "行为说明以固定版本的 Lavik 源码和实测结果为准。"
-                : "Behavior is documented from pinned Lavik source and execution results."}
-            </p>
           </>
         ) : null}
 
@@ -326,41 +251,6 @@ export function ManualPage({
                   : "A captured marker refers to raw bytes returned by an earlier request, not a literal string to type. Binary replies are displayed as Base64; the executable test passes the original bytes unchanged."}
               </p>
             ) : null}
-            <div className="manual-scope">
-              {zh
-                ? "验证范围：本页列出的参数形式、准备步骤和断言。示例不证明未列出的选项或部署模式；请使用自己的数据和客户端运行应用测试。"
-                : "Verification scope: the argument forms, setup and assertions shown here. These examples do not establish support for unlisted options or deployment modes. Run your application tests with your data and client."}
-            </div>
-            <EvidenceDetails
-              report={commands}
-              locale={locale}
-              kind="commands"
-            />
-            <p className="manual-sources">
-              <a
-                href={`https://github.com/eloqdata/lavik/blob/${release.commit}/src/redis/command_table.cpp`}
-              >
-                {zh ? "Lavik 命令注册源码" : "Lavik command registry"}
-              </a>
-              {![
-                "LAVIK.HREPLACE",
-                "ADDREPLICAOF",
-                "TOMBRAIDER",
-                "DEFRAG",
-              ].includes(command.name) ? (
-                <>
-                  {" "}
-                  ·{" "}
-                  <a
-                    href={`https://valkey.io/commands/${command.name.toLowerCase()}/`}
-                  >
-                    {zh
-                      ? "Valkey 对应命令（支持范围可能不同）"
-                      : "Valkey counterpart (support may differ)"}
-                  </a>
-                </>
-              ) : null}
-            </p>
           </>
         ) : null}
 
@@ -449,18 +339,6 @@ export function ManualPage({
                   : "The passing ioredis and iovalkey profiles use disconnect() for cleanup. In separate quit() diagnostics, the call completed but the Node.js process remained alive after 12 seconds; see those client pages for the limitation."}
               </p>
             </div>
-            <EvidenceDetails
-              report={clientResults}
-              locale={locale}
-              kind="clients"
-            />
-            <p className="manual-sources">
-              {zh ? "客户端目录参考" : "Client catalog reference"}:{" "}
-              <a href="https://valkey.io/clients/">Valkey client libraries</a>.{" "}
-              {zh
-                ? "这里的兼容性结论来自对 Lavik 的独立实测。"
-                : "Compatibility results here come from separate tests against Lavik."}
-            </p>
           </>
         ) : null}
 
@@ -511,8 +389,8 @@ export function ManualPage({
             {shutdownProbe?.outcome === "timeout" ? (
               <div className="manual-scope">
                 {zh
-                  ? "结束连接请使用本页验证过的 disconnect()。单独诊断中的 quit() 调用已完成、操作断言也通过，但 Node.js 进程在 12 秒内未退出，因此该关闭路径未通过测试。此现象本身不能确定问题来自客户端还是服务端。完整证据包含 shutdownProbes。"
-                  : "Use the tested disconnect() cleanup path. In a separate diagnostic, quit() completed and operation assertions passed, but the Node.js process did not exit within 12 seconds, so that shutdown path did not pass. This observation alone does not identify a client or server cause. The full receipt includes shutdownProbes."}
+                  ? "结束连接请使用本页验证过的 disconnect()。单独诊断中的 quit() 调用已完成、操作断言也通过，但 Node.js 进程在 12 秒内未退出，因此该关闭路径未通过测试。此现象本身不能确定问题来自客户端还是服务端。"
+                  : "Use the tested disconnect() cleanup path. In a separate diagnostic, quit() completed and operation assertions passed, but the Node.js process did not exit within 12 seconds, so that shutdown path did not pass. This observation alone does not identify a client or server cause."}
               </div>
             ) : null}
             <h2>{zh ? "可执行测试示例" : "Executable test example"}</h2>
@@ -534,22 +412,6 @@ export function ManualPage({
                 <code>{clientSource(client)}</code>
               </pre>
             </details>
-            <p className="manual-sources">
-              <a href={client.source}>
-                {zh ? "客户端官方仓库" : "Official client repository"}
-              </a>{" "}
-              ·{" "}
-              <a
-                href={`https://github.com/eloqdata/lavik-agent/tree/main/verification/manual/clients`}
-              >
-                {zh ? "依赖和复现步骤" : "Dependencies and reproduction"}
-              </a>
-            </p>
-            <EvidenceDetails
-              report={clientResults}
-              locale={locale}
-              kind="clients"
-            />
           </>
         ) : null}
       </article>

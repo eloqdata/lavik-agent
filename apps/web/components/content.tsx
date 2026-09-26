@@ -13,7 +13,15 @@ const shellArg = (value: string) =>
   /^[a-zA-Z0-9:./_-]+$/.test(value)
     ? value
     : `'${value.replaceAll("'", "'\\''")}'`;
-export function RecipeBlock({ id, locale }: { id: string; locale: Locale }) {
+export function RecipeBlock({
+  id,
+  locale,
+  showEvidence = true,
+}: {
+  id: string;
+  locale: Locale;
+  showEvidence?: boolean;
+}) {
   const recipe = recipes.find((r) => r.id === id)!;
   const receipt = storedReceipt(id);
   const zh = locale === "zh-CN";
@@ -45,28 +53,31 @@ export function RecipeBlock({ id, locale }: { id: string; locale: Locale }) {
             .join("\n\n")}
         </code>
       </pre>
-      <details className="verification">
-        <summary>
-          {receipt.status === "passed" ? "✓" : "!"}{" "}
-          {zh ? "查看实际执行记录" : "View actual execution record"}
-        </summary>
-        <p>
-          {receipt.release} · {receipt.platform} ·{" "}
-          {receipt.completedAt.slice(0, 10)}
-        </p>
-        <p>
-          {zh
-            ? "此记录验证功能行为，不验证 NVMe 性能、断电持久性或 SLA。"
-            : "This record checks functional behavior, not NVMe performance, power-loss durability, or an SLA."}
-        </p>
-        <pre>
-          <code>{JSON.stringify(JSON.parse(receipt.output), null, 2)}</code>
-        </pre>
-      </details>
+      {showEvidence && (
+        <details className="verification">
+          <summary>
+            {receipt.status === "passed" ? "✓" : "!"}{" "}
+            {zh ? "查看实际执行记录" : "View actual execution record"}
+          </summary>
+          <p>
+            {receipt.release} · {receipt.platform} ·{" "}
+            {receipt.completedAt.slice(0, 10)}
+          </p>
+          <p>
+            {zh
+              ? "此记录验证功能行为，不验证 NVMe 性能、断电持久性或 SLA。"
+              : "This record checks functional behavior, not NVMe performance, power-loss durability, or an SLA."}
+          </p>
+          <pre>
+            <code>{JSON.stringify(JSON.parse(receipt.output), null, 2)}</code>
+          </pre>
+        </details>
+      )}
     </section>
   );
 }
 export function ArticleBody({ article }: { article: Article }) {
+  const showEvidence = !["docs", "faq"].includes(article.kind);
   const used = new Set<string>();
   for (const block of article.blocks) {
     if (block.type === "paragraph") block.sources.forEach((id) => used.add(id));
@@ -103,32 +114,41 @@ export function ArticleBody({ article }: { article: Article }) {
           if (block.type === "calculation")
             return <CostCalculator key={i} locale={article.locale} />;
           return (
-            <RecipeBlock key={i} id={block.recipeId} locale={article.locale} />
+            <RecipeBlock
+              key={i}
+              id={block.recipeId}
+              locale={article.locale}
+              showEvidence={showEvidence}
+            />
           );
         })}
       </div>
-      <aside className="source-list">
-        <h2>
-          {article.locale === "en" ? "Sources for this page" : "本页资料来源"}
-        </h2>
-        <p>
-          {article.locale === "en" ? "Documentation snapshot" : "文档快照"}:{" "}
-          {release.tag} ·{" "}
-          <a href={`https://github.com/eloqdata/lavik/tree/${release.commit}`}>
-            {release.commit.slice(0, 7)}
-          </a>
-        </p>
-        <ul>
-          {[...used].map((id) => {
-            const source = sources.find((s) => s.id === id)!;
-            return (
-              <li key={id}>
-                <a href={source.url}>{source.title} ↗</a>
-              </li>
-            );
-          })}
-        </ul>
-      </aside>
+      {showEvidence && (
+        <aside className="source-list">
+          <h2>
+            {article.locale === "en" ? "Sources for this page" : "本页资料来源"}
+          </h2>
+          <p>
+            {article.locale === "en" ? "Documentation snapshot" : "文档快照"}:{" "}
+            {release.tag} ·{" "}
+            <a
+              href={`https://github.com/eloqdata/lavik/tree/${release.commit}`}
+            >
+              {release.commit.slice(0, 7)}
+            </a>
+          </p>
+          <ul>
+            {[...used].map((id) => {
+              const source = sources.find((s) => s.id === id)!;
+              return (
+                <li key={id}>
+                  <a href={source.url}>{source.title} ↗</a>
+                </li>
+              );
+            })}
+          </ul>
+        </aside>
+      )}
     </>
   );
 }

@@ -34,7 +34,7 @@ test("bilingual lavik-ctl guides expose tested commands, Grafana setup and accur
         for (const block of await blocks.all())
           await expect(block).toHaveText(operationSnippet(name));
       }
-      await expect(page.locator(".operations-evidence")).toContainText("SPDK");
+      await expect(page.locator(".operations-evidence")).toHaveCount(0);
       await expect(page.locator(".operations-next")).toHaveAttribute(
         "href",
         new RegExp(guide.layout === "single" ? "ha-cluster" : "single-node"),
@@ -58,6 +58,10 @@ test("docs navigation, search and manifest include the operator guides", async (
   request,
 }) => {
   await page.goto("/en/docs/0.1.0/");
+  await page
+    .locator(".docs-nav-group summary")
+    .filter({ hasText: "Managing Lavik" })
+    .click();
   await expect(
     page.locator(
       ".docs-sidebar a[href='/en/docs/0.1.0/lavik-ctl-single-node/']",

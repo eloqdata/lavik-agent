@@ -39,7 +39,7 @@
   "notes": "Initial curated edition. Executable examples require separate real execution receipts; this record alone does not authorize a build. September 20 source audit: added the pinned beta SPDK report and 10M CSV, checked against the updated upstream README. This article and its existing historical sources are unchanged.",
   "knowledgeHash": "7c77c4dbba6848e7e6a2f5c0339ffe677ac5b0a21adbf48d968e1381dba88037",
   "findings": [],
-  "renderingHash": "e7cdfc40d4d0240e7164e6ca7e53a9d85b1c387933b448e11ca2af297f9afad9",
+  "renderingHash": "5ccfe79ba954b37d01f8fdeca6265a185673bdf5c25cc1d4805686b0fa473a87",
   "checkedSourceIds": [
     "benchmark"
   ],
@@ -55,5 +55,38 @@
     "finishedAt": "2026-09-21T16:35:10.516Z",
     "promptSha256": "6c90daaee816b58c52d9ac8cae5ebdc6a443a3d232ea6e960689ddda41529c0c",
     "outputSha256": "395a3b0c2062243db430eb75979df29a37a6d28f1c4eca104c03413240054fb3"
+  },
+  "renderingReview": {
+    "previousRenderingHash": "e7cdfc40d4d0240e7164e6ca7e53a9d85b1c387933b448e11ca2af297f9afad9",
+    "reviewedAt": "2026-09-26T01:35:17.417Z",
+    "reviewer": {
+      "role": "reviewer",
+      "model": "gpt-6-astra",
+      "provider": "openai",
+      "authentication": "chatgpt",
+      "reasoning": "high",
+      "startedAt": "2026-09-26T01:34:54.136Z",
+      "finishedAt": "2026-09-26T01:35:17.417Z",
+      "promptSha256": "5264e9fcd7b69e8e9e0eb133956ad5e1bc1ae151a6eb925bcb6c1a1b54ba9796",
+      "outputSha256": "82aebe6b910c711c4d1f31e301d8a3629a8d89fcb28f076a06e7ecde5ae60093"
+    },
+    "review": {
+      "decision": "pass",
+      "findings": [
+        {
+          "severity": "note",
+          "message": "The prior blocker is resolved: the harness builds the hashed Dockerfile/start.sh, runs the resulting immutable image ID throughout, verifies beta.1 and source REVISION, and records the binary SHA-256. Supplied regenerated execution evidence matches this flow."
+        },
+        {
+          "severity": "note",
+          "message": "Both languages now correctly describe captured offset watermarks, identified replica ACKs, databases 0–15, and skipped self-describing records versus rejected formats. Migration prerequisites, topology restrictions, slot coverage, cutover/rollback boundaries, container security tradeoffs and volume retention remain actionable."
+        },
+        {
+          "severity": "note",
+          "message": "Unchanged navigation and route coverage retain the preceding review’s assessment. Audit details remain hidden without weakening internal publication checks. The renderingHash-only refresh is appropriate with the incremental receipt attached and original technical reviews and all other evidence preserved. This review inspected supplied material only; no tools, credentials or tests were used."
+        }
+      ]
+    },
+    "scope": "Presentation only: hide audit receipt/source sections on docs/faq. Technical content, examples and source evidence unchanged."
   }
 }

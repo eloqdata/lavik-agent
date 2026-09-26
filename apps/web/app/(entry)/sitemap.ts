@@ -1,3 +1,4 @@
+import { userGuideRoutes } from "../../../../packages/docs/repository";
 import type { MetadataRoute } from "next";
 import { articles, articlePath } from "../../../../packages/content/repository";
 import { manualRoutes } from "../../../../packages/manual/repository";
@@ -31,7 +32,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       })),
     ),
     ...["en", "zh-CN"].flatMap((locale) =>
-      operationsRoutes().map((route) => ({
+      [...operationsRoutes(), ...userGuideRoutes()].map((route) => ({
         url: `https://lavik.dev/${locale}/${route}/`,
       })),
     ),

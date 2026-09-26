@@ -5,7 +5,7 @@
   "contentHash": "52ba500b45e98cd2fcb43f4ab1509f27b277bbe1b0fbd901274136ce262844dc",
   "releaseCommit": "3955b98d43b312324aa8d52775df52cfb111c0d0",
   "knowledgeHash": "7c77c4dbba6848e7e6a2f5c0339ffe677ac5b0a21adbf48d968e1381dba88037",
-  "renderingHash": "2b4bf784692d4a2edba57baec6040e5c017eabe7c5230b5a19f32d9c4362d68d",
+  "renderingHash": "b7cd15ee1264da60c9c09a0eafee2680c6bc71d084ae9fd8596be98f35532997",
   "rendererVersion": 2,
   "policyHash": "7876b8134ce99825533b17fdfa976e16b75d9b601c6a756af8ba2cda494569c8",
   "sourceHashes": {
@@ -50,5 +50,38 @@
     "design-adr--0010-report-only-provable-failover-loss"
   ],
   "publicationId": "c7d5f6e6-cb47-4169-97c8-9585ea5c442c",
-  "artifactHash": "cb7a54e3372c4cf1282c5f94fef4fc982efc87fbc702bbcab8be9b0bcc2a9f60"
+  "artifactHash": "cb7a54e3372c4cf1282c5f94fef4fc982efc87fbc702bbcab8be9b0bcc2a9f60",
+  "renderingReview": {
+    "previousRenderingHash": "2b4bf784692d4a2edba57baec6040e5c017eabe7c5230b5a19f32d9c4362d68d",
+    "reviewedAt": "2026-09-26T01:35:17.417Z",
+    "reviewer": {
+      "role": "reviewer",
+      "model": "gpt-6-astra",
+      "provider": "openai",
+      "authentication": "chatgpt",
+      "reasoning": "high",
+      "startedAt": "2026-09-26T01:34:54.136Z",
+      "finishedAt": "2026-09-26T01:35:17.417Z",
+      "promptSha256": "5264e9fcd7b69e8e9e0eb133956ad5e1bc1ae151a6eb925bcb6c1a1b54ba9796",
+      "outputSha256": "82aebe6b910c711c4d1f31e301d8a3629a8d89fcb28f076a06e7ecde5ae60093"
+    },
+    "review": {
+      "decision": "pass",
+      "findings": [
+        {
+          "severity": "note",
+          "message": "The prior blocker is resolved: the harness builds the hashed Dockerfile/start.sh, runs the resulting immutable image ID throughout, verifies beta.1 and source REVISION, and records the binary SHA-256. Supplied regenerated execution evidence matches this flow."
+        },
+        {
+          "severity": "note",
+          "message": "Both languages now correctly describe captured offset watermarks, identified replica ACKs, databases 0–15, and skipped self-describing records versus rejected formats. Migration prerequisites, topology restrictions, slot coverage, cutover/rollback boundaries, container security tradeoffs and volume retention remain actionable."
+        },
+        {
+          "severity": "note",
+          "message": "Unchanged navigation and route coverage retain the preceding review’s assessment. Audit details remain hidden without weakening internal publication checks. The renderingHash-only refresh is appropriate with the incremental receipt attached and original technical reviews and all other evidence preserved. This review inspected supplied material only; no tools, credentials or tests were used."
+        }
+      ]
+    },
+    "scope": "Presentation only: hide audit receipt/source sections on docs/faq. Technical content, examples and source evidence unchanged."
+  }
 }

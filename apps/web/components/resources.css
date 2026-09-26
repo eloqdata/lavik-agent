@@ -305,7 +305,7 @@
   display: none;
 }
 .document-nav .docs-grouped-nav {
-  gap: 20px;
+  gap: 4px;
 }
 .docs-nav-group h2 {
   font-size: 10px;
@@ -568,4 +568,44 @@
 .manual-page .command-list small,
 .manual-page .manual-stats span {
   color: var(--muted);
+}
+
+.docs-nav-group {
+  margin: 0;
+}
+.docs-nav-group > summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  list-style: none;
+  cursor: pointer;
+  padding: 8px 10px;
+  color: var(--ink);
+  font-size: 14px;
+  font-weight: 650;
+  border-radius: 5px;
+}
+.docs-nav-group > summary::-webkit-details-marker {
+  display: none;
+}
+.docs-nav-group > summary:hover {
+  background: var(--soft);
+}
+.docs-nav-group > summary:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
+.docs-category-chevron {
+  font-size: 18px;
+  line-height: 1;
+  transition: transform 0.15s;
+}
+.docs-nav-group[open] > summary .docs-category-chevron {
+  transform: rotate(90deg);
+}
+.docs-category-links {
+  margin-left: 10px;
+  padding-left: 7px;
+  border-left: 1px solid var(--line);
 }

@@ -1,0 +1,308 @@
+{
+  "review": {
+    "decision": "pass",
+    "findings": [
+      {
+        "severity": "note",
+        "message": "The prior blocker is resolved: the harness builds the hashed Dockerfile/start.sh, runs the resulting immutable image ID throughout, verifies beta.1 and source REVISION, and records the binary SHA-256. Supplied regenerated execution evidence matches this flow."
+      },
+      {
+        "severity": "note",
+        "message": "Both languages now correctly describe captured offset watermarks, identified replica ACKs, databases 0–15, and skipped self-describing records versus rejected formats. Migration prerequisites, topology restrictions, slot coverage, cutover/rollback boundaries, container security tradeoffs and volume retention remain actionable."
+      },
+      {
+        "severity": "note",
+        "message": "Unchanged navigation and route coverage retain the preceding review’s assessment. Audit details remain hidden without weakening internal publication checks. The renderingHash-only refresh is appropriate with the incremental receipt attached and original technical reviews and all other evidence preserved. This review inspected supplied material only; no tools, credentials or tests were used."
+      }
+    ]
+  },
+  "reviewer": {
+    "role": "reviewer",
+    "model": "gpt-6-astra",
+    "provider": "openai",
+    "authentication": "chatgpt",
+    "reasoning": "high",
+    "startedAt": "2026-09-26T01:34:54.136Z",
+    "finishedAt": "2026-09-26T01:35:17.417Z",
+    "promptSha256": "5264e9fcd7b69e8e9e0eb133956ad5e1bc1ae151a6eb925bcb6c1a1b54ba9796",
+    "outputSha256": "82aebe6b910c711c4d1f31e301d8a3629a8d89fcb28f076a06e7ecde5ae60093"
+  },
+  "manual": {
+    "previousBundleHash": "8f35f8205fab88c90447c85a93c94bcc1e7b89a379ece0b0c74b7f98478be79e",
+    "bundleHash": "6e3b91dc4e2dbf23bca9eb285eb8cc516833e53b6ce70694312ec417c08673a6",
+    "changed": [
+      "apps/web/app/(entry)/manual-manifest.json/route.ts",
+      "apps/web/app/(entry)/sitemap.ts",
+      "apps/web/app/(site)/[locale]/[...slug]/page.tsx",
+      "apps/web/components/content-v2.tsx",
+      "apps/web/components/content.tsx",
+      "apps/web/components/docs-home.tsx",
+      "apps/web/components/docs-navigation.tsx",
+      "apps/web/components/docs-sidebar.tsx",
+      "apps/web/components/manual.tsx",
+      "apps/web/components/operations.tsx",
+      "apps/web/components/quick-start.tsx",
+      "apps/web/components/resources.css",
+      "apps/web/components/user-guide.tsx",
+      "evidence/onboarding/0.1.0/sources.json",
+      "evidence/onboarding/0.1.0/sources/redis-compatibility.md",
+      "evidence/onboarding/0.1.0/sources/tomb-raider.md",
+      "evidence/onboarding/0.1.0/verification.json",
+      "packages/docs/guides.json",
+      "packages/docs/repository.ts",
+      "packages/manual/gate.ts",
+      "scripts/verify-onboarding.py",
+      "tests/browser/docs-navigation.spec.ts",
+      "tests/browser/manual.spec.ts",
+      "tests/browser/operations.spec.ts",
+      "tests/browser/resources.spec.ts",
+      "tests/browser/site.spec.ts",
+      "tests/onboarding.test.ts",
+      "verification/onboarding/Dockerfile",
+      "verification/onboarding/attach-cluster.sh",
+      "verification/onboarding/attach-redis.sh",
+      "verification/onboarding/compose.yaml",
+      "verification/onboarding/detach.sh",
+      "verification/onboarding/docker-run.sh",
+      "verification/onboarding/start.sh"
+    ]
+  },
+  "articles": [
+    {
+      "file": "evidence/reviews/en-capacity-use-case.json",
+      "previousReviewHash": "281970e24000a63a0b6569682d7bb39131de52fd1f9f62c048aeb594fd00930c",
+      "previousRenderingHash": "e7cdfc40d4d0240e7164e6ca7e53a9d85b1c387933b448e11ca2af297f9afad9",
+      "currentRenderingHash": "5ccfe79ba954b37d01f8fdeca6265a185673bdf5c25cc1d4805686b0fa473a87"
+    },
+    {
+      "file": "evidence/reviews/en-compatibility.json",
+      "previousReviewHash": "00e00cc5f779f2c720ca9fc2788ff1037f1c81b8c492c286d48478da8cde815b",
+      "previousRenderingHash": "e7cdfc40d4d0240e7164e6ca7e53a9d85b1c387933b448e11ca2af297f9afad9",
+      "currentRenderingHash": "5ccfe79ba954b37d01f8fdeca6265a185673bdf5c25cc1d4805686b0fa473a87"
+    },
+    {
+      "file": "evidence/reviews/en-evaluation-faq.json",
+      "previousReviewHash": "9ba3742196217712c799f6cd770178d4db5ea115234cdaba976f3b6fe19ef504",
+      "previousRenderingHash": "e7cdfc40d4d0240e7164e6ca7e53a9d85b1c387933b448e11ca2af297f9afad9",
+      "currentRenderingHash": "5ccfe79ba954b37d01f8fdeca6265a185673bdf5c25cc1d4805686b0fa473a87"
+    },
+    {
+      "file": "evidence/reviews/en-failover-intent-authority-and-evidence.json",
+      "previousReviewHash": "2ced720bbe1023db8768392d949c28f099c249bcc98cc18db2891703ec780427",
+      "previousRenderingHash": "2b4bf784692d4a2edba57baec6040e5c017eabe7c5230b5a19f32d9c4362d68d",
+      "currentRenderingHash": "b7cd15ee1264da60c9c09a0eafee2680c6bc71d084ae9fd8596be98f35532997"
+    },
+    {
+      "file": "evidence/reviews/en-fast-restart-with-index-checkpoints.json",
+      "previousReviewHash": "d755bb54582b9ffebda7e22223e0758b559e60163c130a3e093167e538f52f08",
+      "previousRenderingHash": "2b4bf784692d4a2edba57baec6040e5c017eabe7c5230b5a19f32d9c4362d68d",
+      "currentRenderingHash": "b7cd15ee1264da60c9c09a0eafee2680c6bc71d084ae9fd8596be98f35532997"
+    },
+    {
+      "file": "evidence/reviews/en-grouped-collections-on-ssd.json",
+      "previousReviewHash": "5c496fa5a0f318c3f03ba8eae61b5ad20d7dd95cca7f226975a633e346faf031",
+      "previousRenderingHash": "2b4bf784692d4a2edba57baec6040e5c017eabe7c5230b5a19f32d9c4362d68d",
+      "currentRenderingHash": "b7cd15ee1264da60c9c09a0eafee2680c6bc71d084ae9fd8596be98f35532997"
+    },
+    {
+      "file": "evidence/reviews/en-inside-lavik-request-path.json",
+      "previousReviewHash": "6fe5fed42a94f63486a9bef596c157d5c30b2080fc1470f1d38c5edbb75f4155",
+      "previousRenderingHash": "2b4bf784692d4a2edba57baec6040e5c017eabe7c5230b5a19f32d9c4362d68d",
+      "currentRenderingHash": "b7cd15ee1264da60c9c09a0eafee2680c6bc71d084ae9fd8596be98f35532997"
+    },
+    {
+      "file": "evidence/reviews/en-lavik-spdk-performance-and-capacity.json",
+      "previousReviewHash": "dee3ad94d1add08d7d62aedd767f090bcb0e607b192de8ec2971076667b676eb",
+      "previousRenderingHash": "2b4bf784692d4a2edba57baec6040e5c017eabe7c5230b5a19f32d9c4362d68d",
+      "currentRenderingHash": "b7cd15ee1264da60c9c09a0eafee2680c6bc71d084ae9fd8596be98f35532997"
+    },
+    {
+      "file": "evidence/reviews/en-lua-functions-as-a-durable-catalog.json",
+      "previousReviewHash": "4415e344bef075972bd26fd57055aae214a123ee300be3de8dfe466d3f971462",
+      "previousRenderingHash": "2b4bf784692d4a2edba57baec6040e5c017eabe7c5230b5a19f32d9c4362d68d",
+      "currentRenderingHash": "b7cd15ee1264da60c9c09a0eafee2680c6bc71d084ae9fd8596be98f35532997"
+    },
+    {
+      "file": "evidence/reviews/en-multi-key-transactions-across-partitions.json",
+      "previousReviewHash": "989e4b828be84a119898e1f7a50df83a197341c57ef721a39f69376913bb4fb1",
+      "previousRenderingHash": "2b4bf784692d4a2edba57baec6040e5c017eabe7c5230b5a19f32d9c4362d68d",
+      "currentRenderingHash": "b7cd15ee1264da60c9c09a0eafee2680c6bc71d084ae9fd8596be98f35532997"
+    },
+    {
+      "file": "evidence/reviews/en-overview.json",
+      "previousReviewHash": "25b6dd1679ebadb3219972e7dd033ee2700e4da0c40436cd04ac343d8bfea14c",
+      "previousRenderingHash": "e7cdfc40d4d0240e7164e6ca7e53a9d85b1c387933b448e11ca2af297f9afad9",
+      "currentRenderingHash": "5ccfe79ba954b37d01f8fdeca6265a185673bdf5c25cc1d4805686b0fa473a87"
+    },
+    {
+      "file": "evidence/reviews/en-quick-start.json",
+      "previousReviewHash": "4f9780d4761b20686ed557023bd88d11a7d89227321635a1bbc32c971a5656a0",
+      "previousRenderingHash": "2b4bf784692d4a2edba57baec6040e5c017eabe7c5230b5a19f32d9c4362d68d",
+      "currentRenderingHash": "b7cd15ee1264da60c9c09a0eafee2680c6bc71d084ae9fd8596be98f35532997"
+    },
+    {
+      "file": "evidence/reviews/en-reading-benchmarks.json",
+      "previousReviewHash": "9ea531e8274075eacaf54ea08dad2fb794d43584b46b9762784504d8d8315db4",
+      "previousRenderingHash": "e7cdfc40d4d0240e7164e6ca7e53a9d85b1c387933b448e11ca2af297f9afad9",
+      "currentRenderingHash": "5ccfe79ba954b37d01f8fdeca6265a185673bdf5c25cc1d4805686b0fa473a87"
+    },
+    {
+      "file": "evidence/reviews/en-release-0-1-0.json",
+      "previousReviewHash": "94d6542be8157a3bf6a4df1e78a6331faf53696989b862e070b56ce317a31b57",
+      "previousRenderingHash": "e7cdfc40d4d0240e7164e6ca7e53a9d85b1c387933b448e11ca2af297f9afad9",
+      "currentRenderingHash": "5ccfe79ba954b37d01f8fdeca6265a185673bdf5c25cc1d4805686b0fa473a87"
+    },
+    {
+      "file": "evidence/reviews/en-replication-acks-and-recovery-boundaries.json",
+      "previousReviewHash": "a2fe584389cefcd4a8129ff97017ebfb934b234d9858914f4bf66bd2e424e166",
+      "previousRenderingHash": "2b4bf784692d4a2edba57baec6040e5c017eabe7c5230b5a19f32d9c4362d68d",
+      "currentRenderingHash": "b7cd15ee1264da60c9c09a0eafee2680c6bc71d084ae9fd8596be98f35532997"
+    },
+    {
+      "file": "evidence/reviews/en-storage.json",
+      "previousReviewHash": "fd4fe0c7a378d2de9da53c1c03e8648b3e28ee73224c698ecbaea5f41c7edfbe",
+      "previousRenderingHash": "e7cdfc40d4d0240e7164e6ca7e53a9d85b1c387933b448e11ca2af297f9afad9",
+      "currentRenderingHash": "5ccfe79ba954b37d01f8fdeca6265a185673bdf5c25cc1d4805686b0fa473a87"
+    },
+    {
+      "file": "evidence/reviews/en-why-lavik-separates-index-from-values.json",
+      "previousReviewHash": "7d2ffc3053e38cf2e06b398d82b5fd82bbb4d512b775372ee7df98132879bc59",
+      "previousRenderingHash": "2b4bf784692d4a2edba57baec6040e5c017eabe7c5230b5a19f32d9c4362d68d",
+      "currentRenderingHash": "b7cd15ee1264da60c9c09a0eafee2680c6bc71d084ae9fd8596be98f35532997"
+    },
+    {
+      "file": "evidence/reviews/zh-CN-capacity-use-case.json",
+      "previousReviewHash": "967230fe66f9c84679b1a425d2d9e392ac0e64591d2b435b4788587b9d23f097",
+      "previousRenderingHash": "e7cdfc40d4d0240e7164e6ca7e53a9d85b1c387933b448e11ca2af297f9afad9",
+      "currentRenderingHash": "5ccfe79ba954b37d01f8fdeca6265a185673bdf5c25cc1d4805686b0fa473a87"
+    },
+    {
+      "file": "evidence/reviews/zh-CN-compatibility.json",
+      "previousReviewHash": "80f353a7bcfafdb117270fd4de7d9086af535ef423f332cc0c5645d2a42bf69a",
+      "previousRenderingHash": "e7cdfc40d4d0240e7164e6ca7e53a9d85b1c387933b448e11ca2af297f9afad9",
+      "currentRenderingHash": "5ccfe79ba954b37d01f8fdeca6265a185673bdf5c25cc1d4805686b0fa473a87"
+    },
+    {
+      "file": "evidence/reviews/zh-CN-evaluation-faq.json",
+      "previousReviewHash": "4f5f93869c76c4a3ae95746dbe240edc6065cc9d8bbb0fdc4f297e50eb191734",
+      "previousRenderingHash": "e7cdfc40d4d0240e7164e6ca7e53a9d85b1c387933b448e11ca2af297f9afad9",
+      "currentRenderingHash": "5ccfe79ba954b37d01f8fdeca6265a185673bdf5c25cc1d4805686b0fa473a87"
+    },
+    {
+      "file": "evidence/reviews/zh-CN-failover-intent-authority-and-evidence.json",
+      "previousReviewHash": "4c75c1f65a1a492f1b84f0f26d3207b10c5c936a070ec89e754519a939f1db73",
+      "previousRenderingHash": "2b4bf784692d4a2edba57baec6040e5c017eabe7c5230b5a19f32d9c4362d68d",
+      "currentRenderingHash": "b7cd15ee1264da60c9c09a0eafee2680c6bc71d084ae9fd8596be98f35532997"
+    },
+    {
+      "file": "evidence/reviews/zh-CN-fast-restart-with-index-checkpoints.json",
+      "previousReviewHash": "57bcdd8f5293d3ae7b5db72552f7192db98bc60fc3af9993645e8970cc225ecc",
+      "previousRenderingHash": "2b4bf784692d4a2edba57baec6040e5c017eabe7c5230b5a19f32d9c4362d68d",
+      "currentRenderingHash": "b7cd15ee1264da60c9c09a0eafee2680c6bc71d084ae9fd8596be98f35532997"
+    },
+    {
+      "file": "evidence/reviews/zh-CN-grouped-collections-on-ssd.json",
+      "previousReviewHash": "3b10cd691385572485e5b3829a742390cb41e9062cc7548acb480dffadc5a3af",
+      "previousRenderingHash": "2b4bf784692d4a2edba57baec6040e5c017eabe7c5230b5a19f32d9c4362d68d",
+      "currentRenderingHash": "b7cd15ee1264da60c9c09a0eafee2680c6bc71d084ae9fd8596be98f35532997"
+    },
+    {
+      "file": "evidence/reviews/zh-CN-inside-lavik-request-path.json",
+      "previousReviewHash": "7d0a5f69a160f7dc6af78936a100c8802cf9e6c52b9739f7c887592e675b4b3d",
+      "previousRenderingHash": "2b4bf784692d4a2edba57baec6040e5c017eabe7c5230b5a19f32d9c4362d68d",
+      "currentRenderingHash": "b7cd15ee1264da60c9c09a0eafee2680c6bc71d084ae9fd8596be98f35532997"
+    },
+    {
+      "file": "evidence/reviews/zh-CN-lavik-spdk-performance-and-capacity.json",
+      "previousReviewHash": "760392d6ec8b91ffaad961fa0118f0a78458080bae4c673ffe10faf81924a9dc",
+      "previousRenderingHash": "2b4bf784692d4a2edba57baec6040e5c017eabe7c5230b5a19f32d9c4362d68d",
+      "currentRenderingHash": "b7cd15ee1264da60c9c09a0eafee2680c6bc71d084ae9fd8596be98f35532997"
+    },
+    {
+      "file": "evidence/reviews/zh-CN-lua-functions-as-a-durable-catalog.json",
+      "previousReviewHash": "51eaa5cc070bff8e005235ca9ff13ffe610094f1c0d1a12942fa5cb92fa0a7ca",
+      "previousRenderingHash": "2b4bf784692d4a2edba57baec6040e5c017eabe7c5230b5a19f32d9c4362d68d",
+      "currentRenderingHash": "b7cd15ee1264da60c9c09a0eafee2680c6bc71d084ae9fd8596be98f35532997"
+    },
+    {
+      "file": "evidence/reviews/zh-CN-multi-key-transactions-across-partitions.json",
+      "previousReviewHash": "848934351e0c6f59c561fc1b37bf4574d9e7567f344c08b57b026a6caaab8171",
+      "previousRenderingHash": "2b4bf784692d4a2edba57baec6040e5c017eabe7c5230b5a19f32d9c4362d68d",
+      "currentRenderingHash": "b7cd15ee1264da60c9c09a0eafee2680c6bc71d084ae9fd8596be98f35532997"
+    },
+    {
+      "file": "evidence/reviews/zh-CN-overview.json",
+      "previousReviewHash": "3e7e657db878d836ce8e64bda76426cdd1d8615da22e3212936bb9ef34514bb1",
+      "previousRenderingHash": "e7cdfc40d4d0240e7164e6ca7e53a9d85b1c387933b448e11ca2af297f9afad9",
+      "currentRenderingHash": "5ccfe79ba954b37d01f8fdeca6265a185673bdf5c25cc1d4805686b0fa473a87"
+    },
+    {
+      "file": "evidence/reviews/zh-CN-quick-start.json",
+      "previousReviewHash": "d756240615eee3582a83742c93791741566c8450ebb3fe924986fbb1029b7ec2",
+      "previousRenderingHash": "2b4bf784692d4a2edba57baec6040e5c017eabe7c5230b5a19f32d9c4362d68d",
+      "currentRenderingHash": "b7cd15ee1264da60c9c09a0eafee2680c6bc71d084ae9fd8596be98f35532997"
+    },
+    {
+      "file": "evidence/reviews/zh-CN-reading-benchmarks.json",
+      "previousReviewHash": "3f5959adfd81c4f0ef94d62773a743d6e48a148dbd1d8d831cfe3c22881b32cb",
+      "previousRenderingHash": "e7cdfc40d4d0240e7164e6ca7e53a9d85b1c387933b448e11ca2af297f9afad9",
+      "currentRenderingHash": "5ccfe79ba954b37d01f8fdeca6265a185673bdf5c25cc1d4805686b0fa473a87"
+    },
+    {
+      "file": "evidence/reviews/zh-CN-release-0-1-0.json",
+      "previousReviewHash": "95e45c50f00757a55ab00e36e45117fa0bcfa7678e50ed42a1502b3b007d48fe",
+      "previousRenderingHash": "e7cdfc40d4d0240e7164e6ca7e53a9d85b1c387933b448e11ca2af297f9afad9",
+      "currentRenderingHash": "5ccfe79ba954b37d01f8fdeca6265a185673bdf5c25cc1d4805686b0fa473a87"
+    },
+    {
+      "file": "evidence/reviews/zh-CN-replication-acks-and-recovery-boundaries.json",
+      "previousReviewHash": "64207b81b43ec3d190ec0fe7cbfe84457349a515cd80e9b05b1c35671af96bce",
+      "previousRenderingHash": "2b4bf784692d4a2edba57baec6040e5c017eabe7c5230b5a19f32d9c4362d68d",
+      "currentRenderingHash": "b7cd15ee1264da60c9c09a0eafee2680c6bc71d084ae9fd8596be98f35532997"
+    },
+    {
+      "file": "evidence/reviews/zh-CN-storage.json",
+      "previousReviewHash": "1c4357aa7072c9ee671fd8e9b1c0a24be48818f0a87316150b49b13619a52470",
+      "previousRenderingHash": "e7cdfc40d4d0240e7164e6ca7e53a9d85b1c387933b448e11ca2af297f9afad9",
+      "currentRenderingHash": "5ccfe79ba954b37d01f8fdeca6265a185673bdf5c25cc1d4805686b0fa473a87"
+    },
+    {
+      "file": "evidence/reviews/zh-CN-why-lavik-separates-index-from-values.json",
+      "previousReviewHash": "c34a99d6c7b06a3b9416fa3bd4b91306c89a0609b1e760ce8d666f473cc2e4c2",
+      "previousRenderingHash": "2b4bf784692d4a2edba57baec6040e5c017eabe7c5230b5a19f32d9c4362d68d",
+      "currentRenderingHash": "b7cd15ee1264da60c9c09a0eafee2680c6bc71d084ae9fd8596be98f35532997"
+    }
+  ],
+  "finalStyleReview": {
+    "reviewer": {
+      "role": "reviewer",
+      "model": "gpt-6-astra",
+      "provider": "openai",
+      "authentication": "chatgpt",
+      "reasoning": "high",
+      "additionalReviewReason": "Review final compact sidebar spacing found during desktop/mobile visual inspection.",
+      "startedAt": "2026-09-26T01:38:31.375Z",
+      "finishedAt": "2026-09-26T01:38:45.052Z",
+      "promptSha256": "0232dca5247757f9638fcd87449d02df5b5f2a9dd283bc2cf2b7a1e7e0bfb305",
+      "outputSha256": "4ee989a35e192f596710c1b3e7b0a6854e1ec6ff3d98064605b7cf7b54aa661d"
+    },
+    "review": {
+      "decision": "pass",
+      "findings": [
+        {
+          "severity": "note",
+          "message": "The supplied CSS delta matches the stated spacing adjustment. It preserves 14px labels, padded summary click targets, the focus-visible outline and chevron rotation. No blocking issue found."
+        },
+        {
+          "severity": "note",
+          "message": "Review limited to supplied CSS; no tools, credentials or tests used. Reported automated checks predate this adjustment; the compact preview is coordinator-reported. Prior reviews remain applicable under the asserted unchanged scope."
+        }
+      ]
+    },
+    "previousBundleHash": "6e3b91dc4e2dbf23bca9eb285eb8cc516833e53b6ce70694312ec417c08673a6",
+    "bundleHash": "5a00c9b293567eb47969d478ff96c0a516ef85b0b5056e128b62938426fac3e7",
+    "changed": [
+      "apps/web/components/resources.css"
+    ]
+  }
+}

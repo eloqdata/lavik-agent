@@ -2,7 +2,6 @@ import Link from "next/link";
 import type { Locale } from "../../../packages/content/schema";
 import { release } from "../../../packages/content/repository";
 import { requireReviewedManual } from "../../../packages/manual/gate";
-import { quickStartReport } from "../../../packages/quick-start/evidence";
 import {
   quickStartDependencies,
   quickStartPackages,
@@ -12,7 +11,6 @@ import "./quick-start.css";
 
 export function QuickStartSetup({ locale }: { locale: Locale }) {
   requireReviewedManual();
-  const verification = quickStartReport();
   const zh = locale === "zh-CN";
   return (
     <div className="prose quick-start-setup">
@@ -34,41 +32,6 @@ export function QuickStartSetup({ locale }: { locale: Locale }) {
         packages={quickStartPackages}
         dependencies={quickStartDependencies}
       />
-      <details className="verification quick-start-verification">
-        <summary>
-          {zh ? "查看软件包验证范围" : "Package verification coverage"}
-        </summary>
-        <p>
-          {verification.verifiedAt.slice(0, 10)} · Linux Docker ·{" "}
-          {zh ? "原生运行架构" : "Native runtime architecture"}:{" "}
-          {verification.nativeArch}
-        </p>
-        <ul>
-          {quickStartPackages.map((pkg) => (
-            <li key={pkg.filename}>
-              <strong>
-                {pkg.variant === "minimal" ? "Minimal" : "Standard"} ·{" "}
-                {pkg.arch}
-              </strong>
-              :{" "}
-              {pkg.arch === verification.nativeArch
-                ? zh
-                  ? "下载、校验、解压、版本、启动、读写和正常重启通过。"
-                  : "Download, checksum, extraction, version, startup, commands, and graceful restart passed."
-                : zh
-                  ? "下载、校验、解压和版本检查通过（模拟执行）；未执行 io_uring 运行测试。"
-                  : "Download, checksum, extraction, and version passed under emulation; io_uring runtime not tested."}
-            </li>
-          ))}
-        </ul>
-        <p>
-          {zh ? "实际输出和校验记录" : "Actual output and verification records"}
-          :{" "}
-          <a href="https://github.com/eloqdata/lavik-agent/blob/main/evidence/quick-start/0.1.0/verification.json">
-            verification.json ↗
-          </a>
-        </p>
-      </details>
       <details className="quick-start-spdk">
         <summary>
           {zh
@@ -87,8 +50,8 @@ export function QuickStartSetup({ locale }: { locale: Locale }) {
         </p>
         <p>
           {zh
-            ? "仅使用专门用于 Lavik 的空设备：设备解绑会影响内核对该设备的访问，启动数据库会写入数据。本站本地 Docker 检查验证两个软件包的 io_uring 启动，不代表执行了 SPDK NVMe 设备测试。"
-            : "Use an empty device dedicated to Lavik: rebinding changes kernel access to that device, and starting the database writes to it. This site’s local Docker checks cover io_uring startup for both packages; they do not constitute an SPDK NVMe hardware test."}
+            ? "仅使用专门用于 Lavik 的空设备：设备解绑会影响内核对该设备的访问，启动数据库会写入数据。"
+            : "Use an empty device dedicated to Lavik: rebinding changes kernel access to that device, and starting the database writes to it."}
         </p>
         <a
           href={`https://github.com/eloqdata/lavik/blob/${release.commit}/docs/operations/building-and-packaging.md#runtime-backend-selection`}

@@ -61,6 +61,10 @@ test("docs hub search finds commands and clients; mobile navigation is accessibl
     page.getByRole("navigation", { name: "文档导航" }),
   ).toBeVisible();
   await page
+    .locator(".docs-nav-group summary")
+    .filter({ hasText: "使用 Lavik 开发" })
+    .click();
+  await page
     .getByRole("navigation", { name: "文档导航" })
     .getByRole("link", { name: "命令参考", exact: true })
     .click();

@@ -1,0 +1,681 @@
+{
+  "status": "passed",
+  "version": "0.1.0-beta.1",
+  "architecture": "arm64",
+  "fileHashes": {
+    "scripts/verify-onboarding.py": "1115bc741523becdc4ff445076256f0c9819be1a803d3312b97050a233b94d11",
+    "verification/onboarding/Dockerfile": "44d78b7c5f322f76f725bcc2c35df1e412239358495158f0279ee52011ace953",
+    "verification/onboarding/attach-cluster.sh": "f782ff4dc80b69a5cba2182ac4f7ae6ff8478c18e54acdd5e01954143f726def",
+    "verification/onboarding/attach-redis.sh": "78042da4dc139db5e535e075c5d0319f3ed82caa911caacccc7840f0cf43062b",
+    "verification/onboarding/compose.yaml": "c6be667fdbed9cee37098f32685cbef62a7fc157a352a162eab4556cb2358ab6",
+    "verification/onboarding/detach.sh": "6d035ffcab3ebaf61b40c01062277441baeebb7a807ba6bd1c0281223560b20d",
+    "verification/onboarding/docker-run.sh": "c4662f38bf3d877b54ad25b2ac653d6b7c621b48dee8b887862b3a5ddad4e9ee",
+    "verification/onboarding/start.sh": "013075823384282bbb94f42905155d4622f7ec9203f010507672a99226ffa8dc"
+  },
+  "steps": [
+    {
+      "argv": [
+        "docker",
+        "build",
+        "--iidfile",
+        "/Users/hubert/workspace/lavik-agent/.cache/docs-reorg/lavik-onboard-c7f3093d-image-id",
+        "-t",
+        "lavik-onboard-c7f3093d-image",
+        "verification/onboarding"
+      ],
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": "#0 building with \"desktop-linux\" instance using docker driver\n\n#1 [internal] load build definition from Dockerfile\n#1 transferring dockerfile: 1.20kB done\n#1 DONE 0.0s\n\n#2 [internal] load metadata for docker.io/library/ubuntu:24.04@sha256:b3cc40b72b93588182b5410f723c7aaf142363311c2aa993d8a453ddcbb3ae15\n#2 DONE 0.0s\n\n#3 [internal] load .dockerignore\n#3 transferring context: 2B done\n#3 DONE 0.0s\n\n#4 [1/5] FROM docker.io/library/ubuntu:24.04@sha256:b3cc40b72b93588182b5410f723c7aaf142363311c2aa993d8a453ddcbb3ae15\n#4 resolve docker.io/library/ubuntu:24.04@sha256:b3cc40b72b93588182b5410f723c7aaf142363311c2aa993d8a453ddcbb3ae15 done\n#4 DONE 0.0s\n\n#5 [internal] load build context\n#5 transferring context: 30B done\n#5 DONE 0.0s\n\n#6 [3/5] RUN set -eu;     case \"arm64\" in       arm64) arch=aarch64; checksum=819df5f9f6c534f0fa988d1a9ec3531f1e6b0651527591a54e7235688bf8d984 ;;       amd64) arch=x86_64; checksum=8a3e66f313e7112a3a9dff7b1a0d67ae34e988dfa51f5c310e860d0b3f2daa77 ;;       *) echo 'Use native linux/amd64 or linux/arm64' >&2; exit 1 ;;     esac;     curl -fL \"https://github.com/eloqdata/lavik/releases/download/v0.1.0-beta.1/lavik-v0.1.0-beta.1-linux-${arch}-minimal.tar.gz\" -o /tmp/lavik.tar.gz;     echo \"$checksum  /tmp/lavik.tar.gz\" | sha256sum -c -;     mkdir /opt/lavik; tar -xzf /tmp/lavik.tar.gz --strip-components=1 -C /opt/lavik;     rm /tmp/lavik.tar.gz; chmod -R a+rX /opt/lavik;     install -d -o 65532 -g 65532 /var/lib/lavik\n#6 CACHED\n\n#7 [4/5] COPY start.sh /usr/local/bin/start-lavik\n#7 CACHED\n\n#8 [2/5] RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates curl libnuma1 libuuid1 redis-tools     && rm -rf /var/lib/apt/lists/*\n#8 CACHED\n\n#9 [5/5] RUN chmod 755 /usr/local/bin/start-lavik\n#9 CACHED\n\n#10 exporting to image\n#10 exporting layers done\n#10 exporting manifest sha256:e7a69507cc8e3888bd84bb2b5a66e1e77f596b7baae66a4cdd69606e537db771 done\n#10 exporting config sha256:a37afd17e23c9d72daf169aad7b5b71abc779196f6b7fe847281503fe1220750 done\n#10 exporting attestation manifest sha256:b5726d3a980b4b003acab49b124fb9399f575b798276fc56ab1ce106a4ddd1d8 done\n#10 exporting manifest list sha256:a59bae04b4bc366b3dd0e6e7cbb51ff896652fbd0918c03ede9a18a54bf36efd done\n#10 naming to docker.io/library/lavik-onboard-c7f3093d-image:latest done\n#10 unpacking to docker.io/library/lavik-onboard-c7f3093d-image:latest done\n#10 DONE 0.0s"
+    },
+    {
+      "argv": [
+        "docker",
+        "image",
+        "inspect",
+        "redis:7.2.5"
+      ],
+      "exitCode": 0,
+      "stdout": "[\n    {\n        \"Id\": \"sha256:3aaec283e6e593bde528077d60280ac1589887067a39273348860837c9346d7e\",\n        \"RepoTags\": [\n            \"redis:7.2.5\"\n        ],\n        \"RepoDigests\": [\n            \"redis@sha256:3aaec283e6e593bde528077d60280ac1589887067a39273348860837c9346d7e\"\n        ],\n        \"Comment\": \"buildkit.dockerfile.v0\",\n        \"Created\": \"2024-05-22T23:17:59Z\",\n        \"Config\": {\n            \"ExposedPorts\": {\n                \"6379/tcp\": {}\n            },\n            \"Env\": [\n                \"PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\",\n                \"GOSU_VERSION=1.17\",\n                \"REDIS_VERSION=7.2.5\",\n                \"REDIS_DOWNLOAD_URL=http://download.redis.io/releases/redis-7.2.5.tar.gz\",\n                \"REDIS_DOWNLOAD_SHA=5981179706f8391f03be91d951acafaeda91af7fac56beffb2701963103e423d\"\n            ],\n            \"Entrypoint\": [\n                \"docker-entrypoint.sh\"\n            ],\n            \"Cmd\": [\n                \"redis-server\"\n            ],\n            \"Volumes\": {\n                \"/data\": {}\n            },\n            \"WorkingDir\": \"/data\",\n            \"ArgsEscaped\": true\n        },\n        \"Architecture\": \"arm64\",\n        \"Os\": \"linux\",\n        \"Size\": 45470761,\n        \"RootFS\": {\n            \"Type\": \"layers\",\n            \"Layers\": [\n                \"sha256:054df1200f3e1d70e2ebeafa03c965d0dd34e7dab90b4ea24963352e5590b573\",\n                \"sha256:42163185490cc6855d2f20d32d141d78b578b733e3630fea3ec8dbeba58529f5\",\n                \"sha256:d0027ce5a8aef819db97b99ddd64e220a3cc5c72af8ccb64a53bfa0bfe9fc313\",\n                \"sha256:38e6c90140247a1d18177c66a22cda49cb9794a795bdbf2a937cd770fb7d3162\",\n                \"sha256:ca2488a234277aeda0f3198da3668f5d7932a476ef8094004d0062ec02b422c2\",\n                \"sha256:0ae9a47ef46afbd7a562118f270df831c2685a176ce99fc0f910ccd97f3108a8\",\n                \"sha256:5f70bf18a086007016e948b04aed3b82103a36bea41755b6cddfaf10ace3c6ef\",\n                \"sha256:dfb9ade703ecbea4815052bd215e220fcc6a5d03d65b71dc54c03ce1eacfad69\"\n            ]\n        },\n        \"Metadata\": {\n            \"LastTagTime\": \"2026-09-26T01:21:32.229109553Z\"\n        },\n        \"Descriptor\": {\n            \"mediaType\": \"application/vnd.oci.image.index.v1+json\",\n            \"digest\": \"sha256:3aaec283e6e593bde528077d60280ac1589887067a39273348860837c9346d7e\",\n            \"size\": 10264\n        },\n        \"Identity\": {\n            \"Pull\": [\n                {\n                    \"Repository\": \"docker.io/library/redis\"\n                }\n            ]\n        }\n    }\n]",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "docker",
+        "run",
+        "-d",
+        "--name",
+        "lavik-onboard-c7f3093d-plain",
+        "--network",
+        "none",
+        "--mount",
+        "source=lavik-onboard-c7f3093d-plain-data,target=/var/lib/lavik",
+        "--ulimit",
+        "memlock=536870912:536870912",
+        "--memory",
+        "1g",
+        "--cpus",
+        "2",
+        "--read-only",
+        "--tmpfs",
+        "/tmp",
+        "--cap-drop",
+        "ALL",
+        "--security-opt",
+        "no-new-privileges:true",
+        "--security-opt",
+        "seccomp:unconfined",
+        "--stop-timeout",
+        "60",
+        "sha256:a59bae04b4bc366b3dd0e6e7cbb51ff896652fbd0918c03ede9a18a54bf36efd"
+      ],
+      "exitCode": 0,
+      "stdout": "08f5732a7cdb7ebeccdd810680d80fc37828ebe1495eb9fb1c462dfb80923039",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "docker",
+        "exec",
+        "lavik-onboard-c7f3093d-plain",
+        "/opt/lavik/lavik",
+        "--version"
+      ],
+      "exitCode": 0,
+      "stdout": "lavik 0.1.0-beta.1",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "docker",
+        "exec",
+        "lavik-onboard-c7f3093d-plain",
+        "sha256sum",
+        "/opt/lavik/lavik"
+      ],
+      "exitCode": 0,
+      "stdout": "8306b37ddf05023f85166a6aa2192b7084757e8defd342b602e6470244aca887  /opt/lavik/lavik",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "docker",
+        "exec",
+        "lavik-onboard-c7f3093d-plain",
+        "cat",
+        "/opt/lavik/REVISION"
+      ],
+      "exitCode": 0,
+      "stdout": "3955b98d43b312324aa8d52775df52cfb111c0d0",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "docker",
+        "stop",
+        "--time",
+        "60",
+        "lavik-onboard-c7f3093d-plain"
+      ],
+      "exitCode": 0,
+      "stdout": "Flag --time has been deprecated, use --timeout instead\nlavik-onboard-c7f3093d-plain",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "docker",
+        "rm",
+        "lavik-onboard-c7f3093d-plain"
+      ],
+      "exitCode": 0,
+      "stdout": "lavik-onboard-c7f3093d-plain",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "docker",
+        "run",
+        "-d",
+        "--name",
+        "lavik-onboard-c7f3093d-plain",
+        "--network",
+        "none",
+        "--mount",
+        "source=lavik-onboard-c7f3093d-plain-data,target=/var/lib/lavik",
+        "--ulimit",
+        "memlock=536870912:536870912",
+        "--memory",
+        "1g",
+        "--cpus",
+        "2",
+        "--read-only",
+        "--tmpfs",
+        "/tmp",
+        "--cap-drop",
+        "ALL",
+        "--security-opt",
+        "no-new-privileges:true",
+        "--security-opt",
+        "seccomp:unconfined",
+        "--stop-timeout",
+        "60",
+        "sha256:a59bae04b4bc366b3dd0e6e7cbb51ff896652fbd0918c03ede9a18a54bf36efd"
+      ],
+      "exitCode": 0,
+      "stdout": "d44750e954f800aeda390a4bebdbb7bfea4b929a6fff9f975ff2b7fc4fb529f7",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "docker",
+        "rm",
+        "-f",
+        "lavik-onboard-c7f3093d-plain"
+      ],
+      "exitCode": 0,
+      "stdout": "lavik-onboard-c7f3093d-plain",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "docker",
+        "compose",
+        "-p",
+        "lavik-onboard-c7f3093d",
+        "-f",
+        "/Users/hubert/workspace/lavik-agent/verification/onboarding/compose.yaml",
+        "-f",
+        "/Users/hubert/workspace/lavik-agent/.cache/docs-reorg/lavik-onboard-c7f3093d-compose.yaml",
+        "config",
+        "--quiet"
+      ],
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "docker",
+        "compose",
+        "-p",
+        "lavik-onboard-c7f3093d",
+        "-f",
+        "/Users/hubert/workspace/lavik-agent/verification/onboarding/compose.yaml",
+        "-f",
+        "/Users/hubert/workspace/lavik-agent/.cache/docs-reorg/lavik-onboard-c7f3093d-compose.yaml",
+        "up",
+        "-d",
+        "--no-build",
+        "--wait"
+      ],
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": "Volume lavik-onboard-c7f3093d_lavik-data Creating \n Volume lavik-onboard-c7f3093d_lavik-data Creating \n Volume lavik-onboard-c7f3093d_lavik-data Created \n Volume lavik-onboard-c7f3093d_lavik-data Created \n Container lavik-onboard-c7f3093d-lavik-1 Creating \n Container lavik-onboard-c7f3093d-lavik-1 Created \n Container lavik-onboard-c7f3093d-lavik-1 Starting \n Container lavik-onboard-c7f3093d-lavik-1 Started \n Container lavik-onboard-c7f3093d-lavik-1 Waiting \n Container lavik-onboard-c7f3093d-lavik-1 Healthy"
+    },
+    {
+      "argv": [
+        "docker",
+        "compose",
+        "-p",
+        "lavik-onboard-c7f3093d",
+        "-f",
+        "/Users/hubert/workspace/lavik-agent/verification/onboarding/compose.yaml",
+        "-f",
+        "/Users/hubert/workspace/lavik-agent/.cache/docs-reorg/lavik-onboard-c7f3093d-compose.yaml",
+        "ps",
+        "-q",
+        "lavik"
+      ],
+      "exitCode": 0,
+      "stdout": "058a504d00bb38bd89729f11684921df5daf916f04b32730c8fb8bd98f8db6a8",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "docker",
+        "compose",
+        "-p",
+        "lavik-onboard-c7f3093d",
+        "-f",
+        "/Users/hubert/workspace/lavik-agent/verification/onboarding/compose.yaml",
+        "-f",
+        "/Users/hubert/workspace/lavik-agent/.cache/docs-reorg/lavik-onboard-c7f3093d-compose.yaml",
+        "down"
+      ],
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": "Container lavik-onboard-c7f3093d-lavik-1 Stopping \n Container lavik-onboard-c7f3093d-lavik-1 Stopped \n Container lavik-onboard-c7f3093d-lavik-1 Removing \n Container lavik-onboard-c7f3093d-lavik-1 Removed"
+    },
+    {
+      "argv": [
+        "docker",
+        "compose",
+        "-p",
+        "lavik-onboard-c7f3093d",
+        "-f",
+        "/Users/hubert/workspace/lavik-agent/verification/onboarding/compose.yaml",
+        "-f",
+        "/Users/hubert/workspace/lavik-agent/.cache/docs-reorg/lavik-onboard-c7f3093d-compose.yaml",
+        "up",
+        "-d",
+        "--no-build",
+        "--wait"
+      ],
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": "Container lavik-onboard-c7f3093d-lavik-1 Creating \n Container lavik-onboard-c7f3093d-lavik-1 Created \n Container lavik-onboard-c7f3093d-lavik-1 Starting \n Container lavik-onboard-c7f3093d-lavik-1 Started \n Container lavik-onboard-c7f3093d-lavik-1 Waiting \n Container lavik-onboard-c7f3093d-lavik-1 Healthy"
+    },
+    {
+      "argv": [
+        "docker",
+        "compose",
+        "-p",
+        "lavik-onboard-c7f3093d",
+        "-f",
+        "/Users/hubert/workspace/lavik-agent/verification/onboarding/compose.yaml",
+        "-f",
+        "/Users/hubert/workspace/lavik-agent/.cache/docs-reorg/lavik-onboard-c7f3093d-compose.yaml",
+        "ps",
+        "-q",
+        "lavik"
+      ],
+      "exitCode": 0,
+      "stdout": "78d080c8e544e44dc9e6ed6cb6400c669ad613b3b13bf9d32b51f6543b923249",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "docker",
+        "inspect",
+        "78d080c8e544e44dc9e6ed6cb6400c669ad613b3b13bf9d32b51f6543b923249"
+      ],
+      "exitCode": 0,
+      "stdout": "[\n    {\n        \"Id\": \"78d080c8e544e44dc9e6ed6cb6400c669ad613b3b13bf9d32b51f6543b923249\",\n        \"Created\": \"2026-09-26T01:33:47.723318088Z\",\n        \"Path\": \"/usr/local/bin/start-lavik\",\n        \"Args\": [],\n        \"State\": {\n            \"Status\": \"running\",\n            \"Running\": true,\n            \"Paused\": false,\n            \"Restarting\": false,\n            \"OOMKilled\": false,\n            \"Dead\": false,\n            \"Pid\": 26861,\n            \"ExitCode\": 0,\n            \"Error\": \"\",\n            \"StartedAt\": \"2026-09-26T01:33:47.749035671Z\",\n            \"FinishedAt\": \"0001-01-01T00:00:00Z\",\n            \"Health\": {\n                \"Status\": \"healthy\",\n                \"FailingStreak\": 0,\n                \"Log\": [\n                    {\n                        \"Start\": \"2026-09-26T01:33:52.779112757Z\",\n                        \"End\": \"2026-09-26T01:33:52.793236715Z\",\n                        \"ExitCode\": 0,\n                        \"Output\": \"\"\n                    }\n                ]\n            }\n        },\n        \"Image\": \"sha256:a59bae04b4bc366b3dd0e6e7cbb51ff896652fbd0918c03ede9a18a54bf36efd\",\n        \"ResolvConfPath\": \"/var/lib/docker/containers/78d080c8e544e44dc9e6ed6cb6400c669ad613b3b13bf9d32b51f6543b923249/resolv.conf\",\n        \"HostnamePath\": \"/var/lib/docker/containers/78d080c8e544e44dc9e6ed6cb6400c669ad613b3b13bf9d32b51f6543b923249/hostname\",\n        \"HostsPath\": \"/var/lib/docker/containers/78d080c8e544e44dc9e6ed6cb6400c669ad613b3b13bf9d32b51f6543b923249/hosts\",\n        \"LogPath\": \"/var/lib/docker/containers/78d080c8e544e44dc9e6ed6cb6400c669ad613b3b13bf9d32b51f6543b923249/78d080c8e544e44dc9e6ed6cb6400c669ad613b3b13bf9d32b51f6543b923249-json.log\",\n        \"Name\": \"/lavik-onboard-c7f3093d-lavik-1\",\n        \"RestartCount\": 0,\n        \"Driver\": \"overlayfs\",\n        \"Platform\": \"linux\",\n        \"MountLabel\": \"\",\n        \"ProcessLabel\": \"\",\n        \"AppArmorProfile\": \"\",\n        \"ExecIDs\": null,\n        \"HostConfig\": {\n            \"Binds\": [\n                \"lavik-onboard-c7f3093d_lavik-data:/var/lib/lavik:rw\"\n            ],\n            \"ContainerIDFile\": \"\",\n            \"LogConfig\": {\n                \"Type\": \"json-file\",\n                \"Config\": {}\n            },\n            \"NetworkMode\": \"none\",\n            \"PortBindings\": {},\n            \"RestartPolicy\": {\n                \"Name\": \"no\",\n                \"MaximumRetryCount\": 0\n            },\n            \"AutoRemove\": false,\n            \"VolumeDriver\": \"\",\n            \"VolumesFrom\": null,\n            \"ConsoleSize\": [\n                0,\n                0\n            ],\n            \"CapAdd\": null,\n            \"CapDrop\": [\n                \"ALL\"\n            ],\n            \"CgroupnsMode\": \"private\",\n            \"Dns\": null,\n            \"DnsOptions\": null,\n            \"DnsSearch\": null,\n            \"ExtraHosts\": [],\n            \"GroupAdd\": null,\n            \"IpcMode\": \"private\",\n            \"Cgroup\": \"\",\n            \"Links\": null,\n            \"OomScoreAdj\": 0,\n            \"PidMode\": \"\",\n            \"Privileged\": false,\n            \"PublishAllPorts\": false,\n            \"ReadonlyRootfs\": true,\n            \"SecurityOpt\": [\n                \"no-new-privileges:true\",\n                \"seccomp:unconfined\"\n            ],\n            \"Tmpfs\": {\n                \"/tmp\": \"\"\n            },\n            \"UTSMode\": \"\",\n            \"UsernsMode\": \"\",\n            \"ShmSize\": 67108864,\n            \"Runtime\": \"runc\",\n            \"Isolation\": \"\",\n            \"CpuShares\": 0,\n            \"Memory\": 1073741824,\n            \"NanoCpus\": 2000000000,\n            \"CgroupParent\": \"\",\n            \"BlkioWeight\": 0,\n            \"BlkioWeightDevice\": null,\n            \"BlkioDeviceReadBps\": null,\n            \"BlkioDeviceWriteBps\": null,\n            \"BlkioDeviceReadIOps\": null,\n            \"BlkioDeviceWriteIOps\": null,\n            \"CpuPeriod\": 0,\n            \"CpuQuota\": 0,\n            \"CpuRealtimePeriod\": 0,\n            \"CpuRealtimeRuntime\": 0,\n            \"CpusetCpus\": \"\",\n            \"CpusetMems\": \"\",\n            \"Devices\": null,\n            \"DeviceCgroupRules\": null,\n            \"DeviceRequests\": null,\n            \"MemoryReservation\": 0,\n            \"MemorySwap\": 2147483648,\n            \"MemorySwappiness\": null,\n            \"OomKillDisable\": null,\n            \"PidsLimit\": null,\n            \"Ulimits\": [\n                {\n                    \"Name\": \"memlock\",\n                    \"Hard\": 536870912,\n                    \"Soft\": 536870912\n                }\n            ],\n            \"CpuCount\": 0,\n            \"CpuPercent\": 0,\n            \"IOMaximumIOps\": 0,\n            \"IOMaximumBandwidth\": 0,\n            \"MaskedPaths\": [\n                \"/proc/acpi\",\n                \"/proc/asound\",\n                \"/proc/interrupts\",\n                \"/proc/kcore\",\n                \"/proc/keys\",\n                \"/proc/latency_stats\",\n                \"/proc/sched_debug\",\n                \"/proc/scsi\",\n                \"/proc/timer_list\",\n                \"/proc/timer_stats\",\n                \"/sys/devices/virtual/powercap\",\n                \"/sys/firmware\"\n            ],\n            \"ReadonlyPaths\": [\n                \"/proc/bus\",\n                \"/proc/fs\",\n                \"/proc/irq\",\n                \"/proc/sys\",\n                \"/proc/sysrq-trigger\"\n            ]\n        },\n        \"Storage\": {\n            \"RootFS\": {\n                \"Snapshot\": {\n                    \"Name\": \"overlayfs\"\n                }\n            }\n        },\n        \"Mounts\": [\n            {\n                \"Type\": \"volume\",\n                \"Name\": \"lavik-onboard-c7f3093d_lavik-data\",\n                \"Source\": \"/var/lib/docker/volumes/lavik-onboard-c7f3093d_lavik-data/_data\",\n                \"Destination\": \"/var/lib/lavik\",\n                \"Driver\": \"local\",\n                \"Mode\": \"rw\",\n                \"RW\": true,\n                \"Propagation\": \"\"\n            }\n        ],\n        \"Config\": {\n            \"Hostname\": \"78d080c8e544\",\n            \"Domainname\": \"\",\n            \"User\": \"65532:65532\",\n            \"AttachStdin\": false,\n            \"AttachStdout\": true,\n            \"AttachStderr\": true,\n            \"ExposedPorts\": {\n                \"6379/tcp\": {},\n                \"9100/tcp\": {}\n            },\n            \"Tty\": false,\n            \"OpenStdin\": false,\n            \"StdinOnce\": false,\n            \"Env\": [\n                \"PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\"\n            ],\n            \"Cmd\": null,\n            \"Healthcheck\": {\n                \"Test\": [\n                    \"CMD-SHELL\",\n                    \"test \\\"$(redis-cli --raw PING)\\\" = PONG\"\n                ],\n                \"Interval\": 5000000000,\n                \"Timeout\": 3000000000,\n                \"StartPeriod\": 10000000000,\n                \"Retries\": 24\n            },\n            \"Image\": \"sha256:a59bae04b4bc366b3dd0e6e7cbb51ff896652fbd0918c03ede9a18a54bf36efd\",\n            \"Volumes\": null,\n            \"WorkingDir\": \"\",\n            \"Entrypoint\": [\n                \"/usr/local/bin/start-lavik\"\n            ],\n            \"Labels\": {\n                \"com.docker.compose.config-hash\": \"54779e0ee0ffa6a71f8ded886575ca53aae52a90e441ec0b4088b840b1f98bb3\",\n                \"com.docker.compose.container-number\": \"1\",\n                \"com.docker.compose.depends_on\": \"\",\n                \"com.docker.compose.image\": \"sha256:e7a69507cc8e3888bd84bb2b5a66e1e77f596b7baae66a4cdd69606e537db771\",\n                \"com.docker.compose.oneoff\": \"False\",\n                \"com.docker.compose.project\": \"lavik-onboard-c7f3093d\",\n                \"com.docker.compose.project.config_files\": \"/Users/hubert/workspace/lavik-agent/verification/onboarding/compose.yaml,/Users/hubert/workspace/lavik-agent/.cache/docs-reorg/lavik-onboard-c7f3093d-compose.yaml\",\n                \"com.docker.compose.project.working_dir\": \"/Users/hubert/workspace/lavik-agent/verification/onboarding\",\n                \"com.docker.compose.service\": \"lavik\",\n                \"com.docker.compose.version\": \"5.5.0\",\n                \"org.opencontainers.image.version\": \"24.04\"\n            },\n            \"StopTimeout\": 60\n        },\n        \"NetworkSettings\": {\n            \"SandboxID\": \"b80660fde1c1d3819cad467c2b7150b4db0a494f9c49c2ae8a5fd22cd752bf42\",\n            \"SandboxKey\": \"/var/run/docker/netns/b80660fde1c1\",\n            \"Ports\": {},\n            \"Networks\": {\n                \"none\": {\n                    \"IPAMConfig\": null,\n                    \"Links\": null,\n                    \"Aliases\": null,\n                    \"DriverOpts\": null,\n                    \"GwPriority\": 0,\n                    \"NetworkID\": \"91915d2f30874b6783a815fda8ce7df7638569eb7d51ef58e551f0a42d8223f4\",\n                    \"EndpointID\": \"b79daf3e9bcc3d032f841b49248eb9db79c9e2b436103c850fe51fb5f987b914\",\n                    \"Gateway\": \"\",\n                    \"IPAddress\": \"\",\n                    \"MacAddress\": \"\",\n                    \"IPPrefixLen\": 0,\n                    \"IPv6Gateway\": \"\",\n                    \"GlobalIPv6Address\": \"\",\n                    \"GlobalIPv6PrefixLen\": 0,\n                    \"DNSNames\": null\n                }\n            }\n        },\n        \"ImageManifestDescriptor\": {\n            \"mediaType\": \"application/vnd.oci.image.manifest.v1+json\",\n            \"digest\": \"sha256:e7a69507cc8e3888bd84bb2b5a66e1e77f596b7baae66a4cdd69606e537db771\",\n            \"size\": 1243,\n            \"platform\": {\n                \"architecture\": \"arm64\",\n                \"os\": \"linux\"\n            }\n        }\n    }\n]",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "docker",
+        "compose",
+        "-p",
+        "lavik-onboard-c7f3093d",
+        "-f",
+        "/Users/hubert/workspace/lavik-agent/verification/onboarding/compose.yaml",
+        "-f",
+        "/Users/hubert/workspace/lavik-agent/.cache/docs-reorg/lavik-onboard-c7f3093d-compose.yaml",
+        "down",
+        "--volumes"
+      ],
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": "Container lavik-onboard-c7f3093d-lavik-1 Stopping \n Container lavik-onboard-c7f3093d-lavik-1 Stopped \n Container lavik-onboard-c7f3093d-lavik-1 Removing \n Container lavik-onboard-c7f3093d-lavik-1 Removed \n Volume lavik-onboard-c7f3093d_lavik-data Removing \n Volume lavik-onboard-c7f3093d_lavik-data Removed"
+    },
+    {
+      "argv": [
+        "docker",
+        "run",
+        "-d",
+        "--name",
+        "lavik-onboard-c7f3093d-redis",
+        "--network",
+        "none",
+        "--memory",
+        "512m",
+        "--tmpfs",
+        "/tmp",
+        "--entrypoint",
+        "sh",
+        "redis:7.2.5",
+        "-c",
+        "mkdir -p /tmp/r7001; redis-server --port 7001 --bind 127.0.0.1 --protected-mode no --repl-diskless-sync no --save \"\" --dir /tmp/r7001 --daemonize yes ; exec sleep infinity"
+      ],
+      "exitCode": 0,
+      "stdout": "c1aed8792f1698a9ad09db468f37e4acbcb6695c96d8b60886c04f68e4a4baee",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "docker",
+        "run",
+        "-d",
+        "--name",
+        "lavik-onboard-c7f3093d-redis-target",
+        "--network",
+        "container:lavik-onboard-c7f3093d-redis",
+        "--mount",
+        "source=lavik-onboard-c7f3093d-redis-target-data,target=/var/lib/lavik",
+        "--ulimit",
+        "memlock=536870912:536870912",
+        "--memory",
+        "1g",
+        "--cpus",
+        "2",
+        "--read-only",
+        "--tmpfs",
+        "/tmp",
+        "--cap-drop",
+        "ALL",
+        "--security-opt",
+        "no-new-privileges:true",
+        "--security-opt",
+        "seccomp:unconfined",
+        "--stop-timeout",
+        "60",
+        "sha256:a59bae04b4bc366b3dd0e6e7cbb51ff896652fbd0918c03ede9a18a54bf36efd"
+      ],
+      "exitCode": 0,
+      "stdout": "313f480155101269acb98a3d7894e15a37523d9f01387e575d899400ad9f0b10",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "docker",
+        "exec",
+        "-e",
+        "LAVIK_HOST=127.0.0.1",
+        "-e",
+        "LAVIK_PORT=6379",
+        "-e",
+        "REDIS_HOST=127.0.0.1",
+        "-e",
+        "REDIS_PORT=7001",
+        "-e",
+        "REDIS_HOST_2=127.0.0.1",
+        "-e",
+        "REDIS_PORT_2=7002",
+        "-e",
+        "REDIS_HOST_3=127.0.0.1",
+        "-e",
+        "REDIS_PORT_3=7003",
+        "lavik-onboard-c7f3093d-redis-target",
+        "sh",
+        "-ec",
+        "# Run from a trusted host with redis-cli; use a fresh standalone Lavik target.\n# These variables must identify your private-network endpoints.\nredis-cli -h \"$LAVIK_HOST\" -p \"$LAVIK_PORT\" REPLICAOF \"$REDIS_HOST\" \"$REDIS_PORT\"\nredis-cli -h \"$LAVIK_HOST\" -p \"$LAVIK_PORT\" INFO replication\n"
+      ],
+      "exitCode": 0,
+      "stdout": "OK\n# Replication\nrole:slave\nlavik_replication_state:syncing\nlavik_replication_failed_stopped:0\nlavik_replication_role_epoch:1\nlavik_replication_group_id:2f8bd30ad8420400d3d5f4780640d48293c6e46a\nlavik_replication_boot_id:7ed30ca601c5f81bcfafe3db9892eaa4c3eb97b0\nlavik_replica_incarnation:b46dfe61e8453a58f41b8bfb05541e6f1e7e9c6d\nlavik_function_catalog_generation:0\nlavik_function_catalog_crc64:0\nmaster_replid:ee6171894f855aa671f70faf7e19b127fcada44d\nmaster_replid2:0000000000000000000000000000000000000000\nmaster_repl_offset:0\nsecond_repl_offset:-1\nmaster_host:127.0.0.1\nmaster_port:7001\nmaster_link_status:down\nmaster_last_io_seconds_ago:0\nmaster_link_down_since_seconds:0\nslave_repl_offset:0\nslave_priority:100\nreplica_announced:1\nlavik_source_workers:1\nlavik_connected_flows:1\nlavik_redis_cluster:0\nlavik_redis_topology_fault:0\nlavik_redis_sources:1\nlavik_redis_source0:node=standalone,host=127.0.0.1,port=7001,link=down,offset=0,slots=0-16383\nslave_read_only:1\nmaster_sync_in_progress:1",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "docker",
+        "exec",
+        "-e",
+        "LAVIK_HOST=127.0.0.1",
+        "-e",
+        "LAVIK_PORT=6379",
+        "-e",
+        "REDIS_HOST=127.0.0.1",
+        "-e",
+        "REDIS_PORT=7001",
+        "-e",
+        "REDIS_HOST_2=127.0.0.1",
+        "-e",
+        "REDIS_PORT_2=7002",
+        "-e",
+        "REDIS_HOST_3=127.0.0.1",
+        "-e",
+        "REDIS_PORT_3=7003",
+        "lavik-onboard-c7f3093d-redis-target",
+        "sh",
+        "-ec",
+        "# Only after source writers are paused and all source streams are caught up.\n# Never detach a target that is still LOADING or incompletely synchronized.\nredis-cli -h \"$LAVIK_HOST\" -p \"$LAVIK_PORT\" REPLICAOF NO ONE\nredis-cli -h \"$LAVIK_HOST\" -p \"$LAVIK_PORT\" ROLE\n# Runtime attachment turns Tomb Raider off. Re-enable its cleanup schedule.\nredis-cli -h \"$LAVIK_HOST\" -p \"$LAVIK_PORT\" TOMBRAIDER INTERVAL 1000\n"
+      ],
+      "exitCode": 0,
+      "stdout": "OK\nmaster\n0\n\nOK",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "docker",
+        "exec",
+        "lavik-onboard-c7f3093d-redis",
+        "redis-server",
+        "--version"
+      ],
+      "exitCode": 0,
+      "stdout": "Redis server v=7.2.5 sha=00000000:0 malloc=jemalloc-5.3.0 bits=64 build=5ca3ee44aad670fa",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "docker",
+        "rm",
+        "-f",
+        "lavik-onboard-c7f3093d-redis-target",
+        "lavik-onboard-c7f3093d-redis"
+      ],
+      "exitCode": 0,
+      "stdout": "lavik-onboard-c7f3093d-redis-target\nlavik-onboard-c7f3093d-redis",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "docker",
+        "run",
+        "-d",
+        "--name",
+        "lavik-onboard-c7f3093d-redis-cluster",
+        "--network",
+        "none",
+        "--memory",
+        "512m",
+        "--tmpfs",
+        "/tmp",
+        "--entrypoint",
+        "sh",
+        "redis:7.2.5",
+        "-c",
+        "mkdir -p /tmp/r7001; redis-server --port 7001 --bind 127.0.0.1 --protected-mode no --repl-diskless-sync no --save \"\" --dir /tmp/r7001 --daemonize yes --cluster-enabled yes --cluster-node-timeout 5000 ; mkdir -p /tmp/r7002; redis-server --port 7002 --bind 127.0.0.1 --protected-mode no --repl-diskless-sync no --save \"\" --dir /tmp/r7002 --daemonize yes --cluster-enabled yes --cluster-node-timeout 5000 ; mkdir -p /tmp/r7003; redis-server --port 7003 --bind 127.0.0.1 --protected-mode no --repl-diskless-sync no --save \"\" --dir /tmp/r7003 --daemonize yes --cluster-enabled yes --cluster-node-timeout 5000 ; exec sleep infinity"
+      ],
+      "exitCode": 0,
+      "stdout": "b024288d68a01d76be1405cd352f826c241498e81010dbb902c9ea952e0c2985",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "docker",
+        "exec",
+        "lavik-onboard-c7f3093d-redis-cluster",
+        "redis-cli",
+        "--cluster",
+        "create",
+        "127.0.0.1:7001",
+        "127.0.0.1:7002",
+        "127.0.0.1:7003",
+        "--cluster-yes"
+      ],
+      "exitCode": 0,
+      "stdout": ">>> Performing hash slots allocation on 3 nodes...\nMaster[0] -> Slots 0 - 5460\nMaster[1] -> Slots 5461 - 10922\nMaster[2] -> Slots 10923 - 16383\nM: 55d43a7fb3658b2177f33f538bde04b2424a3a54 127.0.0.1:7001\n   slots:[0-5460] (5461 slots) master\nM: fab170b14dcce197d5abd9f9aec49c3b96e3c0c6 127.0.0.1:7002\n   slots:[5461-10922] (5462 slots) master\nM: 90ad7d0dc54db5e3444b98cf269210addc1f4bc2 127.0.0.1:7003\n   slots:[10923-16383] (5461 slots) master\n>>> Nodes configuration updated\n>>> Assign a different config epoch to each node\n>>> Sending CLUSTER MEET messages to join the cluster\nWaiting for the cluster to join\n\n>>> Performing Cluster Check (using node 127.0.0.1:7001)\nM: 55d43a7fb3658b2177f33f538bde04b2424a3a54 127.0.0.1:7001\n   slots:[0-5460] (5461 slots) master\nM: fab170b14dcce197d5abd9f9aec49c3b96e3c0c6 127.0.0.1:7002\n   slots:[5461-10922] (5462 slots) master\nM: 90ad7d0dc54db5e3444b98cf269210addc1f4bc2 127.0.0.1:7003\n   slots:[10923-16383] (5461 slots) master\n[OK] All nodes agree about slots configuration.\n>>> Check for open slots...\n>>> Check slots coverage...\n[OK] All 16384 slots covered.",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "docker",
+        "run",
+        "-d",
+        "--name",
+        "lavik-onboard-c7f3093d-redis-cluster-target",
+        "--network",
+        "container:lavik-onboard-c7f3093d-redis-cluster",
+        "--mount",
+        "source=lavik-onboard-c7f3093d-redis-cluster-target-data,target=/var/lib/lavik",
+        "--ulimit",
+        "memlock=536870912:536870912",
+        "--memory",
+        "1g",
+        "--cpus",
+        "2",
+        "--read-only",
+        "--tmpfs",
+        "/tmp",
+        "--cap-drop",
+        "ALL",
+        "--security-opt",
+        "no-new-privileges:true",
+        "--security-opt",
+        "seccomp:unconfined",
+        "--stop-timeout",
+        "60",
+        "sha256:a59bae04b4bc366b3dd0e6e7cbb51ff896652fbd0918c03ede9a18a54bf36efd"
+      ],
+      "exitCode": 0,
+      "stdout": "16325c5ec9b02ce5bcfa015b20686c2e424207103d5f52e9c947da0df7263a6b",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "docker",
+        "exec",
+        "-e",
+        "LAVIK_HOST=127.0.0.1",
+        "-e",
+        "LAVIK_PORT=6379",
+        "-e",
+        "REDIS_HOST=127.0.0.1",
+        "-e",
+        "REDIS_PORT=7001",
+        "-e",
+        "REDIS_HOST_2=127.0.0.1",
+        "-e",
+        "REDIS_PORT_2=7002",
+        "-e",
+        "REDIS_HOST_3=127.0.0.1",
+        "-e",
+        "REDIS_PORT_3=7003",
+        "lavik-onboard-c7f3093d-redis-cluster-target",
+        "sh",
+        "-ec",
+        "# Begin with one slot-owning Redis primary; never use a replica endpoint.\nredis-cli -h \"$LAVIK_HOST\" -p \"$LAVIK_PORT\" REPLICAOF \"$REDIS_HOST\" \"$REDIS_PORT\"\n# Repeat ADDREPLICAOF for EVERY remaining slot-owning primary.\nredis-cli -h \"$LAVIK_HOST\" -p \"$LAVIK_PORT\" ADDREPLICAOF \"$REDIS_HOST_2\" \"$REDIS_PORT_2\"\nredis-cli -h \"$LAVIK_HOST\" -p \"$LAVIK_PORT\" ADDREPLICAOF \"$REDIS_HOST_3\" \"$REDIS_PORT_3\"\nredis-cli -h \"$LAVIK_HOST\" -p \"$LAVIK_PORT\" INFO replication\n"
+      ],
+      "exitCode": 0,
+      "stdout": "OK\nOK\nOK\n# Replication\nrole:slave\nlavik_replication_state:syncing\nlavik_replication_failed_stopped:0\nlavik_replication_role_epoch:1\nlavik_replication_group_id:39e30eb9725fd8b1af77b0da01fbe088c3e00db0\nlavik_replication_boot_id:c26edbd28b583e50caea22dc3c5f4f9f5070c5db\nlavik_replica_incarnation:60c27acac42ad5c92a911e4e1324a6cd24bf56d1\nlavik_function_catalog_generation:0\nlavik_function_catalog_crc64:0\nmaster_replid:fbcd2a337d7c5c203fab1742d73e2b467e561ce8\nmaster_replid2:0000000000000000000000000000000000000000\nmaster_repl_offset:0\nsecond_repl_offset:-1\nmaster_host:127.0.0.1\nmaster_port:7001\nmaster_link_status:down\nmaster_last_io_seconds_ago:0\nmaster_link_down_since_seconds:0\nslave_repl_offset:0\nslave_priority:100\nreplica_announced:1\nlavik_source_workers:3\nlavik_connected_flows:3\nlavik_redis_cluster:1\nlavik_redis_topology_fault:0\nlavik_redis_sources:3\nlavik_redis_source0:node=55d43a7fb3658b2177f33f538bde04b2424a3a54,host=127.0.0.1,port=7001,link=down,offset=0,slots=0-5460\nlavik_redis_source1:node=fab170b14dcce197d5abd9f9aec49c3b96e3c0c6,host=127.0.0.1,port=7002,link=down,offset=0,slots=5461-10922\nlavik_redis_source2:node=90ad7d0dc54db5e3444b98cf269210addc1f4bc2,host=127.0.0.1,port=7003,link=down,offset=0,slots=10923-16383\nslave_read_only:1\nmaster_sync_in_progress:1",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "docker",
+        "exec",
+        "-e",
+        "LAVIK_HOST=127.0.0.1",
+        "-e",
+        "LAVIK_PORT=6379",
+        "-e",
+        "REDIS_HOST=127.0.0.1",
+        "-e",
+        "REDIS_PORT=7001",
+        "-e",
+        "REDIS_HOST_2=127.0.0.1",
+        "-e",
+        "REDIS_PORT_2=7002",
+        "-e",
+        "REDIS_HOST_3=127.0.0.1",
+        "-e",
+        "REDIS_PORT_3=7003",
+        "lavik-onboard-c7f3093d-redis-cluster-target",
+        "sh",
+        "-ec",
+        "# Only after source writers are paused and all source streams are caught up.\n# Never detach a target that is still LOADING or incompletely synchronized.\nredis-cli -h \"$LAVIK_HOST\" -p \"$LAVIK_PORT\" REPLICAOF NO ONE\nredis-cli -h \"$LAVIK_HOST\" -p \"$LAVIK_PORT\" ROLE\n# Runtime attachment turns Tomb Raider off. Re-enable its cleanup schedule.\nredis-cli -h \"$LAVIK_HOST\" -p \"$LAVIK_PORT\" TOMBRAIDER INTERVAL 1000\n"
+      ],
+      "exitCode": 0,
+      "stdout": "OK\nmaster\n0\n\nOK",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "docker",
+        "exec",
+        "lavik-onboard-c7f3093d-redis-cluster",
+        "redis-server",
+        "--version"
+      ],
+      "exitCode": 0,
+      "stdout": "Redis server v=7.2.5 sha=00000000:0 malloc=jemalloc-5.3.0 bits=64 build=5ca3ee44aad670fa",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "docker",
+        "rm",
+        "-f",
+        "lavik-onboard-c7f3093d-redis-cluster-target",
+        "lavik-onboard-c7f3093d-redis-cluster"
+      ],
+      "exitCode": 0,
+      "stdout": "lavik-onboard-c7f3093d-redis-cluster-target\nlavik-onboard-c7f3093d-redis-cluster",
+      "stderr": ""
+    }
+  ],
+  "cases": [
+    {
+      "name": "docker",
+      "status": "passed",
+      "greeting": "hello from Lavik",
+      "containerReplacement": "passed"
+    },
+    {
+      "name": "compose",
+      "status": "passed",
+      "downUpPersistence": "passed",
+      "health": "healthy"
+    },
+    {
+      "name": "redis",
+      "status": "passed",
+      "keys": [
+        [
+          "migration-2",
+          "value-7001"
+        ]
+      ],
+      "initialAndIncrementalReads": "passed",
+      "ttlPreserved": true,
+      "sourceAcksCaughtUp": true,
+      "sourceWatermarks": {
+        "7001": 79
+      },
+      "beforeDetach": "# Replication\nrole:slave\nlavik_replication_state:online\nlavik_replication_failed_stopped:0\nlavik_replication_role_epoch:1\nlavik_replication_group_id:2f8bd30ad8420400d3d5f4780640d48293c6e46a\nlavik_replication_boot_id:7ed30ca601c5f81bcfafe3db9892eaa4c3eb97b0\nlavik_replica_incarnation:b46dfe61e8453a58f41b8bfb05541e6f1e7e9c6d\nlavik_function_catalog_generation:1\nlavik_function_catalog_crc64:0\nmaster_replid:3739656a6a62b91a667494e5af1cb2a9f6475930\nmaster_replid2:0000000000000000000000000000000000000000\nmaster_repl_offset:93\nsecond_repl_offset:-1\nmaster_host:127.0.0.1\nmaster_port:7001\nmaster_link_status:up\nmaster_last_io_seconds_ago:0\nmaster_link_down_since_seconds:0\nslave_repl_offset:93\nslave_priority:100\nreplica_announced:1\nlavik_source_workers:1\nlavik_connected_flows:1\nlavik_redis_cluster:0\nlavik_redis_topology_fault:0\nlavik_redis_sources:1\nlavik_redis_source0:node=standalone,host=127.0.0.1,port=7001,link=up,offset=93,slots=0-16383\nslave_read_only:1\nmaster_sync_in_progress:0",
+      "afterDetach": "OK\nmaster\n0\n\nOK",
+      "targetWritable": true,
+      "redisVersion": "Redis server v=7.2.5 sha=00000000:0 malloc=jemalloc-5.3.0 bits=64 build=5ca3ee44aad670fa"
+    },
+    {
+      "name": "redis-cluster",
+      "status": "passed",
+      "keys": [
+        [
+          "migration-2",
+          "value-7001"
+        ],
+        [
+          "migration-3",
+          "value-7002"
+        ],
+        [
+          "migration-0",
+          "value-7003"
+        ]
+      ],
+      "initialAndIncrementalReads": "passed",
+      "ttlPreserved": true,
+      "sourceAcksCaughtUp": true,
+      "sourceWatermarks": {
+        "7001": 79,
+        "7002": 79,
+        "7003": 79
+      },
+      "beforeDetach": "# Replication\nrole:slave\nlavik_replication_state:online\nlavik_replication_failed_stopped:0\nlavik_replication_role_epoch:1\nlavik_replication_group_id:39e30eb9725fd8b1af77b0da01fbe088c3e00db0\nlavik_replication_boot_id:c26edbd28b583e50caea22dc3c5f4f9f5070c5db\nlavik_replica_incarnation:60c27acac42ad5c92a911e4e1324a6cd24bf56d1\nlavik_function_catalog_generation:3\nlavik_function_catalog_crc64:0\nmaster_replid:57dc6a214bc53f494e47f792665f7f506930189e\nmaster_replid2:0000000000000000000000000000000000000000\nmaster_repl_offset:279\nsecond_repl_offset:-1\nmaster_host:127.0.0.1\nmaster_port:7001\nmaster_link_status:up\nmaster_last_io_seconds_ago:0\nmaster_link_down_since_seconds:0\nslave_repl_offset:279\nslave_priority:100\nreplica_announced:1\nlavik_source_workers:3\nlavik_connected_flows:3\nlavik_redis_cluster:1\nlavik_redis_topology_fault:0\nlavik_redis_sources:3\nlavik_redis_source0:node=55d43a7fb3658b2177f33f538bde04b2424a3a54,host=127.0.0.1,port=7001,link=up,offset=93,slots=0-5460\nlavik_redis_source1:node=fab170b14dcce197d5abd9f9aec49c3b96e3c0c6,host=127.0.0.1,port=7002,link=up,offset=93,slots=5461-10922\nlavik_redis_source2:node=90ad7d0dc54db5e3444b98cf269210addc1f4bc2,host=127.0.0.1,port=7003,link=up,offset=93,slots=10923-16383\nslave_read_only:1\nmaster_sync_in_progress:0",
+      "afterDetach": "OK\nmaster\n0\n\nOK",
+      "targetWritable": true,
+      "redisVersion": "Redis server v=7.2.5 sha=00000000:0 malloc=jemalloc-5.3.0 bits=64 build=5ca3ee44aad670fa"
+    }
+  ],
+  "lavikImage": "sha256:a59bae04b4bc366b3dd0e6e7cbb51ff896652fbd0918c03ede9a18a54bf36efd",
+  "redisImage": [
+    "redis@sha256:3aaec283e6e593bde528077d60280ac1589887067a39273348860837c9346d7e"
+  ],
+  "binaryVersion": "lavik 0.1.0-beta.1",
+  "binarySha256": "8306b37ddf05023f85166a6aa2192b7084757e8defd342b602e6470244aca887",
+  "sourceCommit": "3955b98d43b312324aa8d52775df52cfb111c0d0",
+  "verifiedAt": "2026-09-26T01:34:15Z",
+  "scope": "Native local Docker; Minimal beta.1 standalone; Redis 7.2.5, one source and three co-located Cluster primaries. Test-only container names, isolated network namespaces and no host ports. No TLS/authenticated-source, source failover, resharding or production migration certification."
+}

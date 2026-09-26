@@ -1,3 +1,4 @@
+import { onboardingErrors, onboardingReviewedFiles } from "../docs/repository";
 import fs from "node:fs";
 import path from "node:path";
 import { createHash } from "node:crypto";
@@ -357,6 +358,7 @@ export const manualReviewedPaths = () =>
     ),
     "packages/content/downloads.ts",
     ...operationsReviewedFiles(),
+    ...onboardingReviewedFiles(),
     "packages/quick-start/evidence.ts",
     ...quickStartVerificationFiles.filter(
       (f) => f !== "verification/recipes.json",
@@ -461,6 +463,7 @@ export function manualPublicationErrors({ requireReview = true } = {}) {
     errors.push(...downloadEvidenceErrors());
     errors.push(...quickStartEvidenceErrors());
     errors.push(...operationsEvidenceErrors());
+    errors.push(...onboardingErrors());
     errors.push(...useCaseEvidenceErrors());
     if (
       inventory.commit !== release.commit ||

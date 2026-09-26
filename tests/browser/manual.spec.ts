@@ -8,6 +8,10 @@ test("command search, verified examples, client settings, and bilingual navigati
   page.on("pageerror", (error) => errors.push(error.message));
   await page.goto("/en/docs/0.1.0/overview/");
   await page
+    .locator(".docs-nav-group summary")
+    .filter({ hasText: "Build With Lavik" })
+    .click();
+  await page
     .getByRole("link", { name: "Command Reference", exact: true })
     .click();
   await expect(page.locator("h1")).toHaveText("Command reference");

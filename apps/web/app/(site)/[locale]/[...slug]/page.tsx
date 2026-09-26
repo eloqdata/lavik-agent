@@ -1,3 +1,8 @@
+import {
+  userGuides,
+  userGuideRoutes,
+} from "../../../../../../packages/docs/repository";
+import { UserGuidePage } from "../../../../components/user-guide";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
@@ -74,6 +79,7 @@ export function generateStaticParams({
       })),
     ...indexRoutes.map((route) => ({ slug: route.split("/") })),
     ...manualRoutes().map((route) => ({ slug: route.split("/") })),
+    ...userGuideRoutes().map((route) => ({ slug: route.split("/") })),
     ...operationsRoutes().map((route) => ({ slug: route.split("/") })),
     ...useCases.map((entry) => ({ slug: ["use-cases", entry.slug] })),
     ...blogTopics.map((entry) => ({ slug: ["blog", "topic", entry.id] })),
@@ -90,7 +96,7 @@ export async function generateMetadata({
       ? useCases.find((entry) => entry.slug === slug[1])
       : undefined;
   const parsedLocale = localeSchema.parse(locale);
-  const operatorGuide = operationsGuides.find(
+  const operatorGuide = [...operationsGuides, ...userGuides].find(
     (g) => slug.join("/") === `docs/0.1.0/${g.id}`,
   );
   const topic =
@@ -161,11 +167,19 @@ export default async function Page({
   if (route === "community") return <CommunityPage locale={locale} />;
   if (route === "docs" || route === "docs/0.1.0")
     return <DocsHome locale={locale} />;
-  const operatorGuide = operationsGuides.find(
+  const operatorGuide = [...operationsGuides, ...userGuides].find(
     (g) => route === `docs/0.1.0/${g.id}`,
   );
-  if (operatorGuide)
-    return <OperationsPage locale={locale} guide={operatorGuide} />;
+  if (operatorGuide) {
+    const userGuide = userGuides.find((g) => g.id === operatorGuide.id);
+    if (userGuide) return <UserGuidePage locale={locale} guide={userGuide} />;
+    return (
+      <OperationsPage
+        locale={locale}
+        guide={operationsGuides.find((g) => g.id === operatorGuide.id)!}
+      />
+    );
+  }
   if (manualTitle(route, locale))
     return <ManualPage route={route} locale={locale} />;
   const pages = articles().filter((a) => a.locale === locale);

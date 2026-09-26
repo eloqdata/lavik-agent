@@ -101,26 +101,48 @@ export function DocsNavigation({
         aria-label={zh ? "文档导航" : "Documentation navigation"}
       >
         {groups.map((group) => (
-          <div className="docs-nav-group" key={group.title}>
-            <h2>{group.title}</h2>
-            {group.links.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                aria-current={current === link.href ? "page" : undefined}
-                className={
-                  current !== link.href &&
-                  (link.href.endsWith("/commands/") ||
-                    link.href.endsWith("/clients/")) &&
-                  current.startsWith(link.href)
-                    ? "active-section"
-                    : undefined
-                }
-              >
-                {link.title}
-              </Link>
-            ))}
-          </div>
+          <details
+            className="docs-nav-group"
+            key={`${current}:${group.title}`}
+            open={
+              current !== `/${locale}/docs/0.1.0/` &&
+              group.links.some((link) => {
+                const href = link.href.split("#")[0];
+                return (
+                  current === href ||
+                  ((href.endsWith("/commands/") ||
+                    href.endsWith("/clients/")) &&
+                    current.startsWith(href))
+                );
+              })
+            }
+          >
+            <summary>
+              {group.title}
+              <span aria-hidden="true" className="docs-category-chevron">
+                ›
+              </span>
+            </summary>
+            <div className="docs-category-links">
+              {group.links.map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  aria-current={current === link.href ? "page" : undefined}
+                  className={
+                    current !== link.href &&
+                    (link.href.endsWith("/commands/") ||
+                      link.href.endsWith("/clients/")) &&
+                    current.startsWith(link.href)
+                      ? "active-section"
+                      : undefined
+                  }
+                >
+                  {link.title}
+                </Link>
+              ))}
+            </div>
+          </details>
         ))}
       </nav>
     </>

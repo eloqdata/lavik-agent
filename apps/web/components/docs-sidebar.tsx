@@ -1,3 +1,4 @@
+import { userGuides } from "../../../packages/docs/repository";
 import type { Locale } from "../../../packages/content/schema";
 import {
   articles,
@@ -27,43 +28,62 @@ export function DocsSidebar({
         { title: zh ? "文档首页" : "Documentation Home", href: `${root}/` },
         { title: zh ? "Lavik 概览" : "About Lavik", href: `${root}/overview/` },
         {
-          title: zh ? "下载与安装" : "Download & Install",
-          href: `/${locale}/download/`,
+          title: zh ? "使用二进制安装" : "Install With Binary",
+          href: `${root}/quick-start/`,
         },
         {
-          title: zh ? "快速开始" : "Quick Start",
-          href: `${root}/quick-start/`,
+          title: zh ? "使用 Docker 安装" : "Install With Docker",
+          href: `${root}/install-docker/`,
+        },
+        {
+          title: zh
+            ? "使用 Docker Compose 安装"
+            : "Install With Docker Compose",
+          href: `${root}/install-docker-compose/`,
         },
       ],
     },
     {
-      title: zh ? "部署与运维" : "Deploy & Operate",
-      links: operationsGuides.map((g) => ({
-        title:
-          g.layout === "single"
-            ? zh
-              ? "lavik-ctl：单节点"
-              : "lavik-ctl: Single Node"
-            : zh
-              ? "lavik-ctl：主从 HA"
-              : "lavik-ctl: Primary–Follower HA",
-        href: `${root}/${g.id}/`,
-      })),
-    },
-    {
-      title: zh ? "使用 Lavik" : "Build With Lavik",
+      title: zh ? "使用 Lavik 开发" : "Build With Lavik",
       links: [
         {
           title: zh ? "命令参考" : "Command Reference",
           href: `${root}/commands/`,
         },
-        {
-          title: zh ? "客户端库" : "Client Libraries",
-          href: `${root}/clients/`,
-        },
+        { title: zh ? "客户端库" : "Client Library", href: `${root}/clients/` },
         {
           title: zh ? "兼容性概览" : "Compatibility Overview",
           href: `${root}/compatibility/`,
+        },
+      ],
+    },
+    {
+      title: zh ? "管理 Lavik" : "Managing Lavik",
+      links: [
+        {
+          title: zh ? "单节点部署" : "Single Node",
+          href: `${root}/lavik-ctl-single-node/`,
+        },
+        {
+          title: zh ? "主从高可用" : "Primary–Follower HA",
+          href: `${root}/lavik-ctl-ha-cluster/`,
+        },
+        {
+          title: zh ? "监控与 Grafana" : "Monitoring & Grafana",
+          href: `${root}/lavik-ctl-ha-cluster/#monitoring`,
+        },
+      ],
+    },
+    {
+      title: zh ? "迁移到 Lavik" : "Migrating To Lavik",
+      links: [
+        {
+          title: zh ? "从 Redis 迁移" : "From Redis",
+          href: `${root}/migrate-redis/`,
+        },
+        {
+          title: zh ? "从 Redis Cluster 迁移" : "From Redis Cluster",
+          href: `${root}/migrate-redis-cluster/`,
         },
       ],
     },
@@ -97,13 +117,13 @@ export function DocsSidebar({
   for (const group of groups)
     for (const link of group.links)
       indexed.set(link.href, { ...link, kind: group.title });
-  for (const guide of operationsGuides) {
+  for (const guide of [...operationsGuides, ...userGuides]) {
     const href = `${root}/${guide.id}/`;
     indexed.set(href, {
-      title: guide.title[locale],
+      title: indexed.get(href)?.title ?? guide.title[locale],
       href,
       keywords: `${guide.summary[locale]} Grafana Prometheus ${guide.sections.map((s) => s.title[locale]).join(" ")}`,
-      kind: zh ? "部署与运维" : "Deploy & Operate",
+      kind: indexed.get(href)?.kind ?? (zh ? "指南" : "Guide"),
     });
   }
   for (const article of articles().filter(
