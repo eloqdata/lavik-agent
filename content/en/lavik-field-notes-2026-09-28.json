@@ -1,0 +1,132 @@
+{
+  "id": "lavik-field-notes-2026-09-28",
+  "locale": "en",
+  "version": "0.1.0",
+  "kind": "blog",
+  "slug": "lavik-field-notes-2026-09-28",
+  "title": "Evaluate the Redis client’s second attempt",
+  "summary": "A practical compatibility checklist for Lavik: verify replies, connection state, errors, and what your client does when the first attempt has no clear outcome.",
+  "updatedAt": "2026-09-28",
+  "topics": [
+    "best-practise",
+    "architecture"
+  ],
+  "blocks": [
+    {
+      "type": "paragraph",
+      "text": "A successful first read is a useful starting point for evaluating Lavik. The harder question is what your Redis client does after a timeout, a rejected write, or a reconnect. Lavik moves value capacity to storage while retaining a compact key index in DRAM, making it worth evaluating when values strain the memory budget. Its broad Redis-compatible interface still requires checking the commands and operational behavior your application actually uses. For this Apache 2.0 beta, make the application’s recovery behavior part of that evaluation.",
+      "sources": [
+        "readme",
+        "storage"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "Use one evaluation record per application operation: client and version, negotiated protocol, connection setup, exact command and options, expected reply type, expected state change, error handling, timeout policy, and reconnect behavior. This is a proposed acceptance checklist, not a report of additional tests. Its purpose is to turn Lavik’s documented boundaries into observable application requirements.",
+      "sources": [
+        "architecture",
+        "readme"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "Check the reply your application receives"
+    },
+    {
+      "type": "paragraph",
+      "text": "Protocol: exercise the actual client’s connection handshake and decoding. Lavik starts connections with RESP2 semantics and can negotiate RESP3. Where handlers expose them, RESP3 replies include maps, sets, booleans, doubles, nulls, and push frames. Record both the wire-level expectation and the application-level result; a client that connects successfully has not yet demonstrated correct decoding of every reply your application consumes.",
+      "sources": [
+        "architecture"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "Exact commands: inventory the operations your application sends, including options, key counts, value types, missing-key cases, and collection sizes. Lavik’s command metadata classifies arity, key positions, reads, writes, and blocking behavior. Use that specificity in the checklist: support for a data structure does not establish every command variant or error case your application needs. Include pipelined batches and transactions if the client uses them.",
+      "sources": [
+        "architecture",
+        "readme"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "Connection state: repeat the inventory after reconnecting and after a pooled connection changes hands. Lavik retains authentication, selected logical database, protocol version, transaction state, and Pub/Sub subscriptions at the connection boundary. Verify which setup steps the client repeats and how it prevents one caller’s state from reaching another. Test scripting separately: declared keys define the transaction boundary, and blocking operations inside scripts have restrictions that differ from ordinary command execution.",
+      "sources": [
+        "architecture"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "Separate a rejection from an unknown outcome"
+    },
+    {
+      "type": "paragraph",
+      "text": "Errors: record the error received, the exception or return value produced by the client, and the resulting database state. For index admission, Lavik documents ResourceExhausted without publishing a record that cannot enter the index. Snapshot admission has a different boundary: failure to retain snapshot state invalidates that snapshot while the foreground mutation still completes. Keep these paths separate in the evaluation; an error associated with background work does not automatically describe the outcome of a client mutation.",
+      "sources": [
+        "storage"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "Timeouts: treat a missing response as an outcome to investigate before approving automatic retries. Lavik documents separate stages for admission, mutation publication, replication publication, and storage flushing. For each write your client may retry, ask whether repeating it changes the intended result, how the application detects duplicate effects, and what evidence resolves an uncertain first attempt. Pay particular attention to operations whose repeated execution adds another change rather than replacing the same value.",
+      "sources": [
+        "architecture",
+        "storage"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "Durability: a successful ordinary write response is not a synchronous fsync fence. Lavik can publish an index entry pointing to staged bytes before those bytes become crash-durable. Therefore, record response success, visibility to a subsequent read, and survival across a specified failure as separate acceptance conditions. A retry policy cannot turn a response acknowledgement into a stronger persistence guarantee.",
+      "sources": [
+        "storage",
+        "readme"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "Include the operational transitions"
+    },
+    {
+      "type": "paragraph",
+      "text": "Readiness and routing: decide how the client handles startup, full synchronization, and changes of owner. Lavik publishes readiness after recovery and optional import; a listening socket alone is not the readiness boundary. Meta-managed nodes start fenced and need current authority to serve. Cluster mode also retains the same-slot requirement for multi-key commands. Include bounded reconnect behavior and routing refresh in the acceptance record, using the topology you intend to deploy.",
+      "sources": [
+        "architecture",
+        "storage",
+        "readme"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "Backpressure: include a consumer that stops reading and a workload that approaches memory admission limits. Lavik closes a slow Pub/Sub subscriber rather than allowing unbounded output growth. Retained memory has fixed worker shares, and one worker cannot borrow another’s unused balance; the configured memory budget is not a strict RSS ceiling. Verify how the client surfaces disconnects and rejected work, and whether its retry queues remain bounded.",
+      "sources": [
+        "architecture",
+        "storage"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "Start small, then follow one uncertain write"
+    },
+    {
+      "type": "paragraph",
+      "text": "Use the registered basic-commands recipe for the initial check. The supplied host receipt records matching results for its five steps and a successful graceful restart with the ARM64 minimal 0.1.0-beta.1 package on Linux 7.0.12-linuxkit with glibc 2.39. That receipt covers this basic path, not the application checklist above or power-loss recovery. Lavik requires Linux 6.1 or newer with usable io_uring and compatible glibc; that minimum is an API requirement, not a tested kernel matrix.",
+      "sources": [
+        "build",
+        "readme",
+        "storage"
+      ]
+    },
+    {
+      "type": "recipe",
+      "recipeId": "basic-commands"
+    },
+    {
+      "type": "paragraph",
+      "text": "Next, choose one real application mutation that your client may retry. Complete its evaluation record, including connection initialization, reply decoding, error handling, uncertain completion, and reconnect behavior. Make those observations an adoption gate before broadening the workload. This gives the team a concrete compatibility decision tied to its client and application, alongside Lavik’s documented storage and recovery boundaries.",
+      "sources": [
+        "architecture",
+        "storage",
+        "readme"
+      ]
+    }
+  ]
+}
