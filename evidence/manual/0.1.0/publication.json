@@ -2,8 +2,8 @@
   "version": "0.1.0",
   "release": "0.1.0-beta.1",
   "sourceCommit": "3955b98d43b312324aa8d52775df52cfb111c0d0",
-  "bundleHash": "0d906ce6343c524ac527f3eda960e2109bfd326bc752b3f09eed49115ae9ff9c",
-  "reviewedAt": "2026-09-28T14:24:29.280Z",
+  "bundleHash": "a95a5155f75d8c1a4deed3362c7a4bb11c2dce13ef012ac587a1e13d93e43daf",
+  "reviewedAt": "2026-09-28T15:15:41.559Z",
   "reviewedFiles": {
     ".github/workflows/ci.yml": "e56b5d51cca9116590a096383fbc5d73f0bafc89c1df66c6008c8cc9b086d27b",
     ".gitignore": "ac3b6ad1580d7cd27927552974932d97072eff8f466f08df436a4c3e356f548b",
@@ -18,10 +18,12 @@
     "apps/web/app/(site)/[locale]/layout.tsx": "94bcdd7c873128cdf7a5a8c2e837f8b3887263823df87cb1452acf197f2db79f",
     "apps/web/app/(site)/[locale]/page.tsx": "c04c5362021ebfeecf67a5804a5d6ad85b27e81ca75d9d4e3a2e3858ee66049e",
     "apps/web/app/styles.css": "6e85fddc20a271edb183911e6aac71d79ba1b15659debf75e5f1ac98749c8710",
+    "apps/web/components/agent-capacity.tsx": "161792875838a461ebb980fc353f8b007c1c1642eb3a06027b15a46ac4346257",
     "apps/web/components/analytics.tsx": "d417edb13f6bc9d8b3487bedc345fc0a47b85b1e90baac80f6cb13dde222fa80",
     "apps/web/components/benchmark.tsx": "07956637f43fd980277095f059368806a75e8840567b201f7117b15af3a27d0c",
     "apps/web/components/blog.css": "7b9ab78eecbf6dac32b0a6747dbfdd86cb63dd575de42f84ba3fdad7c5ec23f0",
     "apps/web/components/blog.tsx": "58a4d64c58ac9160bca2e74d6c4d4ecb223c38cba3d9f993e061928e84e4835c",
+    "apps/web/components/cluster-illustration.tsx": "9da8ddcc659810ece0db9f91630dd7ee64d29e761b9e51f2bc7b1ee22fffd28b",
     "apps/web/components/command-search.tsx": "bfc5dcbb6926aa52c491ee0df7e8e9d0e65e794579a471b127997475e86dd65f",
     "apps/web/components/community-page.tsx": "9213940e78dd08185b8150d7f4de4d8a677c871df38e893e54253006b137493e",
     "apps/web/components/content-v2.tsx": "658c1ef9b35174a0ca1287663577a17aa9d22c3681240a570a96c623eaa320a9",
@@ -32,8 +34,10 @@
     "apps/web/components/docs-navigation.tsx": "37bb980ee36c95f65dd541aa2f49b0506356129e03869afa04000a82d94750bd",
     "apps/web/components/docs-sidebar.tsx": "d52a40390bf1bd0599a9f51a71e0848b172159e234f077d3ad59d98e858e6aff",
     "apps/web/components/download-page.tsx": "bae8b4830b0df220ed64b7908b40ad52fdc0c529930c54ccd980ef23456ecc90",
+    "apps/web/components/homepage-story.css": "cd2c790508042ac343127355043c87bfec136c336ef0da0ea96c4cc70f92c4d7",
+    "apps/web/components/homepage-story.tsx": "4661b6167236874937748c85d74286f9429323d9c3ea24ce74c80a5c172f1bf0",
     "apps/web/components/homepage.css": "603e551e8ed018fdfe0cfdf41ec97967b7279258d89e0c73385ed3c811bc67f4",
-    "apps/web/components/homepage.tsx": "90b6bc1ff42c87fb605094ca6f8fc949c4714e88c76afee921506e0c05204124",
+    "apps/web/components/homepage.tsx": "212866032968e827a50b19e8bf99db02e9415489160a769581998f23d5e3e298",
     "apps/web/components/language-switch.tsx": "78459cc118b6f7f4f2bbd47e8cf4b07a1bfcd05185f0c40eaf3e5bdbff4236fb",
     "apps/web/components/latency-explorer.tsx": "5c5f5b7e8686eff80a9d247bb5945c8bed2a0512704ceec49ba67a789e13955d",
     "apps/web/components/manual.css": "a69803ae6bde073be855383427ddfeb7ae04c3bc6e038b4287c5831fd182006f",
@@ -140,9 +144,11 @@
     "packages/content/schema.ts": "a376e247addc5c2990e9a65b140fc524bbd799cb8a8ae1a73afde13c4a7e3e34",
     "packages/docs/guides.json": "2125035cc3c73220d883e7fd5f3088a3c9b37f0acaf1c29040eca0d9cae18f15",
     "packages/docs/repository.ts": "658fdb37602d23771860ce2f78a20f8e465a47554bd5a80bbea9243a1fd12a68",
+    "packages/homepage/evidence.ts": "6aaeab0355591d05162530691b00bf1c4d255d93075bb9d5996f7b7225b79d38",
+    "packages/homepage/scenarios.ts": "1000c3b5bf242389f933c4bbc15077a8c43b95564a74001f86e99d986eb24728",
     "packages/local/codex.ts": "118152ba3c21e8f085b4bfb62bbecc732e90dba3ac1199d4fdf63be0dc6f6865",
     "packages/local/review-packet.ts": "7ea1e1433b39d7210866c51c827129805c14b61661eb1ef261ee7b24c451c769",
-    "packages/manual/gate.ts": "127f535243cd0c01da5753deea18dc6e2339eae13479bab12ebfdf7fe5a38bf9",
+    "packages/manual/gate.ts": "7a79b425aaf7c952d4c32cbdf40c2af4ea737f0315ac165268b709f5d19c44e9",
     "packages/manual/repository.ts": "f0e002a916864d820e6fe5a13095ef4e06f288836fd14fc6a79af08904fd4ed2",
     "packages/marketing/analytics.ts": "5e67555d3207fac10ece135bf97f0d9a931a3fce7e458f6e77790fab793386b1",
     "packages/marketing/attribution.ts": "3daa403dbbe5a89b691e87b436d34dd502b85308d4ec03f98ce01b688a300b91",
@@ -202,7 +208,7 @@
     "scripts/prepare-verifier.ts": "ea980f2a02f3622971f0d42428a07335439a13ea1f72641ca56210f1ed754ff2",
     "scripts/review-blog-batch.ts": "13b42481ee001b43fdd3f455e28adf2debc9ccefb67497403cd14e3d6552508b",
     "scripts/review-manual.ts": "e3618ed5d38d5dfca1ddedde24103d4aed7567fae5e51da50c7528eb1c618ab6",
-    "scripts/review-site.ts": "198d808ed1dcc79c0787b532190bd7474ac05d6f5ca2b9faca9ed7fab8d58396",
+    "scripts/review-site.ts": "6ecbc9f44b5b7003261b50e7aeec6244649ac310bbd34e5b6617b09cbf608b23",
     "scripts/seo_html.py": "87c900fb95087625b3291370bc269db8adfd93cea46b6bc2c8231cf0e30970cc",
     "scripts/setup-marketing-platform.ts": "7f24b7ae12aba720ffad4ee4d79de8ef4da89f832b1e8b12b89d33cbff28783a",
     "scripts/stage-apt.ts": "b8cf5c0cc65fe13b4d1133113e838445231c3346c066802cae307cd72bb84b0c",
@@ -232,11 +238,12 @@
     "tests/browser/operations.spec.ts": "ef1d9e172723b84914cb666561a1ce002ae0cf76d7e7a88c37e67b2b177f6acb",
     "tests/browser/quick-start.spec.ts": "0e34641c7b5f27217cd91ef65fd534281aa24e78075ad84984caedab34351df1",
     "tests/browser/resources.spec.ts": "e9d4af62f076afff80169f7cc6fa3ca2177a875f16ccfc30fac14cd35f0c380e",
-    "tests/browser/site.spec.ts": "78dab0cea6c9b6f42154876d091d10f81eb88c6dd10f6e2b1a17c2d28fa9b838",
+    "tests/browser/site.spec.ts": "45612510cb5093d5cde09439c11d4bdbffa23e1c365edace9ed5897c36b28213",
     "tests/browser/use-cases.spec.ts": "7ec7f45dadd864008900124c587010f31c77f507939ee81a9327f84aa3fe6f31",
     "tests/community.test.ts": "da1324ce11a9b691b1dff8de2ad6fdb961e03f5e91f759d6d38d4b484bb403e0",
     "tests/content.test.ts": "cc21d34ae05f97b2afafd6ef8a7a6a437294c85866ebb69c510161442928226e",
     "tests/downloads.test.ts": "addea7d113362e45f8a5d24571ea4351a52574a1673c502169e06fa6c554a01b",
+    "tests/homepage.test.ts": "f9fd11934b4a34a7fe06c3e647f2c47c1f4268cc955c89ffc96eae49d3735da5",
     "tests/local-codex.test.ts": "0bda66cbc67d4050c8312d34eb55b71b301377f3ae0ec0706d89ab8eea915125",
     "tests/manual.test.ts": "f54e20238cf85847135450b21988d723c2ff3869fadabfa53887ae331260a78a",
     "tests/marketing-browser/platform.spec.ts": "4222055159ec953b01be5791f28876e01c74ff0113e89280947093e3146b2c2e",
@@ -343,15 +350,15 @@
     "findings": [
       {
         "severity": "note",
-        "message": "No blocking issue found in the seven supplied changed/new files. The dedicated bilingual homepage removes prototype dependencies, retains route metadata/schema, and uses supported SPDK peak GET/SET figures. The 5% value-capacity model and third-party 80% illustration disclose their separate assumptions, exclusions, and lack of same-workload comparability."
+        "message": "No blocking issue found in the 11 supplied changed/new files. Both languages distinguish the 300-to-3 sizing illustration, 20:1 capacity-price arithmetic, and adjustable agent scenario from measured results or SLA guarantees. The 1B GET point and peak-point P99.99 values match the supplied report and CSV, including Lavik’s higher SET tail latency."
       },
       {
         "severity": "note",
-        "message": "New homepage dependencies are included in the review manifest; exact-file checks remain enforced. Preserve the supplied passing baseline for unchanged manual/client/use-case evidence, article approvals, attribution/privacy, scheduler, authentication, and publication controls. This is incremental supplied-text inspection, not renewed execution verification."
+        "message": "New components, calculation/evidence helpers, and tests are included in the review manifest. Exact-file publication checks remain enforced. Preserve the supplied passing baseline for unchanged manual commands, clients, use cases, execution receipts, article approvals, metadata, attribution/privacy, scheduler, authentication, and deployment controls; this is incremental inspection."
       },
       {
         "severity": "note",
-        "message": "No tools or tests were run. Required export/browser checks must pass before deployment, and Published still requires live-artifact verification. Optional: add client-side navigation assertions confirming the homepage theme clears on other routes and returns correctly."
+        "message": "No tools or tests were run. Required export/browser checks must pass before deployment. This approval does not establish Published status; actual live-artifact verification remains required."
       }
     ]
   },
@@ -361,20 +368,24 @@
     "provider": "openai",
     "authentication": "chatgpt",
     "reasoning": "high",
-    "startedAt": "2026-09-28T14:23:44.391Z",
-    "finishedAt": "2026-09-28T14:24:29.280Z",
-    "promptSha256": "90a842a1ea65905dc1e3ef21d7a90d5e03e905c163464574a36d498e7b473655",
-    "outputSha256": "f3a5f349dff4a641b846c68b178da5f9ed4656def91d8a4f852b953c995d5ad2"
+    "startedAt": "2026-09-28T15:14:57.217Z",
+    "finishedAt": "2026-09-28T15:15:41.559Z",
+    "promptSha256": "2b1b781c16920ff687a9d1b68660fe57f383b7f91df181baa828614d5af53d70",
+    "outputSha256": "ca003145246f6b47362f29bb9ae2dd7e21cd68ca98771cc624dd65be7c0b660f"
   },
   "reviewScope": "incremental",
-  "previousBundleHash": "53dd50c592af33359000d74a2acf96cd3d2b09d421c64e48f5e4becea6eafbba",
+  "previousBundleHash": "0d906ce6343c524ac527f3eda960e2109bfd326bc752b3f09eed49115ae9ff9c",
   "reviewedChanges": [
-    "apps/web/app/(site)/[locale]/page.tsx",
-    "apps/web/components/homepage.css",
+    "apps/web/components/agent-capacity.tsx",
+    "apps/web/components/cluster-illustration.tsx",
+    "apps/web/components/homepage-story.css",
+    "apps/web/components/homepage-story.tsx",
     "apps/web/components/homepage.tsx",
-    "content/homepage-cost-reference.json",
+    "packages/homepage/evidence.ts",
+    "packages/homepage/scenarios.ts",
     "packages/manual/gate.ts",
     "scripts/review-site.ts",
-    "tests/browser/site.spec.ts"
+    "tests/browser/site.spec.ts",
+    "tests/homepage.test.ts"
   ]
 }

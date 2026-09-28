@@ -115,10 +115,11 @@ const supporting = [
 ].filter((f) => !suppliedChanges.includes(f));
 const packet = {
   ownerDirection:
-    "The owner explicitly selected prototype G (paired performance and cost charts) as the live Lavik homepage after learning their merged prototype commit was development-only and blocked by stale review. Promote G to production in both languages, preserve benchmark and capacity-model accuracy, refresh review and deploy through existing CI. No model API keys or hosted agent Admin.",
+    "Expand the existing homepage G below its unchanged hero in both languages: explain Redis compatibility, NVMe SSD storage, the 20:1 capacity-price model, measured performance, open source, agent workloads, and adoption. The owner explicitly answered 'Use it as a sizing illustration' for 300 Redis nodes to 3 Lavik nodes. This is not a measured consolidation or same-P99.99 SLA claim. Refresh independent review and deploy through existing CI. No model API keys or hosted agent Admin.",
   corrections:
-    "The production route now renders a dedicated server component and scoped stylesheet, independent of all development prototype imports/switchers. Check static HTML, one main/h1, schema/SEO, benchmark GET/SET data, 20:1 value-capacity arithmetic, compatibility link, theme isolation and mobile layouts. The third-party cost reference was checked at https://www.dragonflydb.io/ on 2026-09-28: its Memory Consumed chart shows Valkey 400 GB and Redis 500 GB. That narrowly scoped snapshot is bound as content/homepage-cost-reference.json. It supports only an illustrative 80% bar at equal DRAM unit prices, not an empirical same-workload cost comparison with Lavik. Lavik's 5% remains its separately disclosed DRAM/NVMe price model, excluding index, replication and shared costs. No customer claims. Existing deployment and auth protections remain unchanged. New task, default bounded review budget.",
-  scope: "promote owner-selected homepage G and restore reviewed deployment",
+    "New server-rendered story, scoped CSS, exact-count SVG (300 and 3 cubes), and interactive agent capacity calculator. Consolidation assumes 300 x 32 GiB = 3 x 3,200 GiB usable value capacity; the 100x per-node capacity assumption is distinct from the 20x capacity-price ratio. Meta, replicas, index RAM, CPU/network, recovery and failure domains require separate sizing. P99.99 is an acceptance target, not a guarantee; disclosed current GET/SET tail latencies come from the same CSV rows as each product's peak QPS, and SET is slightly higher for Lavik. The frozen CSV only covers 10M keys; the 1B-key point is parsed from the separately headed storage-tier table in the checksum-verified report, at 640 connections, 60s window, with no cluster inference. Agent 100x is explicit arithmetic (1M accounts, 100 agents/account, 64 KiB each), adjustable 1..200; not an industry forecast or native vector/agent feature claim. Apache 2.0 describes EloqData-authored code with third-party notices retained. Preserve accurate compatibility scope and all existing benchmark qualifiers. New dependencies and meaningful math/CSV/no-JS/browser tests are bound to the publication gate. Existing deployment, analytics, auth and manual command evidence remain unchanged. New task, default bounded review budget.",
+  scope:
+    "expand the bilingual homepage with architecture, sizing illustration, agent capacity planning and open-source adoption",
   baseline,
   previousInspection,
   currentFiles: files,
@@ -129,6 +130,9 @@ const packet = {
     "benchmark-spdk",
     "benchmark-spdk-data",
     "tiering-cost",
+    "storage",
+    "architecture",
+    "license",
   ].map((id) => ({
     id,
     ...(followup

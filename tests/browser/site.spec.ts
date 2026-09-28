@@ -199,7 +199,55 @@ test("selected homepage is exported without JavaScript and preview queries canno
         await page.locator('script[type="application/ld+json"]').count(),
       ).toBeGreaterThan(1);
       await expect(page.locator(".prototype-switcher")).toHaveCount(0);
+      await expect(
+        page.locator('.home-cluster-svg use[data-node="redis"]'),
+      ).toHaveCount(300);
+      await expect(
+        page.locator('.home-cluster-svg use[data-node="lavik"]'),
+      ).toHaveCount(3);
+      await expect(page.locator("#home-cluster-caption")).toContainText(
+        locale === "en" ? "not a measured migration" : "不是已完成的迁移案例",
+      );
+      await expect(page.locator(".home-scale-stats")).toContainText("952,560");
+      await expect(page.locator(".home-agent-result")).toContainText(
+        "5.96 TiB",
+      );
+      await expect(page.locator("#open-source")).toContainText("Apache 2.0");
     }
   }
   await context.close();
+});
+
+test("homepage capacity scenario responds to input and tail-latency evidence remains inspectable", async ({
+  page,
+}) => {
+  for (const locale of ["en", "zh-CN"]) {
+    await page.goto(`/${locale}/`);
+    const slider = page.getByRole("slider", {
+      name: locale === "en" ? "Agents per account" : "每个账户的智能体数量",
+    });
+    await slider.focus();
+    await slider.press("Home");
+    await expect(page.locator(".home-agent-result")).toContainText("61.04 GiB");
+    await slider.press("End");
+    await expect(page.locator(".home-agent-result")).toContainText("11.92 TiB");
+    await expect(page.locator(".home-agent-result")).toContainText("200×");
+    await page.locator(".home-tail-details summary").click();
+    await expect(page.locator(".home-tail-details table")).toBeVisible();
+    await expect(
+      page.locator(".home-tail-details tbody tr").nth(0),
+    ).toContainText("10.239");
+    await expect(
+      page.locator(".home-tail-details tbody tr").nth(1),
+    ).toContainText("17.535");
+    await expect(page.locator(".home-sizing-note")).toContainText(
+      locale === "en"
+        ? "not a tested 300-to-3 migration"
+        : "并非经过测试的 300 到 3 迁移",
+    );
+    await expect(page.locator(".home-final-cta a")).toHaveAttribute(
+      "href",
+      `/${locale}/docs/0.1.0/quick-start/`,
+    );
+  }
 });

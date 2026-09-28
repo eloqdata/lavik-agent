@@ -5,6 +5,7 @@ import { pageStructuredData } from "../../../packages/seo/site";
 import { StructuredData } from "./structured-data";
 import costReference from "../../../content/homepage-cost-reference.json";
 import "./homepage.css";
+import { HomepageStory } from "./homepage-story";
 
 type Props = {
   locale: Locale;
@@ -188,6 +189,11 @@ export function Homepage({
         </summary>
         <p>{benchmarkScope}</p>
       </details>
+      <HomepageStory
+        locale={locale}
+        sourceUrl={sourceUrl}
+        benchmarkDate={benchmarkDate}
+      />
     </main>
   );
 }
