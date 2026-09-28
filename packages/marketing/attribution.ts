@@ -9,7 +9,18 @@ export const campaignSources = [
   "slack",
   "newsletter",
 ] as const;
-export type Attribution = { source: string; medium: string; campaign: string };
+export type Attribution = {
+  source: string;
+  medium: string;
+  campaign: string;
+  placement?: string;
+};
+const placementCode = (value: string | null) =>
+  !value
+    ? "untagged"
+    : /^[a-z][a-z0-9-]{1,39}$/.test(value)
+      ? value
+      : "unregistered";
 export type Visit = Attribution & {
   landing: string;
   updatedAt: number;
@@ -78,6 +89,7 @@ export function attribution(
         page.searchParams.get("utm_campaign") || "untagged",
         campaigns,
       ),
+      placement: placementCode(page.searchParams.get("utm_content")),
     };
   }
   if (!referrer) return null;
@@ -142,7 +154,9 @@ export function resolveVisit(
     previous &&
     (incoming.source !== previous.source ||
       incoming.medium !== previous.medium ||
-      incoming.campaign !== previous.campaign);
+      incoming.campaign !== previous.campaign ||
+      (incoming.placement ?? "untagged") !==
+        (previous.placement ?? "untagged"));
   if (fresh && !changedCampaign)
     return { visit: { ...previous, updatedAt: now }, started: false };
   return {

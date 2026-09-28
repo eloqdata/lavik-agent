@@ -76,12 +76,43 @@ export class AdminStore {
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const analyticsPath = new URL(request.url).pathname;
+    if (analyticsPath.startsWith("/go/")) {
+      if (!env.ANALYTICS_STORE)
+        return json({ error: "Share links unavailable" }, 503);
+      const store = env.ANALYTICS_STORE.get(
+        env.ANALYTICS_STORE.idFromName("lavik-marketing-v1"),
+      );
+      return store.fetch(
+        new Request(`https://internal/share/${analyticsPath.slice(4)}`, {
+          method: request.method,
+        }),
+      );
+    }
     if (analyticsPath.startsWith("/api/analytics/")) {
       if (!env.ANALYTICS_STORE)
         return json({ error: "Analytics is unavailable" }, 503);
       const store = env.ANALYTICS_STORE.get(
         env.ANALYTICS_STORE.idFromName("lavik-marketing-v1"),
       );
+      if (
+        analyticsPath === "/api/analytics/platform-bootstrap" &&
+        request.method === "POST"
+      ) {
+        if (
+          !(await verifyRunner(request, {
+            RUNNER_TOKEN: env.ANALYTICS_REPORT_TOKEN,
+          }))
+        )
+          return json({ error: "Authentication required" }, 401);
+        const body = await request.text();
+        if (body.length > 1024) return json({ error: "Invalid body" }, 400);
+        return store.fetch(
+          new Request("https://internal/platform/bootstrap", {
+            method: "POST",
+            body,
+          }),
+        );
+      }
       if (
         analyticsPath === "/api/analytics/report" &&
         request.method === "GET"

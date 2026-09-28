@@ -4,6 +4,75 @@ The owner authorized a bilingual blog every two days and Cloudflare-based channe
 reporting on September 26, 2026. This supersedes the previous default of no
 background scheduling. Hosted Admin and Azure/API-backed writers remain disabled.
 
+## Marketing workspace
+
+The owner authorized a separate, password-protected marketing platform on
+September 27, 2026. Open **https://marketing.lavik.dev/** for traffic, placement
+management, share links, QR codes, and CSV exports. This is the `lavik-marketing`
+Worker; it shares the existing `AnalyticsStore` Durable Object in `lavik-dev`.
+It does not enable the former hosted agent console or call a model.
+
+For first-time setup, run `npm run marketing:setup -- --activate` after deployment.
+This uses the existing local reporting credential to install a random activation
+token hash and writes a private activation link to `.secrets/marketing/activate.html`
+(mode 0600), never to GitHub or public output. Open that local file, follow the
+link, and sign in with **admin / admin**. The link expires in seven days and is
+required in addition to the default credentials. Change the password before any
+report or management access is granted. The activation code is carried in a URL
+fragment, cleared from the browser address bar, and submitted only during sign-in.
+Once activated, the default password and activation link stop working. Bootstrap
+cannot reset an activated account; re-running it before activation replaces the
+prior link.
+
+Only `admin` exists. Passwords require at least 15 characters and are stored as
+salted scrypt hashes (N=32768, r=8, p=3). Sessions use random, server-revocable,
+HttpOnly, Secure, SameSite=Strict host-only cookies, expire after eight hours, and
+require an additional CSRF token for changes. Initial setup sessions last 15
+minutes. Password changes revoke earlier sessions. Save the recovery key displayed
+after setting/changing/resetting the password; it is shown once and stored only as
+a hash. The sign-in page's recovery form can use it to reset a forgotten password.
+Recovery keys rotate after use; no email reset service is configured. Authentication
+is rate-limited at the edge and in the durable store. The local test harness uses
+only its dedicated loopback origin and never deploys with the production Worker.
+
+In **Groups & placements**, rename `wg01`–`wg10` to your ten WeChat groups, or add
+placements for other groups, accounts, or posts. Names stay private; public links
+carry only registered codes. Codes and platforms are immutable to preserve history.
+Archive a placement to stop its short links and exclude it from future generation;
+historical counts and names remain available. Anyone forwarding a tagged link
+retains that link's original placement attribution.
+
+In **Share links**, choose a published article/language, its destination (or another
+public Lavik page), and one or more active placements. Generate the batch, then copy
+the `https://lavik.dev/go/<id>` links or download SVG QR codes. Repeating a combination
+returns the existing link. Short links redirect only to registered public Lavik
+pages and attach source, medium, article campaign and `utm_content` placement tags.
+Redirects/preview requests do not count as visits; the landing-page tracker counts
+browser events. Individual links can be disabled. The catalogue follows new articles
+automatically after website deployment; this does not publish to outside platforms.
+
+**Overview** has UTC date filters (up to 90 days), platform/campaign/placement
+filters, daily visits, period comparisons, group tables, and detailed CSV exports.
+Refresh includes the current provisional hour. Comparisons use the preceding
+interval of equal length. Groups with no recorded activity do not appear in the
+performance table. Metrics are aggregate source-attributed events, not unique people
+or individual click paths. Action rates can span reporting boundaries and are not
+exact funnel conversion rates. Exports escape spreadsheet formula prefixes.
+
+Schema migration retains previous counters as placement `untagged`. Unknown codes
+or a code assigned to a different platform become `unregistered`; arbitrary labels
+are never stored with events. The previously shared `utm_content=wg01` link starts
+tracking that placement after rollout. Historical group attribution cannot be
+reconstructed. Weekly HTML/Markdown reports now include a group/placement table;
+CSV and JSON include placement codes and private names.
+
+GitHub CI tests both sites, uploads both tested artifacts, deploys `lavik-dev`
+before `lavik-marketing` using those artifacts without rebuilding them, then checks
+the marketing revision, asset hashes and unauthenticated API rejection. The
+marketing hostname is excluded from indexing and caches no console responses.
+QR generation uses the pinned MIT-licensed `qrcode-generator` library, served from
+our own domain. No external analytics or QR service receives the links.
+
 ## Schedule and controls
 
 The Mac's `dev.lavik.marketing` launch agent checks daily at 09:00 local time and
@@ -104,7 +173,7 @@ this pipeline; use generated tagged links in authorized channel publications.
 
 The first-party tracker records aggregate hourly counts in a separate Cloudflare
 SQLite Durable Object. It does not invoke a model and does not activate Admin.
-The database holds source, medium, campaign, public page path, event, and count;
+The database holds source, medium, campaign, registered placement code, public page path, event, and count;
 it does not store visitor IDs, IP addresses, fingerprints, or full URL queries.
 Network addresses are processed transiently by Cloudflare's rate limiter.
 Browser-tab sessionStorage preserves attribution and one-time action flags.

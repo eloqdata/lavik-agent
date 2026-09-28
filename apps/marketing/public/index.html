@@ -1,0 +1,412 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex,nofollow" />
+    <title>Lavik Marketing</title>
+    <link rel="icon" href="/logo.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="/style.css" />
+    <script src="/qr.js" defer></script>
+    <script src="/app.js" defer></script>
+  </head>
+  <body>
+    <div id="notice" role="status" aria-live="polite" hidden></div>
+    <main id="login" class="auth-card" hidden>
+      <img src="/logo.svg" alt="Lavik" width="132" />
+      <p class="eyebrow">MARKETING WORKSPACE</p>
+      <h1>Make every share count.</h1>
+      <p class="muted">
+        Sign in to see where readers come from and what they do next.
+      </p>
+      <form id="login-form">
+        <label
+          >Username<input
+            name="username"
+            value="admin"
+            autocomplete="username"
+            readonly
+        /></label>
+        <label
+          >Password<input
+            name="password"
+            type="password"
+            autocomplete="current-password"
+            required
+            maxlength="128"
+        /></label>
+        <p id="activation-note" class="hint">
+          For first-time setup, open your private activation link and sign in
+          with admin / admin.
+        </p>
+        <button type="submit">Sign in</button>
+      </form>
+      <details>
+        <summary>Forgot your password?</summary>
+        <p>Use the recovery key you saved when you set your password.</p>
+        <form id="recover-form">
+          <label
+            >Recovery key<input
+              name="recoveryKey"
+              type="password"
+              autocomplete="off"
+              required
+              minlength="64"
+              maxlength="64"
+          /></label>
+          <label
+            >New password<input
+              name="newPassword"
+              type="password"
+              autocomplete="new-password"
+              required
+              minlength="15"
+              maxlength="128"
+          /></label>
+          <label
+            >Confirm new password<input
+              name="confirm"
+              type="password"
+              autocomplete="new-password"
+              required
+              minlength="15"
+              maxlength="128"
+          /></label>
+          <button type="submit">Reset password</button>
+        </form>
+      </details>
+    </main>
+    <main id="setup" class="auth-card" hidden>
+      <p class="eyebrow">WELCOME TO LAVIK MARKETING</p>
+      <h1>Choose your password.</h1>
+      <p>
+        Replace the initial password to open your private workspace. Use at
+        least 15 characters.
+      </p>
+      <form id="setup-form">
+        <label
+          >Current password<input
+            name="currentPassword"
+            type="password"
+            autocomplete="current-password"
+            required
+            maxlength="128" /></label
+        ><label
+          >New password<input
+            name="newPassword"
+            type="password"
+            autocomplete="new-password"
+            required
+            minlength="15"
+            maxlength="128" /></label
+        ><label
+          >Confirm new password<input
+            name="confirm"
+            type="password"
+            autocomplete="new-password"
+            required
+            minlength="15"
+            maxlength="128" /></label
+        ><button type="submit">Set password and continue</button>
+      </form>
+    </main>
+    <div id="workspace" class="workspace" hidden>
+      <aside>
+        <a href="/" class="brand"
+          ><img src="/logo.svg" alt="Lavik" width="120" /><span
+            >Marketing</span
+          ></a
+        >
+        <nav aria-label="Marketing">
+          <button data-tab="overview" aria-current="page">Overview</button
+          ><button data-tab="placements">Groups & placements</button
+          ><button data-tab="links">Share links</button
+          ><button data-tab="settings">Account</button>
+        </nav>
+        <div class="sidebar-bottom">
+          <a
+            href="https://lavik.dev/en/"
+            target="_blank"
+            rel="noopener noreferrer"
+            >Visit lavik.dev ↗</a
+          ><span>Signed in as admin</span
+          ><button id="logout" class="secondary">Sign out</button>
+        </div>
+      </aside>
+      <main class="content">
+        <section id="tab-overview" class="tab">
+          <header>
+            <div>
+              <p class="eyebrow">TRAFFIC & ADOPTION INTEREST</p>
+              <h1>See what brings people in.</h1>
+              <p class="muted">
+                Compare channels, articles, and the communities you share with.
+              </p>
+            </div>
+            <button id="refresh" class="secondary">Refresh</button>
+          </header>
+          <form id="filters" class="filters">
+            <label
+              >Period<select id="period">
+                <option value="7">Last 7 days</option>
+                <option value="1">Today</option>
+                <option value="30">Last 30 days</option>
+                <option value="custom">Custom dates</option>
+              </select></label
+            >
+            <label>From (UTC)<input id="from" type="date" required /></label
+            ><label
+              >Through (UTC)<input id="through" type="date" required
+            /></label>
+            <label
+              >Platform<select id="source">
+                <option value="">All platforms</option>
+              </select></label
+            >
+            <label
+              >Group / placement<select id="placement">
+                <option value="">All placements</option>
+              </select></label
+            >
+            <label
+              >Article campaign<select id="campaign">
+                <option value="">All campaigns</option>
+              </select></label
+            ><button type="submit">Apply filters</button>
+          </form>
+          <p id="report-status" class="hint" aria-live="polite"></p>
+          <div id="metrics" class="metrics"></div>
+          <section class="panel">
+            <div class="section-heading">
+              <h2>Daily visits</h2>
+              <span class="hint">UTC dates</span>
+            </div>
+            <div id="chart"></div>
+          </section>
+          <section class="panel">
+            <h2>Platforms</h2>
+            <div id="platform-table" class="table-scroll"></div>
+          </section>
+          <section class="panel">
+            <div class="section-heading">
+              <div>
+                <h2>Groups & placements</h2>
+                <p class="hint">
+                  Link attribution follows the tag when a link is forwarded.
+                </p>
+              </div>
+              <button id="export-groups" class="secondary">
+                Export groups CSV
+              </button>
+            </div>
+            <div id="placement-table" class="table-scroll"></div>
+          </section>
+          <section class="panel">
+            <div class="section-heading">
+              <h2>Pages & actions</h2>
+              <button id="export-events" class="secondary">
+                Export detailed CSV
+              </button>
+            </div>
+            <div id="page-table" class="table-scroll"></div>
+          </section>
+          <details class="panel">
+            <summary>How to interpret these numbers</summary>
+            <p>
+              Visits are browser-tab visits, not unique people. Engaged means
+              approximately 20 seconds of visible reading in a visit.
+              Installation interest means an installation guide was opened.
+              Download clicks do not prove installation.
+            </p>
+            <p>
+              Actions are attributed to the source of the visit and count at
+              most once per action type in that visit. The database stores
+              aggregate counts, not individual click paths. Action rates can
+              cross reporting-period boundaries; they are directional, not exact
+              funnel conversion rates.
+            </p>
+            <p>
+              Privacy preferences, blocked scripts, and missing tags reduce
+              coverage. Direct / unknown includes copied links with no usable
+              source. Earlier traffic remains untagged at placement level. The
+              current hour is provisional. Diagnostic checks are excluded.
+            </p>
+          </details>
+        </section>
+        <section id="tab-placements" class="tab" hidden>
+          <header>
+            <div>
+              <p class="eyebrow">KNOW YOUR COMMUNITIES</p>
+              <h1>Groups & placements</h1>
+              <p class="muted">
+                Give each group, account, or post placement its own code. Names
+                stay private.
+              </p>
+            </div>
+          </header>
+          <form id="placement-form" class="panel inline-form">
+            <label
+              >Platform<select
+                name="source"
+                id="new-source"
+                required
+              ></select></label
+            ><label
+              >Tracking code<input
+                name="code"
+                placeholder="wg11"
+                pattern="[a-z][a-z0-9-]{1,39}"
+                required
+                maxlength="40" /></label
+            ><label
+              >Private name<input
+                name="label"
+                placeholder="Database engineers · WeChat"
+                required
+                maxlength="100" /></label
+            ><button type="submit">Add placement</button>
+          </form>
+          <p class="hint">
+            Codes and platforms stay fixed to preserve history. Archiving stops
+            a placement’s short links and removes it from new link generation.
+          </p>
+          <div id="placement-editor" class="panel table-scroll"></div>
+        </section>
+        <section id="tab-links" class="tab" hidden>
+          <header>
+            <div>
+              <p class="eyebrow">ONE ARTICLE. EVERY COMMUNITY.</p>
+              <h1>Share links</h1>
+              <p class="muted">
+                Generate a distinct link for each placement. Copy it, download
+                its QR code, or export the whole batch.
+              </p>
+            </div>
+          </header>
+          <form id="link-form" class="panel">
+            <div class="inline-form">
+              <label
+                >Article & language<select
+                  id="link-article"
+                  required
+                ></select></label
+              ><label
+                >Destination page<select id="link-path" required></select
+              ></label>
+            </div>
+            <div class="section-heading">
+              <h2>Choose placements</h2>
+              <button id="select-all" type="button" class="secondary">
+                Select all active
+              </button>
+            </div>
+            <div id="link-placements" class="check-grid"></div>
+            <button type="submit">Generate share links</button>
+            <p class="hint">
+              Generating the same combination again returns the same link. No
+              posts are sent to external platforms.
+            </p>
+          </form>
+          <section class="panel">
+            <div class="section-heading">
+              <h2>Saved links</h2>
+              <button id="export-links" class="secondary">
+                Export links CSV
+              </button>
+            </div>
+            <label
+              >Search links<input
+                id="link-search"
+                type="search"
+                placeholder="Group, article, or platform"
+            /></label>
+            <div id="link-table" class="table-scroll"></div>
+          </section>
+        </section>
+        <section id="tab-settings" class="tab" hidden>
+          <header>
+            <div>
+              <p class="eyebrow">ADMIN ACCOUNT</p>
+              <h1>Password & recovery</h1>
+              <p class="muted">
+                Changing your password signs out other sessions and creates a
+                new recovery key.
+              </p>
+            </div>
+          </header>
+          <form id="password-form" class="panel narrow">
+            <label
+              >Current password<input
+                name="currentPassword"
+                type="password"
+                autocomplete="current-password"
+                required
+                maxlength="128" /></label
+            ><label
+              >New password<input
+                name="newPassword"
+                type="password"
+                autocomplete="new-password"
+                required
+                minlength="15"
+                maxlength="128" /></label
+            ><label
+              >Confirm new password<input
+                name="confirm"
+                type="password"
+                autocomplete="new-password"
+                required
+                minlength="15"
+                maxlength="128" /></label
+            ><button type="submit">Change password</button>
+          </form>
+          <section class="panel narrow">
+            <h2>Weekly reporting</h2>
+            <p>
+              Your Mac’s existing weekly report now includes groups and
+              placements. Use the dashboard for current results and CSV exports.
+              The scheduled report runs while your Mac is available.
+            </p>
+            <p>
+              Only one account, <strong>admin</strong>, has access to this
+              workspace.
+            </p>
+          </section>
+        </section>
+      </main>
+    </div>
+    <dialog id="recovery-dialog">
+      <h2>Save your recovery key</h2>
+      <p>
+        This key can reset your admin password. Store it in your password
+        manager. It is shown only now; any previous recovery key has been
+        replaced.
+      </p>
+      <textarea
+        id="recovery-key"
+        readonly
+        aria-label="New recovery key"
+        rows="3"
+      ></textarea>
+      <div class="actions">
+        <button id="copy-recovery" class="secondary">Copy key</button
+        ><button id="saved-recovery">I saved the key</button>
+      </div>
+    </dialog>
+    <dialog id="qr-dialog">
+      <h2 id="qr-title">Share QR code</h2>
+      <img
+        id="qr-image"
+        alt="QR code for this share link"
+        width="280"
+        height="280"
+      />
+      <p id="qr-url" class="mono"></p>
+      <div class="actions">
+        <button id="download-qr">Download SVG</button
+        ><button id="close-qr" class="secondary">Close</button>
+      </div>
+    </dialog>
+    <noscript>This private workspace requires JavaScript.</noscript>
+  </body>
+</html>

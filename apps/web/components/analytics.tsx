@@ -80,6 +80,7 @@ export function Analytics({ campaignIds }: { campaignIds: string[] }) {
         source: visit.source,
         medium: visit.medium,
         campaign: visit.campaign,
+        placement: visit.placement ?? "untagged",
       });
       void fetch("/api/analytics/event", {
         method: "POST",

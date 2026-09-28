@@ -32,6 +32,9 @@
     "marketing:tick": "node --import tsx scripts/marketing.ts tick",
     "marketing:status": "node --import tsx scripts/marketing.ts status",
     "marketing:report": "node --import tsx scripts/marketing.ts report",
+    "marketing:setup": "node --import tsx scripts/setup-marketing-platform.ts",
+    "build:marketing": "node --import tsx scripts/build-marketing.ts",
+    "test:marketing": "npm run build:marketing && playwright test --config playwright.marketing.config.ts",
     "marketing:link": "node --import tsx scripts/marketing.ts link",
     "seo:audit": "python3 scripts/audit-seo.py"
   },
@@ -39,6 +42,7 @@
     "@openai/agents": "0.18.0",
     "jose": "6.2.12",
     "next": "16.3.5",
+    "qrcode-generator": "2.0.4",
     "react": "19.3.0",
     "react-dom": "19.3.0",
     "zod": "^4.3.6"

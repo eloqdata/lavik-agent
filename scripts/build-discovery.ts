@@ -97,6 +97,7 @@ await fs.writeFile(
       articles: blog.map((a) => ({
         id: a.id,
         locale: a.locale,
+        title: a.title,
         canonical: `https://lavik.dev${articlePath(a)}`,
         links: Object.fromEntries(
           campaignSources.map((source) => [
