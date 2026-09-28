@@ -5,7 +5,7 @@ import { benchmarkRows } from "../packages/content/benchmarks.ts";
 
 const origin = "http://127.0.0.1:3100";
 for (const locale of ["en", "zh-CN"]) {
-  for (const variant of ["A", "B", "C", "D", "E", "F"]) {
+  for (const variant of ["A", "B", "C", "D", "E", "F", "G"]) {
     const response = await fetch(`${origin}/${locale}/?variant=${variant}`);
     assert.equal(response.status, 200);
     const html = await response.text();
@@ -17,7 +17,7 @@ for (const locale of ["en", "zh-CN"]) {
     assert.ok(html.includes("20:1"));
     assert.ok(html.includes(`/${locale}/benchmarks/`));
     assert.ok(html.includes(`/${locale}/docs/0.1.0/quick-start/`));
-    if (["B", "C", "D", "F"].includes(variant)) {
+    if (["B", "C", "D", "F", "G"].includes(variant)) {
       for (const row of benchmarkRows()) {
         assert.ok(
           html.includes(variant === "D" ? row.name.split(" ")[0] : row.name),
@@ -29,6 +29,14 @@ for (const locale of ["en", "zh-CN"]) {
     if (["D", "F"].includes(variant)) {
       assert.match(html, /<details class="astra-proof[^\"]*">/);
     }
+    if (variant === "G") {
+      const costChart = html.slice(
+        html.indexOf('class="dual-card dual-cost-card"'),
+        html.indexOf('class="dual-sources"'),
+      );
+      assert.ok(costChart.includes('style="width:5%"'));
+      assert.equal((costChart.match(/style="width:100%"/g) || []).length, 2);
+    }
   }
   for (const query of ["", "?variant=unknown"]) {
     const html = await (await fetch(`${origin}/${locale}/${query}`)).text();
@@ -37,5 +45,5 @@ for (const locale of ["en", "zh-CN"]) {
   }
 }
 console.log(
-  "Six variants, both locales, benchmark values, links, and original-page fallback passed.",
+  "Seven variants, both locales, benchmark values, links, and original-page fallback passed.",
 );

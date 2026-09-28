@@ -1,10 +1,11 @@
 "use client";
 
-// THROWAWAY: Six performance-first homepage variants on /en/ and /zh-CN/.
+// THROWAWAY: Seven homepage variants on /en/ and /zh-CN/.
 // Question: how should a Redis-compatible database introduce its SSD performance
 // and capacity-cost advantages? A/B/C preserve the first set; D/E/F lead with
 // product identity before value in Astra's additional directions.
-// Switch with ?variant=A|B|C|D|E|F. No winner chosen; never publish these drafts.
+// G pairs two graphs beside the product introduction, following the supplied layout.
+// Switch with ?variant=A|B|C|D|E|F|G. No winner chosen; never publish these drafts.
 // Run: npm run dev -- --hostname 127.0.0.1 --port 3100
 import type { ReactNode } from "react";
 import Link from "next/link";
@@ -13,6 +14,7 @@ import { BenchmarkChart, type BenchmarkRow } from "./benchmark";
 import { PrototypeSwitcher } from "./prototype-switcher";
 import "./homepage-prototype.css";
 import { VariantD, VariantE, VariantF } from "./homepage-prototype-astra";
+import { VariantG } from "./homepage-prototype-dual";
 
 const variants = [
   {
@@ -50,6 +52,12 @@ const variants = [
     name: "引擎换新",
     question: "SSD 数据库 → 熟悉的 Redis 客户端 → 性能与成本",
     component: VariantF,
+  },
+  {
+    key: "G",
+    name: "双图首屏",
+    question: "SSD Redis 数据库 → 更快吞吐 + 1/20 容量成本",
+    component: VariantG,
   },
 ];
 
