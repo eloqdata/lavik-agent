@@ -1,7 +1,8 @@
 "use client";
 
 // THROWAWAY G: product identity on the left, paired performance/cost graphs on the right.
-// Uses published throughput and the existing capacity-price model, not memory-use claims.
+// Throughput is measured. Cost is illustrative: Dragonfly's homepage gives
+// Valkey/Redis memory examples of 400/500 GB; Lavik uses our SSD price assumption.
 import Link from "next/link";
 import { BenchmarkChart } from "./benchmark";
 import type { Props } from "./homepage-prototype";
@@ -17,6 +18,7 @@ export function VariantG({
 }: Props) {
   const zh = locale === "zh-CN";
   const costPercent = 100 / Number(capacityRatio);
+  const valkeyPercent = (400 / 500) * 100;
   return (
     <main id="main" className="homepage-prototype prototype-g" data-variant="G">
       <section className="dual-hero container">
@@ -37,8 +39,8 @@ export function VariantG({
           </p>
           <p className="dual-description">
             {zh
-              ? "在已发布的测试中，Lavik 的峰值吞吐量超过内存 Redis 和 Valkey，同时带来 1/20 的值容量成本。"
-              : "Lavik delivers higher peak throughput than in-memory Redis and Valkey in published tests — with value-capacity cost at 1/20."}
+              ? "在已发布的测试中，Lavik 的峰值吞吐量超过内存 Redis 和 Valkey。在容量成本示意模型中，成本为 Redis 的 1/20。"
+              : "Lavik delivers higher peak throughput than in-memory Redis and Valkey in published tests. Our illustrative capacity-cost model puts Lavik at 1/20 of Redis."}
           </p>
           <div className="dual-actions">
             <Link href={`/${locale}/docs/0.1.0/quick-start/`}>
@@ -87,15 +89,26 @@ export function VariantG({
               <h2 id="dual-cost-title">
                 <small>{zh ? "同时，仅需" : "Yet"}</small>1/{capacityRatio}
               </h2>
-              <p>{zh ? "值容量成本" : "the value-capacity cost"}</p>
+              <p>
+                {zh ? "Redis 的值容量成本" : "of Redis value-capacity cost"}
+              </p>
+              <span className="dual-result-note">
+                {zh ? "示意模型" : "Illustrative model"}
+              </span>
             </div>
             <div className="dual-cost-chart">
               <p className="dual-chart-label">
-                {zh ? "相同容量 · 相对成本" : "Same capacity · relative cost"}
+                {zh
+                  ? "成本示意 · Redis = 100%"
+                  : "Illustrative cost · Redis = 100%"}
               </p>
               {rows.map((row) => {
                 const lavik = row.name.startsWith("Lavik ");
-                const percent = lavik ? costPercent : 100;
+                const percent = lavik
+                  ? costPercent
+                  : row.name.startsWith("Valkey ")
+                    ? valkeyPercent
+                    : 100;
                 return (
                   <div className="dual-cost-row" key={row.name}>
                     <div>
@@ -139,11 +152,17 @@ export function VariantG({
               <Link href={`/${locale}/cost/`}>
                 {zh ? "容量成本模型" : "Capacity cost model"} ↗
               </Link>
+              <a href="https://www.dragonflydb.io/">
+                {zh
+                  ? "Redis / Valkey 参考比例"
+                  : "Redis / Valkey reference ratio"}{" "}
+                ↗
+              </a>
             </div>
             <p>
               {zh
-                ? `按 DRAM / SSD 每 GiB 单价 ${capacityRatio}:1 估算。仅比较值容量成本，部署总成本另计。`
-                : `At a ${capacityRatio}:1 DRAM / SSD price per GiB. Value-capacity cost only; total deployment costs vary.`}
+                ? `示意假设：Valkey / Redis 比例参考 Dragonfly 主页的 400 / 500 GB；Lavik 按 DRAM / SSD 每 GiB 单价 ${capacityRatio}:1 估算为 Redis 基准的 ${costPercent}%。三者并非同条件实测，亦不代表部署总成本。`
+                : `Illustrative assumptions: Valkey / Redis follows Dragonfly’s 400 / 500 GB example; Lavik uses a ${capacityRatio}:1 DRAM / SSD price per GiB, at ${costPercent}% of the Redis baseline. These are not same-workload measurements or total deployment costs.`}
             </p>
           </div>
         </div>

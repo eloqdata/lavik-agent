@@ -35,7 +35,12 @@ for (const locale of ["en", "zh-CN"]) {
         html.indexOf('class="dual-sources"'),
       );
       assert.ok(costChart.includes('style="width:5%"'));
-      assert.equal((costChart.match(/style="width:100%"/g) || []).length, 2);
+      assert.ok(costChart.includes('style="width:80%"'));
+      assert.equal((costChart.match(/style="width:100%"/g) || []).length, 1);
+      assert.ok(
+        costChart.includes(locale === "en" ? "Illustrative model" : "示意模型"),
+      );
+      assert.ok(html.includes('href="https://www.dragonflydb.io/"'));
     }
   }
   for (const query of ["", "?variant=unknown"]) {
