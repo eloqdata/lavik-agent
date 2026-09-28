@@ -17,6 +17,8 @@ import {
 } from "../../../../../packages/content/benchmarks";
 import { BenchmarkChart } from "../../../components/benchmark";
 import { estimateCost } from "../../../../../packages/content/economics";
+import { Suspense } from "react";
+import { HomepagePrototype } from "../../../components/homepage-prototype";
 
 // Compare the value-capacity tier; index memory and shared server costs are separate.
 const capacityCost = estimateCost({
@@ -46,7 +48,7 @@ export default async function Home({
     zh = locale === "zh-CN";
   const rows = benchmarkRows();
   const [lavik] = rows;
-  return (
+  const homepage = (
     <main id="main">
       <StructuredData data={pageStructuredData(locale, "")} />
       <section className="hero">
@@ -346,5 +348,20 @@ export default async function Home({
         </Link>
       </section>
     </main>
+  );
+  if (process.env.NODE_ENV === "production") return homepage;
+  return (
+    <Suspense fallback={homepage}>
+      <HomepagePrototype
+        locale={locale}
+        rows={rows}
+        capacityRatio={capacityRatio}
+        sourceUrl={sources.find((s) => s.id === currentBenchmark.sourceId)!.url}
+        benchmarkDate={currentBenchmark.date}
+        benchmarkScope={currentBenchmark.scope[locale]}
+      >
+        {homepage}
+      </HomepagePrototype>
+    </Suspense>
   );
 }
