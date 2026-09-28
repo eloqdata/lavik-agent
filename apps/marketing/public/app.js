@@ -15,7 +15,7 @@ const platforms = [
 let session,
   placements = [],
   links = [],
-  catalogue = { articles: [], paths: [] },
+  catalogue = { articles: [], pages: [], paths: [] },
   report,
   previous,
   reportEpoch = 0,
@@ -245,19 +245,21 @@ async function loadWorkspace() {
     ].map((s) => [s, sourceLabel(s)]),
     "All platforms",
   );
-  const articles = [
+  const campaigns = [
     ...new Map(
-      catalogue.articles.filter((a) => a.locale === "en").map((a) => [a.id, a]),
+      shareTargets()
+        .filter((a) => a.locale === "en")
+        .map((a) => [a.id, a]),
     ).values(),
   ];
   options(
     $("campaign"),
-    articles.map((a) => [a.id, a.title || a.id]),
+    campaigns.map((a) => [a.id, a.title || a.id]),
     "All campaigns",
   );
   options(
-    $("link-article"),
-    catalogue.articles.map((a) => [
+    $("link-page"),
+    shareTargets().map((a) => [
       `${a.id}/${a.locale}`,
       `${a.locale === "en" ? "EN" : "中文"} · ${a.title || a.id}`,
     ]),
@@ -352,9 +354,12 @@ function renderPlacements() {
     $("link-placements").append(label);
   }
 }
+function shareTargets() {
+  return [...(catalogue.pages || []), ...catalogue.articles];
+}
 function updateLinkPath() {
-  const article = catalogue.articles.find(
-    (a) => `${a.id}/${a.locale}` === $("link-article").value,
+  const article = shareTargets().find(
+    (a) => `${a.id}/${a.locale}` === $("link-page").value,
   );
   if (article) $("link-path").value = new URL(article.canonical).pathname;
 }
@@ -761,7 +766,7 @@ listen("placement-form", "submit", async (e) => {
   renderPlacements();
   notice("Placement added.");
 });
-listen("link-article", "change", updateLinkPath);
+listen("link-page", "change", updateLinkPath);
 listen("link-search", "input", renderLinks);
 listen("select-all", "click", () => {
   const boxes = [...$("link-placements").querySelectorAll("input")],
@@ -777,10 +782,10 @@ listen("link-form", "submit", async () => {
   ].map((i) => i.value);
   if (!selected.length || selected.length > 100)
     throw new Error("Choose between 1 and 100 placements.");
-  const article = catalogue.articles.find(
-    (a) => `${a.id}/${a.locale}` === $("link-article").value,
+  const article = shareTargets().find(
+    (a) => `${a.id}/${a.locale}` === $("link-page").value,
   );
-  if (!article) throw new Error("Choose an article.");
+  if (!article) throw new Error("Choose a page.");
   const result = await api("links", "POST", {
     campaign: article.id,
     path: $("link-path").value,

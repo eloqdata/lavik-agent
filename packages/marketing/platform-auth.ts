@@ -15,12 +15,9 @@ const equal = (a: string, b: string) =>
   a.length === b.length && timingSafeEqual(Buffer.from(a), Buffer.from(b));
 const password = z
   .string()
-  .min(15, "Use at least 15 characters")
+  .min(9, "Use at least 9 characters")
   .max(128)
-  .refine(
-    (v) => v.trim().length >= 15,
-    "Use at least 15 non-padding characters",
-  );
+  .refine((v) => v.trim().length >= 9, "Use at least 9 non-padding characters");
 type Account = {
   hash: string;
   setupHash: string | null;

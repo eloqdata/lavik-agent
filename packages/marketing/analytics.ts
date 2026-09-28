@@ -140,6 +140,7 @@ export class AnalyticsStore {
         if (endpoint === "catalogue" && request.method === "GET")
           return json({
             articles: registry!.articles,
+            pages: registry!.pages,
             paths: [...registry!.paths].sort(),
           });
         return (

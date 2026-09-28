@@ -24,7 +24,7 @@ Once activated, the default password and activation link stop working. Bootstrap
 cannot reset an activated account; re-running it before activation replaces the
 prior link.
 
-Only `admin` exists. Passwords require at least 15 characters and are stored as
+Only `admin` exists. Passwords require at least 9 characters and are stored as
 salted scrypt hashes (N=32768, r=8, p=3). Sessions use random, server-revocable,
 HttpOnly, Secure, SameSite=Strict host-only cookies, expire after eight hours, and
 require an additional CSRF token for changes. Initial setup sessions last 15
@@ -42,11 +42,11 @@ Archive a placement to stop its short links and exclude it from future generatio
 historical counts and names remain available. Anyone forwarding a tagged link
 retains that link's original placement attribution.
 
-In **Share links**, choose a published article/language, its destination (or another
-public Lavik page), and one or more active placements. Generate the batch, then copy
+In **Share links**, choose a landing page, download page, installation guide, or blog
+article in English or Chinese, its destination (or another public Lavik page), and one or more active placements. Generate the batch, then copy
 the `https://lavik.dev/go/<id>` links or download SVG QR codes. Repeating a combination
 returns the existing link. Short links redirect only to registered public Lavik
-pages and attach source, medium, article campaign and `utm_content` placement tags.
+pages and attach source, medium, page/article campaign and `utm_content` placement tags.
 Redirects/preview requests do not count as visits; the landing-page tracker counts
 browser events. Individual links can be disabled. The catalogue follows new articles
 automatically after website deployment; this does not publish to outside platforms.
@@ -150,15 +150,20 @@ Every new marketing link should include `utm_source`, `utm_medium`, and
 `utm_campaign`. Generate one with:
 
 ```sh
+npm run marketing:link -- /en/ wechat site-home
+npm run marketing:link -- /en/download/ x site-download
+npm run marketing:link -- /en/docs/0.1.0/install-docker/ reddit install-docker
 npm run marketing:link -- /en/blog/why-lavik-separates-index-from-values/ x why-lavik-separates-index-from-values
 npm run marketing:link -- /zh-CN/blog/why-lavik-separates-index-from-values/ wechat why-lavik-separates-index-from-values
 ```
 
 Supported campaign sources are `x`, `reddit`, `medium`, `wechat`, `rednote`, `github`,
-`discord`, `slack`, and `newsletter`. Campaign IDs must be existing blog article
-IDs. Unknown campaign values become `unregistered`; arbitrary values are not
+`discord`, `slack`, and `newsletter`. Campaign IDs must be existing blog article IDs or registered site campaigns:
+`site-home`, `site-download`, `install-binary`, `install-packages`, `install-docker`,
+and `install-docker-compose`. Unknown campaign values become `unregistered`; arbitrary values are not
 stored. `/campaign-links.json` supplies current links
-for every blog edition. Canonical metadata always points to the clean article URL.
+for each supported site page and every blog edition. Canonical metadata always points
+to the clean page URL.
 Use the tagged URL in WeChat QR codes too. Do not put names, email addresses, access
 tokens, or other personal information in campaign parameters.
 

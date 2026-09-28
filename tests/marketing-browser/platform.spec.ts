@@ -9,7 +9,7 @@ test("admin activates, tracks groups, generates share links and QR codes, export
   const errors: string[] = [];
   page.on("pageerror", (e) => errors.push(e.message));
   const activation = randomBytes(32).toString("hex"),
-    password = "local browser password 2026!";
+    password = "browser09";
   expect((await request.post("/test/reset", { data: {} })).status()).toBe(204);
   expect(
     (
@@ -111,7 +111,7 @@ test("admin activates, tracks groups, generates share links and QR codes, export
   );
   await page.getByRole("button", { name: "Share links", exact: true }).click();
   await page
-    .getByRole("combobox", { name: "Article & language", exact: true })
+    .getByRole("combobox", { name: "Page & language", exact: true })
     .selectOption("lavik-field-notes-2026-09-26/en");
   await page.getByLabel("Database engineers · WeChat", { exact: true }).check();
   await page.getByLabel("WeChat Group 02 · WeChat", { exact: true }).check();
@@ -136,6 +136,34 @@ test("admin activates, tracks groups, generates share links and QR codes, export
     await fs.readFile((await (await qrDownload).path())!, "utf8"),
   ).toContain("<svg");
   await page.getByRole("button", { name: "Close", exact: true }).click();
+  // Site destinations are independent campaigns; no blog selection is needed.
+  const destinations = [
+    ["site-home/en", "/en/"],
+    ["site-download/en", "/en/download/"],
+    ["install-binary/en", "/en/docs/0.1.0/quick-start/"],
+    ["install-packages/en", "/en/docs/0.1.0/install-packages/"],
+    ["install-docker/en", "/en/docs/0.1.0/install-docker/"],
+    ["install-docker-compose/en", "/en/docs/0.1.0/install-docker-compose/"],
+    ["site-home/zh-CN", "/zh-CN/"],
+    ["install-docker/zh-CN", "/zh-CN/docs/0.1.0/install-docker/"],
+  ];
+  for (const [target, path] of destinations) {
+    await page
+      .getByRole("combobox", { name: "Page & language", exact: true })
+      .selectOption(target);
+    await expect(page.locator("#link-path")).toHaveValue(path);
+    await page.getByRole("button", { name: "Generate share links" }).click();
+    const campaign = target.split("/")[0];
+    await expect
+      .poll(async () => {
+        const current = await (await page.request.get("/api/links")).json();
+        return current.links.filter(
+          (l: { campaign: string; path: string }) =>
+            l.campaign === campaign && l.path === path,
+        ).length;
+      })
+      .toBe(2);
+  }
   await page.getByRole("button", { name: "Overview", exact: true }).click();
   await page.screenshot({
     path: ".cache/marketing-dashboard-desktop.png",
@@ -162,11 +190,11 @@ test("admin activates, tracks groups, generates share links and QR codes, export
   await page
     .locator("#recover-form")
     .getByLabel("New password", { exact: true })
-    .fill("recovered browser password 2026!");
+    .fill("recover09");
   await page
     .locator("#recover-form")
     .getByLabel("Confirm new password", { exact: true })
-    .fill("recovered browser password 2026!");
+    .fill("recover09");
   await page
     .getByRole("button", { name: "Reset password", exact: true })
     .click();

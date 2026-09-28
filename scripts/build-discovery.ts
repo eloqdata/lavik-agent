@@ -9,6 +9,7 @@ import {
 } from "../packages/content/repository.ts";
 import { blogPresentation } from "../packages/blog/presentation.ts";
 import { blogCoverSvg } from "../packages/blog/cover.ts";
+import { siteCampaigns } from "../packages/marketing/site-campaigns.ts";
 import {
   campaignSources,
   campaignUrl,
@@ -89,11 +90,32 @@ const llms = `# Lavik\n\n> Lavik is an Apache 2.0 Redis-compatible key-value sto
     "\n",
   )}\n\n## Feeds\n\n- [English blog and releases](https://lavik.dev/en/feed.xml)\n- [中文博客与版本发布](https://lavik.dev/zh-CN/feed.xml)\n\nHistorical articles retain their original measurements and source snapshots. Use the current benchmark page for the latest published comparison.\n`;
 await fs.writeFile(path.join(out, "llms.txt"), llms);
+const sharePages = siteCampaigns(release.version);
+for (const page of sharePages) {
+  // Do not advertise an installation target unless it was actually exported.
+  await fs.access(
+    path.join(out, new URL(page.canonical).pathname, "index.html"),
+  );
+}
 await fs.writeFile(
   path.join(out, "campaign-links.json"),
   JSON.stringify(
     {
-      schemaVersion: 1,
+      schemaVersion: 2,
+      pages: sharePages.map((page) => ({
+        ...page,
+        links: Object.fromEntries(
+          campaignSources.map((source) => [
+            source,
+            campaignUrl(
+              new URL(page.canonical).pathname,
+              source,
+              page.id,
+              sharePages.map((p) => p.id),
+            ),
+          ]),
+        ),
+      })),
       articles: blog.map((a) => ({
         id: a.id,
         locale: a.locale,

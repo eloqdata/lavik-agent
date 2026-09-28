@@ -2,10 +2,18 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { DatabaseSync } from "node:sqlite";
 import { randomBytes } from "node:crypto";
-import { AnalyticsStore } from "../packages/marketing/analytics";
+import {
+  AnalyticsStore,
+  analyticsEventSchema,
+} from "../packages/marketing/analytics";
 import { PlatformAuth, digest } from "../packages/marketing/platform-auth";
 import { PlacementStore } from "../packages/marketing/placements";
 import { resolveVisit } from "../packages/marketing/attribution";
+import { siteCampaigns } from "../packages/marketing/site-campaigns";
+import {
+  publicRegistry,
+  publicDimensions,
+} from "../packages/marketing/dimensions";
 import {
   renderReport,
   summarizePlacements,
@@ -60,6 +68,7 @@ function fixture(legacy = false) {
       Response.json(
         r.url.endsWith("campaign-links.json")
           ? {
+              pages: siteCampaigns("0.1.0"),
               articles: [
                 {
                   id: "test",
@@ -71,6 +80,9 @@ function fixture(legacy = false) {
             }
           : {
               pages: {
+                ...Object.fromEntries(
+                  siteCampaigns("0.1.0").map((p) => [p.canonical, "hash"]),
+                ),
                 "https://lavik.dev/en/": "hash",
                 "https://lavik.dev/en/blog/test/": "hash",
               },
@@ -139,7 +151,7 @@ async function activate(store: AnalyticsStore) {
     request(
       "password",
       "POST",
-      { currentPassword: "admin", newPassword: "a strong test password 2026!" },
+      { currentPassword: "admin", newPassword: "ninechars" },
       cookie,
       body.csrf,
     ),
@@ -218,19 +230,32 @@ test("admin setup, CSRF, password rotation, one-time recovery, and logout protec
       ).status,
       403,
     );
+    for (const rejected of ["12345678", " 12345678 "])
+      assert.equal(
+        (
+          await f.store.fetch(
+            request(
+              "password",
+              "POST",
+              {
+                currentPassword: "ninechars",
+                newPassword: rejected,
+              },
+              state.cookie,
+              state.csrf,
+            ),
+          )
+        ).status,
+        400,
+      );
     assert.equal(
       (
         await f.store.fetch(
-          request(
-            "password",
-            "POST",
-            {
-              currentPassword: "a strong test password 2026!",
-              newPassword: "admin",
-            },
-            state.cookie,
-            state.csrf,
-          ),
+          request("recover", "POST", {
+            username: "admin",
+            recoveryKey: state.recoveryKey,
+            newPassword: "12345678",
+          }),
         )
       ).status,
       400,
@@ -239,7 +264,7 @@ test("admin setup, CSRF, password rotation, one-time recovery, and logout protec
       request("recover", "POST", {
         username: "admin",
         recoveryKey: state.recoveryKey,
-        newPassword: "a recovered password 2026!",
+        newPassword: "recover09",
       }),
     );
     assert.equal(recovered.status, 200);
@@ -284,7 +309,8 @@ test("admin setup, CSRF, password rotation, one-time recovery, and logout protec
     );
     assert.ok(
       !stored.includes(state.recoveryKey) &&
-        !stored.includes("a recovered password"),
+        !stored.includes("recover09") &&
+        !stored.includes("ninechars"),
     );
   } finally {
     f.sqlite.close();
@@ -433,6 +459,79 @@ test("share batches are idempotent, destinations are validated, archive stops re
       request("placements/wg02", "PATCH", { active: false }, s.cookie, s.csrf),
     );
     assert.equal((await create()).status, 400);
+  } finally {
+    f.sqlite.close();
+  }
+});
+test("site campaigns generate localized links and retain identity through browser and server attribution", async () => {
+  const f = fixture();
+  try {
+    const state = await activate(f.store);
+    const catalogue = (await (
+      await f.store.fetch(request("catalogue", "GET", undefined, state.cookie))
+    ).json()) as { pages: { id: string }[]; articles: { id: string }[] };
+    assert.equal(catalogue.pages.length, 12);
+    assert.equal(catalogue.articles[0].id, "test");
+    const registry = await publicRegistry(f.assets);
+    for (const page of siteCampaigns("0.1.0")) {
+      const path = new URL(page.canonical).pathname;
+      const created = await f.store.fetch(
+        request(
+          "links",
+          "POST",
+          { campaign: page.id, path, placements: ["wg01"] },
+          state.cookie,
+          state.csrf,
+        ),
+      );
+      assert.equal(created.status, 201);
+      const { links } = (await created.json()) as { links: { id: string }[] };
+      const redirected = await f.store.fetch(
+        new Request(`https://internal/share/${links[0].id}`),
+      );
+      assert.equal(redirected.status, 302);
+      const target = new URL(redirected.headers.get("Location")!);
+      assert.equal(target.origin + target.pathname, page.canonical);
+      assert.equal(target.searchParams.get("utm_campaign"), page.id);
+      assert.equal(target.searchParams.get("utm_content"), "wg01");
+      const visit = resolveVisit(
+        target.href,
+        "",
+        undefined,
+        1000,
+        registry.campaigns,
+      ).visit;
+      assert.equal(visit.campaign, page.id);
+      const event = await publicDimensions(
+        f.assets,
+        analyticsEventSchema.parse({
+          source: visit.source,
+          medium: visit.medium,
+          campaign: visit.campaign,
+          placement: visit.placement,
+          path,
+          event: "visit",
+        }),
+      );
+      assert.equal(event!.campaign, page.id);
+      assert.equal(
+        (await publicDimensions(f.assets, {
+          ...event!,
+          campaign: "unknown-site",
+        }))!.campaign,
+        "unregistered",
+      );
+    }
+    assert.equal(
+      await publicDimensions(f.assets, {
+        source: "wechat",
+        medium: "social",
+        campaign: "site-home",
+        path: "/admin/",
+        event: "visit",
+      }),
+      null,
+    );
   } finally {
     f.sqlite.close();
   }

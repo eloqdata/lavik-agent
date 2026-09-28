@@ -350,6 +350,7 @@ export const manualReviewedPaths = () =>
     "packages/community/links.ts",
     "packages/marketing/process-lock.ts",
     "packages/marketing/dimensions.ts",
+    "packages/marketing/site-campaigns.ts",
     "scripts/marketing-child.mjs",
     "scripts/verify-marketing-install.mjs",
     "tests/marketing-process.test.ts",

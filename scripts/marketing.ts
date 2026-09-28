@@ -1,5 +1,6 @@
 import { waitForDeployment } from "../packages/marketing/deployment.ts";
-import { articles } from "../packages/content/repository.ts";
+import { articles, release } from "../packages/content/repository.ts";
+import { siteCampaigns } from "../packages/marketing/site-campaigns.ts";
 import fs from "node:fs/promises";
 import path from "node:path";
 import { spawn } from "node:child_process";
@@ -60,14 +61,12 @@ await fs.mkdir(directory, { recursive: true, mode: 0o700 });
 const command = process.argv[2] ?? "status";
 if (command === "link") {
   console.log(
-    campaignUrl(
-      process.argv[3]!,
-      process.argv[4]!,
-      process.argv[5]!,
-      articles()
+    campaignUrl(process.argv[3]!, process.argv[4]!, process.argv[5]!, [
+      ...siteCampaigns(release.version).map((p) => p.id),
+      ...articles()
         .filter((a) => a.kind === "blog")
         .map((a) => a.id),
-    ),
+    ]),
   );
   process.exit(0);
 }

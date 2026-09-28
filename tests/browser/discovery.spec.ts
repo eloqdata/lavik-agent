@@ -33,6 +33,7 @@ test("production tracker preserves campaign attribution, counts versioned instal
     source: string;
     path: string;
     placement: string;
+    campaign: string;
   }[] = [];
   await page.clock.install();
   // Route every production-origin request to local files or this event sink.
@@ -50,7 +51,7 @@ test("production tracker preserves campaign attribution, counts versioned instal
     }
   });
   await page.goto(
-    "https://lavik.dev/en/?utm_source=wechat&utm_medium=social&utm_campaign=why-lavik-separates-index-from-values&utm_content=wg01",
+    "https://lavik.dev/en/?utm_source=wechat&utm_medium=social&utm_campaign=site-home&utm_content=wg01",
   );
   await expect
     .poll(() => events.filter((e) => e.event === "visit").length)
@@ -59,7 +60,7 @@ test("production tracker preserves campaign attribution, counts versioned instal
     history.pushState(
       null,
       "",
-      "/en/?utm_source=medium&utm_medium=referral&utm_campaign=reading-benchmarks",
+      "/en/?utm_source=medium&utm_medium=referral&utm_campaign=site-download",
     ),
   );
   await expect
@@ -71,6 +72,10 @@ test("production tracker preserves campaign attribution, counts versioned instal
     .toBe(1);
   expect(events.find((e) => e.event === "visit")?.source).toBe("wechat");
   expect(events.find((e) => e.event === "visit")?.placement).toBe("wg01");
+  expect(events.find((e) => e.event === "visit")?.campaign).toBe("site-home");
+  expect(events.find((e) => e.event === "install")?.campaign).toBe(
+    "site-download",
+  );
   expect(events.find((e) => e.event === "install")?.source).toBe("medium");
   expect(events.filter((e) => e.event === "visit")).toHaveLength(2);
   await page.goto("https://lavik.dev/en/privacy/");

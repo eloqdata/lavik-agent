@@ -115,11 +115,10 @@ const supporting = [
 ].filter((f) => !suppliedChanges.includes(f));
 const packet = {
   ownerDirection:
-    "The owner requests marketing.lavik.dev: a private, single-admin marketing platform with group/placement attribution, automatic batch share links, QR codes, a date-filtered dashboard, and weekly placement reporting. They requested initial admin/admin credentials and password reset. The implementation additionally requires an owner-only one-time activation link before default credentials work, forces password change before data access, and supplies rotating recovery keys. The previous hosted model/agent Admin remains disabled; this new platform makes no model calls.",
+    "The owner asks for direct share links for the landing page, download page and installation pages as well as existing blogs, and explicitly accepts a password length greater than 8. Implement a 9-character minimum for setup, password changes and recovery. Existing accounts must not be reset. The private marketing platform remains single-admin with no model calls; the old hosted model Admin remains disabled.",
   corrections:
-    "Review the new marketing platform including authentication, activation exposure, password recovery/session revocation, CSRF/origin/host restrictions, durable-store migration, allowed public redirect destinations, dynamic placement registration, source-bound placement normalization, private labels, CSV safety, attribution persistence, dashboard/report aggregation, and same-artifact CI deployment. Tests use a separate local-only harness; test reset/bootstrap routes are never production entrypoints. Existing aggregate history migrates to untagged placement. Missing historic group identity is never reconstructed. Browser reports include a labeled provisional current hour; weekly reports retain completed UTC intervals. All new production/test/build/deployment files and dependency locks are bound. This is a new task with the default bounded review budget; prior corrective-review authorizations are not reused.",
-  scope:
-    "private marketing platform, placement attribution, share-link management and reporting",
+    "Review registered site campaigns across public manifest, browser tracker, server normalization, catalogue, share-link generation, filters and CLI. Both English and Chinese targets must work, preserving existing blog campaigns and public path restrictions. Validate the 8-rejected/9-accepted password boundary in UI and API without weakening CSRF, activation, recovery or rate limits. New review receipts use a bundle hash suffix to preserve earlier same-day evidence. This is a new task with the default bounded review budget; prior extra-review authorizations are not reused.",
+  scope: "site-page sharing and owner-selected password minimum",
   baseline,
   previousInspection,
   currentFiles: files,
@@ -200,7 +199,7 @@ else {
   );
   await fs.mkdir("evidence/reviews/infrastructure", { recursive: true });
   await fs.writeFile(
-    `evidence/reviews/infrastructure/${receipt.finishedAt.slice(0, 10)}-discovery-marketing.json`,
+    `evidence/reviews/infrastructure/${receipt.finishedAt.slice(0, 10)}-${publication.bundleHash.slice(0, 12)}-discovery-marketing.json`,
     JSON.stringify(
       {
         review,
