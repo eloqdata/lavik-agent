@@ -1,9 +1,10 @@
 "use client";
 
-// THROWAWAY: Three performance-first homepage variants on /en/ and /zh-CN/.
+// THROWAWAY: Six performance-first homepage variants on /en/ and /zh-CN/.
 // Question: does a bold claim, benchmark-first layout, or engine story best
 // communicate SSD > in-memory Redis / Valkey, with capacity cost as a bonus?
-// Switch with ?variant=A|B|C. No winner chosen; never publish these drafts.
+// A/B/C are the first set; D/E/F are Astra's additional directions.
+// Switch with ?variant=A|B|C|D|E|F. No winner chosen; never publish these drafts.
 // Run: npm run dev -- --hostname 127.0.0.1 --port 3100
 import type { ReactNode } from "react";
 import Link from "next/link";
@@ -11,26 +12,48 @@ import { useSearchParams } from "next/navigation";
 import { BenchmarkChart, type BenchmarkRow } from "./benchmark";
 import { PrototypeSwitcher } from "./prototype-switcher";
 import "./homepage-prototype.css";
+import { VariantD, VariantE, VariantF } from "./homepage-prototype-astra";
 
 const variants = [
   {
     key: "A",
     name: "打破直觉",
     question: "SSD 比内存快 → 实测支撑 → 20× 容量成本优势",
+    component: VariantA,
   },
   {
     key: "B",
     name: "让数据说话",
     question: "性能主张 → 首屏 GET / SET 对比 → 成本加分",
+    component: VariantB,
   },
   {
     key: "C",
     name: "工程师工作台",
     question: "熟悉的客户端 → NVMe 引擎 → 实测性能 → 成本优势",
+    component: VariantC,
+  },
+  {
+    key: "D",
+    name: "性能头条",
+    question: "SSD 超越内存 → 容量成本加分 → 展开实测证据",
+    component: VariantD,
+  },
+  {
+    key: "E",
+    name: "换一种介质",
+    question: "SSD 的反直觉性能 → 20× 容量成本优势",
+    component: VariantE,
+  },
+  {
+    key: "F",
+    name: "引擎换新",
+    question: "SSD 承载值 → 熟悉的客户端 → 展开性能证据",
+    component: VariantF,
   },
 ];
 
-type Props = {
+export type Props = {
   locale: string;
   rows: BenchmarkRow[];
   capacityRatio: string;
@@ -418,21 +441,13 @@ export function HomepagePrototype({
   ...props
 }: Props & { children: ReactNode }) {
   const current = useSearchParams().get("variant");
-  if (
-    process.env.NODE_ENV === "production" ||
-    !variants.some((variant) => variant.key === current)
-  )
-    return children;
+  const selected = variants.find((variant) => variant.key === current);
+  if (process.env.NODE_ENV === "production" || !selected) return children;
+  const Variant = selected.component;
   return (
     <>
-      {current === "A" ? (
-        <VariantA {...props} />
-      ) : current === "B" ? (
-        <VariantB {...props} />
-      ) : (
-        <VariantC {...props} />
-      )}
-      <PrototypeSwitcher variants={variants} current={current!} />
+      <Variant {...props} />
+      <PrototypeSwitcher variants={variants} current={selected.key} />
     </>
   );
 }

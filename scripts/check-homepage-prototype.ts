@@ -5,7 +5,7 @@ import { benchmarkRows } from "../packages/content/benchmarks.ts";
 
 const origin = "http://127.0.0.1:3100";
 for (const locale of ["en", "zh-CN"]) {
-  for (const variant of ["A", "B", "C"]) {
+  for (const variant of ["A", "B", "C", "D", "E", "F"]) {
     const response = await fetch(`${origin}/${locale}/?variant=${variant}`);
     assert.equal(response.status, 200);
     const html = await response.text();
@@ -17,12 +17,17 @@ for (const locale of ["en", "zh-CN"]) {
     assert.ok(html.includes("20:1"));
     assert.ok(html.includes(`/${locale}/benchmarks/`));
     assert.ok(html.includes(`/${locale}/docs/0.1.0/quick-start/`));
-    if (variant !== "A") {
+    if (["B", "C", "D", "F"].includes(variant)) {
       for (const row of benchmarkRows()) {
-        assert.ok(html.includes(row.name));
+        assert.ok(
+          html.includes(variant === "D" ? row.name.split(" ")[0] : row.name),
+        );
         assert.ok(html.includes(row.get.toLocaleString("en-US")));
         assert.ok(html.includes(row.set.toLocaleString("en-US")));
       }
+    }
+    if (["D", "F"].includes(variant)) {
+      assert.match(html, /<details class="astra-proof[^\"]*">/);
     }
   }
   for (const query of ["", "?variant=unknown"]) {
@@ -32,5 +37,5 @@ for (const locale of ["en", "zh-CN"]) {
   }
 }
 console.log(
-  "Three variants, both locales, benchmark values, links, and original-page fallback passed.",
+  "Six variants, both locales, benchmark values, links, and original-page fallback passed.",
 );
