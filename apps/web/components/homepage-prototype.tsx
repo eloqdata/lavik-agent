@@ -1,9 +1,9 @@
 "use client";
 
 // THROWAWAY: Six performance-first homepage variants on /en/ and /zh-CN/.
-// Question: does a bold claim, benchmark-first layout, or engine story best
-// communicate SSD > in-memory Redis / Valkey, with capacity cost as a bonus?
-// A/B/C are the first set; D/E/F are Astra's additional directions.
+// Question: how should a Redis-compatible database introduce its SSD performance
+// and capacity-cost advantages? A/B/C preserve the first set; D/E/F lead with
+// product identity before value in Astra's additional directions.
 // Switch with ?variant=A|B|C|D|E|F. No winner chosen; never publish these drafts.
 // Run: npm run dev -- --hostname 127.0.0.1 --port 3100
 import type { ReactNode } from "react";
@@ -36,19 +36,19 @@ const variants = [
   {
     key: "D",
     name: "性能头条",
-    question: "SSD 超越内存 → 容量成本加分 → 展开实测证据",
+    question: "Redis 兼容数据库 → SSD 吞吐 → 容量成本加分",
     component: VariantD,
   },
   {
     key: "E",
     name: "换一种介质",
-    question: "SSD 的反直觉性能 → 20× 容量成本优势",
+    question: "Redis 兼容数据库 → SSD 的性能与容量优势",
     component: VariantE,
   },
   {
     key: "F",
     name: "引擎换新",
-    question: "SSD 承载值 → 熟悉的客户端 → 展开性能证据",
+    question: "Redis 兼容数据库 → 存储架构 → 性能与成本",
     component: VariantF,
   },
 ];

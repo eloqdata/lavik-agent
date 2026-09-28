@@ -55,21 +55,16 @@ export function VariantD(props: Props) {
           <span>SPDK · {benchmarkDate}</span>
         </div>
         <h1>
-          {zh ? (
-            <>
-              SSD，<em>跑在前面。</em>
-            </>
-          ) : (
-            <>
-              SSD takes <em>the lead.</em>
-            </>
-          )}
+          <span className="astra-product-intro">
+            {zh ? "Lavik 是开源的" : "Lavik is an open-source"}
+          </span>{" "}
+          <em>{zh ? "Redis 兼容数据库。" : "Redis-compatible database."}</em>
         </h1>
         <div className="astra-d-deck">
           <p>
             {zh
               ? "Lavik 把值放在 NVMe SSD。在已发布的 SPDK 测试中，GET 与 SET 峰值吞吐量均超过内存 Redis / Valkey。"
-              : "Values on NVMe SSD. Peak GET and SET throughput ahead of in-memory Redis / Valkey in published SPDK tests. This is Lavik."}
+              : "Store values on NVMe SSD. Exceed in-memory Redis / Valkey in peak GET and SET throughput in published SPDK tests."}
           </p>
           <Start locale={locale} />
         </div>
@@ -198,25 +193,16 @@ export function VariantE(props: Props) {
           </span>
         </div>
         <h1>
-          {zh ? (
-            <>
-              数据，放 SSD。
-              <br />
-              <em>吞吐，超内存。</em>
-            </>
-          ) : (
-            <>
-              Put it on SSD.
-              <br />
-              <em>Pull ahead.</em>
-            </>
-          )}
+          <span className="astra-product-intro">
+            {zh ? "Lavik 是开源的" : "Lavik is an open-source"}
+          </span>{" "}
+          <em>{zh ? "Redis 兼容数据库。" : "Redis-compatible database."}</em>
         </h1>
         <div className="astra-e-story">
           <p>
             {zh
-              ? "Lavik 在已发布的 SPDK GET / SET 峰值吞吐测试中，超过了内存 Redis 和 Valkey。存储介质，不必定义性能上限。"
-              : "Lavik outperforms in-memory Redis and Valkey in published SPDK peak GET / SET throughput. Rethink what SSD can do."}
+              ? "值存 NVMe SSD，吞吐超内存。Lavik 在已发布的 SPDK GET / SET 峰值吞吐测试中，超过了内存 Redis 和 Valkey。"
+              : "Values on NVMe SSD. Throughput beyond in-memory. Lavik outperforms in-memory Redis and Valkey in published SPDK peak GET / SET tests."}
           </p>
           <Start locale={locale} />
         </div>
@@ -322,32 +308,22 @@ export function VariantF(props: Props) {
       <section className="astra-f-hero container">
         <div className="astra-f-topline">
           <span className="astra-eyebrow">
-            LAVIK /{" "}
-            {zh ? "下一代 Redis 兼容引擎" : "THE NEXT REDIS-COMPATIBLE ENGINE"}
+            LAVIK / {zh ? "为数据换一种存法" : "RETHINK WHERE YOUR DATA LIVES"}
           </span>
           <span className="astra-f-status">SPDK + NVMe</span>
         </div>
         <div className="astra-f-heading">
           <h1>
-            {zh ? (
-              <>
-                用 SSD。
-                <br />
-                <em>超越内存吞吐。</em>
-              </>
-            ) : (
-              <>
-                Choose SSD.
-                <br />
-                <em>Outrun memory.</em>
-              </>
-            )}
+            <span className="astra-product-intro">
+              {zh ? "Lavik 是开源的" : "Lavik is an open-source"}
+            </span>{" "}
+            <em>{zh ? "Redis 兼容数据库。" : "Redis-compatible database."}</em>
           </h1>
           <div>
             <p>
               {zh
-                ? "在已发布的 SPDK 测试中，Lavik 的 GET / SET 峰值吞吐量超过内存 Redis 和 Valkey。值存储换了介质，性能有了新选择。"
-                : "In published SPDK tests, Lavik exceeds in-memory Redis and Valkey in peak GET / SET throughput. Change where values live. Expand what is possible."}
+                ? "值存在 NVMe SSD，键索引留在内存。在已发布的 SPDK 测试中，Lavik 的 GET / SET 峰值吞吐量超过内存 Redis 和 Valkey。"
+                : "Values on NVMe SSD. Key indexes in memory. In published SPDK tests, Lavik exceeds in-memory Redis and Valkey in peak GET / SET throughput."}
             </p>
             <Start locale={locale} />
           </div>
