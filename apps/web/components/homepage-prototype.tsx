@@ -36,19 +36,19 @@ const variants = [
   {
     key: "D",
     name: "性能头条",
-    question: "Redis 兼容数据库 → SSD 吞吐 → 容量成本加分",
+    question: "SSD 数据库 → Redis 兼容 → 性能与成本",
     component: VariantD,
   },
   {
     key: "E",
     name: "换一种介质",
-    question: "Redis 兼容数据库 → SSD 的性能与容量优势",
+    question: "SSD 数据库 → Redis 兼容 → 性能与容量优势",
     component: VariantE,
   },
   {
     key: "F",
     name: "引擎换新",
-    question: "Redis 兼容数据库 → 存储架构 → 性能与成本",
+    question: "SSD 数据库 → 熟悉的 Redis 客户端 → 性能与成本",
     component: VariantF,
   },
 ];

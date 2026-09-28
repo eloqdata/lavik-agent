@@ -1,7 +1,7 @@
 "use client";
 
 // THROWAWAY: Astra's D/E/F alternatives on the existing locale homepage.
-// Question: editorial proof, a storage manifesto, or an architecture story?
+// Question: editorial proof, a product manifesto, or a familiar-client story?
 // Keep A/B/C intact; no design has been selected for production.
 import Link from "next/link";
 import type { Props } from "./homepage-prototype";
@@ -38,8 +38,8 @@ function CostNote({
   return (
     <p className="astra-cost-note">
       {locale === "zh-CN"
-        ? `假设 DRAM / SSD 每 GiB 单价为 ${capacityRatio}:1，值容量成本降至 1/${capacityRatio}。索引内存、存储放大与服务器成本另计。`
-        : `At a ${capacityRatio}:1 DRAM / SSD price per GiB, value capacity costs 1/${capacityRatio} as much. Index memory, storage amplification, and server costs are additional.`}
+        ? `假设 DRAM / SSD 每 GiB 单价为 ${capacityRatio}:1，值容量成本降至 1/${capacityRatio}。仅比较容量成本，部署总成本另计。`
+        : `At a ${capacityRatio}:1 DRAM / SSD price per GiB, value capacity costs 1/${capacityRatio} as much. Capacity-only estimate; total deployment costs vary.`}
     </p>
   );
 }
@@ -56,15 +56,19 @@ export function VariantD(props: Props) {
         </div>
         <h1>
           <span className="astra-product-intro">
-            {zh ? "Lavik 是开源的" : "Lavik is an open-source"}
+            {zh ? "Lavik 是一个" : "Lavik is an"}
           </span>{" "}
-          <em>{zh ? "Redis 兼容数据库。" : "Redis-compatible database."}</em>
+          <em>
+            {zh ? "基于 SSD 的" : "SSD-based"}
+            <br />
+            {zh ? "Redis 兼容数据库。" : "Redis-compatible database."}
+          </em>
         </h1>
         <div className="astra-d-deck">
           <p>
             {zh
-              ? "Lavik 把值放在 NVMe SSD。在已发布的 SPDK 测试中，GET 与 SET 峰值吞吐量均超过内存 Redis / Valkey。"
-              : "Store values on NVMe SSD. Exceed in-memory Redis / Valkey in peak GET and SET throughput in published SPDK tests."}
+              ? "在已发布的 SPDK 测试中，Lavik 的 GET 与 SET 峰值吞吐量均超过内存 Redis / Valkey。"
+              : "Lavik exceeds in-memory Redis / Valkey in peak GET and SET throughput in published SPDK tests."}
           </p>
           <Start locale={locale} />
         </div>
@@ -75,11 +79,9 @@ export function VariantD(props: Props) {
               <span>SPDK / GET + SET</span>
             </div>
             <div className="astra-d-thesis">
-              <span>
-                {zh ? "你以为，需要全内存。" : "You expected all-memory."}
-              </span>
+              <span>{zh ? "基于 SSD。" : "Built on SSD."}</span>
               <strong>
-                {zh ? "其实，值在 SSD。" : "The values are on SSD."}
+                {zh ? "吞吐，超越内存。" : "Beyond in-memory throughput."}
               </strong>
               <p>
                 {zh
@@ -194,25 +196,31 @@ export function VariantE(props: Props) {
         </div>
         <h1>
           <span className="astra-product-intro">
-            {zh ? "Lavik 是开源的" : "Lavik is an open-source"}
+            {zh ? "Lavik 是一个" : "Lavik is an"}
           </span>{" "}
-          <em>{zh ? "Redis 兼容数据库。" : "Redis-compatible database."}</em>
+          <em>
+            {zh ? "基于 SSD 的" : "SSD-based"}
+            <br />
+            {zh ? "Redis 兼容数据库。" : "Redis-compatible database."}
+          </em>
         </h1>
         <div className="astra-e-story">
           <p>
             {zh
-              ? "值存 NVMe SSD，吞吐超内存。Lavik 在已发布的 SPDK GET / SET 峰值吞吐测试中，超过了内存 Redis 和 Valkey。"
-              : "Values on NVMe SSD. Throughput beyond in-memory. Lavik outperforms in-memory Redis and Valkey in published SPDK peak GET / SET tests."}
+              ? "Lavik 在已发布的 SPDK GET / SET 峰值吞吐测试中，超过了内存 Redis 和 Valkey。"
+              : "Lavik outperforms in-memory Redis and Valkey in published SPDK peak GET / SET throughput tests."}
           </p>
           <Start locale={locale} />
         </div>
         <div className="astra-e-runway">
           <div className="astra-e-medium">
-            <span>01 / {zh ? "值存储" : "VALUE STORAGE"}</span>
-            <strong>
-              NVMe<span>SSD</span>
-            </strong>
-            <small>{zh ? "键索引留在内存" : "Key index stays in memory"}</small>
+            <span>01 / {zh ? "认识 LAVIK" : "MEET LAVIK"}</span>
+            <strong>Lavik</strong>
+            <small>
+              {zh
+                ? "基于 SSD 的 Redis 兼容数据库"
+                : "SSD-based Redis-compatible database"}
+            </small>
           </div>
           <div className="astra-e-path" aria-hidden="true">
             <i />
@@ -226,15 +234,13 @@ export function VariantE(props: Props) {
             <h2>
               {zh ? (
                 <>
-                  值在 SSD。
-                  <br />
                   吞吐超越
                   <br />
                   <em>内存引擎。</em>
                 </>
               ) : (
                 <>
-                  SSD values.
+                  Throughput
                   <br />
                   Beyond
                   <br />
@@ -258,8 +264,8 @@ export function VariantE(props: Props) {
         <div className="astra-e-comparison">
           <span>
             {zh
-              ? "改变值存储介质，沿用熟悉的接口。"
-              : "Change the value storage. Keep the familiar interface."}
+              ? "使用熟悉的 Redis 客户端。"
+              : "Use your familiar Redis clients."}
           </span>
           <span>Redis clients</span>
           <span>RESP2 / RESP3</span>
@@ -308,22 +314,29 @@ export function VariantF(props: Props) {
       <section className="astra-f-hero container">
         <div className="astra-f-topline">
           <span className="astra-eyebrow">
-            LAVIK / {zh ? "为数据换一种存法" : "RETHINK WHERE YOUR DATA LIVES"}
+            LAVIK /{" "}
+            {zh
+              ? "熟悉的接口，全新的可能"
+              : "FAMILIAR INTERFACE. NEW POSSIBILITIES."}
           </span>
-          <span className="astra-f-status">SPDK + NVMe</span>
+          <span className="astra-f-status">{zh ? "开源" : "OPEN SOURCE"}</span>
         </div>
         <div className="astra-f-heading">
           <h1>
             <span className="astra-product-intro">
-              {zh ? "Lavik 是开源的" : "Lavik is an open-source"}
+              {zh ? "Lavik 是一个" : "Lavik is an"}
             </span>{" "}
-            <em>{zh ? "Redis 兼容数据库。" : "Redis-compatible database."}</em>
+            <em>
+              {zh ? "基于 SSD 的" : "SSD-based"}
+              <br />
+              {zh ? "Redis 兼容数据库。" : "Redis-compatible database."}
+            </em>
           </h1>
           <div>
             <p>
               {zh
-                ? "值存在 NVMe SSD，键索引留在内存。在已发布的 SPDK 测试中，Lavik 的 GET / SET 峰值吞吐量超过内存 Redis 和 Valkey。"
-                : "Values on NVMe SSD. Key indexes in memory. In published SPDK tests, Lavik exceeds in-memory Redis and Valkey in peak GET / SET throughput."}
+                ? "在已发布的 SPDK 测试中，Lavik 的 GET / SET 峰值吞吐量超过内存 Redis 和 Valkey。"
+                : "In published SPDK tests, Lavik exceeds in-memory Redis and Valkey in peak GET / SET throughput."}
             </p>
             <Start locale={locale} />
           </div>
@@ -331,17 +344,17 @@ export function VariantF(props: Props) {
         <div className="astra-f-workspace">
           <aside className="astra-f-guide">
             <span className="astra-eyebrow">
-              01 / {zh ? "重新分配存储" : "RETHINK THE STORAGE"}
+              01 / {zh ? "熟悉的 Redis 接口" : "THE REDIS INTERFACE YOU KNOW"}
             </span>
             <h2>
               {zh
-                ? "让内存做索引。\n让 SSD 装下值。"
-                : "Memory for keys.\nSSD for values."}
+                ? "沿用熟悉的\nRedis 客户端。"
+                : "Keep your familiar\nRedis clients."}
             </h2>
             <p>
               {zh
-                ? "Lavik 的存储架构，将值容量从全内存的成本中解放出来。"
-                : "Lavik separates value capacity from the economics of an all-memory engine."}
+                ? "通过 RESP2 / RESP3 协议连接 Lavik，体验基于 SSD 的 Redis 兼容数据库。"
+                : "Connect to Lavik over RESP2 / RESP3 and put an SSD-based Redis-compatible database to work."}
             </p>
             <Link className="astra-text-link" href={`/${locale}/benchmarks/`}>
               {zh ? "测试方法与限制" : "Methodology & limitations"} ↗
@@ -353,16 +366,10 @@ export function VariantF(props: Props) {
               <strong>Redis / RESP</strong>
               <span aria-hidden="true">↓</span>
             </div>
-            <div className="astra-f-storage">
-              <div className="astra-f-memory">
-                <span>{zh ? "键索引" : "KEY INDEX"}</span>
-                <strong>DRAM</strong>
-              </div>
-              <div className="astra-f-ssd">
-                <span>{zh ? "值存储" : "VALUE STORAGE"}</span>
-                <strong>NVMe SSD</strong>
-                <span>Lavik + SPDK</span>
-              </div>
+            <div className="astra-f-product">
+              <span>Lavik</span>
+              <strong>{zh ? "基于 SSD 的数据库" : "SSD-based database"}</strong>
+              <span>{zh ? "兼容 Redis" : "Redis-compatible"}</span>
             </div>
             <p className="astra-f-outcome">
               <span>GET + SET</span>
