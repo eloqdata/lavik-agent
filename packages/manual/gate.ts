@@ -293,6 +293,10 @@ export const manualReviewedPaths = () =>
   [
     "apps/web/app/(site)/[locale]/layout.tsx",
     "apps/web/app/(site)/[locale]/page.tsx",
+    "apps/web/components/homepage.tsx",
+    "apps/web/components/homepage.css",
+    "content/homepage-cost-reference.json",
+    "tests/browser/site.spec.ts",
     "apps/web/app/styles.css",
     "apps/web/components/analytics.tsx",
     "apps/web/components/project-page.tsx",

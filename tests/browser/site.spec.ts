@@ -38,22 +38,45 @@ test("both languages, benchmark interaction, and real verification output", asyn
           await expect(row).toContainText(`p99 ${p99} ms`);
         }
       }
-      await expect(page.locator(".lavik-bar")).toHaveCount(1);
+      await expect(page.locator(".benchmark-chart .lavik-bar")).toHaveCount(1);
       if (!section) {
-        await expect(page.locator(".large-stat")).toHaveText("1.01M");
-        await expect(page.locator(".hero h1")).toContainText("20");
-        await expect(page.locator(".capacity-saving")).toContainText("95%");
-        await expect(page.locator(".capacity-assumption")).toContainText(
-          "20:1",
+        await expect(page.locator("main")).toHaveAttribute(
+          "data-homepage",
+          "G",
         );
-        await expect(page.locator(".hero .button.secondary")).toHaveAttribute(
-          "href",
-          `/${locale}/cost/`,
-        );
-        await expect(page.locator(".benchmark-context a")).toHaveAttribute(
+        await expect(page.locator("h1")).toHaveCount(1);
+        await expect(page.locator("h1")).toContainText("NVMe SSD");
+        await expect(page.locator("#dual-cost-title")).toContainText("1/20");
+        await expect(page.locator(".dual-cost-row strong")).toHaveText([
+          "5%",
+          "100%",
+          "80%",
+        ]);
+        for (const [index, width] of ["5%", "100%", "80%"].entries()) {
+          await expect(
+            page.locator(".dual-cost-row .bar").nth(index),
+          ).toHaveAttribute("style", `width:${width}`);
+        }
+        await expect(page.locator(".dual-sources")).toContainText("20:1");
+        await expect(
+          page.locator(".dual-source-links a").nth(1),
+        ).toHaveAttribute("href", `/${locale}/cost/`);
+        await expect(
+          page.locator(".dual-source-links a").first(),
+        ).toHaveAttribute(
           "href",
           /lavik-v0\.1\.0-beta\.1-spdk-vs-peers-2026-09-18/,
         );
+        await expect(
+          page.locator(".dual-source-links a").nth(2),
+        ).toHaveAttribute("href", "https://www.dragonflydb.io/");
+        await expect(page.locator(".dual-actions a").first()).toHaveAttribute(
+          "href",
+          `/${locale}/docs/0.1.0/quick-start/`,
+        );
+        await expect(page.locator(".prototype-switcher")).toHaveCount(0);
+        await page.locator(".dual-method summary").click();
+        await expect(page.locator(".dual-method p")).toBeVisible();
       }
     }
   }
@@ -143,4 +166,40 @@ test("English and Chinese pages fit a mobile viewport", async ({ page }) => {
     path: ".cache/screenshots/home-zh-mobile.png",
     fullPage: true,
   });
+});
+
+test("selected homepage is exported without JavaScript and preview queries cannot change it", async ({
+  browser,
+  baseURL,
+}) => {
+  const context = await browser.newContext({ javaScriptEnabled: false });
+  const page = await context.newPage();
+  for (const locale of ["en", "zh-CN"]) {
+    for (const query of ["", "?variant=A", "?variant=G"]) {
+      await page.goto(`${baseURL}/${locale}/${query}`);
+      await expect(page.locator("main")).toHaveAttribute("data-homepage", "G");
+      await expect(page.locator("h1")).toContainText("Redis");
+      await expect(page.locator(".chart-row").first()).toContainText(
+        "1,012,180",
+      );
+      await expect(page.locator(".benchmark-data")).toContainText("930,465");
+      await expect(page.locator(".dual-cost-row strong")).toHaveText([
+        "5%",
+        "100%",
+        "80%",
+      ]);
+      await expect(page.locator(".dual-sources")).toContainText(
+        locale === "en" ? "not same-workload measurements" : "并非同条件实测",
+      );
+      await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
+        "href",
+        `https://lavik.dev/${locale}/`,
+      );
+      expect(
+        await page.locator('script[type="application/ld+json"]').count(),
+      ).toBeGreaterThan(1);
+      await expect(page.locator(".prototype-switcher")).toHaveCount(0);
+    }
+  }
+  await context.close();
 });

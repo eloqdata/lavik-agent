@@ -115,10 +115,10 @@ const supporting = [
 ].filter((f) => !suppliedChanges.includes(f));
 const packet = {
   ownerDirection:
-    "The owner asks for direct share links for the landing page, download page and installation pages as well as existing blogs, and explicitly accepts a password length greater than 8. Implement a 9-character minimum for setup, password changes and recovery. Existing accounts must not be reset. The private marketing platform remains single-admin with no model calls; the old hosted model Admin remains disabled.",
+    "The owner explicitly selected prototype G (paired performance and cost charts) as the live Lavik homepage after learning their merged prototype commit was development-only and blocked by stale review. Promote G to production in both languages, preserve benchmark and capacity-model accuracy, refresh review and deploy through existing CI. No model API keys or hosted agent Admin.",
   corrections:
-    "Review registered site campaigns across public manifest, browser tracker, server normalization, catalogue, share-link generation, filters and CLI. Both English and Chinese targets must work, preserving existing blog campaigns and public path restrictions. Validate the 8-rejected/9-accepted password boundary in UI and API without weakening CSRF, activation, recovery or rate limits. New review receipts use a bundle hash suffix to preserve earlier same-day evidence. This is a new task with the default bounded review budget; prior extra-review authorizations are not reused.",
-  scope: "site-page sharing and owner-selected password minimum",
+    "The production route now renders a dedicated server component and scoped stylesheet, independent of all development prototype imports/switchers. Check static HTML, one main/h1, schema/SEO, benchmark GET/SET data, 20:1 value-capacity arithmetic, compatibility link, theme isolation and mobile layouts. The third-party cost reference was checked at https://www.dragonflydb.io/ on 2026-09-28: its Memory Consumed chart shows Valkey 400 GB and Redis 500 GB. That narrowly scoped snapshot is bound as content/homepage-cost-reference.json. It supports only an illustrative 80% bar at equal DRAM unit prices, not an empirical same-workload cost comparison with Lavik. Lavik's 5% remains its separately disclosed DRAM/NVMe price model, excluding index, replication and shared costs. No customer claims. Existing deployment and auth protections remain unchanged. New task, default bounded review budget.",
+  scope: "promote owner-selected homepage G and restore reviewed deployment",
   baseline,
   previousInspection,
   currentFiles: files,
