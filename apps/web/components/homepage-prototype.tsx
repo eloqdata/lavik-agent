@@ -1,12 +1,13 @@
 "use client";
 
-// THROWAWAY: Seven layout studies and three motion studies on /en/ and /zh-CN/.
+// THROWAWAY: Seven layout studies and four motion studies on /en/ and /zh-CN/.
 // Question: how should a Redis-compatible database introduce its SSD performance
 // and capacity-cost advantages? A/B/C preserve the first set; D/E/F lead with
 // product identity before value in Astra's additional directions.
 // G pairs two graphs beside the product introduction, following the supplied layout.
 // H/I/J animate the latest main homepage: entrance, ambient flow, scroll narrative.
-// Switch with ?variant=A through J. Motion controls link back to the layout studies.
+// K combines H's title entrance with J's scroll illustrations.
+// Switch with ?variant=A through K. Motion controls link back to the layout studies.
 // Run: npm run dev -- --hostname 127.0.0.1 --port 3100
 import type { ReactNode } from "react";
 import Link from "next/link";

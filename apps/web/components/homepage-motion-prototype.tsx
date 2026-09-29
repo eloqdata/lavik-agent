@@ -1,6 +1,6 @@
 "use client";
 
-// THROWAWAY H/I/J: three motion directions over the latest server-rendered homepage.
+// THROWAWAY H/I/J/K: motion directions over the latest server-rendered homepage.
 // The data, charts and illustration counts stay unchanged; only presentation moves.
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { usePathname } from "next/navigation";
@@ -10,6 +10,7 @@ export const motionVariants = [
   { key: "H", name: "渐进登场", question: "标题分拍 → 图表展开 → 章节渐入" },
   { key: "I", name: "光流引擎", question: "光线扫过 → 请求流动 → 节点呼吸" },
   { key: "J", name: "滚动叙事", question: "滚动推进 → 插图展开 → 阅读进度" },
+  { key: "K", name: "分拍 × 展开", question: "H 标题分拍 → J 插图随滚动展开" },
 ];
 
 export function HomepageMotionPrototype({
@@ -48,7 +49,7 @@ export function HomepageMotionPrototype({
     scene.dataset.ready = "true";
     if (reduced || paused) return;
 
-    if (variant !== "J") {
+    if (variant !== "J" && variant !== "K") {
       const observer = new IntersectionObserver(
         (entries) => {
           entries.forEach((entry) => {
@@ -111,7 +112,7 @@ export function HomepageMotionPrototype({
 
   return (
     <div
-      className={`motion-lab motion-${variant.toLowerCase()}`}
+      className={`motion-lab motion-${variant.toLowerCase()}${variant === "K" ? " motion-j" : ""}`}
       data-variant={variant}
       data-paused={paused}
       data-reduced={reduced}
@@ -131,7 +132,7 @@ export function HomepageMotionPrototype({
               ? zh
                 ? "已暂停"
                 : "Paused"
-              : variant === "J"
+              : variant === "J" || variant === "K"
                 ? zh
                   ? "滚动页面以预览"
                   : "Scroll to explore"

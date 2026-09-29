@@ -43,7 +43,7 @@ for (const locale of ["en", "zh-CN"]) {
       assert.ok(html.includes('href="https://www.dragonflydb.io/"'));
     }
   }
-  for (const variant of ["H", "I", "J"]) {
+  for (const variant of ["H", "I", "J", "K"]) {
     const html = await (
       await fetch(`${origin}/${locale}/?variant=${variant}`)
     ).text();
@@ -56,6 +56,9 @@ for (const locale of ["en", "zh-CN"]) {
     assert.equal((homepage.match(/data-node="redis"/g) || []).length, 300);
     assert.equal((homepage.match(/data-node="lavik"/g) || []).length, 3);
     assert.ok(html.includes('class="motion-lab-controls"'));
+    if (variant === "K") {
+      assert.ok(html.includes('class="motion-lab motion-k motion-j"'));
+    }
   }
   for (const query of ["", "?variant=unknown"]) {
     const html = await (await fetch(`${origin}/${locale}/${query}`)).text();
@@ -64,5 +67,5 @@ for (const locale of ["en", "zh-CN"]) {
   }
 }
 console.log(
-  "Seven layouts, three motion studies, both locales, evidence, and current-main fallback passed.",
+  "Seven layouts, four motion studies, both locales, evidence, and current-main fallback passed.",
 );
