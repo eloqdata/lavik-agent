@@ -57,19 +57,19 @@ test("both languages, benchmark interaction, and real verification output", asyn
             page.locator(".dual-cost-row .bar").nth(index),
           ).toHaveAttribute("style", `width:${width}`);
         }
-        await expect(page.locator(".dual-sources")).toContainText("20:1");
-        await expect(
-          page.locator(".dual-source-links a").nth(1),
-        ).toHaveAttribute("href", `/${locale}/cost/`);
+        await expect(page.locator(".dual-source-links a")).toHaveCount(1);
+        await expect(page.locator(".dual-sources > p")).toHaveCount(0);
+        await expect(page.locator(".dual-description")).toContainText(
+          locale === "en"
+            ? "Our capacity cost is just 1/20 of Redis."
+            : "容量成本仅为 Redis 的 1/20。",
+        );
         await expect(
           page.locator(".dual-source-links a").first(),
         ).toHaveAttribute(
           "href",
           /lavik-v0\.1\.0-beta\.1-spdk-vs-peers-2026-09-18/,
         );
-        await expect(
-          page.locator(".dual-source-links a").nth(2),
-        ).toHaveAttribute("href", "https://www.dragonflydb.io/");
         await expect(page.locator(".dual-actions a").first()).toHaveAttribute(
           "href",
           `/${locale}/docs/0.1.0/quick-start/`,
@@ -188,9 +188,12 @@ test("selected homepage is exported without JavaScript and preview queries canno
         "100%",
         "80%",
       ]);
-      await expect(page.locator(".dual-sources")).toContainText(
-        locale === "en" ? "not same-workload measurements" : "并非同条件实测",
+      await expect(page.locator(".dual-description")).toContainText(
+        locale === "en"
+          ? "Our capacity cost is just 1/20 of Redis."
+          : "容量成本仅为 Redis 的 1/20。",
       );
+      await expect(page.locator(".dual-sources > p")).toHaveCount(0);
       await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
         "href",
         `https://lavik.dev/${locale}/`,
