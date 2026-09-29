@@ -1,11 +1,43 @@
 import test from "node:test";
 import assert from "node:assert/strict";
+import { createElement } from "react";
+import { renderToStaticMarkup } from "react-dom/server";
+import { ClusterIllustration } from "../apps/web/components/cluster-illustration";
 import {
   agentCapacity,
   capacityLabel,
   consolidationScenario as sizing,
 } from "../packages/homepage/scenarios";
 import { homepageEvidence } from "../packages/homepage/evidence";
+
+test("Lavik cube animation is isolated from positioning and stays inside the SVG", () => {
+  const html = renderToStaticMarkup(
+    createElement(ClusterIllustration, { locale: "en" }),
+  );
+  const placements = [
+    ...html.matchAll(
+      /<g transform="translate\((\d+) (\d+)\) scale\((\d+)\)"><use data-node="lavik" href="#home-lavik-cube"><\/use><\/g>/g,
+    ),
+  ];
+  assert.equal(
+    placements.length,
+    3,
+    "each animated cube needs its own positioning group",
+  );
+  const viewBox = html.match(/viewBox="0 0 (\d+) (\d+)"/)!;
+  const [, width, height] = viewBox.map(Number);
+  for (const [, x, y, scale] of placements) {
+    for (const progress of [0, 0.5, 1]) {
+      const animatedScale = 0.65 + 0.35 * progress;
+      // Cube geometry spans x=-8..8, y=0..17; animation pivots about (0, 8.5).
+      const halfWidth = Number(scale) * 8 * animatedScale;
+      const top = Number(y) + Number(scale) * 8.5 * (1 - animatedScale);
+      const bottom = Number(y) + Number(scale) * 8.5 * (1 + animatedScale);
+      assert.ok(Number(x) - halfWidth >= 0 && Number(x) + halfWidth <= width);
+      assert.ok(top >= 0 && bottom <= height);
+    }
+  }
+});
 
 test("300-to-3 illustration preserves aggregate value capacity and requires 100x per-node capacity", () => {
   assert.equal(sizing.redisNodes * sizing.redisValueGiBPerNode, 9600);

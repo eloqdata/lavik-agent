@@ -73,12 +73,10 @@ export function ClusterIllustration({ locale }: { locale: string }) {
           "translate(729 176) scale(7)",
           "translate(895 176) scale(7)",
         ].map((transform, i) => (
-          <use
-            key={i}
-            data-node="lavik"
-            href="#home-lavik-cube"
-            transform={transform}
-          />
+          // Keep layout transforms outside the animated element's transform origin.
+          <g key={i} transform={transform}>
+            <use data-node="lavik" href="#home-lavik-cube" />
+          </g>
         ))}
       </svg>
       <figcaption id="home-cluster-caption">
