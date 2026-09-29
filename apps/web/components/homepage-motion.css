@@ -1,0 +1,89 @@
+/* Selected K direction: title beats, chart reveals, then scroll-driven illustrations. */
+.homepage-motion[data-motion="active"] .dual-intro h1 > *,
+.homepage-motion[data-motion="active"] .dual-evidence > * {
+  animation: homepage-rise 0.85s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.homepage-motion[data-motion="active"] .dual-intro h1 > :nth-child(1) {
+  animation-delay: 0.14s;
+}
+.homepage-motion[data-motion="active"] .dual-intro h1 > :nth-child(2) {
+  animation-delay: 0.28s;
+}
+.homepage-motion[data-motion="active"] .dual-intro h1 > :nth-child(3) {
+  animation-delay: 0.42s;
+}
+.homepage-motion[data-motion="active"] .dual-evidence > :nth-child(1) {
+  animation-delay: 0.45s;
+}
+.homepage-motion[data-motion="active"] .dual-evidence > :nth-child(2) {
+  animation-delay: 0.7s;
+}
+.homepage-motion[data-motion="active"] .dual-evidence > :nth-child(3) {
+  animation-delay: 1s;
+}
+.homepage-motion[data-motion="active"] .bar {
+  transform-origin: left;
+  animation: homepage-bar 1.2s cubic-bezier(0.2, 0.7, 0.2, 1) 0.8s both;
+}
+.homepage-motion[data-motion="active"] [data-scroll-reveal] {
+  opacity: calc(0.18 + 0.82 * var(--reveal-progress, 1));
+  translate: 0 calc((1 - var(--reveal-progress, 1)) * 54px);
+}
+.homepage-motion[data-motion="active"] .home-engine {
+  scale: calc(0.94 + 0.06 * var(--reveal-progress, 1));
+}
+.homepage-motion[data-motion="active"] .home-engine-client {
+  translate: calc((var(--reveal-progress, 1) - 1) * 60px) 0;
+}
+.homepage-motion[data-motion="active"] .home-engine-server {
+  translate: calc((1 - var(--reveal-progress, 1)) * 60px) 0;
+}
+.homepage-motion[data-motion="active"] .home-cluster-svg > path {
+  stroke-dasharray: 180;
+  stroke-dashoffset: calc((1 - var(--reveal-progress, 1)) * 180);
+}
+.homepage-motion[data-motion="active"] [data-node="lavik"] {
+  transform-box: fill-box;
+  transform-origin: center;
+  scale: calc(0.65 + 0.35 * var(--reveal-progress, 1));
+}
+.homepage-motion[data-motion="active"] .home-license-mark {
+  rotate: calc((1 - var(--reveal-progress, 1)) * -5deg);
+}
+@keyframes homepage-rise {
+  from {
+    opacity: 0;
+    translate: 0 28px;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+@keyframes homepage-bar {
+  from {
+    scale: 0 1;
+  }
+  to {
+    scale: 1 1;
+  }
+}
+@media (max-width: 760px) {
+  .homepage-motion[data-motion="active"] .home-engine-client,
+  .homepage-motion[data-motion="active"] .home-engine-server {
+    translate: none;
+  }
+}
+/* Also protects the page before the preference-change listener runs. */
+@media (prefers-reduced-motion: reduce), print {
+  .homepage-motion[data-motion="active"] *,
+  .homepage-motion[data-motion="active"] *::after {
+    animation: none !important;
+    transition: none !important;
+    translate: none !important;
+    scale: none !important;
+    rotate: none !important;
+    opacity: 1 !important;
+    stroke-dashoffset: 0 !important;
+  }
+}

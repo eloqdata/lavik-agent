@@ -6,9 +6,8 @@ import {
   currentBenchmark,
 } from "../../../../../packages/content/benchmarks";
 import { estimateCost } from "../../../../../packages/content/economics";
-import { Suspense } from "react";
 import { Homepage } from "../../../components/homepage";
-import { HomepagePrototype } from "../../../components/homepage-prototype";
+import { HomepageMotion } from "../../../components/homepage-motion";
 
 // Compare the value-capacity tier; index memory and shared server costs are separate.
 const capacityCost = estimateCost({
@@ -35,29 +34,16 @@ export default async function Home({
 }) {
   const locale = localeSchema.parse((await params).locale);
   const rows = benchmarkRows();
-  const homepage = (
-    <Homepage
-      locale={locale}
-      rows={rows}
-      capacityRatio={capacityRatio}
-      sourceUrl={sources.find((s) => s.id === currentBenchmark.sourceId)!.url}
-      benchmarkDate={currentBenchmark.date}
-      benchmarkScope={currentBenchmark.scope[locale]}
-    />
-  );
-  if (process.env.NODE_ENV === "production") return homepage;
   return (
-    <Suspense fallback={homepage}>
-      <HomepagePrototype
+    <HomepageMotion>
+      <Homepage
         locale={locale}
         rows={rows}
         capacityRatio={capacityRatio}
         sourceUrl={sources.find((s) => s.id === currentBenchmark.sourceId)!.url}
         benchmarkDate={currentBenchmark.date}
         benchmarkScope={currentBenchmark.scope[locale]}
-      >
-        {homepage}
-      </HomepagePrototype>
-    </Suspense>
+      />
+    </HomepageMotion>
   );
 }
