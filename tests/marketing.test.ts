@@ -171,7 +171,7 @@ test("aggregate analytics stores counts without visitor identities and bounds re
     assert.equal(row.count, 2);
     assert.ok(alarm && alarm > Date.now());
     sql
-      .prepare("INSERT INTO metrics VALUES(?,?,?,?,?,?,?)")
+      .prepare("INSERT INTO metrics VALUES(?,?,?,?,?,?,?,?)")
       .run(
         "2020-01-01T00:00:00.000Z",
         "old",
@@ -179,13 +179,23 @@ test("aggregate analytics stores counts without visitor identities and bounds re
         "old",
         "/en/",
         "visit",
+        "untagged",
         1,
       );
     await store.alarm();
     assert.equal(sql.prepare("SELECT count(*) AS n FROM metrics").get()!.n, 1);
     assert.deepEqual(
       Object.keys(row).sort(),
-      ["hour", "source", "medium", "campaign", "path", "event", "count"].sort(),
+      [
+        "hour",
+        "source",
+        "medium",
+        "campaign",
+        "path",
+        "event",
+        "placement",
+        "count",
+      ].sort(),
     );
     assert.throws(() => analyticsPeriod("2020-01-01", "2026-01-01"));
     assert.throws(() => analyticsPeriod("2026-01-01T00:01:00Z", "2026-01-02"));
@@ -355,6 +365,7 @@ test("unregistered campaign values and private referrer subdomains are discarded
     source: "x",
     medium: "campaign",
     campaign: "unregistered",
+    placement: "untagged",
   });
   assert.equal(
     attribution(

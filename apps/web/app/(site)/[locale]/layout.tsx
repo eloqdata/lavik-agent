@@ -2,7 +2,8 @@ import { websiteStructuredData } from "../../../../../packages/seo/site";
 import { StructuredData } from "../../../components/structured-data";
 import { Analytics } from "../../../components/analytics";
 import { Suspense } from "react";
-import { articles } from "../../../../../packages/content/repository";
+import { articles, release } from "../../../../../packages/content/repository";
+import { siteCampaigns } from "../../../../../packages/marketing/site-campaigns";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Header, Footer } from "../../../components/site";
@@ -41,6 +42,7 @@ export default async function Layout({
         <Suspense fallback={null}>
           <Analytics
             campaignIds={[
+              ...siteCampaigns(release.version).map((p) => p.id),
               ...new Set(
                 articles()
                   .filter((a) => a.kind === "blog")

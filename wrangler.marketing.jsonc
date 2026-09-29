@@ -1,0 +1,34 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "lavik-marketing",
+  "main": "apps/marketing/worker.ts",
+  "account_id": "50aa9d595550cc016bfbe6f23a757cca",
+  "compatibility_date": "2026-09-20",
+  "compatibility_flags": ["nodejs_compat"],
+  "workers_dev": false,
+  "preview_urls": false,
+  "routes": [{ "pattern": "marketing.lavik.dev", "custom_domain": true }],
+  "durable_objects": {
+    "bindings": [
+      {
+        "name": "ANALYTICS_STORE",
+        "class_name": "AnalyticsStore",
+        "script_name": "lavik-dev",
+      },
+    ],
+  },
+  "ratelimits": [
+    {
+      "name": "MARKETING_AUTH_LIMIT",
+      "namespace_id": "1002",
+      "simple": { "limit": 6, "period": 60 },
+    },
+  ],
+  "assets": {
+    "binding": "ASSETS",
+    "directory": "./apps/marketing/out",
+    "run_worker_first": true,
+    "html_handling": "none",
+    "not_found_handling": "404-page",
+  },
+}

@@ -17,8 +17,8 @@ export function ProjectPage({
         <div className="prose">
           <p>
             {zh
-              ? "我们使用托管在 Cloudflare 上的第一方统计，了解哪些文章和推广渠道帮助读者评估 Lavik。统计记录页面路径、推广来源、媒介、活动标识及汇总事件数，按小时聚合，采用 180 天保留窗口，每日清理。"
-              : "We use first-party analytics hosted on Cloudflare to understand which articles and channels help readers evaluate Lavik. Analytics records page paths, campaign source, medium, campaign identifiers, and aggregate event counts in hourly buckets, with a 180-day retention window and daily cleanup."}
+              ? "我们使用托管在 Cloudflare 上的第一方统计，了解哪些文章和推广渠道帮助读者评估 Lavik。统计记录页面路径、推广来源、媒介、活动标识、已登记的群组或投放位置代码及汇总事件数，按小时聚合，采用 180 天保留窗口，每日清理。代码标识分享链接的投放位置，不用于识别群成员。转发链接会保留原投放位置的归因。"
+              : "We use first-party analytics hosted on Cloudflare to understand which articles and channels help readers evaluate Lavik. Analytics records page paths, campaign source, medium, campaign identifiers, registered group or placement codes, and aggregate event counts in hourly buckets, with a 180-day retention window and daily cleanup. Codes identify where a link was shared, not group members. Forwarded links retain their original placement attribution."}
           </p>
           <p>
             {zh

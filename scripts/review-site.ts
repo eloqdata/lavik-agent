@@ -115,11 +115,11 @@ const supporting = [
 ].filter((f) => !suppliedChanges.includes(f));
 const packet = {
   ownerDirection:
-    "The owner explicitly chose the homepage headline Faster than Redis. 20x lower capacity cost. Preserve that prominent message with immediate visible scope. Search/social metadata now separately qualifies SPDK throughput and no longer repeats an unqualified 20x title.",
+    "Expand the existing homepage G below its unchanged hero in both languages: explain Redis compatibility, NVMe SSD storage, the 20:1 capacity-price model, measured performance, open source, agent workloads, and adoption. The owner explicitly answered 'Use it as a sizing illustration' for 300 Redis nodes to 3 Lavik nodes. This is not a measured consolidation or same-P99.99 SLA claim. Refresh independent review and deploy through existing CI. No model API keys or hosted agent Admin.",
   corrections:
-    "This corrective packet supplies full current lockfile contents (no HEAD-relative diff), verified by their exact hash, and binds all local imported dependencies. The owner authorized up to two extra corrective reviews after the first three. Explicit coordinator PID is checked before child startup and throughout monitoring; a delayed-start crash test covers buffered handshakes. CI now requires exact live manifest, all sitemap-page semantic hashes, and six discovery assets before separately nonfatal IndexNow notifications. Crash handling now keeps stale locks closed, records process groups before executable startup, kills orphaned groups, and requires explicit checked recovery. Scheduled checkouts use npm ci. Attribution accepts only known source/media buckets, registered article campaign IDs and deployed public page paths; unknown campaigns/referrers are bucketed. Opt-out broadcasts a cleanup event and checks privacy preferences before every counter/storage/send. Direct deployment queues the complete main CI workflow.",
+    "New server-rendered story, scoped CSS, exact-count SVG (300 and 3 cubes), and interactive agent capacity calculator. Consolidation assumes 300 x 32 GiB = 3 x 3,200 GiB usable value capacity; the 100x per-node capacity assumption is distinct from the 20x capacity-price ratio. Meta, replicas, index RAM, CPU/network, recovery and failure domains require separate sizing. P99.99 is an acceptance target, not a guarantee; disclosed current GET/SET tail latencies come from the same CSV rows as each product's peak QPS, and SET is slightly higher for Lavik. The frozen CSV only covers 10M keys; the 1B-key point is parsed from the separately headed storage-tier table in the checksum-verified report, at 640 connections, 60s window, with no cluster inference. Agent 100x is explicit arithmetic (1M accounts, 100 agents/account, 64 KiB each), adjustable 1..200; not an industry forecast or native vector/agent feature claim. Apache 2.0 describes EloqData-authored code with third-party notices retained. Preserve accurate compatibility scope and all existing benchmark qualifiers. New dependencies and meaningful math/CSV/no-JS/browser tests are bound to the publication gate. Existing deployment, analytics, auth and manual command evidence remain unchanged. New task, default bounded review budget.",
   scope:
-    "incremental site discovery, attribution, and bounded local publishing infrastructure",
+    "expand the bilingual homepage with architecture, sizing illustration, agent capacity planning and open-source adoption",
   baseline,
   previousInspection,
   currentFiles: files,
@@ -130,6 +130,9 @@ const packet = {
     "benchmark-spdk",
     "benchmark-spdk-data",
     "tiering-cost",
+    "storage",
+    "architecture",
+    "license",
   ].map((id) => ({
     id,
     ...(followup
@@ -200,7 +203,7 @@ else {
   );
   await fs.mkdir("evidence/reviews/infrastructure", { recursive: true });
   await fs.writeFile(
-    `evidence/reviews/infrastructure/${receipt.finishedAt.slice(0, 10)}-discovery-marketing.json`,
+    `evidence/reviews/infrastructure/${receipt.finishedAt.slice(0, 10)}-${publication.bundleHash.slice(0, 12)}-discovery-marketing.json`,
     JSON.stringify(
       {
         review,

@@ -2,6 +2,7 @@ export type MetricRow = {
   source: string;
   medium: string;
   campaign: string;
+  placement?: string;
   path: string;
   event: string;
   count: number;
@@ -11,6 +12,36 @@ export type MarketingReport = {
   until: string;
   generatedAt: string;
   rows: MetricRow[];
+  placements?: { code: string; label: string; source: string }[];
+};
+export function summarizePlacements(report: MarketingReport) {
+  const groups = new Map<string, MetricRow[]>();
+  for (const row of report.rows) {
+    if (row.source === "diagnostic") continue;
+    const key = `${row.source}/${row.placement ?? "untagged"}`;
+    groups.set(key, [...(groups.get(key) ?? []), row]);
+  }
+  return [...groups.values()]
+    .map((rows) => {
+      const first = rows[0],
+        code = first.placement ?? "untagged";
+      return {
+        ...summarizeChannels(rows)[0],
+        placement: code,
+        label:
+          report.placements?.find(
+            (p) => p.code === code && p.source === first.source,
+          )?.label ?? code,
+      };
+    })
+    .sort(
+      (a, b) => b.visits - a.visits || a.placement.localeCompare(b.placement),
+    );
+}
+export const csvCell = (value: unknown) => {
+  const text = String(value ?? "");
+  const safe = /^[\s]*[=+@-]|^[\t\r\n]/.test(text) ? `'${text}` : text;
+  return `"${safe.replaceAll('"', '""')}"`;
 };
 export function summarizeChannels(rows: MetricRow[]) {
   const groups = new Map<
@@ -142,13 +173,48 @@ export function renderReport(
     ? "Compare installation-guide visits and download intent alongside traffic volume. Do not sum the action columns as unique conversions: one visit can perform several actions. With small counts, gather more data before changing marketing allocation."
     : "No recorded traffic in this period. Collection begins when the tracker is deployed; this is not a historical backfill.";
   const insights = channelInsights(report, previous);
+  const placementRows = summarizePlacements(report);
+  const placementHead = [
+    "Source",
+    "Placement",
+    "Group / placement name",
+    "Visits",
+    "Engaged",
+    "Install guide",
+    "Download clicks",
+  ];
+  const placementCells = placementRows.map((p) => [
+    p.source,
+    p.placement,
+    p.label,
+    p.visits,
+    p.engaged,
+    p.install,
+    p.download,
+  ]);
+  const mdSafe = (value: unknown) =>
+    String(value)
+      .replaceAll("|", "\\|")
+      .replace(/[\r\n]/g, " ");
+  const placementMarkdown = `\n## Groups and placements\n\n| ${placementHead.join(" | ")} |\n| ${placementHead.map(() => "---").join(" | ")} |\n${placementCells.map((c) => `| ${c.map(mdSafe).join(" | ")} |`).join("\n")}\n\nPlacement attribution began with the marketing-platform rollout. Earlier events remain untagged. Forwarded links retain their original placement tag.\n`;
   const markdown = `# Lavik weekly marketing report\n\n${report.since} to ${report.until} (UTC, exclusive end). Generated ${report.generatedAt}.\n\n| ${head.join(" | ")} |\n| ${head.map(() => "---").join(" | ")} |\n${cells.map((c) => `| ${c.join(" | ")} |`).join("\n")}\n\n${interpretation}\n\nVisits are browser-tab visits, not unique people. Engaged means at least 20 visible seconds. Direct / unknown includes copied links and apps without attribution. Cross-week activity can produce actions from visits that began before this reporting period. Download clicks do not prove installation. Blocking scripts, privacy signals, or stripped tags reduce coverage.\n\nThe CSV contains the platform/campaign/page breakdown. Tag every new external link; existing untagged X posts can be attributed to X when the referrer survives, but their campaign may remain untagged.\n`;
   const csv =
     [
-      "source,medium,campaign,path,event,count",
+      "source,medium,campaign,placement,placement_label,path,event,count",
       ...report.rows.map((r) =>
-        [r.source, r.medium, r.campaign, r.path, r.event, r.count]
-          .map((v) => `"${String(v).replaceAll('"', '""')}"`)
+        [
+          r.source,
+          r.medium,
+          r.campaign,
+          r.placement ?? "untagged",
+          report.placements?.find(
+            (p) => p.code === r.placement && p.source === r.source,
+          )?.label ?? "",
+          r.path,
+          r.event,
+          r.count,
+        ]
+          .map(csvCell)
           .join(","),
       ),
     ].join("\n") + "\n";
@@ -156,15 +222,21 @@ export function renderReport(
   return {
     markdown:
       markdown +
+      placementMarkdown +
       (insights.length
         ? `\n## Channel observations\n\n${insights.map((s) => `- ${s}`).join("\n")}\n`
         : ""),
     csv,
-    html: html.replace(
-      "</html>",
-      insights.length
-        ? `<h2>Channel observations</h2><ul>${insights.map((s) => `<li>${escape(s)}</li>`).join("")}</ul></html>`
-        : "</html>",
-    ),
+    html: html
+      .replace(
+        "</html>",
+        `<h2>Groups and placements</h2><div class="scroll"><table><thead><tr>${placementHead.map((h) => `<th>${escape(h)}</th>`).join("")}</tr></thead><tbody>${placementCells.map((c) => `<tr>${c.map((v) => `<td>${escape(String(v))}</td>`).join("")}</tr>`).join("")}</tbody></table></div><p>Earlier events remain untagged. Forwarded links retain their original placement tag. These counts do not reconstruct individual click paths.</p></html>`,
+      )
+      .replace(
+        "</html>",
+        insights.length
+          ? `<h2>Channel observations</h2><ul>${insights.map((s) => `<li>${escape(s)}</li>`).join("")}</ul></html>`
+          : "</html>",
+      ),
   };
 }
