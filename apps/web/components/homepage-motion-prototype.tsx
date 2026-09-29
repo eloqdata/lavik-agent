@@ -10,7 +10,11 @@ export const motionVariants = [
   { key: "H", name: "渐进登场", question: "标题分拍 → 图表展开 → 章节渐入" },
   { key: "I", name: "光流引擎", question: "光线扫过 → 请求流动 → 节点呼吸" },
   { key: "J", name: "滚动叙事", question: "滚动推进 → 插图展开 → 阅读进度" },
-  { key: "K", name: "分拍 × 展开", question: "H 标题分拍 → J 插图随滚动展开" },
+  {
+    key: "K",
+    name: "分拍 × 展开",
+    question: "标题分拍 → 图表展开 → 插图随滚动展开",
+  },
 ];
 
 export function HomepageMotionPrototype({
@@ -87,15 +91,17 @@ export function HomepageMotionPrototype({
         );
         element.style.setProperty("--motion-progress", String(progress));
       });
-      const page = scene.getBoundingClientRect();
-      const progress = Math.min(
-        1,
-        Math.max(0, -page.top / Math.max(1, page.height - innerHeight)),
-      );
-      scene.parentElement?.style.setProperty(
-        "--page-progress",
-        String(progress),
-      );
+      if (variant === "J") {
+        const page = scene.getBoundingClientRect();
+        const progress = Math.min(
+          1,
+          Math.max(0, -page.top / Math.max(1, page.height - innerHeight)),
+        );
+        scene.parentElement?.style.setProperty(
+          "--page-progress",
+          String(progress),
+        );
+      }
     };
     const schedule = () => {
       if (!frame) frame = requestAnimationFrame(update);
@@ -117,7 +123,9 @@ export function HomepageMotionPrototype({
       data-paused={paused}
       data-reduced={reduced}
     >
-      <div className="motion-reading-progress" aria-hidden="true" />
+      {variant === "J" && (
+        <div className="motion-reading-progress" aria-hidden="true" />
+      )}
       <aside
         className="motion-lab-controls"
         aria-label={zh ? "动画原型控制" : "Animation prototype controls"}

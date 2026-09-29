@@ -56,6 +56,10 @@ for (const locale of ["en", "zh-CN"]) {
     assert.equal((homepage.match(/data-node="redis"/g) || []).length, 300);
     assert.equal((homepage.match(/data-node="lavik"/g) || []).length, 3);
     assert.ok(html.includes('class="motion-lab-controls"'));
+    assert.equal(
+      html.includes('class="motion-reading-progress"'),
+      variant === "J",
+    );
     if (variant === "K") {
       assert.ok(html.includes('class="motion-lab motion-k motion-j"'));
     }

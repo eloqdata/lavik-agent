@@ -6,7 +6,7 @@
 // product identity before value in Astra's additional directions.
 // G pairs two graphs beside the product introduction, following the supplied layout.
 // H/I/J animate the latest main homepage: entrance, ambient flow, scroll narrative.
-// K combines H's title entrance with J's scroll illustrations.
+// K combines H's title/chart entrance with J's illustrations, without reading progress.
 // Switch with ?variant=A through K. Motion controls link back to the layout studies.
 // Run: npm run dev -- --hostname 127.0.0.1 --port 3100
 import type { ReactNode } from "react";
