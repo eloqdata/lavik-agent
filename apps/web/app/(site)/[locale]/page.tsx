@@ -7,6 +7,7 @@ import {
 } from "../../../../../packages/content/benchmarks";
 import { estimateCost } from "../../../../../packages/content/economics";
 import { Homepage } from "../../../components/homepage";
+import { HomepageMotion } from "../../../components/homepage-motion";
 
 // Compare the value-capacity tier; index memory and shared server costs are separate.
 const capacityCost = estimateCost({
@@ -32,16 +33,17 @@ export default async function Home({
   params: Promise<{ locale: string }>;
 }) {
   const locale = localeSchema.parse((await params).locale);
+  const rows = benchmarkRows();
   return (
-    <Homepage
-      locale={locale}
-      rows={benchmarkRows()}
-      capacityRatio={capacityRatio}
-      sourceUrl={
-        sources.find((source) => source.id === currentBenchmark.sourceId)!.url
-      }
-      benchmarkDate={currentBenchmark.date}
-      benchmarkScope={currentBenchmark.scope[locale]}
-    />
+    <HomepageMotion>
+      <Homepage
+        locale={locale}
+        rows={rows}
+        capacityRatio={capacityRatio}
+        sourceUrl={sources.find((s) => s.id === currentBenchmark.sourceId)!.url}
+        benchmarkDate={currentBenchmark.date}
+        benchmarkScope={currentBenchmark.scope[locale]}
+      />
+    </HomepageMotion>
   );
 }

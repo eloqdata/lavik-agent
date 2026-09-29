@@ -51,8 +51,8 @@ export function Homepage({
           </p>
           <p className="dual-description">
             {zh
-              ? "在已发布的测试中，Lavik 的峰值吞吐量超过内存 Redis 和 Valkey。在容量成本示意模型中，成本为 Redis 的 1/20。"
-              : "Lavik delivers higher peak throughput than in-memory Redis and Valkey in published tests. Our illustrative capacity-cost model puts Lavik at 1/20 of Redis."}
+              ? `在已发布的测试中，Lavik 的峰值吞吐量超过内存 Redis 和 Valkey。容量成本仅为 Redis 的 1/${capacityRatio}。`
+              : `Lavik delivers higher peak throughput than in-memory Redis and Valkey in published tests. Our capacity cost is just 1/${capacityRatio} of Redis.`}
           </p>
           <div className="dual-actions">
             <Link href={`/${locale}/docs/0.1.0/quick-start/`}>
@@ -107,15 +107,12 @@ export function Homepage({
               <p>
                 {zh ? "Redis 的值容量成本" : "of Redis value-capacity cost"}
               </p>
-              <span className="dual-result-note">
-                {zh ? "示意模型" : "Illustrative model"}
-              </span>
             </div>
             <div className="dual-cost-chart">
               <p className="dual-chart-label">
                 {zh
-                  ? "成本示意 · Redis = 100%"
-                  : "Illustrative cost · Redis = 100%"}
+                  ? "容量成本 · Redis = 100%"
+                  : "Capacity cost · Redis = 100%"}
               </p>
               {rows.map((row) => {
                 const lavik = row.name.startsWith("Lavik ");
@@ -164,21 +161,7 @@ export function Homepage({
               <a href={sourceUrl}>
                 {zh ? "吞吐测试来源" : "Throughput benchmark"} ↗
               </a>
-              <Link href={`/${locale}/cost/`}>
-                {zh ? "容量成本模型" : "Capacity cost model"} ↗
-              </Link>
-              <a href={costReference.sourceUrl}>
-                {zh
-                  ? "Redis / Valkey 参考比例"
-                  : "Redis / Valkey reference ratio"}{" "}
-                ↗
-              </a>
             </div>
-            <p>
-              {zh
-                ? `示意假设：按相同 DRAM 单价，Valkey / Redis 比例参考 Dragonfly 主页的 ${costReference.memoryExampleGB.valkey} / ${costReference.memoryExampleGB.redis} GB；Lavik 按 DRAM / SSD 每 GiB 单价 ${capacityRatio}:1 估算为 Redis 基准的 ${costPercent}%。三者并非同条件实测；索引内存、复制与共同服务器成本未计入，亦不代表部署总成本。`
-                : `Illustrative assumptions: at equal DRAM unit prices, Valkey / Redis follows Dragonfly’s ${costReference.memoryExampleGB.valkey} / ${costReference.memoryExampleGB.redis} GB example; Lavik uses a ${capacityRatio}:1 DRAM / SSD price per GiB, at ${costPercent}% of the Redis baseline. These are not same-workload measurements. Index memory, replication, and shared server costs are excluded; this is not total deployment cost.`}
-            </p>
           </div>
         </div>
       </section>
