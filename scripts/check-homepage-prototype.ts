@@ -43,12 +43,26 @@ for (const locale of ["en", "zh-CN"]) {
       assert.ok(html.includes('href="https://www.dragonflydb.io/"'));
     }
   }
+  for (const variant of ["H", "I", "J"]) {
+    const html = await (
+      await fetch(`${origin}/${locale}/?variant=${variant}`)
+    ).text();
+    assert.ok(html.includes(`data-variant="${variant}"`));
+    assert.ok(html.includes('data-homepage="G"'));
+    assert.ok(html.includes('id="architecture"'));
+    // The streamed response also includes the Suspense fallback homepage.
+    const scene = html.slice(html.indexOf('class="motion-scene"'));
+    const homepage = scene.slice(0, scene.indexOf("</main>"));
+    assert.equal((homepage.match(/data-node="redis"/g) || []).length, 300);
+    assert.equal((homepage.match(/data-node="lavik"/g) || []).length, 3);
+    assert.ok(html.includes('class="motion-lab-controls"'));
+  }
   for (const query of ["", "?variant=unknown"]) {
     const html = await (await fetch(`${origin}/${locale}/${query}`)).text();
-    assert.ok(html.includes('class="hero"'));
+    assert.ok(html.includes('data-homepage="G"'));
     assert.ok(!html.includes('class="prototype-switcher"'));
   }
 }
 console.log(
-  "Seven variants, both locales, benchmark values, links, and original-page fallback passed.",
+  "Seven layouts, three motion studies, both locales, evidence, and current-main fallback passed.",
 );

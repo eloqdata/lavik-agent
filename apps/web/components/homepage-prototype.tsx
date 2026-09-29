@@ -1,11 +1,12 @@
 "use client";
 
-// THROWAWAY: Seven homepage variants on /en/ and /zh-CN/.
+// THROWAWAY: Seven layout studies and three motion studies on /en/ and /zh-CN/.
 // Question: how should a Redis-compatible database introduce its SSD performance
 // and capacity-cost advantages? A/B/C preserve the first set; D/E/F lead with
 // product identity before value in Astra's additional directions.
 // G pairs two graphs beside the product introduction, following the supplied layout.
-// Switch with ?variant=A|B|C|D|E|F|G. No winner chosen; never publish these drafts.
+// H/I/J animate the latest main homepage: entrance, ambient flow, scroll narrative.
+// Switch with ?variant=A through J. Motion controls link back to the layout studies.
 // Run: npm run dev -- --hostname 127.0.0.1 --port 3100
 import type { ReactNode } from "react";
 import Link from "next/link";
@@ -15,6 +16,10 @@ import { PrototypeSwitcher } from "./prototype-switcher";
 import "./homepage-prototype.css";
 import { VariantD, VariantE, VariantF } from "./homepage-prototype-astra";
 import { VariantG } from "./homepage-prototype-dual";
+import {
+  HomepageMotionPrototype,
+  motionVariants,
+} from "./homepage-motion-prototype";
 
 const variants = [
   {
@@ -449,8 +454,23 @@ export function HomepagePrototype({
   ...props
 }: Props & { children: ReactNode }) {
   const current = useSearchParams().get("variant");
+  if (process.env.NODE_ENV === "production") return children;
+  const motion = motionVariants.find((variant) => variant.key === current);
+  if (motion)
+    return (
+      <>
+        <HomepageMotionPrototype
+          key={motion.key}
+          variant={motion.key}
+          locale={props.locale}
+        >
+          {children}
+        </HomepageMotionPrototype>
+        <PrototypeSwitcher variants={motionVariants} current={motion.key} />
+      </>
+    );
   const selected = variants.find((variant) => variant.key === current);
-  if (process.env.NODE_ENV === "production" || !selected) return children;
+  if (!selected) return children;
   const Variant = selected.component;
   return (
     <>
