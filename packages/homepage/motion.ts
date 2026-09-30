@@ -3,7 +3,9 @@ export function mountHomepageMotion(root: HTMLElement) {
   const preference = window.matchMedia("(prefers-reduced-motion: reduce)");
   const targets = [
     ...root.querySelectorAll<HTMLElement>(
-      ".home-split-heading, .home-engine, .home-three-cards, .home-scale-grid, .home-centered-heading, .home-cluster-figure, .home-sizing-facts, .home-sla-row, .home-agent-grid, .home-agent-cards, .home-open-source, .home-evaluate",
+      // Keep the disclosure and calculator outside scroll-driven transforms:
+      // focusing their controls must not move the next interaction target.
+      ".home-split-heading, .home-engine, .home-three-cards, .home-scale-grid, .home-centered-heading, .home-cluster-figure, .home-sizing-facts, .home-agent-cards, .home-open-source, .home-evaluate",
     ),
   ];
   let frame = 0;
