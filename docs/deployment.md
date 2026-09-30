@@ -43,6 +43,14 @@ without deploying. A build superseded on `main` is skipped before publication.
 CI saves its execution receipts as the `verification-evidence` artifact, preserving
 the committed execution records used by reviewed articles.
 
+As of September 29, website-only commits deploy without a local test run or a new
+manual-content review. All build and test execution happens in GitHub Actions.
+Documentation approval is scoped to technical content, sources, executable
+examples, and meaning-bearing renderers; unrelated homepage or infrastructure
+edits no longer make that approval stale. Invalid documentation evidence and
+failed CI checks still prevent deployment. The tested artifacts are deployed
+unchanged, followed by live revision and page verification.
+
 GitHub stores the owning account ID in `CLOUDFLARE_ACCOUNT_ID` and the deployment
 token in `CLOUDFLARE_LAVIK`. Both workflows also accept `CLOUDFLARE_API_TOKEN`, which
 takes precedence if present. The repository variable `LAVIK_AUTO_DEPLOY=true`

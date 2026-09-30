@@ -109,6 +109,14 @@ For a local deployment, sign in with `npx wrangler login`, then run `npm run dep
 
 Automatic deployment is enabled for pushes to `main`. Follow the [Verify content and website workflow](https://github.com/eloqdata/lavik-agent/actions/workflows/ci.yml) to see verification and deployment results. Pull requests run verification only; failed checks prevent deployment, and builds superseded on `main` are skipped before publication.
 
+No local tests or running laptop are required to deploy a website change. Push
+the commit and GitHub performs the build and tests, deploys both Cloudflare
+Workers, and checks the live revision. Homepage, styling, navigation, dependency,
+and workflow changes do not invalidate unchanged documentation-content approval.
+Versioned technical documentation, source evidence, examples, and article content
+still require their existing accuracy reviews; see the
+[manual workflow](docs/manual-workflow.md) for the content boundary.
+
 The repository uses GitHub secrets `CLOUDFLARE_ACCOUNT_ID` and `CLOUDFLARE_LAVIK`, with repository variable `LAVIK_AUTO_DEPLOY=true`. Both deployment workflows also accept the standard secret name `CLOUDFLARE_API_TOKEN`, which takes precedence if present. The API token must permit Workers deployment and custom domain management for the target account and zone. Keep it in GitHub Secrets; browser login credentials remain local. Set `LAVIK_AUTO_DEPLOY=false` to suspend automatic deployment while retaining verification.
 
 The CI workflow reruns real Linux verification, checks content, tests the application, builds the site, and tests it in Chromium before deployment. CI execution receipts are uploaded from `.cache/ci-verification`; reviewed publication receipts remain unchanged, so an x86 runner cannot silently replace an article's documented ARM execution record. Model credentials are not needed for website CI. The separate **Write and publish a bilingual campaign** workflow accepts a brief and campaign ID, and additionally needs `OPENAI_API_KEY` plus the two model-name variables. It commits passing bilingual content and can deploy directly; it does not depend on a token-authored push triggering another workflow. Branch rules must permit the configured bot to write content, or that commit step will fail explicitly. Store `.runs` durably for a future hosted worker; GitHub run artifacts are retained for 30 days and workflow reruns do not automatically restore them.

@@ -518,6 +518,68 @@ export function manualFileHashes() {
     manualReviewedPaths().map((file) => [file, fileHash(file)]),
   );
 }
+
+// Content approval and website deployment have different lifetimes. A homepage,
+// stylesheet, lockfile or CI edit must not invalidate unchanged manual content.
+// Keep the wider manifest above for optional infrastructure reviews; the export
+// gate compares only technical content, its evidence and meaning-bearing code.
+const manualSemanticFiles = new Set([
+  "content/claims.json",
+  "packages/content/repository.ts",
+  "packages/content/schema.ts",
+  "packages/content/gate.ts",
+  "packages/content/publication-context.ts",
+  "packages/content/downloads.ts",
+  "packages/content/economics.ts",
+  "packages/content/benchmarks.ts",
+  "packages/verification/runner.ts",
+  "apps/web/components/content.tsx",
+  "apps/web/components/content-v2.tsx",
+  "apps/web/components/manual.tsx",
+  "apps/web/components/docs-home.tsx",
+  "apps/web/components/user-guide.tsx",
+  "apps/web/components/operations.tsx",
+  "apps/web/components/download-page.tsx",
+  "apps/web/components/quick-start.tsx",
+  "apps/web/components/quick-start-installer.tsx",
+  "apps/web/components/copy-code.tsx",
+  "apps/web/components/use-cases.tsx",
+  "apps/web/components/latency-explorer.tsx",
+  "apps/web/app/(site)/[locale]/[...slug]/page.tsx",
+  "apps/web/app/(entry)/manual-manifest.json/route.ts",
+  "scripts/check-content.ts",
+  "scripts/prepare-verifier.ts",
+  "scripts/verify-examples.ts",
+  "scripts/verify-manual.py",
+  "scripts/verify-downloads.ts",
+  "scripts/verify-operations.py",
+  "scripts/verify-onboarding.py",
+  "scripts/verify-docker-images.py",
+  "scripts/verify-quick-start.ts",
+  "scripts/verify-use-cases.py",
+  "scripts/verify-apt.py",
+  "scripts/build-apt.sh",
+  "scripts/stage-apt.ts",
+]);
+function requiresManualContentReview(file: string) {
+  return (
+    /^(evidence\/|verification\/|packaging\/apt\/|content\/(manual|operations|releases|downloads)\/|packages\/(manual|docs|operations|apt|quick-start|use-cases)\/)/.test(
+      file,
+    ) || manualSemanticFiles.has(file)
+  );
+}
+function reviewedContent(files: Record<string, string>) {
+  return Object.fromEntries(
+    Object.entries(files).filter(([file]) => requiresManualContentReview(file)),
+  );
+}
+export function manualContentFileHashes() {
+  return Object.fromEntries(
+    manualReviewedPaths()
+      .filter(requiresManualContentReview)
+      .map((file) => [file, fileHash(file)]),
+  );
+}
 export function manualBundleHash(files: Record<string, string>) {
   return createHash("sha256")
     .update(
@@ -647,7 +709,7 @@ export function manualPublicationErrors({ requireReview = true } = {}) {
     }
     if (requireReview) {
       const publication = manualPublication(),
-        files = manualFileHashes();
+        files = manualContentFileHashes();
       if (
         publication.review.decision !== "pass" ||
         publication.review.findings.some((f) => f.severity === "blocking")
@@ -659,10 +721,14 @@ export function manualPublicationErrors({ requireReview = true } = {}) {
         publication.version !== "0.1.0"
       )
         errors.push("Review covers a different release");
+      // Validate the complete original receipt before projecting its content
+      // scope. Legacy infrastructure hashes remain historical review evidence;
+      // they are never rewritten to pretend new website code was reviewed.
       if (
-        !isDeepStrictEqual(publication.reviewedFiles, files) ||
-        publication.bundleHash !== manualBundleHash(files)
+        publication.bundleHash !== manualBundleHash(publication.reviewedFiles)
       )
+        errors.push("Manual review manifest integrity mismatch");
+      if (!isDeepStrictEqual(reviewedContent(publication.reviewedFiles), files))
         errors.push("Manual changed after independent review");
       if (
         publication.reviewer.authentication !== "chatgpt" ||

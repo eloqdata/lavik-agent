@@ -126,16 +126,36 @@ Codex session. A pass writes `evidence/manual/0.1.0/publication.json`, binding
 source, content, test code, receipts, renderer and client configuration to
 SHA-256 hashes. A failed review leaves the bundle unpublished; correct the
 reported issues, rerun affected Docker tests, and use the remaining review
-attempt. Changes made during or after review invalidate the approval.
+attempt. Changes to reviewed manual content, evidence, or meaning-bearing code
+during or after review invalidate its approval.
 
-`npm run check` includes the manual publication gate. Both the page renderer
-and manifest export also require valid evidence and review, so running Next
-directly does not bypass validation. The review includes these export paths,
-the package scripts and the CI workflow. Push the approved bundle
-to `main` to use the existing GitHub → Cloudflare deployment workflow. This
-deployment does not run a model. Verify `/manual-manifest.json` and the live
-command/client pages after CI succeeds. The website contains the English and
-Chinese editions under `/en/docs/0.1.0/` and `/zh-CN/docs/0.1.0/`.
+On September 29, 2026, the owner requested automatic deployment for repository
+pushes without local testing. Website deployment and manual content approval now
+have separate scopes. Push to `main`; GitHub runs the Linux verification, content
+checks, build, and browser suites, then deploys the tested artifacts to Cloudflare
+and verifies the live revision. No local test run, local server, or model call is
+required for a website-only change. Pull requests verify without deploying.
+
+`npm run check` includes the manual publication gate. Both the page renderer and
+manifest export still require valid evidence and review, so invoking Next directly
+does not bypass content validation. The gate binds versioned prose, commands,
+clients, source/evidence files, verification inputs, package contents, and code
+that determines the meaning of the manual. Website-only files such as homepage
+animations, styles, navigation, dependency lockfiles, and CI configuration are
+validated by GitHub CI instead of invalidating unchanged manual approval.
+
+The original review manifest and its digest remain intact. The gate checks its
+integrity, then requires an exact match of the current manual-content subset,
+including its file inventory. It never stamps new website bytes as independently
+reviewed. Full-bundle infrastructure review remains available through
+`scripts/review-site.ts`, but is optional for website-only changes. Changes to
+technical content and independent article approvals retain their existing review
+requirements. `/manual-manifest.json` reports `reviewScope: manual-content`, the
+current `contentBundleHash`, and the original review's `bundleHash`. Live
+deployment identity is reported separately by `/discovery-manifest.json`.
+
+The website contains the English and Chinese editions under `/en/docs/0.1.0/`
+and `/zh-CN/docs/0.1.0/`. CI performs the live verification after deployment.
 
 For another release, add a separate version directory, release lock, source
 inventory, examples, receipts and review. Do not overwrite 0.1.0 evidence

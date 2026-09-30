@@ -110,9 +110,16 @@ export function Homepage({
             </div>
             <div className="dual-cost-chart">
               <p className="dual-chart-label">
+                <Link href={`/${locale}/cost/`}>
+                  {zh
+                    ? "容量成本模型 · 20:1 DRAM / NVMe SSD 单价"
+                    : "Capacity-cost model · 20:1 DRAM / NVMe SSD prices"}{" "}
+                  ↗
+                </Link>
+                <br />
                 {zh
-                  ? "容量成本 · Redis = 100%"
-                  : "Capacity cost · Redis = 100%"}
+                  ? "Redis = 100% · Valkey 为内存用量示例"
+                  : "Redis = 100% · Valkey: memory-use example"}
               </p>
               {rows.map((row) => {
                 const lavik = row.name.startsWith("Lavik ");
@@ -167,10 +174,23 @@ export function Homepage({
       </section>
       <details className="dual-method container">
         <summary>
-          {zh ? "测试条件与适用范围" : "Test conditions & scope"}{" "}
+          {zh ? "测试条件与成本假设" : "Benchmark & cost assumptions"}{" "}
           <span>SPDK · {benchmarkDate}</span>
         </summary>
         <p>{benchmarkScope}</p>
+        <p>
+          {zh
+            ? "值容量模型假设 DRAM 与 NVMe SSD 每 GiB 单价为 20:1，因此 Lavik 的值容量成本为 Redis 的 5%。索引内存、复制与共同服务器成本另计。Valkey 的 80% 来自 Dragonfly 网站的独立内存示例（400 GB 对 Redis 的 500 GB），在相同 DRAM 单价下推导；这些比例并非与 Lavik 在相同工作负载下的实测成本。"
+            : "The value-capacity model assumes DRAM costs 20× as much per GiB as NVMe SSD, yielding Lavik’s 5% bar. Index memory, replication, and shared server costs are additional. Valkey’s 80% uses the separate Dragonfly website memory example (400 GB versus Redis’s 500 GB), at equal DRAM unit prices. These ratios are not measured same-workload costs against Lavik."}{" "}
+          <Link href={`/${locale}/cost/`}>
+            {zh ? "成本计算方法" : "Cost methodology"} ↗
+          </Link>
+          {" · "}
+          <a href={costReference.sourceUrl}>
+            {zh ? "内存示例来源" : "Memory example source"} (
+            {costReference.observedOn}) ↗
+          </a>
+        </p>
       </details>
       <HomepageStory
         locale={locale}

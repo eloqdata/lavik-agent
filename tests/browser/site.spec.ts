@@ -58,7 +58,11 @@ test("both languages, benchmark interaction, and real verification output", asyn
           ).toHaveAttribute("style", `width:${width}`);
         }
         await expect(page.locator(".dual-source-links a")).toHaveCount(1);
-        await expect(page.locator(".dual-sources > p")).toHaveCount(0);
+        await expect(page.locator(".dual-chart-label")).toContainText("20:1");
+        await expect(page.locator(".dual-chart-label a")).toHaveAttribute(
+          "href",
+          `/${locale}/cost/`,
+        );
         await expect(page.locator(".dual-description")).toContainText(
           locale === "en"
             ? "Our capacity cost is just 1/20 of Redis."
@@ -76,7 +80,17 @@ test("both languages, benchmark interaction, and real verification output", asyn
         );
         await expect(page.locator(".prototype-switcher")).toHaveCount(0);
         await page.locator(".dual-method summary").click();
-        await expect(page.locator(".dual-method p")).toBeVisible();
+        await expect(page.locator(".dual-method p").first()).toBeVisible();
+        await expect(page.locator(".dual-method p").last()).toContainText(
+          "400 GB",
+        );
+        await expect(page.locator(".dual-method p").last()).toContainText(
+          "500 GB",
+        );
+        await expect(page.locator(".dual-method a").last()).toHaveAttribute(
+          "href",
+          "https://www.dragonflydb.io/",
+        );
       }
     }
   }
@@ -193,7 +207,12 @@ test("selected homepage is exported without JavaScript and preview queries canno
           ? "Our capacity cost is just 1/20 of Redis."
           : "容量成本仅为 Redis 的 1/20。",
       );
-      await expect(page.locator(".dual-sources > p")).toHaveCount(0);
+      await expect(page.locator(".dual-chart-label")).toContainText("20:1");
+      await expect(page.locator(".dual-method")).toContainText(
+        locale === "en"
+          ? "not measured same-workload costs"
+          : "并非与 Lavik 在相同工作负载下的实测成本",
+      );
       await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
         "href",
         `https://lavik.dev/${locale}/`,

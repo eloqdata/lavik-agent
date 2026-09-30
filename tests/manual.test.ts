@@ -11,13 +11,14 @@ import {
 import {
   manualEvidenceErrors,
   manualPublicationErrors,
-  manualFileHashes,
+  manualContentFileHashes,
+  manualBundleHash,
   requireReviewedManual,
 } from "../packages/manual/gate";
 
 test("changes to evidence-reading dependencies invalidate the direct Next export guard", (t) => {
   assert.deepEqual(manualPublicationErrors(), []);
-  const reviewed = manualFileHashes();
+  const reviewed = manualContentFileHashes();
   const original = fs.readFileSync.bind(fs);
   let changed = "";
   t.mock.method(fs, "readFileSync", ((
@@ -37,12 +38,14 @@ test("changes to evidence-reading dependencies invalidate the direct Next export
     "evidence/sources.json",
     "content/claims.json",
     "verification/recipes.json",
-    "package-lock.json",
-    "tsconfig.json",
-    "apps/web/next.config.ts",
+    "content/manual/0.1.0/catalog.json",
+    "apps/web/components/manual.tsx",
+    "apps/web/components/user-guide.tsx",
+    "apps/web/app/(site)/[locale]/[...slug]/page.tsx",
+    "packages/manual/gate.ts",
   ]) {
     changed = file;
-    assert.notEqual(manualFileHashes()[file], reviewed[file], file);
+    assert.notEqual(manualContentFileHashes()[file], reviewed[file], file);
     assert.ok(
       manualPublicationErrors().includes(
         "Manual changed after independent review",
@@ -51,6 +54,79 @@ test("changes to evidence-reading dependencies invalidate the direct Next export
     );
     // The page renderers and manifest invoke this same guard directly, even
     // when npm's content:check step is skipped with `next build apps/web`.
+    assert.throws(
+      () => requireReviewedManual(),
+      /Manual changed after independent review/,
+    );
+  }
+});
+
+test("website-only edits deploy through CI without invalidating manual content approval", (t) => {
+  const original = fs.readFileSync.bind(fs);
+  let changed = "";
+  t.mock.method(fs, "readFileSync", ((
+    file: fs.PathOrFileDescriptor,
+    ...args: unknown[]
+  ) => {
+    if (changed && String(file).endsWith(changed))
+      throw new Error(
+        `Website file should not be read by content approval: ${changed}`,
+      );
+    return Reflect.apply(original, fs, [file, ...args]);
+  }) as typeof fs.readFileSync);
+  for (const file of [
+    "apps/web/components/homepage.tsx",
+    "apps/web/components/homepage-motion.tsx",
+    "apps/web/components/homepage-motion.css",
+    "packages/homepage/motion.ts",
+    "apps/web/app/styles.css",
+    "tests/browser/site.spec.ts",
+    "package-lock.json",
+    "tsconfig.json",
+    "apps/web/next.config.ts",
+    ".github/workflows/ci.yml",
+  ]) {
+    changed = file;
+    assert.equal(file in manualContentFileHashes(), false, file);
+    assert.deepEqual(manualPublicationErrors(), [], file);
+    assert.doesNotThrow(() => requireReviewedManual(), file);
+  }
+});
+
+test("content projection preserves receipt integrity and rejects missing or removed content bindings", (t) => {
+  const original = fs.readFileSync.bind(fs);
+  let mutation = "digest";
+  t.mock.method(fs, "readFileSync", ((
+    file: fs.PathOrFileDescriptor,
+    ...args: unknown[]
+  ) => {
+    const result = Reflect.apply(original, fs, [file, ...args]);
+    if (!String(file).endsWith("evidence/manual/0.1.0/publication.json"))
+      return result;
+    const publication = JSON.parse(String(result));
+    if (mutation === "digest") publication.bundleHash = "0".repeat(64);
+    else {
+      if (mutation === "missing")
+        delete publication.reviewedFiles["apps/web/components/manual.tsx"];
+      else
+        publication.reviewedFiles["packages/docs/removed-guide.json"] =
+          "0".repeat(64);
+      publication.bundleHash = manualBundleHash(publication.reviewedFiles);
+    }
+    return JSON.stringify(publication);
+  }) as typeof fs.readFileSync);
+  assert.ok(
+    manualPublicationErrors().includes(
+      "Manual review manifest integrity mismatch",
+    ),
+  );
+  for (mutation of ["missing", "removed"]) {
+    assert.ok(
+      manualPublicationErrors().includes(
+        "Manual changed after independent review",
+      ),
+      mutation,
+    );
     assert.throws(
       () => requireReviewedManual(),
       /Manual changed after independent review/,
