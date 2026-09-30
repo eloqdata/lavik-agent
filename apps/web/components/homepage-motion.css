@@ -1,4 +1,9 @@
 /* Selected K direction: title beats, chart reveals, then scroll-driven illustrations. */
+.homepage-motion {
+  /* Scroll-driven transforms must not make native scroll anchoring move the
+     viewport in response, especially when focusing controls below a reveal. */
+  overflow-anchor: none;
+}
 .homepage-motion[data-motion="active"] .dual-intro h1 > *,
 .homepage-motion[data-motion="active"] .dual-evidence > * {
   animation: homepage-rise 0.85s cubic-bezier(0.16, 1, 0.3, 1) both;
