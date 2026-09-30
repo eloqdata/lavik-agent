@@ -1,0 +1,126 @@
+{
+  "id": "lavik-field-notes-2026-09-30",
+  "locale": "en",
+  "version": "0.1.0",
+  "kind": "blog",
+  "slug": "lavik-field-notes-2026-09-30",
+  "title": "Choose the latency budget before the connection count",
+  "summary": "Lavik’s September 18 SPDK sweep shows why the highest-throughput point may be the wrong operating point. A latency-constrained reading reveals a different comparison.",
+  "updatedAt": "2026-09-30",
+  "topics": [
+    "benchmark",
+    "best-practise"
+  ],
+  "blocks": [
+    {
+      "type": "paragraph",
+      "text": "When sizing a Redis-compatible service, the useful number is often the throughput that fits your latency budget. Lavik’s September 18 SPDK benchmark makes that distinction concrete: doubling connections beyond its 10-million-key GET peak reduced throughput while sharply increasing p99. For teams considering NVMe-backed value capacity, the connection sweep is more useful than the winning bar alone.",
+      "sources": [
+        "benchmark-spdk",
+        "benchmark-spdk-data"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "Lavik is an Apache 2.0 beta project that keeps a compact key index in DRAM and stores values on storage. The benchmark used the downloaded standard 0.1.0-beta.1 package at revision 3955b98d43b312324aa8d52775df52cfb111c0d0, with SPDK storage and kernel TCP. Its results do not describe the minimal package’s io_uring path.",
+      "sources": [
+        "readme",
+        "benchmark-spdk",
+        "build"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "The point after the peak matters"
+    },
+    {
+      "type": "paragraph",
+      "text": "For 10 million keys with 1 KiB values, Lavik delivered 803,016 GET QPS at 320 connections with 0.959 ms p99. At 640 connections, throughput reached 1,012,180 QPS and p99 rose to 3.599 ms. At 1,280 connections, throughput fell to 940,713 QPS while p99 reached 9.791 ms. More outstanding work bought no additional throughput at that last point. These measurements identify an unfavorable operating point, although they do not isolate its internal cause.",
+      "sources": [
+        "benchmark-spdk-data"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "Average latency also helps explain what the connection count means. With pipeline=1, each connection has at most one request outstanding. At the 640-connection point, roughly 1.012 million requests per second multiplied by 0.632 ms average latency gives about 640 outstanding requests. At 1,280 connections, roughly 941,000 requests per second multiplied by 1.360 ms gives about 1,279. This arithmetic describes the measured request population; p99 cannot replace the average in that calculation.",
+      "sources": [
+        "benchmark-spdk",
+        "benchmark-spdk-data"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "An illustrative 1 ms budget changes the selection"
+    },
+    {
+      "type": "paragraph",
+      "text": "Suppose the selection rule is a client-observed GET p99 below 1 ms. This is an illustrative filter, not a promised SLA. Among the supplied 10M-key measurements, Lavik’s highest qualifying throughput was 803,016 QPS at 320 connections, with 0.959 ms p99. Redis 8.8.0’s was 769,130 QPS with 16 I/O threads and 320 connections, at 0.975 ms p99. Valkey 9.1.0’s was 692,905 QPS with 16 I/O threads and 160 connections, at 0.519 ms p99. Each result is the best qualifying sampled point across that product’s supplied configurations, not an interpolated limit.",
+      "sources": [
+        "benchmark-spdk-data"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "For Valkey, that filter retains the 16-I/O-thread configuration used in the report’s peak GET comparison, but changes the selected connection count from 1,280 to 160. It also exposes a percentile tradeoff: at those three qualifying points, p99.9 was 2.023 ms for Lavik, 1.663 ms for Redis, and 0.815 ms for Valkey. Meeting a p99 threshold does not establish the same result at p99.9. Lavik’s 0.959 ms p99 also leaves little margin below the illustrative threshold; a single 30-second observation cannot establish reliable operating headroom.",
+      "sources": [
+        "benchmark-spdk",
+        "benchmark-spdk-data"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "Keep the workload attached to the number"
+    },
+    {
+      "type": "paragraph",
+      "text": "The server had an AMD EPYC 9V74, eight physical cores / 16 logical CPUs, approximately 126 GiB RAM, and six NVMe devices. The client ran on a separate host. The 10M group used uniform random GET or overwriting SET, 1,024-byte values, pipeline=1, no rate limit, and 30-second windows across 80–1,280 connections. Its default correlated client seeds are part of the scope. This is a concurrency-driven sweep, so it does not establish how the service handles an independently imposed arrival rate or a burst while preserving a latency target.",
+      "sources": [
+        "benchmark-spdk"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "The independent billion-key group used 60-second windows, distinct client seeds, and a sweep extending to 2,560 connections. Lavik’s GET peak was 952,560 QPS at 640 connections with 3.599 ms p99. The matching p99 number from the smaller dataset does not make the workloads interchangeable. Writes give another reason to retain both metrics: Lavik peaked at 764,939 SET QPS with 10.879 ms p99, while Garnet 2.1.5 peaked at 751,057 QPS with 5.535 ms p99; both points used 1,280 connections. A throughput-only ranking hides that write-tail difference.",
+      "sources": [
+        "benchmark-spdk"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "The report contains 22 newly measured Lavik SPDK points and 124 reused peer-control points from an earlier sweep on the same hosts. Products ran sequentially, once per command, connection count, and thread configuration. Cache policies, warmup, memory reservations, and persistence settings differ; Redis and Valkey had AOF and automatic snapshots disabled. All formal points reported zero connection errors and measured GETs had zero misses, but Garnet’s post-test exact count and value-length check remain unverified. Those checks and short windows cannot establish equal crash durability or an SLA.",
+      "sources": [
+        "benchmark-spdk"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "Turn the sweep into an evaluation decision"
+    },
+    {
+      "type": "paragraph",
+      "text": "For your own evaluation, write down the required throughput, p99 and p99.9 budgets, and acceptable failure semantics before choosing concurrency. Then measure representative value sizes, access skew, command mix, and pipeline depth across a connection sweep. Include sustained overwrites and background reclamation, and repeat measurements around the candidate operating point. The decision should be whether that point retains margin under your traffic; the supplied results are a starting hypothesis for this work.",
+      "sources": [
+        "benchmark-spdk",
+        "benchmark-spdk-data",
+        "storage"
+      ]
+    },
+    {
+      "type": "claim",
+      "claimId": "durability"
+    },
+    {
+      "type": "paragraph",
+      "text": "Begin with the basic-commands recipe below to check a local installation, then move to application-specific compatibility and load evaluation. The recipe uses a different storage path from the SPDK benchmark and does not reproduce its performance. Consult Platform and packaging for Linux, io_uring, and glibc requirements. The existing article “Evaluate the Redis client’s second attempt” is a useful companion when planning compatibility checks.",
+      "sources": [
+        "build",
+        "readme",
+        "benchmark-spdk"
+      ]
+    },
+    {
+      "type": "recipe",
+      "recipeId": "basic-commands"
+    }
+  ]
+}

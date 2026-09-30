@@ -1,0 +1,126 @@
+{
+  "id": "lavik-field-notes-2026-09-30",
+  "locale": "zh-CN",
+  "version": "0.1.0",
+  "kind": "blog",
+  "slug": "lavik-field-notes-2026-09-30",
+  "title": "先定延迟预算，再选连接数",
+  "summary": "Lavik 9 月 18 日的 SPDK 连接数扫描说明，吞吐量最高的测量点未必适合作为运行点。加上延迟约束后，比较结果会发生变化。",
+  "updatedAt": "2026-09-30",
+  "topics": [
+    "benchmark",
+    "best-practise"
+  ],
+  "blocks": [
+    {
+      "type": "paragraph",
+      "text": "为 Redis 兼容服务规划容量时，更有用的数字往往是满足延迟预算的吞吐量。Lavik 9 月 18 日的 SPDK 基准给出了一个具体例子：在一千万键 GET 测试中，越过吞吐量峰值后再将连接数翻倍，吞吐量反而下降，p99 则明显升高。对于考虑用 NVMe 承载值数据的团队，完整的连接数扫描比最高的一根柱子更有参考价值。",
+      "sources": [
+        "benchmark-spdk",
+        "benchmark-spdk-data"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "Lavik 是采用 Apache 2.0 许可证的 beta 项目，在 DRAM 中保留紧凑的键索引，将值放在存储设备上。本次基准使用下载的标准版 0.1.0-beta.1 软件包，源码修订为 3955b98d43b312324aa8d52775df52cfb111c0d0，存储采用 SPDK，网络采用内核 TCP。这些结果不代表 minimal 软件包的 io_uring 路径。",
+      "sources": [
+        "readme",
+        "benchmark-spdk",
+        "build"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "峰值之后的测量点同样重要"
+    },
+    {
+      "type": "paragraph",
+      "text": "在一千万键、每个值 1 KiB 的测试中，Lavik 在 320 个连接下达到 803,016 GET QPS，p99 为 0.959 ms。连接数增加到 640 时，吞吐量达到 1,012,180 QPS，p99 升至 3.599 ms。再增加到 1,280 个连接，吞吐量降至 940,713 QPS，p99 则达到 9.791 ms。最后一个点中，更多在途请求没有换来更高吞吐量。这些测量揭示了一个不利的运行点，但没有单独确定其内部成因。",
+      "sources": [
+        "benchmark-spdk-data"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "平均延迟也有助于解释连接数的含义。pipeline=1 时，每个连接最多有一个在途请求。在 640 连接的测量点，每秒约 101.2 万次请求乘以 0.632 ms 平均延迟，得到约 640 个在途请求。在 1,280 连接的测量点，每秒约 94.1 万次请求乘以 1.360 ms，得到约 1,279 个。这个算式描述了测量中的在途请求数量；不能用 p99 替代其中的平均延迟。",
+      "sources": [
+        "benchmark-spdk",
+        "benchmark-spdk-data"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "假设以 1 ms 为预算，选择就会改变"
+    },
+    {
+      "type": "paragraph",
+      "text": "假设筛选条件是客户端观测到的 GET p99 低于 1 ms。这只是示例条件，并非 SLA 承诺。在提供的一千万键测量中，Lavik 满足条件的最高吞吐量为 803,016 QPS，对应 320 个连接，p99 为 0.959 ms。Redis 8.8.0 为 769,130 QPS，使用 16 个 I/O 线程、320 个连接，p99 为 0.975 ms。Valkey 9.1.0 为 692,905 QPS，使用 16 个 I/O 线程、160 个连接，p99 为 0.519 ms。每个结果都是该产品所有已提供配置中满足条件的最佳实测点，没有通过插值推算极限。",
+      "sources": [
+        "benchmark-spdk-data"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "对于 Valkey，这个筛选条件仍然选中报告峰值 GET 比较所用的 16 个 I/O 线程配置，但将选中的连接数从 1,280 改为 160。它还揭示了不同延迟分位之间的取舍：上述三个合格点的 p99.9 分别为 Lavik 2.023 ms、Redis 1.663 ms、Valkey 0.815 ms。满足 p99 门槛，并不意味着 p99.9 也有相同表现。此外，Lavik 的 0.959 ms p99 距离示例门槛很近；单次 30 秒观测无法证明运行时有可靠的余量。",
+      "sources": [
+        "benchmark-spdk",
+        "benchmark-spdk-data"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "数字必须与工作负载一起阅读"
+    },
+    {
+      "type": "paragraph",
+      "text": "服务端采用 AMD EPYC 9V74，拥有 8 个物理核心、16 个逻辑 CPU、约 126 GiB 内存和六块 NVMe 设备，客户端位于另一台主机。一千万键组采用均匀随机 GET 或覆盖式 SET，值大小为 1,024 字节，pipeline=1，不限速，在 80–1,280 个连接之间扫描，每个窗口为 30 秒。默认的相关客户端随机种子也是测试范围的一部分。这是由并发数驱动的扫描，无法据此确定服务在外部独立施加的请求到达率或突发流量下，能否维持延迟目标。",
+      "sources": [
+        "benchmark-spdk"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "独立的十亿键组采用 60 秒窗口、各客户端独立的随机种子，并将连接数扫描扩展到 2,560。Lavik 的 GET 峰值为 952,560 QPS，对应 640 个连接，p99 为 3.599 ms。这个 p99 与小数据集中的数字相同，并不意味着两种工作负载可以互换。写入结果进一步说明为什么要同时保留两个指标：Lavik 的 SET 峰值为 764,939 QPS，p99 为 10.879 ms；Garnet 2.1.5 的峰值为 751,057 QPS，p99 为 5.535 ms。两者都对应 1,280 个连接。只看吞吐量排名，会隐藏这一写入尾延迟差异。",
+      "sources": [
+        "benchmark-spdk"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "报告包含 22 个新测量的 Lavik SPDK 数据点，以及从相同主机上较早一次扫描复用的 124 个对照产品数据点。各产品依次运行，每种命令、连接数和线程配置只测量一次。缓存策略、预热、内存预留和持久化设置存在差异；Redis 和 Valkey 关闭了 AOF 与自动快照。所有正式测量点均报告零连接错误，实测 GET 均无未命中，但 Garnet 测试后的精确键数和值长度检查尚未验证。这些检查和短时间窗口无法证明相同的崩溃持久性或 SLA。",
+      "sources": [
+        "benchmark-spdk"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "把连接数扫描变成评估决策"
+    },
+    {
+      "type": "paragraph",
+      "text": "开展自己的评估时，先明确所需吞吐量、p99 与 p99.9 预算，以及可接受的故障语义，再选择并发数。随后用有代表性的值大小、访问偏斜、命令组合和流水线深度进行连接数扫描。加入持续覆盖写入和后台空间回收，并在候选运行点附近重复测量。决策依据应是该运行点在实际流量下是否仍有余量；这里的结果可以作为这项工作的初始假设。",
+      "sources": [
+        "benchmark-spdk",
+        "benchmark-spdk-data",
+        "storage"
+      ]
+    },
+    {
+      "type": "claim",
+      "claimId": "durability"
+    },
+    {
+      "type": "paragraph",
+      "text": "可以先用下面的 basic-commands 操作配方检查本地安装，再进行应用所需的兼容性与负载评估。该配方使用的存储路径与 SPDK 基准不同，不能复现其性能。Linux、io_uring 和 glibc 要求请参阅“Platform and packaging（平台与软件包）”。规划兼容性检查时，也可以配合阅读已有文章“Evaluate the Redis client’s second attempt（评估 Redis 客户端的第二次尝试）”。",
+      "sources": [
+        "build",
+        "readme",
+        "benchmark-spdk"
+      ]
+    },
+    {
+      "type": "recipe",
+      "recipeId": "basic-commands"
+    }
+  ]
+}
