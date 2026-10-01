@@ -23,7 +23,7 @@ export function Header({ locale }: { locale: Locale }) {
       <div className="container header-inner">
         <Link href={`/${locale}/`} className="wordmark" aria-label="Lavik home">
           <Mark />
-          lavik<span className="version-pill">0.1.0 beta</span>
+          Lavik<span className="version-pill">0.1.0 beta</span>
         </Link>
         <nav aria-label={zh ? "主导航" : "Main navigation"}>
           <Link href={`/${locale}/download/`}>{zh ? "下载" : "Download"}</Link>
