@@ -1,0 +1,149 @@
+{
+  "id": "lavik-field-notes-2026-10-02",
+  "locale": "en",
+  "version": "0.1.0",
+  "kind": "blog",
+  "slug": "lavik-field-notes-2026-10-02",
+  "title": "Size session context for what expires—and what remains",
+  "summary": "Moving reconstructable session context to SSD changes the capacity budget. TTL visibility, index removal, physical reclamation, and authoritative login state still need separate decisions.",
+  "updatedAt": "2026-10-05",
+  "topics": [
+    "use-case",
+    "best-practise",
+    "architecture"
+  ],
+  "blocks": [
+    {
+      "type": "paragraph",
+      "text": "Retaining session context can spare an application repeated reconstruction of recently viewed items, intermediate workflow results, or derived personalization data. The sizing question is how much context remains worth keeping after activity stops. Lavik’s compact DRAM key index and SSD value storage make it a candidate for evaluating longer retention, but TTL expiration does not release every resource at once. This article proposes an application design and evaluation plan; it does not describe a customer deployment.",
+      "sources": [
+        "readme",
+        "storage"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "Start by separating reconstructable context from authoritative login state. Define reconstructable narrowly: losing the context causes a miss and a rebuild from an authoritative source, without restoring permissions or changing identity. Token validity, logout, revocation, and privilege changes require their own correctness contract. Lavik 0.1.0-beta.1 is an Apache 2.0 beta project, and an ordinary successful write response is not a synchronous durability fence. A context-retention experiment therefore cannot establish suitability as the authority for login decisions.",
+      "sources": [
+        "readme",
+        "storage"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "For this proposed design, keep authorization checks tied to the authoritative system and treat stored context as disposable input. Make misses, stale versions, and rebuild failures explicit application outcomes. If a context field can grant access, include it in the authorization review even if the application calls it a cache. A successful TTL update or deletion must not be assumed to prove that an acknowledged security change will survive a crash.",
+      "sources": [
+        "storage",
+        "architecture"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "Give retention three separate budgets"
+    },
+    {
+      "type": "paragraph",
+      "text": "The first budget is visible context. For fixed TTLs with no refresh or early deletion, a steady-state starting estimate is the rate of newly created distinct context keys multiplied by their retention time. As an illustrative planning assumption—not a measurement—100 new keys per second retained for one hour gives 360,000 live keys. At an assumed mean value size of 8 KiB, that is about 2.75 GiB of value payload. It excludes keys, indexes, record metadata, old versions, buffers, and replicas. With sliding TTLs, estimate retention from actual refresh and abandonment behavior; request rate multiplied by TTL would count repeated activity as new sessions.",
+      "sources": [
+        "storage"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "The second budget is retained index memory. Lavik hides expired values from reads immediately, while bounded background expiration rechecks the current version and deadline before acting. Its preferred deletion writes a tombstone so an older value cannot reappear after clock rollback. A tombstone retains an index slot; erasing the entry enables incremental bucket shrinking. Consequently, the number of contexts an application can still read can fall before retained index memory falls. Measure both, and distinguish retained-memory accounting from process RSS: Lavik’s memory limit is not a strict RSS ceiling.",
+      "sources": [
+        "storage"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "The third budget is reusable device capacity. Overwrites append new record versions, and the old durable version remains live in physical accounting until its replacement’s flush completes. Ordinary record blocks become defrag candidates only when durable, inactive, unpinned, and at most 50 percent live. Relocation must reach durable destinations before the source can be reclaimed. A cohort of expired sessions can therefore leave obsolete records scattered among blocks containing live records. Budget for that interval instead of treating expired payload bytes as immediately available capacity.",
+      "sources": [
+        "storage"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "TTL governs read visibility; it is not a physical-erasure deadline. Logical expiry, index removal, and block reuse are distinct events in Lavik’s storage lifecycle. If retained context has a physical-deletion requirement, evaluate that separately: the supplied architecture does not establish secure erasure, and even the explicit storage reset is described as a logical reset rather than a secure erase.",
+      "sources": [
+        "storage"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "These budgets suggest a specific workload question: do sessions expire together, or does activity keep refreshing a subset among abandoned contexts? Those patterns can have the same visible payload total while leaving different mixes of live and obsolete records. Lavik exposes per-device available capacity, durability state, and maintenance statistics to investigate the difference. Its architecture describes reclamation mechanisms; it does not supply a measured session-churn capacity factor.",
+      "sources": [
+        "storage"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "Evaluate an expiration cycle, not just a full load"
+    },
+    {
+      "type": "paragraph",
+      "text": "Define a representative context population: distinct-key creation rate, key and value sizes, TTL distribution, refresh frequency, overwrite frequency, and rebuild cost. Separate fixed-lifetime contexts from sliding sessions. Design a disposable trial covering load, active refresh, abandonment, expiration, and continued admission of new contexts. Include both staggered expiration and a concentrated expiration wave. These are proposed evaluation stages, not tests reported here.",
+      "sources": [
+        "storage",
+        "architecture"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "During the trial, compare application-visible hits and misses with retained memory, RSS, per-device available blocks, dirty staging bytes, pending flushes, and maintenance activity. Continue beyond the first expiration wave while new contexts arrive. Set acceptable foreground latency, reconstruction traffic, and resource headroom before the run. A useful acceptance condition is that repeated retention cycles stay within those limits without a continuing rise in retained memory or unavailable device space. A stable live-key count alone cannot establish that.",
+      "sources": [
+        "storage"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "Review TTL refresh, overwrite, logout, and client retry behavior as separate cases. Plan abrupt-restart checks alongside graceful restart, record which context losses are acceptable, and verify that rebuilding never bypasses authorization. Lavik reconstructs state from committed records; reply-time success and crash durability are separate boundaries. Also include the cost of repopulation when evaluating recovery: the architecture states that a process restart creates a new replication history and requires whole-group full synchronization.",
+      "sources": [
+        "storage",
+        "architecture"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "The supplied host receipt reports that the basic recipe’s five command checks and a graceful restart passed using the ARM64 minimal beta package under Linux 7.0.12-linuxkit with glibc 2.39. That receipt supplies no TTL, abrupt-crash, physical-erasure, or authentication-workflow result. The proposed trial extends beyond this basic validation.",
+      "sources": [
+        "readme",
+        "build",
+        "storage"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "The September 18 SPDK report provides performance background, but its uniform random GET and overwriting SET workloads do not establish session-retention behavior. It used 1 KiB values, pipeline depth one, and 30-second windows for 10 million keys or 60-second windows for one billion keys. Its 22 new Lavik points were compared with 124 reused peer points; io_uring was excluded. TTL churn, reconstruction traffic, and authorization behavior require separate evaluation. Those measurements also do not establish equal crash durability or SLA equivalence.",
+      "sources": [
+        "benchmark-spdk"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "For the deployment estimate, carry all three resource budgets forward and add replication, recovery headroom, and operating costs. Value-capacity arithmetic alone does not establish total-cost savings or an equivalent service commitment. The historical cost report compares dated instance-price estimates across different managed and self-managed service boundaries; it cannot price this session design.",
+      "sources": [
+        "storage",
+        "architecture",
+        "tiering-cost"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "Start with one disposable context cohort"
+    },
+    {
+      "type": "paragraph",
+      "text": "Choose one reconstructable context type, document its authoritative source and miss behavior, and set retention and resource limits. Use the supplied basic-commands recipe to establish a working client connection before building the TTL trial. Published packages require Linux 6.1 or newer, usable io_uring, and compatible glibc; Linux 6.1 is an API floor, not a tested kernel matrix. The minimal package uses kernel networking and io_uring, unlike the SPDK storage backend in the cited benchmark. Extend retention only after observing complete expiration-and-reclamation cycles with acceptable rebuild behavior.",
+      "sources": [
+        "build",
+        "storage",
+        "benchmark-spdk"
+      ]
+    },
+    {
+      "type": "recipe",
+      "recipeId": "basic-commands"
+    }
+  ]
+}
