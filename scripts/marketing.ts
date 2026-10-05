@@ -348,7 +348,7 @@ async function finishDelivery(job: Job) {
   await save();
   console.log(`Published ${job.id}: ${job.urls!.join(" ")}`);
 }
-async function blog(force = false) {
+async function blog(force = false, retryId?: string) {
   if (config.automaticWebsitePublication !== true)
     throw new Error(
       "Automatic website publication is disabled in the marketing schedule",
@@ -368,44 +368,90 @@ async function blog(force = false) {
     await save();
     throw new Error(interrupted.error);
   }
-  if (
-    !force &&
-    (state.paused || !config.enabled || state.nextBlogDate > localDay())
-  )
-    return;
-  const date = localDay(),
-    id = `lavik-field-notes-${date}`,
-    topic =
-      config.topicRotation[state.jobs.length % config.topicRotation.length];
-  if (state.jobs.some((j) => j.id === id))
-    throw new Error(
-      "A job already exists for today; inspect its state instead of creating a duplicate",
-    );
-  const taskDir = path.join(directory, "tasks", id),
-    worktree = path.join(directory, "worktrees", id);
-  await fs.mkdir(taskDir, { recursive: true, mode: 0o700 });
-  await fs.mkdir(path.dirname(worktree), { recursive: true, mode: 0o700 });
-  const job: Job = {
-    id,
-    date,
-    brief: `${topic} Find a specific fresh angle not covered by existing articles. If the evidence cannot support a worthwhile new article, return a blocked review rather than fill the schedule with repetition.`,
-    status: "writing",
-    directory: taskDir,
-    worktree,
-  };
-  state.jobs.push(job);
-  state.nextBlogDate = addDays(date, config.blogIntervalDays);
+  let job: Job;
+  if (retryId) {
+    const existing = state.jobs.find((j) => j.id === retryId);
+    if (
+      !existing ||
+      existing.status !== "needs_attention" ||
+      existing.commit ||
+      !/^[a-z0-9-]{1,80}$/.test(retryId) ||
+      existing.directory !== path.join(directory, "tasks", retryId) ||
+      existing.worktree !== path.join(directory, "worktrees", retryId)
+    )
+      throw new Error(
+        "Retry requires an uncommitted needs_attention job with its original paths",
+      );
+    const files = await fs.readdir(existing.directory);
+    const attempts = files.filter((name) => /^(writer|reviewer)-/.test(name));
+    if (
+      files.includes("prepared.json") ||
+      attempts.length !== 1 ||
+      attempts[0] !== "writer-1"
+    )
+      throw new Error(
+        "Retry supports only a first-writer failure with no review or prepared publication; preserve its original attempts",
+      );
+    job = existing;
+    job.status = "writing";
+    job.error = undefined;
+  } else {
+    if (
+      !force &&
+      (state.paused || !config.enabled || state.nextBlogDate > localDay())
+    )
+      return;
+    const date = localDay(),
+      id = `lavik-field-notes-${date}`,
+      topic =
+        config.topicRotation[state.jobs.length % config.topicRotation.length];
+    if (state.jobs.some((j) => j.id === id))
+      throw new Error(
+        "A job already exists for today; inspect its state instead of creating a duplicate",
+      );
+    const taskDir = path.join(directory, "tasks", id),
+      worktree = path.join(directory, "worktrees", id);
+    await fs.mkdir(taskDir, { recursive: true, mode: 0o700 });
+    await fs.mkdir(path.dirname(worktree), { recursive: true, mode: 0o700 });
+    job = {
+      id,
+      date,
+      brief: `${topic} Find a specific fresh angle not covered by existing articles. If the evidence cannot support a worthwhile new article, return a blocked review rather than fill the schedule with repetition.`,
+      status: "writing",
+      directory: taskDir,
+      worktree,
+    };
+    state.jobs.push(job);
+    state.nextBlogDate = addDays(date, config.blogIntervalDays);
+  }
   await save();
+  const { id, directory: taskDir, worktree } = job;
   const log = path.join(taskDir, "runner.log");
   try {
     await run("git", ["fetch", "origin", "main"], root, log, 120_000);
-    await run(
-      "git",
-      ["worktree", "add", "--detach", worktree, "origin/main"],
-      root,
-      log,
-      60_000,
-    );
+    if (retryId) {
+      if (
+        await run("git", ["status", "--porcelain"], worktree, undefined, 60_000)
+      )
+        throw new Error(
+          "Retry checkout has changes; preserve them and reconcile manually",
+        );
+      await run(
+        "git",
+        ["merge", "--ff-only", "origin/main"],
+        worktree,
+        log,
+        60_000,
+      );
+    } else {
+      await run(
+        "git",
+        ["worktree", "add", "--detach", worktree, "origin/main"],
+        root,
+        log,
+        60_000,
+      );
+    }
     // Install the exact reviewed lock in this checkout; never reuse a possibly
     // different installation from the owner's working tree.
     await run(
@@ -423,16 +469,30 @@ async function blog(force = false) {
       60_000,
     );
     // The cache contains public verified artifacts; private keys and .env are never copied.
-    await fs.symlink(
-      path.join(root, ".cache"),
-      path.join(worktree, ".cache"),
-      "dir",
-    );
+    const cache = path.join(worktree, ".cache"),
+      expectedCache = path.join(root, ".cache");
+    try {
+      await fs.symlink(expectedCache, cache, "dir");
+    } catch (error) {
+      if (
+        (error as NodeJS.ErrnoException).code !== "EEXIST" ||
+        (await fs.readlink(cache)) !== expectedCache
+      )
+        throw error;
+    }
     await run("npm", ["run", "content:check"], worktree, log, 60_000);
     await run("npm", ["run", "verify:prepare"], worktree, log, 10 * 60_000);
     await run(
       process.execPath,
-      ["--import", "tsx", "scripts/blog-task.ts", taskDir, id, job.brief],
+      [
+        "--import",
+        "tsx",
+        "scripts/blog-task.ts",
+        taskDir,
+        id,
+        job.brief,
+        ...(retryId ? ["--resume"] : []),
+      ],
       worktree,
       log,
       45 * 60_000,
@@ -450,7 +510,8 @@ async function blog(force = false) {
       )
     )
       throw new Error("Publication contains unexpected files");
-    await run("npm", ["run", "check"], worktree, log, 15 * 60_000);
+    // Validate publication evidence locally; website tests/build/deployment run in GitHub CI.
+    await run("npm", ["run", "content:check"], worktree, log, 60_000);
     await run("git", ["add", "--", ...prepared.files], worktree, log, 60_000);
     const staged = (
       await run(
@@ -514,7 +575,10 @@ try {
     );
   } else if (command === "report") await report();
   else if (command === "run-now") await blog(true);
-  else if (command === "tick") {
+  else if (command === "retry") {
+    if (!process.argv[3]) throw new Error("Usage: marketing.ts retry JOB_ID");
+    await blog(false, process.argv[3]);
+  } else if (command === "tick") {
     if (state.lastReportWeek !== weekStart())
       try {
         await report();
@@ -524,7 +588,7 @@ try {
     if (!state.paused && config.enabled) await blog();
   } else
     throw new Error(
-      "Use status, check, tick, run-now, pause, resume, recover, report, or link PATH SOURCE CAMPAIGN",
+      "Use status, check, tick, run-now, pause, resume, recover, retry JOB_ID, report, or link PATH SOURCE CAMPAIGN",
     );
 } finally {
   ownership.release();

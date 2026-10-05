@@ -93,6 +93,7 @@ npm run marketing:tick
 node --import tsx scripts/marketing.ts pause
 node --import tsx scripts/marketing.ts resume
 node --import tsx scripts/marketing.ts recover
+node --import tsx scripts/marketing.ts retry lavik-field-notes-YYYY-MM-DD
 node --import tsx scripts/marketing.ts run-now
 npm run marketing:report
 ```
@@ -111,6 +112,16 @@ directories to obtain more model calls. A stopped writer becomes `needs_attentio
 and retains its draft and logs. Inspect the reason and fix the underlying problem;
 subsequent scheduled dates may select another article. A committed article awaiting
 deployment is reconciled before generating a new one, without calling a writer.
+
+Deterministic draft validation findings go back to the writer within the same
+two-attempt budget. Invalid drafts are saved with their findings and never sent
+to review or publication. An explicit `retry JOB_ID` can recover a task stopped
+after its first successful writer call and before any review or preparation. It
+keeps the original attempt directory, verifies saved writer provenance, uses only
+the remaining writer correction, and requires a fresh independent review. It
+fast-forwards a clean task checkout to current main without resetting changes or
+advancing the scheduled next date. Exhausted or partly published tasks are not
+automatically regenerated.
 
 A coordinator crash leaves its lock closed. Child process groups are recorded
 before they may execute and stop if their coordinator dies. Inspect the saved
@@ -132,8 +143,10 @@ model-generated shell commands are not executed.
 
 The existing content/publication gate binds the exact articles, evidence, policy,
 and renderer. The publisher stages only the new article and its evidence, runs
-repository checks, commits both languages, pushes to main without force, and waits
-for CI. Published means the live publication manifest and both page content hashes
+the content gate, commits both languages, pushes to main without force, and waits
+for GitHub CI to run website tests, build, and deploy. The local scheduler does not
+run website test suites or builds; Docker verification of article examples remains
+required. Published means the live publication manifest and both page content hashes
 match. A non-fast-forward push is preserved for reconciliation; it never overwrites
 another contributor's work. New source snapshots or arbitrary examples require a
 separate reviewed repository change before a scheduled writer can use them.
