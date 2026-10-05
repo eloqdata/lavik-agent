@@ -430,8 +430,21 @@ async function blog(force = false, retryId?: string) {
   try {
     await run("git", ["fetch", "origin", "main"], root, log, 120_000);
     if (retryId) {
+      // Older checkouts ignore .cache/ directories but expose our shared-cache symlink.
+      // Exclude only that verified symlink when checking for work to preserve.
       if (
-        await run("git", ["status", "--porcelain"], worktree, undefined, 60_000)
+        (await fs.readlink(path.join(worktree, ".cache"))) !==
+        path.join(root, ".cache")
+      )
+        throw new Error("Retry checkout has an unexpected cache path");
+      if (
+        await run(
+          "git",
+          ["status", "--porcelain", "--", ".", ":(exclude).cache"],
+          worktree,
+          undefined,
+          60_000,
+        )
       )
         throw new Error(
           "Retry checkout has changes; preserve them and reconcile manually",
