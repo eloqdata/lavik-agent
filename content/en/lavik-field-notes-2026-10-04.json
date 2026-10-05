@@ -1,0 +1,132 @@
+{
+  "id": "lavik-field-notes-2026-10-04",
+  "locale": "en",
+  "version": "0.1.0",
+  "kind": "blog",
+  "slug": "lavik-field-notes-2026-10-04",
+  "title": "The cache still has ten million keys. Its payloads got bigger.",
+  "summary": "Growing cached objects changes more than capacity. A hypothetical payload expansion shows how Lavik shifts pressure toward response bytes, replacement writes, and storage reclamation.",
+  "updatedAt": "2026-10-05",
+  "topics": [
+    "architecture",
+    "best-practise"
+  ],
+  "blocks": [
+    {
+      "type": "paragraph",
+      "text": "A cached object gains more fields, but its key and request rate stay the same. The capacity graph rises even though the application is doing the same number of lookups. Lavik’s DRAM key index and SSD value storage make this situation worth examining: larger values need not all fit in RAM, but every replacement and response still has bytes to move. For an infrastructure review, payload growth deserves its own workload budget.",
+      "sources": [
+        "readme",
+        "storage"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "Consider a hypothetical cache containing ten million serialized objects stored as String values. Their keys, expiration policy, and access distribution remain unchanged, while each value grows from 1 KiB to 8 KiB. Live value bytes rise from 10.24 GB to 81.92 GB, using decimal GB. These are payload calculations, excluding keys, record metadata, obsolete versions, and free-space reserves; they are not measurements of Lavik’s memory or disk consumption.",
+      "sources": [
+        "storage"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "The index separates capacity concerns; it does not freeze memory use"
+    },
+    {
+      "type": "paragraph",
+      "text": "Lavik retains key identity, logical version, and record coordinates in its runtime index, with values stored in files, raw block devices, or SPDK NVMe namespaces. In this scenario, payload growth does not itself multiply the number of top-level index entries. The application can enlarge objects without requiring an equally large increase in DRAM just to hold their complete values.",
+      "sources": [
+        "storage",
+        "readme"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "The separation does not imply constant process memory. Active append streams use staging buffers, reads need I/O buffers, and requests and replies have their own lifetimes. Large external values are read and validated across their extents and assembled into the logical value. The 8 KiB example does not establish that an extent threshold has been crossed. Lavik’s memory limit governs accumulating retained state rather than imposing a strict RSS ceiling, so an evaluation should observe retained memory and RSS separately.",
+      "sources": [
+        "storage"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "Unchanged QPS can hide eight times the payload traffic"
+    },
+    {
+      "type": "paragraph",
+      "text": "Suppose the same hypothetical application replaces 50,000 complete objects per second. The value bytes supplied by those writes increase from 51.2 MB/s to 409.6 MB/s, using decimal MB. At 50,000 successful full-object reads per second, returned value bytes increase by the same amounts. This arithmetic describes application payload traffic only. It excludes protocol framing and says nothing about measured device bandwidth, physical I/O counts, or achievable throughput.",
+      "sources": [
+        "storage",
+        "architecture"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "That distinction matters for serialized objects: changing one field in the application may still replace the entire stored String. Lavik appends immutable record versions and updates the index to the new location. An ordinary replacement keeps the previous durable version live in physical accounting until the replacement’s flush completes. Consequently, a stable key count and stable live population can coexist with substantial storage turnover.",
+      "sources": [
+        "storage"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "Reclaimed space has a completion boundary"
+    },
+    {
+      "type": "paragraph",
+      "text": "Obsolete bytes do not immediately become allocatable space. Lavik considers an ordinary record block for defragmentation when it is durable, inactive, unpinned, and at most 50 percent live. Reclamation relocates current records and waits for durable destinations and drained pins before retiring the source. A block then passes through the allocation-bitmap and cold-reuse lifecycle. Larger replacements therefore give an evaluation another question to answer: can reclamation return space quickly enough under the actual overwrite pattern?",
+      "sources": [
+        "storage"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "Monitor available storage blocks alongside dirty staging bytes, pending flushes, and defragmentation activity. Live payload size alone cannot describe how much room remains for ongoing replacements. Also keep acknowledgment and durability separate: an ordinary successful write response is not a synchronous fsync fence. A capacity test that checks only successful replies leaves both reclamation behavior and failure semantics unresolved.",
+      "sources": [
+        "storage"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "The published benchmark does not measure this expansion"
+    },
+    {
+      "type": "paragraph",
+      "text": "The September 18, 2026 beta SPDK report uses 1,024-byte values, uniform random GET or overwriting SET, and pipeline depth one. Its ten-million-key points run for 30 seconds; its billion-key points run for 60 seconds. It combines 22 newly measured Lavik points with 124 reused peer-control points, with each command, connection count, and server-thread configuration measured once. Those results provide evidence for the recorded workload, not an 8 KiB throughput forecast or proof of sustained reclamation at a different payload size.",
+      "sources": [
+        "benchmark-spdk"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "Likewise, larger values can make moving value capacity out of DRAM more attractive without establishing a deployment-wide saving. Value-capacity arithmetic does not measure total cost or establish equivalent latency, durability, availability, or operational service. The historical instance-price estimates explicitly stop short of a full TCO comparison. For this scenario, any cost model should include the resources needed to move and reclaim the larger payloads, alongside the capacity needed to retain them.",
+      "sources": [
+        "readme",
+        "storage",
+        "tiering-cost"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "Make payload growth a separate acceptance test"
+    },
+    {
+      "type": "paragraph",
+      "text": "Compare the old and proposed object encodings on a disposable deployment while holding key count and application operation mix fixed. Set acceptance criteria for application latency, successful throughput, retained memory, RSS, and available storage. Include sustained overwrites and representative expiration behavior. Observe whether available capacity stabilizes while traffic continues, as well as whether maintenance catches up after traffic subsides. These are proposed evaluation steps, not additional reported tests.",
+      "sources": [
+        "storage",
+        "benchmark-spdk"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "Lavik 0.1.0-beta.1 is an Apache 2.0 beta project with a broad Redis-compatible surface. Validate the commands and operational behavior your application needs before adoption. Start with the basic recipe below: the supplied Docker receipt records its five command checks and a graceful restart passing with the ARM64 minimal beta package on Linux 7.0.12-linuxkit and glibc 2.39. That narrow result does not validate the hypothetical larger-object workload, SPDK performance, or power-loss recovery. Deployment prerequisites still include Linux 6.1 or newer, usable io_uring, and compatible glibc.",
+      "sources": [
+        "readme",
+        "build",
+        "storage"
+      ]
+    },
+    {
+      "type": "recipe",
+      "recipeId": "basic-commands"
+    }
+  ]
+}
