@@ -1,0 +1,141 @@
+{
+  "id": "lavik-field-notes-2026-10-06",
+  "locale": "en",
+  "version": "0.1.0",
+  "kind": "blog",
+  "slug": "lavik-field-notes-2026-10-06",
+  "title": "Rehearse the first write after a Redis migration",
+  "summary": "A migration rehearsal should prove what happens after Lavik accepts new writes: how to validate the data, judge latency, and return to the source without silently losing changes.",
+  "updatedAt": "2026-10-06",
+  "topics": [
+    "best-practise",
+    "use-case"
+  ],
+  "blocks": [
+    {
+      "type": "paragraph",
+      "text": "A Redis migration can look reversible until the destination accepts its first new write. Before that point, the source may still represent the complete application state. After it, sending traffic back can discard changes that exist only at the destination. For a Lavik rehearsal, make that boundary explicit: prove how the team will account for destination writes before declaring fallback ready.",
+      "sources": [
+        "architecture",
+        "storage"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "Lavik makes this evaluation useful when value capacity is pushing a Redis deployment toward more DRAM: it keeps a compact key index in memory and stores values on files, raw devices, or SPDK NVMe namespaces. The Apache 2.0 project is at release 0.1.0-beta.1. Its Redis-compatible RDB import/export and PSYNC support provide possible data-transfer paths, but those capabilities alone do not establish a complete migration or reverse-synchronization procedure.",
+      "sources": [
+        "readme",
+        "architecture"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "Give the rehearsal a defined comparison point"
+    },
+    {
+      "type": "paragraph",
+      "text": "Start with a disposable destination and a written definition of the source state being compared. For the first rehearsal, a bounded pause in application writes can make that definition easier to audit. Record the logical databases, key population, value types, expiration expectations, and application invariants at that point. If the eventual migration requires continuous writes, treat convergence during live traffic as a separate acceptance gate; a successful static import does not prove it.",
+      "sources": [
+        "architecture",
+        "storage"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "Compare logical content rather than storage files. Lavik has its own durable representation, and startup reconstructs its runtime indexes. Validate string bytes, hash fields and values, set membership, list order, sorted-set members and scores, and stream information your application actually uses. Include large collections and multiple logical databases if they occur in the workload. A matching total key count can conceal a missing key paired with an unexpected one, or a value with the wrong type.",
+      "sources": [
+        "storage",
+        "architecture"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "Expiration needs a time-aware comparison. Lavik stores absolute expiration times and hides expired values on reads; physical reclamation happens separately. Record when each comparison occurs and distinguish keys expected to remain live from keys expected to expire during the rehearsal. Require matching deadlines within a declared measurement tolerance, rather than identical remaining TTL readings taken at different times. Disk usage is not a substitute for this logical validation.",
+      "sources": [
+        "storage"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "Turn compatibility into an application acceptance gate"
+    },
+    {
+      "type": "paragraph",
+      "text": "Use the application's real client configuration and request sequences to define compatibility acceptance: expected replies, value types, transaction outcomes, script behavior, and error handling must match the application's requirements. Lavik supports RESP2/RESP3 and a broad command surface, not universal Redis compatibility. In particular, declared keys define Lua and Function transaction boundaries, and cluster multi-key commands retain the same-slot requirement. A standalone rehearsal cannot establish cluster acceptance.",
+      "sources": [
+        "readme",
+        "architecture"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "Use the supplied basic-commands recipe as an initial connection check. The host's October 6 receipt reports that its five operations and a graceful restart passed with the ARM64 minimal beta package on Linux 7.0.12-linuxkit and glibc 2.39. That is evidence for this small exercise, not for your application's migration, SPDK operation, crash recovery, or complete command compatibility. Published packages require Linux 6.1 or newer with usable io_uring and a compatible glibc; the kernel floor is not a tested platform matrix.",
+      "sources": [
+        "build",
+        "readme"
+      ]
+    },
+    {
+      "type": "recipe",
+      "recipeId": "basic-commands"
+    },
+    {
+      "type": "heading",
+      "text": "Separate traffic fallback from data fallback"
+    },
+    {
+      "type": "paragraph",
+      "text": "Define two rehearsal checkpoints. At the first, the destination has received data but no authoritative application writes; returning to the source should require no reconciliation of destination-only changes. At the second, the destination has accepted a deliberately bounded set of application writes. Record those writes in a rehearsal ledger and require the team to explain the disposition of every change before reopening source traffic. The ledger is proposed acceptance evidence, not a Lavik migration feature.",
+      "sources": [
+        "architecture",
+        "storage"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "Choose the second checkpoint's fallback policy before executing it. For reconstructable cache data, that might mean discarding destination changes and refilling from an authoritative system, with the refill load included in acceptance. For authoritative data, require a separately validated reconciliation or reverse-transfer procedure, including ordering, deletions, and expiration. RDB export and PSYNC support do not by themselves prove that an old source can safely resume. If the procedure is missing, fallback after destination writes remains unproven.",
+      "sources": [
+        "readme",
+        "architecture",
+        "storage"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "Record durability expectations independently of the transfer result. An ordinary successful Lavik write is not a synchronous fsync fence. A graceful restart check therefore cannot establish power-loss behavior. Process restart also creates a new replication history and requires whole-group full synchronization. Define acceptable data loss and recovery time explicitly, and keep recovery and resynchronization acceptance separate from the ability to redirect client connections.",
+      "sources": [
+        "storage",
+        "architecture"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "Make latency a cutover gate, including the return path"
+    },
+    {
+      "type": "paragraph",
+      "text": "Before replaying traffic, write down the required successful throughput, p99 and p99.9 latency ceilings, permitted error rate, and measurement duration for each important operation. Judge the destination at the intended traffic level with representative key sizes, values, command mix, connection counts, and maintenance activity. Also evaluate the fallback period: a source that has fallen behind, or a cache that must refill, has a different workload from steady-state serving. These are proposed rehearsal criteria, not reported test results.",
+      "sources": [
+        "benchmark-spdk",
+        "storage"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "The September 18 SPDK report supplies context rather than a cutover threshold. Its 10-million-key, 1 KiB GET workload reached 1,012,180 QPS at 640 connections, with p99 of 3.599 ms and p99.9 of 5.631 ms. This used kernel TCP, six NVMe drives, 16 Lavik workers, pipeline=1, and a 30-second measurement window. The report contains 22 new Lavik measurements and 124 reused peer-control points; each configuration was measured once. It excludes io_uring and does not establish equal crash durability or your application's SLA.",
+      "sources": [
+        "benchmark-spdk"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "For the next rehearsal, create one acceptance record with four outcomes: application compatibility, logical data validation, latency at required load, and fallback after destination writes. Attach the exact package identity, chosen transfer path, comparison point, and evidence for each outcome. Leave untested outcomes marked unproven. The useful deliverable is a demonstrated route back after a known set of changes—not merely a destination that loaded successfully.",
+      "sources": [
+        "build",
+        "architecture",
+        "storage",
+        "benchmark-spdk"
+      ]
+    }
+  ]
+}
