@@ -1,0 +1,95 @@
+{
+  "id": "lavik-field-notes-2026-10-08",
+  "locale": "zh-CN",
+  "version": "0.1.0",
+  "kind": "blog",
+  "slug": "lavik-field-notes-2026-10-08",
+  "title": "先选 Lavik 软件包，再确定 I/O 实验",
+  "summary": "Minimal 与 Standard 对部署环境的要求不同。先选择能回答首轮评估问题的软件包，再把 SPDK 作为独立实验。",
+  "updatedAt": "2026-10-08",
+  "topics": [
+    "best-practise",
+    "architecture"
+  ],
+  "blocks": [
+    {
+      "type": "paragraph",
+      "text": "首次评估 Lavik，应先确认 Linux 主机和 Redis 客户端能否运行你关心的工作负载。选对软件包，可以让第一轮结果更容易解释。Lavik 将值的容量需求转移到存储设备，同时在 DRAM 中保留紧凑的键索引；Minimal 和 Standard 都提供其 Redis 兼容接口。如果先用普通文件评估，Minimal 是一个实用起点。当评估明确需要 SPDK 存储或实验性 DPDK 网络时，Standard 才有必要。Lavik 0.1.0-beta.1 是采用 Apache 2.0 许可证的 beta 项目。",
+      "sources": [
+        "readme",
+        "build"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "首先要分清二进制包含的能力与运行进程实际选择的后端。Minimal 包含内核 TCP 和 io_uring。Standard 额外包含 DPDK 和 SPDK，但默认仍使用内核 TCP 和 io_uring。因此，安装 Standard 本身并不意味着已经开始 SPDK 实验。网络与存储后端在启动时独立选择，并在该进程的整个生命周期内保持不变。",
+      "sources": [
+        "build",
+        "architecture"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "即使没有启用可选后端，Standard 也会改变 CPU 要求。其 x86_64 软件包面向 x86-64-v2，ARM64 软件包面向 armv8-a+crc；使用默认后端时，这些要求同样适用。Minimal 使用编译器的默认 CPU 目标。Standard 还需要 NUMA、UUID 等运行时库。如果机器配置不一致，在为整批主机选择同一个归档包之前，应检查实际部署环境的 CPU 和运行库。",
+      "sources": [
+        "build",
+        "readme"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "两种软件包都要求 Linux 6.1 或更新版本、可用的 io_uring，以及兼容的 glibc。发布包在 Ubuntu 24.04 上构建，并不面向旧版 glibc 环境。Linux 6.1 是 API 兼容性的下限，不代表已经验证过所有相应内核。在容器中，宿主机内核必须满足要求，容器策略也必须允许 io_uring 的初始化、提交和注册。选择 SPDK 不能免除这一依赖，因为工作线程的运行时服务仍然使用 io_uring。",
+      "sources": [
+        "build"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "软件包前置条件和安装指导可查阅固定版本的《Building and packaging》：https://github.com/eloqdata/lavik/blob/3955b98d43b312324aa8d52775df52cfb111c0d0/docs/operations/building-and-packaging.md。请在评估记录中保存归档包版本和源代码修订号；持续更新的 nightly 具有不同的版本溯源含义。所提供的主机回执覆盖 0.1.0-beta.1 的 ARM64 Minimal 归档包，运行环境为 Linux 7.0.12-linuxkit、glibc 2.39。回执记录了下方五项基础客户端操作及一次正常关闭后的重启通过。这并不说明你的主机、Standard 软件包或 SPDK 也已通过相同验证。",
+      "sources": [
+        "build",
+        "readme"
+      ]
+    },
+    {
+      "type": "recipe",
+      "recipeId": "basic-commands"
+    },
+    {
+      "type": "paragraph",
+      "text": "将这份操作配方作为第一步接口检查。回执中的可执行文件从解压目录运行，没有加入 PATH。使用普通文件评估时，存储文件必须事先存在：Lavik 不会在启动时创建、扩展或预分配缺失的文件。基础读写通过不能证明完整的 Redis 兼容性，正常关闭后的重启也不能证明断电持久性。普通写入成功响应并不代表同步 fsync 已完成。",
+      "sources": [
+        "build",
+        "storage",
+        "readme"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "当需要回答明确的存储问题时，再转向 Standard。SPDK 需要可访问的 NVMe 设备、适当的设备绑定与 DMA 内存准备，以及设备的独占使用权。9 月 18 日的基准使用 Standard、SPDK 存储和内核 TCP，并不需要 DPDK 网络。DPDK 网络是独立的实验性单机运行模式，其 TLS、复制和集群路径不在验证范围内。首次实验就同时启用两个可选后端，会一次引入两项部署变化。",
+      "sources": [
+        "build",
+        "architecture",
+        "benchmark-spdk",
+        "readme"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "9 月 18 日的 SPDK 报告提供了发布包溯源信息，并链接到存储配置指南：https://github.com/eloqdata/lavik/blob/a6acc2c41612f4480b5f1f53ee48c369220970e9/perf_reports/lavik-v0.1.0-beta.1-spdk-vs-peers-2026-09-18/README.md。该实验使用六个专用 NVMe 控制器、16 个 Lavik 工作线程，以及独立于其他 Lavik 内存开销的 8 GiB 大页预留。报告包含 22 个新测得的 Lavik 数据点和 124 个复用的对照产品数据点，明确排除了 io_uring。因此，它没有提供同一报告内的测量，来证明将你的 Minimal 评估切换到 Standard 能获得多少性能提升。报告中针对特定主机的设备准备步骤，也不适合直接套用到任意磁盘。",
+      "sources": [
+        "benchmark-spdk"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "让第一轮评估产出一份可复现的部署记录：所选归档包、宿主机内核与 glibc、CPU 兼容性、实际后端、存储类型，以及仍需验证的应用行为。先在兼容的一次性环境中运行所提供的基础配方，再验证实际客户端和命令组合。如果 SPDK 仍值得评估，就沿着报告链接的配置指南，将它作为独立实验，分别记录前置条件和结果。这样，软件包选择有了明确目的，性能、恢复和应用兼容性也各自成为清晰的评估问题。",
+      "sources": [
+        "build",
+        "readme",
+        "benchmark-spdk",
+        "storage"
+      ]
+    }
+  ]
+}

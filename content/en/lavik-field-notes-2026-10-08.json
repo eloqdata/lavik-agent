@@ -1,0 +1,95 @@
+{
+  "id": "lavik-field-notes-2026-10-08",
+  "locale": "en",
+  "version": "0.1.0",
+  "kind": "blog",
+  "slug": "lavik-field-notes-2026-10-08",
+  "title": "Choose the Lavik package before choosing the I/O experiment",
+  "summary": "Minimal and Standard define different deployment prerequisites. Start with the package that answers your first evaluation question, then treat SPDK as a separate experiment.",
+  "updatedAt": "2026-10-08",
+  "topics": [
+    "best-practise",
+    "architecture"
+  ],
+  "blocks": [
+    {
+      "type": "paragraph",
+      "text": "Your first Lavik evaluation should establish whether your Linux host and Redis client can run the workload you care about. Package selection can make that first result easier to interpret. Lavik moves value capacity to storage while retaining a compact key index in DRAM; both Minimal and Standard expose its Redis-compatible interface. For an initial evaluation using a regular file, Minimal is a practical starting point. Standard becomes useful when the evaluation specifically needs SPDK storage or experimental DPDK networking. Lavik 0.1.0-beta.1 is an Apache 2.0 beta project.",
+      "sources": [
+        "readme",
+        "build"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "The important distinction is between what a binary includes and what a running process selects. Minimal includes kernel TCP and io_uring. Standard additionally includes DPDK and SPDK, but still starts with kernel TCP and io_uring by default. Installing Standard therefore does not, by itself, create an SPDK experiment. Network and storage backends are selected independently at startup and remain fixed for that process lifetime.",
+      "sources": [
+        "build",
+        "architecture"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "Standard also changes the CPU requirement before you activate either optional backend. Its x86_64 package targets x86-64-v2; its ARM64 package targets armv8-a+crc. Those requirements apply even when the process uses the default backends. Minimal uses the compiler's default CPU target. Standard additionally needs runtime libraries such as NUMA and UUID. For a mixed fleet, check the actual deployment CPU and library environment before selecting one archive for every host.",
+      "sources": [
+        "build",
+        "readme"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "Both packages require Linux 6.1 or newer with usable io_uring and a compatible glibc. The release packages are built on Ubuntu 24.04 and do not target older glibc environments. Linux 6.1 is an API floor, not a tested kernel matrix. In a container, the host kernel must satisfy that floor and the container policy must permit io_uring setup, submission, and registration. Selecting SPDK does not remove this dependency: worker runtime services still use io_uring.",
+      "sources": [
+        "build"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "Use the pinned Building and packaging guide for package prerequisites and installation guidance: https://github.com/eloqdata/lavik/blob/3955b98d43b312324aa8d52775df52cfb111c0d0/docs/operations/building-and-packaging.md. Keep the archive version and source revision with your evaluation notes; a moving nightly is a different provenance choice. The supplied host receipt covers the ARM64 Minimal archive for 0.1.0-beta.1 on Linux 7.0.12-linuxkit with glibc 2.39. It records the five basic client operations below and a graceful restart as passed. It does not establish that your host, the Standard package, or SPDK has passed the same exercise.",
+      "sources": [
+        "build",
+        "readme"
+      ]
+    },
+    {
+      "type": "recipe",
+      "recipeId": "basic-commands"
+    },
+    {
+      "type": "paragraph",
+      "text": "Treat that recipe as the first interface check. The receipt ran the executable from its extracted package directory, without putting it on PATH. For a regular-file evaluation, storage must already exist: Lavik does not create, extend, or preallocate a missing file at startup. Passing basic reads and writes does not establish complete Redis compatibility, and a graceful restart does not prove power-loss durability. An ordinary successful write response is not a synchronous fsync fence.",
+      "sources": [
+        "build",
+        "storage",
+        "readme"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "Move to Standard when there is a concrete storage question to answer. SPDK needs an accessible NVMe device, appropriate device binding and DMA memory preparation, and exclusive device ownership. The September 18 benchmark used Standard with SPDK storage and kernel TCP; it did not require DPDK networking. The latter is a separate experimental standalone profile whose TLS, replication, and cluster paths are outside its validation scope. Combining both optional backends in the first experiment would introduce two deployment changes at once.",
+      "sources": [
+        "build",
+        "architecture",
+        "benchmark-spdk",
+        "readme"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "The September 18 SPDK report provides release-package provenance and points to its storage setup guide: https://github.com/eloqdata/lavik/blob/a6acc2c41612f4480b5f1f53ee48c369220970e9/perf_reports/lavik-v0.1.0-beta.1-spdk-vs-peers-2026-09-18/README.md. Its experiment used six dedicated NVMe controllers, 16 Lavik workers, and an 8 GiB hugepage reservation separate from other Lavik memory. It contains 22 new Lavik measurements and 124 reused peer-control points, and excludes io_uring. It consequently supplies no same-report measurement of a performance gain from switching your Minimal evaluation to Standard. Its host-specific device preparation is also unsuitable for copying onto arbitrary drives.",
+      "sources": [
+        "benchmark-spdk"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "Make the first evaluation result a reproducible deployment record: selected archive, host kernel and glibc, CPU compatibility, active backends, storage type, and the application behaviors still to verify. Start with the supplied basic recipe on a compatible disposable environment, then exercise your actual client and command mix. If SPDK remains relevant, follow the report's linked setup guide and record it as a separate experiment with its own prerequisites and results. This gives the package choice a clear purpose and leaves performance, recovery, and application compatibility as explicit evaluation questions.",
+      "sources": [
+        "build",
+        "readme",
+        "benchmark-spdk",
+        "storage"
+      ]
+    }
+  ]
+}
