@@ -348,7 +348,7 @@ async function finishDelivery(job: Job) {
   await save();
   console.log(`Published ${job.id}: ${job.urls!.join(" ")}`);
 }
-async function blog(force = false, retryId?: string) {
+async function blog(force = false, retryId?: string, reviewOnly = false) {
   if (config.automaticWebsitePublication !== true)
     throw new Error(
       "Automatic website publication is disabled in the marketing schedule",
@@ -386,12 +386,25 @@ async function blog(force = false, retryId?: string) {
     const attempts = files.filter((name) => /^(writer|reviewer)-/.test(name));
     if (
       files.includes("prepared.json") ||
-      attempts.length !== 1 ||
-      attempts[0] !== "writer-1"
+      (reviewOnly
+        ? attempts.length !== 2 ||
+          !attempts.includes("writer-1") ||
+          !attempts.includes("reviewer-1")
+        : attempts.length !== 1 || attempts[0] !== "writer-1")
     )
       throw new Error(
-        "Retry supports only a first-writer failure with no review or prepared publication; preserve its original attempts",
+        "Retry requires the original first writer and no prepared publication; review-only retry also requires exactly one failed reviewer",
       );
+    if (reviewOnly) {
+      const reviewFiles = await fs.readdir(
+        path.join(existing.directory, "reviewer-1"),
+      );
+      if (
+        reviewFiles.includes("receipt.json") ||
+        reviewFiles.includes("result.json")
+      )
+        throw new Error("Review-only retry cannot replace a completed review");
+    }
     job = existing;
     job.status = "writing";
     job.error = undefined;
@@ -504,7 +517,7 @@ async function blog(force = false, retryId?: string) {
         taskDir,
         id,
         job.brief,
-        ...(retryId ? ["--resume"] : []),
+        ...(retryId ? [reviewOnly ? "--resume-review" : "--resume"] : []),
       ],
       worktree,
       log,
@@ -588,9 +601,9 @@ try {
     );
   } else if (command === "report") await report();
   else if (command === "run-now") await blog(true);
-  else if (command === "retry") {
+  else if (command === "retry" || command === "retry-review") {
     if (!process.argv[3]) throw new Error("Usage: marketing.ts retry JOB_ID");
-    await blog(false, process.argv[3]);
+    await blog(false, process.argv[3], command === "retry-review");
   } else if (command === "tick") {
     if (state.lastReportWeek !== weekStart())
       try {
@@ -601,7 +614,7 @@ try {
     if (!state.paused && config.enabled) await blog();
   } else
     throw new Error(
-      "Use status, check, tick, run-now, pause, resume, recover, retry JOB_ID, report, or link PATH SOURCE CAMPAIGN",
+      "Use status, check, tick, run-now, pause, resume, recover, retry JOB_ID, retry-review JOB_ID, report, or link PATH SOURCE CAMPAIGN",
     );
 } finally {
   ownership.release();

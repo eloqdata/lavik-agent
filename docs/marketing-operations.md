@@ -94,6 +94,7 @@ node --import tsx scripts/marketing.ts pause
 node --import tsx scripts/marketing.ts resume
 node --import tsx scripts/marketing.ts recover
 node --import tsx scripts/marketing.ts retry lavik-field-notes-YYYY-MM-DD
+node --import tsx scripts/marketing.ts retry-review lavik-field-notes-YYYY-MM-DD
 node --import tsx scripts/marketing.ts run-now
 npm run marketing:report
 ```
@@ -120,7 +121,12 @@ after its first successful writer call and before any review or preparation. It
 keeps the original attempt directory, verifies saved writer provenance, uses only
 the remaining writer correction, and requires a fresh independent review. It
 fast-forwards a clean task checkout to current main without resetting changes or
-advancing the scheduled next date. Exhausted or partly published tasks are not
+advancing the scheduled next date. If the first reviewer failed before producing
+a result (for example, model capacity was unavailable), explicitly use
+`retry-review JOB_ID`. This validates the saved writer receipt, rechecks the exact
+draft against fresh Docker evidence, and uses only the second reviewer attempt.
+It does not rewrite the article, change its draft date, replace a completed review,
+switch models, or reset the original task budget. Exhausted or partly published tasks are not
 automatically regenerated.
 
 A coordinator crash leaves its lock closed. Child process groups are recorded

@@ -37,3 +37,28 @@ export async function runBlogRevisionCycle<D, W, R>(options: {
     `Blog still needs correction after the bounded attempts: ${feedback}`,
   );
 }
+
+// A provider failure during review does not require rewriting a valid saved draft.
+// The caller verifies the original writer receipt and remaining task budget.
+export async function reviewSavedBlogDraft<D, W, R>(options: {
+  drafts: D;
+  writer: W;
+  validate: (drafts: D) => string[];
+  review: (
+    drafts: D,
+  ) => Promise<{ passed: boolean; feedback: string; receipt: R }>;
+}) {
+  const errors = options.validate(options.drafts);
+  if (errors.length)
+    throw new Error(`Saved draft requires correction: ${errors.join("\n")}`);
+  const reviewed = await options.review(options.drafts);
+  if (!reviewed.passed)
+    throw new Error(
+      `Independent review requires correction: ${reviewed.feedback}`,
+    );
+  return {
+    drafts: options.drafts,
+    writer: options.writer,
+    reviewer: reviewed.receipt,
+  };
+}

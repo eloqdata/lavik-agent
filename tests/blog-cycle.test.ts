@@ -1,6 +1,9 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { runBlogRevisionCycle } from "../packages/marketing/blog-cycle.ts";
+import {
+  runBlogRevisionCycle,
+  reviewSavedBlogDraft,
+} from "../packages/marketing/blog-cycle.ts";
 import { validateArticle } from "../packages/content/gate.ts";
 import type { Article } from "../packages/content/schema.ts";
 
@@ -155,4 +158,76 @@ test("provider failures propagate without an automatic model retry", async () =>
     /Authentication unavailable/,
   );
   assert.equal(writes, 1);
+});
+
+test("review-only recovery preserves the exact saved draft and original writer receipt", async () => {
+  let reviews = 0;
+  const original = JSON.stringify(corrected);
+  const writer = { outputSha256: "original-writer-hash" };
+  const result = await reviewSavedBlogDraft({
+    drafts: corrected,
+    writer,
+    validate: validateArticle,
+    review: async (drafts) => {
+      reviews++;
+      assert.equal(JSON.stringify(drafts), original);
+      return { passed: true, feedback: "", receipt: "reviewer-2" };
+    },
+  });
+  assert.equal(reviews, 1);
+  assert.equal(result.writer, writer);
+  assert.equal(result.drafts, corrected);
+  assert.equal(result.reviewer, "reviewer-2");
+});
+
+test("review-only recovery rejects invalid saved drafts before a model call", async () => {
+  await assert.rejects(
+    reviewSavedBlogDraft({
+      drafts: invalid,
+      writer: "writer-1",
+      validate: validateArticle,
+      review: async () => {
+        throw new Error("Must not review invalid content");
+      },
+    }),
+    /Saved draft requires correction.*calculation block/s,
+  );
+});
+
+test("review-only recovery preserves blocking findings without retrying the model", async () => {
+  let reviews = 0;
+  await assert.rejects(
+    reviewSavedBlogDraft({
+      drafts: corrected,
+      writer: "writer-1",
+      validate: validateArticle,
+      review: async () => {
+        reviews++;
+        return {
+          passed: false,
+          feedback: "Unsupported migration promise",
+          receipt: "reviewer-2",
+        };
+      },
+    }),
+    /Unsupported migration promise/,
+  );
+  assert.equal(reviews, 1);
+});
+
+test("review-only recovery propagates provider failures without retry or fallback", async () => {
+  let reviews = 0;
+  await assert.rejects(
+    reviewSavedBlogDraft({
+      drafts: corrected,
+      writer: "writer-1",
+      validate: validateArticle,
+      review: async () => {
+        reviews++;
+        throw new Error("Selected model is at capacity");
+      },
+    }),
+    /Selected model is at capacity/,
+  );
+  assert.equal(reviews, 1);
 });
