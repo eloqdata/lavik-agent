@@ -124,9 +124,16 @@ fast-forwards a clean task checkout to current main without resetting changes or
 advancing the scheduled next date. If the first reviewer failed before producing
 a result (for example, model capacity was unavailable), explicitly use
 `retry-review JOB_ID`. This validates the saved writer receipt, rechecks the exact
-draft against fresh Docker evidence, and uses only the second reviewer attempt.
+draft against its original execution evidence, and uses only the second reviewer attempt.
+A fresh Docker check supplements the original receipt without changing historical
+execution dates quoted in the draft. Both receipts are retained privately.
 It does not rewrite the article, change its draft date, replace a completed review,
-switch models, or reset the original task budget. Exhausted or partly published tasks are not
+switch models, or reset the original task budget. For deliberate manual recovery,
+`retry-review JOB_ID --additional-review="short reason"` can use the manual
+workflow's third-review allowance only when there is one writer and two reviewer
+attempts. This consumes the unused writer slot: four total calls remain the hard
+limit. The reason is stored in the review receipt. Scheduled ticks never set this
+option. Exhausted or partly published tasks are not
 automatically regenerated.
 
 A coordinator crash leaves its lock closed. Child process groups are recorded

@@ -348,7 +348,12 @@ async function finishDelivery(job: Job) {
   await save();
   console.log(`Published ${job.id}: ${job.urls!.join(" ")}`);
 }
-async function blog(force = false, retryId?: string, reviewOnly = false) {
+async function blog(
+  force = false,
+  retryId?: string,
+  reviewOnly = false,
+  additionalReviewReason?: string,
+) {
   if (config.automaticWebsitePublication !== true)
     throw new Error(
       "Automatic website publication is disabled in the marketing schedule",
@@ -387,15 +392,16 @@ async function blog(force = false, retryId?: string, reviewOnly = false) {
     if (
       files.includes("prepared.json") ||
       (reviewOnly
-        ? attempts.length !== 2 ||
+        ? attempts.length !== (additionalReviewReason ? 3 : 2) ||
           !attempts.includes("writer-1") ||
-          !attempts.includes("reviewer-1")
+          !attempts.includes("reviewer-1") ||
+          (Boolean(additionalReviewReason) && !attempts.includes("reviewer-2"))
         : attempts.length !== 1 || attempts[0] !== "writer-1")
     )
       throw new Error(
-        "Retry requires the original first writer and no prepared publication; review-only retry also requires exactly one failed reviewer",
+        "Retry requires the original first writer, no prepared publication, and the exact remaining attempt budget",
       );
-    if (reviewOnly) {
+    if (reviewOnly && !additionalReviewReason) {
       const reviewFiles = await fs.readdir(
         path.join(existing.directory, "reviewer-1"),
       );
@@ -518,6 +524,9 @@ async function blog(force = false, retryId?: string, reviewOnly = false) {
         id,
         job.brief,
         ...(retryId ? [reviewOnly ? "--resume-review" : "--resume"] : []),
+        ...(additionalReviewReason
+          ? [`--additional-review=${additionalReviewReason}`]
+          : []),
       ],
       worktree,
       log,
@@ -603,7 +612,17 @@ try {
   else if (command === "run-now") await blog(true);
   else if (command === "retry" || command === "retry-review") {
     if (!process.argv[3]) throw new Error("Usage: marketing.ts retry JOB_ID");
-    await blog(false, process.argv[3], command === "retry-review");
+    const reason = process.argv
+      .find((arg) => arg.startsWith("--additional-review="))
+      ?.slice("--additional-review=".length);
+    if (
+      reason !== undefined &&
+      (command !== "retry-review" || !reason.trim() || reason.length > 120)
+    )
+      throw new Error(
+        "An explicit short reason is required for a manual third review",
+      );
+    await blog(false, process.argv[3], command === "retry-review", reason);
   } else if (command === "tick") {
     if (state.lastReportWeek !== weekStart())
       try {
