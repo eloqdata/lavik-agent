@@ -1,0 +1,132 @@
+{
+  "id": "lavik-field-notes-2026-10-10",
+  "locale": "en",
+  "version": "0.1.0",
+  "kind": "blog",
+  "slug": "lavik-field-notes-2026-10-10",
+  "title": "Price the capacity you can keep available",
+  "summary": "A storage quote becomes useful only after accounting for replicas, physical overhead, index memory, and room to rebuild. Compare configurations that meet the same operating requirements.",
+  "updatedAt": "2026-10-10",
+  "topics": [
+    "best-practise",
+    "architecture"
+  ],
+  "blocks": [
+    {
+      "type": "paragraph",
+      "text": "A lower price per storage byte can make a database proposal look compelling before anyone budgets for replacing a replica. For a Redis workload moving beyond RAM, the useful purchasing question is how much logical data the proposed deployment can retain while meeting its operating requirements. Lavik moves values to storage while keeping a compact key index in DRAM. That changes the capacity budget, but the budget still needs to cover memory, extra copies, maintenance, and recovery.",
+      "sources": [
+        "readme",
+        "storage"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "This article examines Lavik 0.1.0-beta.1, an Apache 2.0 beta project. The earlier article “Plan cache growth by counting keys, not just terabytes” develops the dataset-sizing question. Here the focus is the next decision: turning a capacity estimate into a quote whose assumptions survive an operational review.",
+      "sources": [
+        "readme",
+        "storage"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "Give every cost line a denominator"
+    },
+    {
+      "type": "paragraph",
+      "text": "Start with logical application payload: the values the application needs to retain, counted once. Then separate physical storage provisioned across all copies, DRAM provisioned across those copies, and recurring deployment cost. Dividing a storage charge by physical bytes answers a unit-price question. Dividing the deployment bill by logical payload answers a different question. Neither establishes the throughput or availability that those bytes can support.",
+      "sources": [
+        "storage",
+        "tiering-cost"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "A useful planning equation is: provisioned storage = logical payload × copy count × physical-to-logical footprint ratio ÷ target occupancy. Define the footprint ratio to include keys, record metadata, layout overhead, and the obsolete versions expected under the chosen workload. Define occupancy as the fraction of provisioned capacity you plan to use after allowing for operational headroom. These are planning inputs, not measured Lavik constants; keep their definitions separate so the same reserve is not charged twice.",
+      "sources": [
+        "storage"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "Attach a date, billing unit, and inclusion list to every price. If local NVMe is included in a VM quote, adding a separate hypothetical disk rental would double-count it. The August 12 report records user-supplied estimates of $1,152.67 per month for the Lavik server VM and $2,414.28 for Azure Managed Redis. Those historical estimates exclude the benchmark client and compare different service boundaries. They provide no current quote or measured total-cost ratio.",
+      "sources": [
+        "tiering-cost"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "Charge replicas for memory as well as storage"
+    },
+    {
+      "type": "paragraph",
+      "text": "Copy count belongs in both sides of the resource budget. Lavik reconstructs worker-owned indexes when recovering local data; a replica also needs memory to receive and serve its population. Moving values to NVMe does not remove the index, request buffers, storage buffers, or replication state. Price each proposed node with enough memory for its assigned population and runtime needs, then add the nodes required by the chosen replication topology.",
+      "sources": [
+        "architecture",
+        "storage"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "Aggregate free memory can also hide a local constraint. Lavik divides its configured memory budget into fixed worker shares, and a worker cannot borrow another worker’s unused balance. Retained-state admission stops at 90 percent of each share; the configured budget is not a strict RSS ceiling. A quote should therefore record worker distribution and process headroom alongside total DRAM. A single average bytes-per-key estimate cannot establish that every worker will admit the target population.",
+      "sources": [
+        "storage"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "Decide the failure requirement before choosing copy count. Record which node or failure-domain loss the design must tolerate, whether reads and writes must continue, and how much acknowledged data loss is acceptable. Lavik’s ordinary successful write response is not a synchronous durability fence. Replication topology and failure semantics must be evaluated together before treating two deployment quotes as equivalent.",
+      "sources": [
+        "readme",
+        "architecture",
+        "storage"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "Budget for space that cannot yet be reused"
+    },
+    {
+      "type": "paragraph",
+      "text": "A freshly loaded dataset is an incomplete basis for estimating physical footprint. Lavik appends immutable record versions. An old durable version remains charged until its replacement has crossed the required flush boundary. Defragmentation moves live records and must make their destinations durable before releasing the source. Metadata, protected maintenance reserves, and versions awaiting reclamation all affect how much logical payload fits.",
+      "sources": [
+        "storage"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "Replica replacement makes that distinction financially important. Native full synchronization invalidates the prior population and builds the replacement in place. It does not reserve a second complete dataset in advance, but invalidated blocks do not become immediately allocatable. They must complete reclamation, and the rebuild can report resource exhaustion if insufficient capacity is reclaimable. Avoid both shortcuts: automatically doubling the dataset budget, or assuming an in-place rebuild needs no spare capacity.",
+      "sources": [
+        "storage"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "For an evaluation, propose three separate observations: physical footprint after loading, footprint during sustained overwrites with maintenance active, and available capacity during replica replacement. Record retained memory and RSS alongside them. These are proposed measurements, not results supplied here. Their purpose is to replace an unexplained amplification multiplier with evidence for the operating states the deployment must survive.",
+      "sources": [
+        "storage"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "Apply performance requirements before accepting the quote"
+    },
+    {
+      "type": "paragraph",
+      "text": "A capacity estimate must also pass the workload’s latency and throughput requirements. The September 18 SPDK report used separate 10-million-key and one-billion-key datasets with 1 KiB values, uniform random GET or overwriting SET, and pipeline depth one. It contains 22 new Lavik measurements and 124 reused peer-control points, with each configuration measured once for 30 or 60 seconds. Those observations do not establish sustained rebuild performance or equal crash durability. “What the NVMe benchmark tells us” provides a companion reading of benchmark evidence.",
+      "sources": [
+        "benchmark-spdk"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "Build the final worksheet around one explicit operating requirement. Enter dated prices, logical payload, copy count, per-node index and runtime memory, observed physical footprint, and reserved capacity. Then list the costs outside that capacity calculation: compute, networking, backup storage, monitoring, and operational work. Compare the resulting configurations only after validating workload compatibility and recovery behavior. “Evaluate the Redis client’s second attempt” and “Choose the Lavik package before choosing the I/O experiment” are useful companion articles for those evaluation steps. The practical deliverable is a quote with a stated usable capacity and evidence gaps that can be closed in a pilot.",
+      "sources": [
+        "tiering-cost",
+        "storage",
+        "architecture",
+        "build"
+      ]
+    }
+  ]
+}
