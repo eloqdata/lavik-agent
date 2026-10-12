@@ -1,0 +1,132 @@
+{
+  "id": "lavik-field-notes-2026-10-12",
+  "locale": "en",
+  "version": "0.1.0",
+  "kind": "blog",
+  "slug": "lavik-field-notes-2026-10-12",
+  "title": "Your cache can run out of memory before the server does",
+  "summary": "A growing Lavik cache needs a capacity budget per worker as well as per server. A hypothetical uneven key distribution shows why spare NVMe space and aggregate memory headroom may not admit the next key.",
+  "updatedAt": "2026-10-12",
+  "topics": [
+    "best-practise",
+    "architecture"
+  ],
+  "blocks": [
+    {
+      "type": "paragraph",
+      "text": "A capacity forecast can show room for more values on SSD and room for more indexes in memory, yet still miss the constraint that stops cache growth. In Lavik, retained-memory admission is divided into fixed worker shares. A worker cannot borrow another worker’s unused balance. For a growing cache, the distribution of keys across workers belongs in the forecast alongside total key count and value bytes.",
+      "sources": [
+        "storage"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "Lavik’s compact DRAM key index and storage-backed values make it useful when value capacity would otherwise dominate memory requirements. This article concerns the Apache 2.0 beta release 0.1.0-beta.1. Its storage design shifts the capacity budget, but retains both an index-memory requirement and limits on where that memory can be consumed.",
+      "sources": [
+        "readme",
+        "storage"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "The admission boundary is local to each worker"
+    },
+    {
+      "type": "paragraph",
+      "text": "Lavik assigns each of its 16,384 logical partitions to a worker using partition ID modulo worker count. A worker’s indexes share an entry arena, which avoids stranding entry capacity in sparse partitions. Across workers, however, the configured memory budget remains divided into fixed shares, with retained state admitted up to 90 percent of each share. Sharing capacity within a worker does not make unused capacity on another worker available.",
+      "sources": [
+        "storage"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "Key distribution therefore matters independently of traffic distribution. A worker owning many rarely accessed keys can face index pressure without being the busiest worker by requests. Conversely, high request volume alone does not establish how much retained index state that worker owns. Capacity planning should estimate both ownership and activity.",
+      "sources": [
+        "storage",
+        "architecture"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "A hypothetical growth plan that passes the aggregate check"
+    },
+    {
+      "type": "paragraph",
+      "text": "Assume 16 workers and a configured retained-memory budget of 64 GiB. Each worker gets 4 GiB, giving a 3.6 GiB admission threshold and a summed threshold of 57.6 GiB. For illustration, assume 128 bytes of retained index memory per key and another 0.5 GiB of retained state on each worker. These are modeling assumptions, not measured Lavik memory costs; actual index representations, key sizes, expiration state, table growth, and other retained allocations must be evaluated for the intended workload.",
+      "sources": [
+        "storage"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "Now grow from 80 million to 160 million keys while keeping every value at 1 KiB. Logical value bytes rise from about 76.29 GiB to 152.59 GiB. Under the assumed 128-byte index allowance, total index memory rises from about 9.54 GiB to 19.07 GiB. Adding the assumed 8 GiB of other retained state produces totals of 17.54 GiB and 27.07 GiB—both comfortably below the summed 57.6 GiB admission threshold. Logical value bytes exclude record metadata, obsolete versions, and storage reserves.",
+      "sources": [
+        "storage"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "Suppose the application’s actual partition distribution places 20 percent of all keys on one worker throughout this growth. That worker goes from 16 million to 32 million keys. Its modeled index memory rises from 1.91 GiB to 3.81 GiB; including its other retained state raises the total from 2.41 GiB to 4.31 GiB. The forecast crosses that worker’s 3.6 GiB threshold even though the server-wide total still looks generous. The 20 percent distribution is a hypothetical input, not a reported Lavik observation.",
+      "sources": [
+        "storage"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "With an even distribution at 160 million keys, the same model gives each worker about 1.19 GiB of index state plus 0.5 GiB of other retained state. The difference comes entirely from ownership distribution. Lavik admits index capacity before publishing a record that needs a new or replacement entry; admission failure can reject that operation without publishing an unindexable record. More free SSD space does not resolve this memory constraint.",
+      "sources": [
+        "storage"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "Keep three budgets separate"
+    },
+    {
+      "type": "paragraph",
+      "text": "The value budget describes logical payload growth and the physical storage needed to support it. Append-based replacement leaves obsolete versions to reclaim, and storage reserves and metadata consume space beyond live values. The index budget describes retained memory, including its distribution across workers. Neither budget alone describes the whole server.",
+      "sources": [
+        "storage"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "Shared server costs include the CPU, host memory, storage devices, networking, and operational work needed to serve and recover the cache. Lavik’s memory setting is not a strict RSS ceiling: client buffers have a separate quota, and allocator, request, and I/O peaks need headroom. A proposal to increase that setting must therefore be checked against host memory as well as the worker that needs relief. The historical instance-price comparison in the storage-tier report is not a measured total-cost model for this hypothetical deployment.",
+      "sources": [
+        "storage",
+        "tiering-cost"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "Changing worker count also deserves a separate evaluation. It changes partition ownership and the size of each fixed memory share. Lavik can recover with a changed worker count without rewriting data during startup, but old physical blocks may temporarily be remote from their keys, with foreground replacement and defragmentation gradually relocating live records. Adding workers is therefore not an automatic cure for uneven index demand.",
+      "sources": [
+        "storage"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "Make the next capacity review about the first exhausted worker"
+    },
+    {
+      "type": "paragraph",
+      "text": "For a representative dataset, estimate keys per worker from partition ownership, then evaluate retained-memory demand for the real key lengths, TTL usage, and data types. Carry the busiest ownership share into the growth forecast instead of assuming every worker holds the average. Rehearse growth with the intended worker count and record admission failures, aggregate retained memory, RSS, available storage, and reclamation behavior. This is a proposed evaluation, not a test result reported here.",
+      "sources": [
+        "storage",
+        "architecture"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "For a first local check, use the basic-commands recipe below. The supplied host receipt records a pass for its five client operations and a graceful restart using the ARM64 Minimal beta package on Linux 7.0.12 with glibc 2.39. That receipt establishes a basic starting point; it does not validate this hypothetical capacity model, behavior under memory pressure, or crash durability. A successful ordinary write response is not a synchronous durability fence.",
+      "sources": [
+        "build",
+        "storage"
+      ]
+    },
+    {
+      "type": "recipe",
+      "recipeId": "basic-commands"
+    }
+  ]
+}
