@@ -1,0 +1,32 @@
+{
+  "review": {
+    "decision": "changes_required",
+    "findings": [
+      {
+        "severity": "blocking",
+        "message": "Docker publication is not bound to the reviewed/tested images. smoke-test.py tests local tags, while docker-published.json records registry digests, platforms and a version string without linking those digests to the tested builds. An image with different entrypoint/bootstrap code could retain the same version and satisfy these publication checks. Record and compare tested image identities against both published per-platform images, or verify their reviewed contents and run native smoke tests using immutable digest references."
+      },
+      {
+        "severity": "note",
+        "message": "The APT publication correction addresses the prior blocker through deployed-file hash/size checks, reviewed-key installation, fingerprint validation and metadata rechecking. Source checksums, signing continuity, immutable beta packages/by-hash preservation, stable candidate selection and Cloudflare asset sizes show no material blocking issue in this inspection."
+      },
+      {
+        "severity": "note",
+        "message": "Docker startup guards, stable CLI flags and cluster bootstrap ordering show no additional blocker. Coordinator/native CI receipts report passing AMD64 and ARM64 tests; I ran no tools or tests. Unchanged beta manual approval is inherited only within the stated scope. This review does not establish beta database/cluster migration, SPDK hardware support or lifecycle behavior under a booted systemd manager."
+      }
+    ]
+  },
+  "reviewer": {
+    "role": "reviewer",
+    "model": "gpt-6-astra",
+    "provider": "openai",
+    "authentication": "chatgpt",
+    "reasoning": "high",
+    "additionalReviewReason": "Use an unused writer slot for the identified HTTP client and bounded network retry correction",
+    "startedAt": "2026-10-13T09:18:34.468Z",
+    "finishedAt": "2026-10-13T09:21:29.040Z",
+    "promptSha256": "76cd8b5077da4b41f084f7afff4d5d5413782b4a20cace9767e35c37886fee8d",
+    "outputSha256": "6a6716c5bb97aa818f95423dfb37ee69b9b0e9dd5399ff49005491227c60de6d"
+  },
+  "correction": "Native CI now pulls both immutable published image indexes, runs complete smoke tests using those exact references for standalone and Compose, and records each platform configuration digest before and after execution. Registry child configuration digests are compared to the test receipts."
+}
