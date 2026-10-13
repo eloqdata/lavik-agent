@@ -1,6 +1,16 @@
+import {
+  defaultDocVersion,
+  type DocVersion,
+} from "../../../packages/docs/versions";
+import {
+  stableRelease,
+  stableCases,
+  stableGuides,
+} from "../../../packages/docs/stable";
+import { requireStableDocs } from "../../../packages/docs/gate";
 import Link from "next/link";
 import type { Locale } from "../../../packages/content/schema";
-import { release } from "../../../packages/content/repository";
+import { release as betaRelease } from "../../../packages/content/repository";
 import {
   manualCases,
   manualClients,
@@ -9,10 +19,18 @@ import { requireReviewedManual } from "../../../packages/manual/gate";
 import { DocsSidebar } from "./docs-sidebar";
 import { operationsGuides } from "../../../packages/operations/repository";
 
-export function DocsHome({ locale }: { locale: Locale }) {
+export function DocsHome({
+  locale,
+  version = defaultDocVersion,
+}: {
+  locale: Locale;
+  version?: DocVersion;
+}) {
+  const stable = version === "0.1.0";
+  const release = stable ? stableRelease : betaRelease;
   const zh = locale === "zh-CN";
-  const publication = requireReviewedManual();
-  const root = `/${locale}/docs/0.1.0`;
+  const publication = stable ? requireStableDocs() : requireReviewedManual();
+  const root = `/${locale}/docs/${version}`;
   const clients = manualClients();
   const cards = [
     {
@@ -36,8 +54,8 @@ export function DocsHome({ locale }: { locale: Locale }) {
       href: `${root}/install-docker/`,
       label: "03",
       text: zh
-        ? "拉取官方 beta.1 镜像，以持久化卷运行独立实例。"
-        : "Pull the official beta.1 image and run a standalone instance with a persistent volume.",
+        ? `拉取官方 ${version} 镜像，以持久化卷运行独立实例。`
+        : `Pull the official ${version} image and run a standalone instance with a persistent volume.`,
     },
     {
       title: zh ? "使用 Docker Compose 安装" : "Install With Docker Compose",
@@ -54,12 +72,12 @@ export function DocsHome({ locale }: { locale: Locale }) {
       className="container document-layout docs-home"
       data-manual-hash={publication.bundleHash}
     >
-      <DocsSidebar locale={locale} route="docs/0.1.0" />
+      <DocsSidebar locale={locale} route={`docs/${version}`} />
       <article className="document">
         <div className="breadcrumb">
           <Link href={`/${locale}/`}>Lavik</Link>
           <span>/</span>
-          <span>0.1.0</span>
+          <span>{version}</span>
         </div>
         <p className="eyebrow">
           {zh ? "面向真实应用的文档" : "DOCUMENTATION FOR BUILDERS"}
@@ -74,10 +92,16 @@ export function DocsHome({ locale }: { locale: Locale }) {
           <strong>{release.tag}</strong>
           <span>
             {zh
-              ? "当前 beta · 文档版本 0.1.0"
-              : "Current beta · documentation version 0.1.0"}
+              ? stable
+                ? "当前稳定版本"
+                : "历史 Beta 文档"
+              : stable
+                ? "Current stable release"
+                : "Archived beta documentation"}
           </span>
-          <Link href={`/${locale}/releases/`}>
+          <Link
+            href={`/${locale}/releases/${stable ? "0-1-0" : "0-1-0-beta-1"}/`}
+          >
             {zh ? "版本说明" : "Release notes"} →
           </Link>
         </div>
@@ -106,7 +130,7 @@ export function DocsHome({ locale }: { locale: Locale }) {
               <span className="eyebrow">
                 {zh ? "命令参考" : "COMMAND REFERENCE"}
               </span>
-              <strong>{manualCases().length}</strong>
+              <strong>{(stable ? stableCases() : manualCases()).length}</strong>
               <h3>{zh ? "已收录命令" : "documented commands"} →</h3>
               <p>
                 {zh
@@ -143,8 +167,12 @@ export function DocsHome({ locale }: { locale: Locale }) {
               <h3>{zh ? "从 Redis Cluster 迁移" : "From Redis Cluster"} →</h3>
               <p>
                 {zh
-                  ? "盘点源主节点与槽位，汇入独立 Lavik。"
-                  : "Inventory source primaries and slots, then consolidate into standalone Lavik."}
+                  ? stable
+                    ? "盘点源主节点与槽位，规划导入 Single 或 Cluster。"
+                    : "盘点源主节点与槽位，汇入独立 Lavik。"
+                  : stable
+                    ? "Inventory source primaries and slots, then plan import into Single or Cluster."
+                    : "Inventory source primaries and slots, then consolidate into standalone Lavik."}
               </p>
             </Link>
           </div>
@@ -192,7 +220,10 @@ export function DocsHome({ locale }: { locale: Locale }) {
               : "Deploy and manage with lavik-ctl"}
           </h2>
           <div className="docs-guide-list">
-            {operationsGuides.map((guide) => (
+            {(stable
+              ? stableGuides().filter((g) => g.id.startsWith("lavik-ctl"))
+              : operationsGuides
+            ).map((guide) => (
               <Link key={guide.id} href={`${root}/${guide.id}/`}>
                 <h3>{guide.title[locale]} →</h3>
                 <p>{guide.summary[locale]}</p>

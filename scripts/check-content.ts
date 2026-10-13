@@ -1,3 +1,4 @@
+import { stableDocumentationErrors } from "../packages/docs/gate.ts";
 import {
   articles,
   articlePath,
@@ -9,7 +10,7 @@ import { publicationErrors } from "../packages/content/gate.ts";
 import { manualPublicationErrors } from "../packages/manual/gate.ts";
 
 const failures: string[] = [];
-failures.push(...manualPublicationErrors());
+failures.push(...manualPublicationErrors(), ...stableDocumentationErrors());
 const pages = articles();
 const routes = new Set<string>();
 for (const source of sources) sourceText(source.id);

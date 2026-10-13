@@ -1,7 +1,16 @@
+import { type DocVersion } from "../../../packages/docs/versions";
+import {
+  stableRelease,
+  stableCatalog,
+  stableCases,
+  stableCommandReport,
+  stableClientReport,
+} from "../../../packages/docs/stable";
+import { requireStableDocs } from "../../../packages/docs/gate";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Locale } from "../../../packages/content/schema";
-import { release } from "../../../packages/content/repository";
+import { release as betaRelease } from "../../../packages/content/repository";
 import {
   clientReport,
   clientSource,
@@ -75,33 +84,41 @@ function exampleTranscript(steps: VerifiedStep[]) {
 export function ManualPage({
   route,
   locale,
+  version = "0.1.0-beta.1",
 }: {
+  version?: DocVersion;
   route: string;
   locale: Locale;
 }) {
-  const publication = requireReviewedManual();
+  const stable = version === "0.1.0";
+  const release = stable ? stableRelease : betaRelease;
+  const publication = stable ? requireStableDocs() : requireReviewedManual();
+  const normalizedRoute = route.replace(`docs/${version}`, "docs/0.1.0");
   const zh = locale === "zh-CN",
-    title = manualTitle(route, locale);
+    title =
+      normalizedRoute.endsWith("/commands/lavik.replicaof") && stable
+        ? "LAVIK.REPLICAOF"
+        : manualTitle(route, locale);
   if (!title) notFound();
-  const catalog = manualCatalog(),
-    cases = manualCases(),
+  const catalog = stable ? stableCatalog() : manualCatalog(),
+    cases = stable ? stableCases() : manualCases(),
     clients = manualClients();
-  const commands = commandReport(),
-    clientResults = clientReport();
-  const commandName = route.startsWith("docs/0.1.0/commands/")
+  const commands = stable ? stableCommandReport() : commandReport(),
+    clientResults = stable ? stableClientReport() : clientReport();
+  const commandName = normalizedRoute.startsWith("docs/0.1.0/commands/")
     ? route.split("/").at(-1)!.toUpperCase()
     : undefined;
   const command = catalog.commands.find((c) => c.name === commandName);
   const definition = cases.find((c) => c.name === commandName);
   const result = commands.commands.find((c) => c.name === commandName);
-  const client = route.startsWith("docs/0.1.0/clients/")
+  const client = normalizedRoute.startsWith("docs/0.1.0/clients/")
     ? clients.find((c) => c.id === route.split("/").at(-1))
     : undefined;
   const tested = clientResults.clients.find((c) => c.id === client?.id);
   const shutdownProbe = clientResults.shutdownProbes.find(
     (p) => p.id === client?.id,
   );
-  const root = `/${locale}/docs/0.1.0`;
+  const root = `/${locale}/docs/${version}`;
   return (
     <main
       id="main"
@@ -113,7 +130,7 @@ export function ManualPage({
         <div className="breadcrumb">
           <Link href={root + "/"}>{zh ? "文档" : "Docs"}</Link>
           <span>/</span>
-          <span>0.1.0</span>
+          <span>{version}</span>
           {command ? (
             <>
               <span>/</span>
@@ -130,7 +147,7 @@ export function ManualPage({
         <h1>{title}</h1>
         <div className="article-meta">{release.tag}</div>
 
-        {route === "docs/0.1.0/commands" ? (
+        {normalizedRoute === "docs/0.1.0/commands" ? (
           <>
             <p className="document-summary">
               {zh
@@ -147,7 +164,7 @@ export function ManualPage({
                 <span>{zh ? "命令类别" : "command families"}</span>
               </div>
               <div>
-                <strong>0.1.0</strong>
+                <strong>{version}</strong>
                 <span>{zh ? "版本固定" : "version pinned"}</span>
               </div>
             </div>
@@ -161,6 +178,7 @@ export function ManualPage({
             </div>
             <CommandSearch
               locale={locale}
+              version={version}
               commands={cases.map((c) => ({
                 name: c.name,
                 group: c.group,
@@ -254,7 +272,7 @@ export function ManualPage({
           </>
         ) : null}
 
-        {route === "docs/0.1.0/clients" ? (
+        {normalizedRoute === "docs/0.1.0/clients" ? (
           <>
             <p className="document-summary">
               {zh
@@ -334,9 +352,15 @@ export function ManualPage({
                   : "Each client page lists the operations actually executed. Tests that use a client's raw-command API are labeled. Libraries and features absent from this matrix have not been certified here."}
               </p>
               <p>
-                {zh
-                  ? "ioredis 和 iovalkey 的通过配置使用 disconnect() 结束连接。单独的 quit() 诊断中，调用虽然完成，但 Node.js 进程在 12 秒后仍未退出；请查看对应客户端页面的限制说明。"
-                  : "The passing ioredis and iovalkey profiles use disconnect() for cleanup. In separate quit() diagnostics, the call completed but the Node.js process remained alive after 12 seconds; see those client pages for the limitation."}
+                {clientResults.shutdownProbes.some(
+                  (probe) => probe.outcome === "timeout",
+                )
+                  ? zh
+                    ? "ioredis 和 iovalkey 的通过配置使用 disconnect() 结束连接。单独的 quit() 诊断中，Node.js 进程在 12 秒后仍未退出；请查看对应客户端页面。"
+                    : "The passing ioredis and iovalkey profiles use disconnect() for cleanup. Separate quit() diagnostics timed out after 12 seconds; see those client pages."
+                  : zh
+                    ? "ioredis 和 iovalkey 的主测试使用 disconnect()。本版本的独立 quit() 诊断也成功完成，Node.js 进程正常退出。"
+                    : "The main ioredis and iovalkey profiles use disconnect(). Separate quit() diagnostics also completed successfully and the Node.js processes exited for this release."}
               </p>
             </div>
           </>

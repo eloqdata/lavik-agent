@@ -34,7 +34,7 @@ export function OperationsPage({
 }) {
   const publication = requireReviewedManual();
   const zh = locale === "zh-CN";
-  const root = `/${locale}/docs/0.1.0`;
+  const root = `/${locale}/docs/0.1.0-beta.1`;
   const other = operationsGuides.find((g) => g.id !== guide.id)!;
   return (
     <main
@@ -42,7 +42,7 @@ export function OperationsPage({
       className="container document-layout operations-guide"
       data-manual-hash={publication.bundleHash}
     >
-      <DocsSidebar locale={locale} route={`docs/0.1.0/${guide.id}`} />
+      <DocsSidebar locale={locale} route={`docs/0.1.0-beta.1/${guide.id}`} />
       <article className="document">
         <div className="breadcrumb">
           <Link href={`${root}/`}>Lavik Docs</Link>
@@ -95,7 +95,11 @@ export function OperationsPage({
                   case "link":
                     return (
                       <p key={i}>
-                        <Link href={block.href.replaceAll("{locale}", locale)}>
+                        <Link
+                          href={block.href
+                            .replaceAll("{locale}", locale)
+                            .replace("/docs/0.1.0/", "/docs/0.1.0-beta.1/")}
+                        >
                           {block.label[locale]} →
                         </Link>
                       </p>

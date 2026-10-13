@@ -20,7 +20,7 @@ export function QuickStartSetup({ locale }: { locale: Locale }) {
           : "Use Linux 6.1+ with usable io_uring and Ubuntu 24.04-compatible glibc. On macOS or Windows, run the package in a Linux VM meeting these requirements; the Linux binaries do not run directly on macOS."}
       </p>
       <p>
-        <Link href={`/${locale}/download/`}>
+        <Link href={`/${locale}/download/0.1.0-beta.1/`}>
           {zh
             ? "查看所有发布包、SHA-256 校验和及平台要求"
             : "All packages, SHA-256 checksums, and platform requirements"}{" "}

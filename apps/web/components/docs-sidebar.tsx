@@ -1,3 +1,10 @@
+import {
+  docVersions,
+  docVersionForRoute,
+  defaultDocVersion,
+} from "../../../packages/docs/versions";
+import { stableCatalog, stableGuides } from "../../../packages/docs/stable";
+import { DocVersionSelect } from "./doc-version-select";
 import { userGuides } from "../../../packages/docs/repository";
 import type { Locale } from "../../../packages/content/schema";
 import {
@@ -20,7 +27,9 @@ export function DocsSidebar({
   route: string;
 }) {
   const zh = locale === "zh-CN";
-  const root = `/${locale}/docs/0.1.0`;
+  const version = docVersionForRoute(route) ?? defaultDocVersion;
+  const stable = version === "0.1.0";
+  const root = `/${locale}/docs/${version}`;
   const groups = [
     {
       title: zh ? "开始使用" : "Get Started",
@@ -64,6 +73,14 @@ export function DocsSidebar({
     {
       title: zh ? "管理 Lavik" : "Managing Lavik",
       links: [
+        ...(stable
+          ? [
+              {
+                title: zh ? "Lavik Admin" : "Lavik Admin",
+                href: `${root}/lavik-admin/`,
+              },
+            ]
+          : []),
         {
           title: zh ? "单节点部署" : "Single Node",
           href: `${root}/lavik-ctl-single-node/`,
@@ -121,7 +138,9 @@ export function DocsSidebar({
   for (const group of groups)
     for (const link of group.links)
       indexed.set(link.href, { ...link, kind: group.title });
-  for (const guide of [...operationsGuides, ...userGuides]) {
+  for (const guide of stable
+    ? stableGuides()
+    : [...operationsGuides, ...userGuides]) {
     const href = `${root}/${guide.id}/`;
     indexed.set(href, {
       title: indexed.get(href)?.title ?? guide.title[locale],
@@ -131,9 +150,14 @@ export function DocsSidebar({
     });
   }
   for (const article of articles().filter(
-    (a) => a.locale === locale && (a.kind === "docs" || a.kind === "faq"),
+    (a) =>
+      a.locale === locale &&
+      ((!stable && a.kind === "docs") || a.kind === "faq"),
   )) {
-    const href = articlePath(article);
+    const href = articlePath(article).replace(
+      "/docs/0.1.0-beta.1/",
+      `/docs/${version}/`,
+    );
     indexed.set(href, {
       title: indexed.get(href)?.title ?? article.title,
       href,
@@ -141,7 +165,7 @@ export function DocsSidebar({
       kind: zh ? "指南" : "Guide",
     });
   }
-  for (const command of manualCatalog().commands) {
+  for (const command of (stable ? stableCatalog() : manualCatalog()).commands) {
     const href = `${root}/commands/${command.name.toLowerCase()}/`;
     indexed.set(href, {
       title: command.name,
@@ -163,10 +187,29 @@ export function DocsSidebar({
     <aside className="document-nav docs-sidebar">
       <div className="docs-sidebar-inner">
         <span className="eyebrow">LAVIK DOCS</span>
-        <span className="doc-version">
-          0.1.0 <span className="status-pill">Beta</span>
-          <small>{release.tag}</small>
-        </span>
+        <DocVersionSelect
+          locale={locale}
+          version={version}
+          options={docVersions
+            .map((target) => ({
+              version: target,
+              href:
+                `/${locale}/docs/${target}/${route.startsWith("docs/") ? route.split("/").slice(2).join("/") : ""}`.replace(
+                  /\/$/,
+                  "",
+                ) + "/",
+            }))
+            .map((option) => ({
+              ...option,
+              href:
+                option.version === "0.1.0-beta.1"
+                  ? option.href.replace(
+                      /\/(lavik-admin|commands\/lavik\.replicaof)\/$/,
+                      "/",
+                    )
+                  : option.href,
+            }))}
+        />
         <DocsNavigation
           locale={locale}
           route={route}

@@ -13,7 +13,7 @@ test("bilingual lavik-ctl guides expose tested commands, Grafana setup and accur
 }) => {
   for (const locale of ["en", "zh-CN"] as const)
     for (const guide of operationsGuides) {
-      await page.goto(`/${locale}/docs/0.1.0/${guide.id}/`);
+      await page.goto(`/${locale}/docs/0.1.0-beta.1/${guide.id}/`);
       await expect(page.locator("h1")).toHaveText(guide.title[locale]);
       await expect(page).toHaveTitle(new RegExp("lavik-ctl"));
       await expect(page.locator("main")).toHaveAttribute(
@@ -57,26 +57,26 @@ test("docs navigation, search and manifest include the operator guides", async (
   page,
   request,
 }) => {
-  await page.goto("/en/docs/0.1.0/");
+  await page.goto("/en/docs/0.1.0-beta.1/");
   await page
     .locator(".docs-nav-group summary")
     .filter({ hasText: "Managing Lavik" })
     .click();
   await expect(
     page.locator(
-      ".docs-sidebar a[href='/en/docs/0.1.0/lavik-ctl-single-node/']",
+      ".docs-sidebar a[href='/en/docs/0.1.0-beta.1/lavik-ctl-single-node/']",
     ),
   ).toBeVisible();
   await expect(
     page.locator(
-      ".docs-guide-list a[href='/en/docs/0.1.0/lavik-ctl-ha-cluster/']",
+      ".docs-guide-list a[href='/en/docs/0.1.0-beta.1/lavik-ctl-ha-cluster/']",
     ),
   ).toBeVisible();
   await page.locator(".docs-sidebar input").fill("Grafana");
   for (const guide of operationsGuides)
     await expect(
       page.locator(
-        `.docs-search-results a[href='/en/docs/0.1.0/${guide.id}/']`,
+        `.docs-search-results a[href='/en/docs/0.1.0-beta.1/${guide.id}/']`,
       ),
     ).toBeVisible();
   const manifest = await (await request.get("/manual-manifest.json")).json();

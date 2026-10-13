@@ -5,10 +5,12 @@ import { CopyCode } from "./copy-code";
 
 export function QuickStartInstaller({
   locale,
+  version = "0.1.0-beta.1",
   packages,
   dependencies,
 }: {
   locale: Locale;
+  version?: string;
   packages: {
     arch: string;
     variant: string;
@@ -81,8 +83,8 @@ export function QuickStartInstaller({
       </p>
       <p>
         {zh
-          ? "版本输出应为 lavik 0.1.0-beta.1。保持这个终端位于该目录，继续下面的启动步骤。"
-          : "Expect lavik 0.1.0-beta.1. Keep this terminal in that directory for the startup step below."}
+          ? `版本输出应为 lavik ${version}。保持这个终端位于该目录，继续下面的启动步骤。`
+          : `Expect lavik ${version}. Keep this terminal in that directory for the startup step below.`}
       </p>
     </section>
   );

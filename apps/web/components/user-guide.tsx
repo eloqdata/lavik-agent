@@ -14,14 +14,14 @@ export function UserGuidePage({
   guide: UserGuide;
 }) {
   const publication = requireReviewedManual();
-  const root = `/${locale}/docs/0.1.0`;
+  const root = `/${locale}/docs/0.1.0-beta.1`;
   return (
     <main
       id="main"
       className="container document-layout"
       data-manual-hash={publication.bundleHash}
     >
-      <DocsSidebar locale={locale} route={`docs/0.1.0/${guide.id}`} />
+      <DocsSidebar locale={locale} route={`docs/0.1.0-beta.1/${guide.id}`} />
       <article className="document">
         <div className="breadcrumb">
           <Link href={`${root}/`}>Lavik Docs</Link>
@@ -53,7 +53,11 @@ export function UserGuidePage({
                   <p key={i}>{block.text[locale]}</p>
                 ) : block.type === "link" ? (
                   <p key={i}>
-                    <Link href={block.href.replaceAll("{locale}", locale)}>
+                    <Link
+                      href={block.href
+                        .replaceAll("{locale}", locale)
+                        .replace("/docs/0.1.0/", "/docs/0.1.0-beta.1/")}
+                    >
                       {block.text[locale]} →
                     </Link>
                   </p>

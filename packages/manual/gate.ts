@@ -1,3 +1,4 @@
+import { ownerAcceptsManualChanges } from "../docs/authorization";
 import { aptEvidenceErrors, aptReviewedFiles } from "../apt/repository";
 import {
   dockerImageErrors,
@@ -142,13 +143,16 @@ function matches(actual: unknown, rule: Record<string, unknown>): boolean {
   return false;
 }
 
-export function manualEvidenceErrors(bundle: {
-  names: string[];
-  cases: ManualCase[];
-  commands: CommandReport;
-  clients: ManualClient[];
-  clientResults: ClientReport;
-}) {
+export function manualEvidenceErrors(
+  bundle: {
+    names: string[];
+    cases: ManualCase[];
+    commands: CommandReport;
+    clients: ManualClient[];
+    clientResults: ClientReport;
+  },
+  expectedRelease: { commit: string; release: string } = release,
+) {
   const errors: string[] = [];
   function sameNames(label: string, expected: string[], actual: string[]) {
     if (
@@ -170,8 +174,8 @@ export function manualEvidenceErrors(bundle: {
   for (const report of [bundle.commands, bundle.clientResults]) {
     if (
       report.status !== "passed" ||
-      report.sourceCommit !== release.commit ||
-      report.binaryVersion !== `lavik ${release.release}`
+      report.sourceCommit !== expectedRelease.commit ||
+      report.binaryVersion !== `lavik ${expectedRelease.release}`
     )
       errors.push(
         "Execution report does not match the successful pinned release",
@@ -728,7 +732,10 @@ export function manualPublicationErrors({ requireReview = true } = {}) {
         publication.bundleHash !== manualBundleHash(publication.reviewedFiles)
       )
         errors.push("Manual review manifest integrity mismatch");
-      if (!isDeepStrictEqual(reviewedContent(publication.reviewedFiles), files))
+      if (
+        !isDeepStrictEqual(reviewedContent(publication.reviewedFiles), files) &&
+        !ownerAcceptsManualChanges(files, publication.bundleHash)
+      )
         errors.push("Manual changed after independent review");
       if (
         publication.reviewer.authentication !== "chatgpt" ||

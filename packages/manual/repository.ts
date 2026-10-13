@@ -149,15 +149,18 @@ export function clientSource(client: ManualClient) {
     "utf8",
   );
 }
-export function manualRoutes() {
+export function manualRoutes(version = "0.1.0-beta.1") {
   return [
-    "docs/0.1.0/commands",
-    "docs/0.1.0/clients",
-    ...manualCases().map((c) => `docs/0.1.0/commands/${c.name.toLowerCase()}`),
-    ...manualClients().map((c) => `docs/0.1.0/clients/${c.id}`),
+    `docs/${version}/commands`,
+    `docs/${version}/clients`,
+    ...manualCases().map(
+      (c) => `docs/${version}/commands/${c.name.toLowerCase()}`,
+    ),
+    ...manualClients().map((c) => `docs/${version}/clients/${c.id}`),
   ];
 }
 export function manualTitle(route: string, locale: Locale) {
+  route = route.replace("docs/0.1.0-beta.1", "docs/0.1.0");
   if (route === "docs/0.1.0/commands")
     return locale === "en" ? "Command reference" : "命令参考";
   if (route === "docs/0.1.0/clients")

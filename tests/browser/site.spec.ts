@@ -106,15 +106,15 @@ test("both languages, benchmark interaction, and real verification output", asyn
       ".recipe .verification, .source-list, .quick-start-verification",
     ),
   ).toHaveCount(0);
-  await expect(page.locator(".recipe pre").first()).toContainText(
-    "./lavik --bind",
-  );
+  await expect(
+    page.locator('[data-doc-example$="binary-start.sh"] pre'),
+  ).toContainText("./lavik --bind");
   await page
     .getByRole("link", { name: "Switch to Simplified Chinese" })
     .click();
   await expect(page).toHaveURL(/\/zh-CN\/docs\/0.1.0\/quick-start\//);
   await expect(page.locator("html")).toHaveAttribute("lang", "zh-CN");
-  await expect(page.locator("h1")).toContainText("运行第一组命令");
+  await expect(page.locator("h1")).toContainText("使用二进制安装");
   expect(errors).toEqual([]);
 });
 test("cost scenarios recalculate rather than promise a fixed deployment saving", async ({

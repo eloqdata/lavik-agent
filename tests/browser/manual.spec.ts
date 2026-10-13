@@ -41,13 +41,15 @@ test("command search, verified examples, client settings, and bilingual navigati
 test("every manual route exports with a review hash", async ({ request }) => {
   test.setTimeout(120_000);
   const manifest = await (await request.get("/manual-manifest.json")).json();
-  expect(manifest.routes).toBe(manualRoutes().length * 2);
+  expect(manifest.versions["0.1.0-beta.1"].routes).toBe(
+    manualRoutes().length * 2,
+  );
   for (const locale of ["en", "zh-CN"])
     for (const route of manualRoutes()) {
       const response = await request.get(`/${locale}/${route}/`);
       expect(response.status(), `${locale}/${route}`).toBe(200);
       expect(await response.text()).toContain(
-        `data-manual-hash="${manifest.bundleHash}"`,
+        `data-manual-hash="${manifest.versions["0.1.0-beta.1"].bundleHash}"`,
       );
     }
 });

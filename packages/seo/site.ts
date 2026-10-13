@@ -1,3 +1,9 @@
+import { docVersionForRoute } from "../docs/versions";
+import {
+  stableGuides,
+  stableCatalog,
+  stableReleaseNotes,
+} from "../docs/stable";
 import { comparisonSource } from "../comparisons/measurements";
 import { changedAt } from "./dates";
 import {
@@ -63,8 +69,8 @@ const pairs: Record<string, [string, string, string, string]> = {
   releases: [
     "Lavik Release Notes",
     "Lavik 版本说明",
-    "Read versioned Lavik release notes, download the beta packages, and review requirements and changes before upgrading.",
-    "阅读 Lavik 版本说明、下载 beta 发布包，并在升级前了解要求和变更。",
+    "Read Lavik release notes, download stable or archived beta packages, and review requirements and changes before upgrading.",
+    "阅读 Lavik 版本说明、下载稳定版或历史 Beta 发布包，并在升级前了解要求和变更。",
   ],
   download: [
     "Download Lavik",
@@ -112,28 +118,35 @@ const pairs: Record<string, [string, string, string, string]> = {
 export function pageInfo(locale: Locale, input: string) {
   const route = canonicalRoute(input),
     zh = locale === "zh-CN";
+  const docVersion = docVersionForRoute(route);
+  const stable = docVersion === "0.1.0";
+  const lookupRoute = route.replace("docs/0.1.0-beta.1", "docs/0.1.0");
+  const stableNote =
+    route === "releases/0-1-0" ? stableReleaseNotes() : undefined;
+  const archivedDownload = route === "download/0.1.0-beta.1";
   const article = articles().find(
     (a) => articlePath(a) === `/${locale}/${route}/`,
   );
-  const guide = [...operationsGuides, ...userGuides].find(
-    (g) => route === `docs/0.1.0/${g.id}`,
-  );
+  const guide = (
+    stable ? stableGuides() : [...operationsGuides, ...userGuides]
+  ).find((g) => lookupRoute === `docs/0.1.0/${g.id}`);
   const useCase = useCases.find((c) => route === `use-cases/${c.slug}`);
   const topic = blogTopics.find((t) => route === `blog/topic/${t.id}`);
-  const command = route.startsWith("docs/0.1.0/commands/")
-    ? manualCatalog().commands.find(
+  const command = lookupRoute.startsWith("docs/0.1.0/commands/")
+    ? (stable ? stableCatalog() : manualCatalog()).commands.find(
         (c) => c.name.toLowerCase() === route.split("/").at(-1),
       )
     : undefined;
-  const client = route.startsWith("docs/0.1.0/clients/")
+  const client = lookupRoute.startsWith("docs/0.1.0/clients/")
     ? manualClients().find((c) => c.id === route.split("/").at(-1))
     : undefined;
   const comparison = comparisonForRoute(route);
-  const fixed = pairs[route];
+  const fixed = pairs[archivedDownload ? "download" : lookupRoute];
   const title =
     (comparison
       ? `Lavik vs ${comparison.name}: ${zh ? "性能、架构与成本" : "Performance, Architecture and Cost"}`
       : undefined) ??
+    stableNote?.title[locale] ??
     article?.title ??
     guide?.title[locale] ??
     useCase?.title[locale] ??
@@ -148,6 +161,7 @@ export function pageInfo(locale: Locale, input: string) {
     "Lavik";
   const description =
     (comparison ? comparisonCopy[comparison.id].summary[locale] : undefined) ??
+    stableNote?.summary[locale] ??
     article?.summary ??
     guide?.summary[locale] ??
     useCase?.summary[locale] ??
@@ -178,8 +192,17 @@ export function pageInfo(locale: Locale, input: string) {
     );
   return {
     route,
-    title,
-    description,
+    title: docVersion
+      ? `${title} · ${docVersion}`
+      : archivedDownload
+        ? `${title} · 0.1.0-beta.1`
+        : title,
+    description:
+      stable || route === "download"
+        ? description.replaceAll("0.1.0-beta.1", "0.1.0")
+        : docVersion === "0.1.0-beta.1"
+          ? description.replace(/0\.1\.0(?!-beta\.1)/g, "0.1.0-beta.1")
+          : description,
     article,
     comparison,
     emptyTopic,

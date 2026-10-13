@@ -72,7 +72,7 @@ export function articles(): Article[] {
 }
 export function articlePath(article: Article) {
   const section = {
-    docs: `docs/${article.version}`,
+    docs: "docs/0.1.0-beta.1",
     release: "releases",
     "use-case": "use-cases",
     blog: "blog",

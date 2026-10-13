@@ -105,7 +105,7 @@ export function DocsNavigation({
             className="docs-nav-group"
             key={`${current}:${group.title}`}
             open={
-              current !== `/${locale}/docs/0.1.0/` &&
+              !/^docs\/[^/]+$/.test(route) &&
               group.links.some((link) => {
                 const href = link.href.split("#")[0];
                 return (

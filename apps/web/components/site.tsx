@@ -1,3 +1,4 @@
+import { ReleaseBadge } from "./release-badge";
 import Link from "next/link";
 import { LanguageSwitch } from "./language-switch";
 import type { Locale } from "../../../packages/content/schema";
@@ -24,7 +25,8 @@ export function Header({ locale }: { locale: Locale }) {
       <div className="container header-inner">
         <Link href={`/${locale}/`} className="wordmark" aria-label="Lavik home">
           <Mark />
-          Lavik<span className="version-pill">0.1.0 beta</span>
+          Lavik
+          <ReleaseBadge />
         </Link>
         <nav aria-label={zh ? "主导航" : "Main navigation"}>
           <Link href={`/${locale}/download/`}>{zh ? "下载" : "Download"}</Link>

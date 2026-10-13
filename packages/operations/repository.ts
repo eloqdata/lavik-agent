@@ -47,7 +47,7 @@ export const operationsGuides = guideSchema
   .array()
   .parse(JSON.parse(readText("content/operations/0.1.0/guides.json")));
 export const operationsRoutes = () =>
-  operationsGuides.map((g) => `docs/0.1.0/${g.id}`);
+  operationsGuides.map((g) => `docs/0.1.0-beta.1/${g.id}`);
 export function operationSnippet(name: string) {
   if (!/^[a-z-]+$/.test(name)) throw new Error("Invalid operator snippet");
   return readText(`verification/operations/snippets/${name}.sh`).trim();

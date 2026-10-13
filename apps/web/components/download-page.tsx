@@ -1,13 +1,37 @@
+import {
+  defaultDocVersion,
+  docVersions,
+  downloadPath,
+  type DocVersion,
+} from "../../../packages/docs/versions";
+import {
+  stableRelease,
+  stableDownloads,
+  stablePackages,
+} from "../../../packages/docs/stable";
+import { requireStableDocs } from "../../../packages/docs/gate";
+import { DocVersionSelect } from "./doc-version-select";
 import Link from "next/link";
 import type { Locale } from "../../../packages/content/schema";
-import { release } from "../../../packages/content/repository";
+import { release as betaRelease } from "../../../packages/content/repository";
 import {
-  downloadPackages,
-  downloadRelease,
+  downloadPackages as betaPackages,
+  downloadRelease as betaDownloads,
 } from "../../../packages/content/downloads";
 import { CopyCode } from "./copy-code";
 
-export function DownloadPage({ locale }: { locale: Locale }) {
+export function DownloadPage({
+  locale,
+  version = defaultDocVersion,
+}: {
+  locale: Locale;
+  version?: DocVersion;
+}) {
+  const stable = version === "0.1.0";
+  if (stable) requireStableDocs();
+  const release = stable ? stableRelease : betaRelease;
+  const downloadRelease = stable ? stableDownloads : betaDownloads;
+  const downloadPackages = stable ? stablePackages() : betaPackages;
   const zh = locale === "zh-CN";
   const source = `https://github.com/eloqdata/lavik/blob/${release.commit}`;
   return (
@@ -19,13 +43,30 @@ export function DownloadPage({ locale }: { locale: Locale }) {
           ? "选择适合你机器的 Linux 发布包，验证校验和，然后运行第一组命令。Apache 2.0 开源，免费使用。"
           : "Choose a Linux package for your machine, verify the checksum, and run your first commands. Free to use, open source under Apache 2.0."}
       </p>
+      <DocVersionSelect
+        locale={locale}
+        version={version}
+        options={docVersions.map((version) => ({
+          version,
+          href: downloadPath(locale, version),
+        }))}
+      />
       <div className="release-banner">
         <div>
           <span className="eyebrow">
-            {zh ? "当前发布版本" : "CURRENT RELEASE"}
+            {stable
+              ? zh
+                ? "当前稳定版本"
+                : "CURRENT STABLE RELEASE"
+              : zh
+                ? "历史 Beta"
+                : "ARCHIVED BETA"}
           </span>
           <h2>
-            {release.tag} <span className="status-pill">Beta</span>
+            {release.tag}{" "}
+            <span className="status-pill">
+              {stable ? (zh ? "稳定版" : "Stable") : "Beta"}
+            </span>
           </h2>
           <p>
             {zh ? "发布于" : "Released"}{" "}
@@ -33,14 +74,50 @@ export function DownloadPage({ locale }: { locale: Locale }) {
           </p>
         </div>
         <div className="button-row">
-          <Link className="button" href={`/${locale}/docs/0.1.0/quick-start/`}>
+          <Link
+            className="button"
+            href={`/${locale}/docs/${version}/quick-start/`}
+          >
             {zh ? "快速开始" : "Quick start"} →
           </Link>
-          <a className="button secondary" href={downloadRelease.html_url}>
-            {zh ? "GitHub 发布说明" : "GitHub release notes"} ↗
+          <a
+            className="button secondary"
+            href={`/${locale}/releases/${stable ? "0-1-0" : "0-1-0-beta-1"}/`}
+          >
+            {zh ? "版本说明" : "Release notes"} ↗
           </a>
         </div>
       </div>
+      {stable ? (
+        <section className="download-requirements">
+          <h2>{zh ? "更多安装方式" : "More Ways To Install"}</h2>
+          <p>
+            {zh
+              ? "发布压缩包包含 lavik、lavik-meta、lavik-ctl，以及 Lavik Admin 和其 Node.js 运行时。APT 软件包及 Docker 镜像提供服务端程序，不包含 Admin。"
+              : "Release archives include lavik, lavik-meta, lavik-ctl, and Lavik Admin with its Node.js runtime. APT packages and Docker images contain the server tools; Admin is available in the archives."}
+          </p>
+          <div className="button-row">
+            <Link
+              className="button secondary"
+              href={`/${locale}/docs/0.1.0/install-packages/`}
+            >
+              APT · 0.1.0-1
+            </Link>
+            <Link
+              className="button secondary"
+              href={`/${locale}/docs/0.1.0/install-docker/`}
+            >
+              Docker · 0.1.0
+            </Link>
+            <Link
+              className="button secondary"
+              href={`/${locale}/docs/0.1.0/install-docker-compose/`}
+            >
+              Docker Compose
+            </Link>
+          </div>
+        </section>
+      ) : null}
       <section className="download-requirements" aria-labelledby="requirements">
         <h2 id="requirements">{zh ? "下载之前" : "Before you download"}</h2>
         <p>
@@ -129,7 +206,7 @@ export function DownloadPage({ locale }: { locale: Locale }) {
                     <CopyCode locale={locale} code={pkg.commands} />
                     <Link
                       className="text-link"
-                      href={`/${locale}/docs/0.1.0/quick-start/`}
+                      href={`/${locale}/docs/${version}/quick-start/`}
                     >
                       {zh
                         ? "下一步：启动并连接 Lavik"

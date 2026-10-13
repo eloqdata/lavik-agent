@@ -1,4 +1,15 @@
 import {
+  docVersionForRoute,
+  isDocVersion,
+} from "../../../../../../packages/docs/versions";
+import {
+  stableGuideRoutes,
+  stableGuides,
+  stableReleaseNotes,
+  stableManualRoutes,
+} from "../../../../../../packages/docs/stable";
+import { StableGuidePage } from "../../../../components/stable-guide";
+import {
   pageMetadata,
   pageStructuredData,
 } from "../../../../../../packages/seo/site";
@@ -70,6 +81,9 @@ const indexRoutes = [
   "community",
   "docs",
   "docs/0.1.0",
+  "docs/0.1.0-beta.1",
+  "download/0.1.0-beta.1",
+  "releases/0-1-0",
   "about",
   "privacy",
 ];
@@ -86,6 +100,8 @@ export function generateStaticParams({
         slug: articlePath(a).split("/").filter(Boolean).slice(1),
       })),
     ...indexRoutes.map((route) => ({ slug: route.split("/") })),
+    ...stableGuideRoutes().map((route) => ({ slug: route.split("/") })),
+    ...stableManualRoutes().map((route) => ({ slug: route.split("/") })),
     ...manualRoutes().map((route) => ({ slug: route.split("/") })),
     ...userGuideRoutes().map((route) => ({ slug: route.split("/") })),
     ...operationsRoutes().map((route) => ({ slug: route.split("/") })),
@@ -131,11 +147,40 @@ async function PageContent({
   const useCase = useCases.find((entry) => route === `use-cases/${entry.slug}`);
   if (useCase) return <UseCasePage locale={locale} entry={useCase} />;
   if (route === "download") return <DownloadPage locale={locale} />;
+  if (route.startsWith("download/") && isDocVersion(route.slice(9)))
+    return (
+      <DownloadPage
+        locale={locale}
+        version={route.slice(9) as "0.1.0-beta.1"}
+      />
+    );
+  if (route === "releases/0-1-0")
+    return (
+      <StableGuidePage
+        locale={locale}
+        guide={stableReleaseNotes()}
+        releaseNote
+      />
+    );
   if (route === "community") return <CommunityPage locale={locale} />;
-  if (route === "docs" || route === "docs/0.1.0")
-    return <DocsHome locale={locale} />;
+  const docVersion = docVersionForRoute(route);
+  if (docVersion && (route === "docs" || route.split("/").length === 2))
+    return <DocsHome locale={locale} version={docVersion} />;
+  if (docVersion === "0.1.0") {
+    const stableGuide = stableGuides().find(
+      (guide) => route === `docs/0.1.0/${guide.id}`,
+    );
+    if (stableGuide)
+      return <StableGuidePage locale={locale} guide={stableGuide} />;
+    if (
+      manualTitle(route, locale) ||
+      route === "docs/0.1.0/commands/lavik.replicaof"
+    )
+      return <ManualPage route={route} locale={locale} version="0.1.0" />;
+    notFound();
+  }
   const operatorGuide = [...operationsGuides, ...userGuides].find(
-    (g) => route === `docs/0.1.0/${g.id}`,
+    (g) => route === `docs/0.1.0-beta.1/${g.id}`,
   );
   if (operatorGuide) {
     const userGuide = userGuides.find((g) => g.id === operatorGuide.id);
@@ -180,7 +225,9 @@ async function PageContent({
           <div className="breadcrumb">
             <Link href={`/${locale}/`}>Lavik</Link>
             <span>/</span>
-            <span>{article.kind === "docs" ? "0.1.0" : article.kind}</span>
+            <span>
+              {article.kind === "docs" ? "0.1.0-beta.1" : article.kind}
+            </span>
           </div>
           <h1>{article.title}</h1>
           <p className="document-summary">{article.summary}</p>
@@ -205,8 +252,8 @@ async function PageContent({
               </>
             ) : (
               <>
-                {zh ? "文档版本" : "Documentation"}: 0.1.0 · {release.tag} ·{" "}
-                {article.updatedAt}
+                {zh ? "文档版本" : "Documentation"}: 0.1.0-beta.1 ·{" "}
+                {release.tag} · {article.updatedAt}
               </>
             )}
           </div>
@@ -223,7 +270,7 @@ async function PageContent({
               <a
                 href={
                   article.id === "quick-start"
-                    ? `/${locale}/download/`
+                    ? `/${locale}/download/0.1.0-beta.1/`
                     : `https://github.com/eloqdata/lavik/releases/tag/${release.tag}`
                 }
               >
@@ -404,6 +451,19 @@ async function PageContent({
             : "Understand the details, with their context."}
       </p>
       <div className="article-list">
+        {kind === "release" && (
+          <Link
+            href={`/${locale}/releases/0-1-0/`}
+            className="article-list-item"
+          >
+            <time>2026-10-13</time>
+            <div>
+              <h2>{stableReleaseNotes().title[locale]}</h2>
+              <p>{stableReleaseNotes().summary[locale]}</p>
+            </div>
+            <span>↗</span>
+          </Link>
+        )}
         {pages
           .filter((a) => a.kind === kind)
           .sort(

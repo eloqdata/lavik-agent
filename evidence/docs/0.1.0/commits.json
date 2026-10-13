@@ -1,0 +1,682 @@
+{
+  "base": "3955b98d43b312324aa8d52775df52cfb111c0d0",
+  "head": "feb61224e414c5653fd09560e20c9d214db1e3ac",
+  "total": 135,
+  "commits": [
+    {
+      "sha": "b0dbb38fe36863fe5458cab42853529c5a5ba1eb",
+      "message": "docs: publish beta.1 SPDK benchmarks and setup guide (#84)\n\n* docs: replace peer benchmark with beta.1 SPDK results\n\n* docs: describe benchmark sampling uniformly as methodology\n\n* docs: omit fixed defaults from SPDK launch examples\n\n* docs: summarize memory benchmark gains and use default workers\n\n* docs: simplify benchmark presentation and figure captions\n\n* docs: reflect measured throughput advantage in README headline\n\n* docs: simplify NVMe throughput headline\n\n* docs: link benchmark Lavik mentions to the measured release",
+      "url": "https://github.com/eloqdata/lavik/commit/b0dbb38fe36863fe5458cab42853529c5a5ba1eb"
+    },
+    {
+      "sha": "d159d05027ea1a0c86abe3367f9ab276ecbf4765",
+      "message": "perf(cluster): accelerate FULL sync and replica startup (#83)\n\n* Reduce native follower reconnect delay to 100 ms\n\n* perf(replication): pipeline partition handoffs\n\nRemove per-partition stop-and-wait from native FULL synchronization. Track\nNotSent/InFlight/Acked progress before sending, dispatch exact ACKs through\none reader, and require every physical partition to finish before the cut.\n\nRun bounded independent target handoffs and join them before attempt cleanup.\nPreserve same-partition dependencies and reset/cut barriers. Serialize only\ncomplete ACK frame writes with a worker-local coroutine mutex, since short\nwrites can suspend; frame encoding stays outside that scope. Cancel the\nwhole session on reader/task failures to release cross-flow barriers.\n\nKeep wire formats unchanged and use existing session recovery instead of\nper-partition retries. Document completion, compatibility and lifetime rules.\n\nValidate 54 focused unit tests, 52 manager integration tests, both rebuild\nprotocol/failure gates, and mixed old/new source-target cut/reconnect tests.\nThe new out-of-order regression test fails with the old serial source.\nTwelve alternating cluster trials pass. Debug empty FULL median decreases\nfrom 2.122s to 1.706s; FULL fallback from 2.066s to 1.676s. Ordinary controlled\nfailover uses partial continuation and shows no demonstrated speedup.\n\nRelated: #46, #70\n\n* perf(replication): skip empty database scans during FULL\n\nExport only DB0 in cluster mode and preserve all logical DBs for standalone\nreplication. Skip an empty baseline atomically on its owning worker only\nwhen no UNSTARTED write admission remains; later writes use the publish FIFO.\nScan after pending admissions drain instead of trusting an earlier empty mask.\n\nReplace the two per-64-partition fixed fairness sleeps with Yield. Preserve\ncondition polling, retry pacing and actual deadline timers.\n\nValidate storage admission races, post-skip publication, standalone DB15 and\nstale-key removal, plus cluster manager/protocol/failure gates. Three alternating\nDebug trials reduce empty FULL median from 1.7305 s to 0.5250 s versus the saved\nasynchronous-handoff build. Update replication architecture and public API docs.\n\nRefs #83\n\n* perf(cluster): overlap startup and bound Meta retry delays\n\nLaunch Meta peers and Data processes without per-process readiness waits,\nthen join the two replica populations behind one READY barrier. Keep replica\nassignment commits ordered for topology CAS and preserve Owner-only creation.\n\nReplace exponential Meta reconnect backoff with stateless 80-120 ms jitter\nfor startup and established-session loss, where lost control prevents serving.\nRetain the 10-second legacy observation grace for rolling-upgrade safety.\n\nReuse the existing candidate-source observation wait before repeated controlled\nfailover: local replay may precede its next Meta heartbeat. Update the control\narchitecture, operations guide and retry policy test.\n\nValidate 10 focused unit tests and seven integration scenarios, including\ncontrolled/FULL fallback, leader replacement, automatic failover and replica\nrestart. Final paired Debug trials reduce empty setup median from 6.307 s to\n4.135 s. Release and large-fleet retry load were not benchmarked.\n\nRefs #83\n\n* perf(storage): initialize only DB0 indexes in cluster mode\n\nPrepare only enabled runtime database indexes and construct them directly\nwith each worker's shared arena. Worker-owned contiguous arrays outlive\npartition views and avoid per-partition allocation and temporary private\narenas. Standalone retains all 16 databases.\n\nBound maintenance, recovery, snapshots and FULL cleanup by enabled DBs.\nPreserve 16-slot durable/wire epochs and checkpoint capacities, initialize\nFULL local epochs independently of index detach, and reject current records\nor replay commands for disabled databases rather than hiding old data.\n\nAdd a cold/checkpoint cross-mode recovery regression and update storage and\nreplication architecture. Eight integration/E2E gates and 87 focused unit\ntests pass. Six alternating Debug trials against 6f21997a reduce Data startup\n0.808 -> 0.206 s, RSS by 58.3 MiB, and empty cluster setup 4.154 -> 3.434 s.\nRelease and loaded-data performance are not measured.\n\n* fix(replication): reject full-sync counts beyond enabled databases\n\nValidate the requested count against the runtime database count instead of\nsilently clamping it. Preserve smaller valid requests, including DB0-only\ncluster FULL, and document the API range.\n\nAdd a regression for zero and disabled database counts. The focused unit,\nstandalone replication-log E2E and cluster FULL-fallback gate pass; changed\nC++ lines pass clang-format and git diff --check.",
+      "url": "https://github.com/eloqdata/lavik/commit/d159d05027ea1a0c86abe3367f9ab276ecbf4765"
+    },
+    {
+      "sha": "fb64aa59a9565bb56a5698da0fd90216a0af5d87",
+      "message": "meta: replace NuRaft with asynchronous etcd Raft runtime (#85)\n\n* meta: replace NuRaft with asynchronous etcd Raft runtime\n\n* meta: fence higher terms while storage admission is saturated\n\n* test: keep the default detector window through population recovery\n\n* meta: preserve uncertain outcomes after proposal admission\n\n* test: restore original population recovery detector policy\n\n* test: require exact membership operation completion\n\n* meta: address build, recovery and fixture review findings\n\n* test: enable large codecs and hardware safety gate in CI\n\n* meta: use a single Raft storage layout in the data directory\n\n* docs: scope format compatibility exception to pre-stable releases\n\n* docs: remove added storage compatibility policy\n\n* replication: restart idle history monitor after pending retirement\n\nAn idle monitor can pass its final consumer check and yield while disabling\nworker logs. A concurrent native or Redis export handshake previously saw\nthat monitor as running before waiting for its reset. When the reset ended,\nthe old monitor exited and the handshake enabled history without a monitor.\nLater disconnected replicas could fall behind the backlog without triggering\nhistory retirement.\n\nEnsure monitoring after joining a pending reset. Keep active-control/export\nownership across the wait so idle cleanup cannot retire the new consumer.\nAdd a deterministic fault-enabled regression for a control admitted during\nidle retirement; the existing expiry/full-sync test and timeouts are intact.\n\n* raft: fence snapshot configuration and order durable publication\n\nRawNode restores membership when it accepts a snapshot, before older apply\njobs finish. Track that restored cut and drain covered completions without\nreapplying their configuration changes. Defer local capture until snapshot\ninstallation supplies a matching application/configuration cut, and complete\ncapture waiters that the incoming image has already satisfied.\n\nWrite the received image and WAL marker before raising HardState.Commit.\nAnchor the snapshot commit before writing any accompanying suffix, so even a\npartial suffix remains recoverable. Release WAL locks and advance GC only\nafter the entire transaction is durable.\n\nAdd real Runtime stale-configuration regressions and subprocess crash cuts,\nincluding partial suffix persistence without graceful WAL close. Preserve\nlocal snapshot commit checks and test the GC-release isolation boundary.",
+      "url": "https://github.com/eloqdata/lavik/commit/fb64aa59a9565bb56a5698da0fd90216a0af5d87"
+    },
+    {
+      "sha": "661b359208ebc8dc30043d0b4372e38714184613",
+      "message": "chore: remove CLAUDE.md symlink (#119)\n\nClaude Code now natively supports AGENTS.md, so the CLAUDE.md symlink\npointing to AGENTS.md is redundant and can be dropped.",
+      "url": "https://github.com/eloqdata/lavik/commit/661b359208ebc8dc30043d0b4372e38714184613"
+    },
+    {
+      "sha": "996c58213e64d001b2170af1d6440f55ac16b64c",
+      "message": "feat(meta): add authenticated Sentinel server\n\nAdd an optional Meta Sentinel server with independent authentication and bounded RESP sessions. Preserve standalone Data authentication and verify compatibility with Redis 7.2.",
+      "url": "https://github.com/eloqdata/lavik/commit/996c58213e64d001b2170af1d6440f55ac16b64c"
+    },
+    {
+      "sha": "414ac7a9db8a6282420ee1b6bb5a5a62deff6767",
+      "message": "perf(storage): reduce SET and defrag overhead (#87)\n\n* perf(storage): reduce SET lookup and payload copy overhead\n\n* perf(storage): reduce defrag copying and index probe work\n\n* perf(storage): narrow receipt matching and skip empty manifest probes\n\n* build: pin runtime write-path scheduling optimization\n\n* perf(storage): retain the measured scalar lookup variant",
+      "url": "https://github.com/eloqdata/lavik/commit/414ac7a9db8a6282420ee1b6bb5a5a62deff6767"
+    },
+    {
+      "sha": "a6acc2c41612f4480b5f1f53ee48c369220970e9",
+      "message": "test: fix Meta apply waits and tombstone TTL timing (#123)",
+      "url": "https://github.com/eloqdata/lavik/commit/a6acc2c41612f4480b5f1f53ee48c369220970e9"
+    },
+    {
+      "sha": "fa25df49bea7d9cd37ef9e6bb0de23c2f54cc634",
+      "message": "feat(config)!: separate client mode from Meta management (#121)\n\nSeparate Redis client semantics from Meta-managed authority and lifecycle.\n\n- Add independent client-mode single|cluster and meta-managed yes|no settings,\n  with explicit CLI overrides and validation before storage preparation.\n  Rename management identity and discovery options; remove legacy aliases.\n- Use client mode for reporting and DB/slot semantics, and Meta management\n  for native authorization, identity, lifecycle and expiration authority.\n  Model managed Single as one full-keyspace Group; keep its startup disabled\n  pending the remaining authority integration in #90.\n- Split native replication and Redis consumption into separate source files.\n  Preserve Redis AUTH/PSYNC, reconnect cursors and Cluster multi-source\n  coordination. Validate the initial handshake before replacing an existing\n  subscription, without product probes or external native fallback.\n- Remove incoming PSYNC export. Support one-shot migration through RedisShake\n  ScanReader, and migrate native replication tests to authorized Meta fixtures.\n- Update configuration examples, architecture docs and integration coverage;\n  pin Redis/RedisShake test dependencies and fix their build/test races.\n\nValidation: local builds, real Redis/Cluster/ScanReader and Meta integration\nchecks passed. The final native replication gate and five repeated post-cut\nRESET recovery cases passed. Full CI runs on both amd64 and arm64.\n\nBREAKING CHANGE: remove cluster-enabled and replaced cluster-* management\noptions, external standalone-native attachment, incoming PSYNC/REPLCONF export,\nand redis-export-backpressure. Use the new configuration names and ScanReader\nfor export; ScanReader destinations require Redis 7.2 or newer.\n\nCloses #88.",
+      "url": "https://github.com/eloqdata/lavik/commit/fa25df49bea7d9cd37ef9e6bb0de23c2f54cc634"
+    },
+    {
+      "sha": "5c38e5d8bc4258e40af7446fa6a8f1a704ea9793",
+      "message": "perf: optimize index lookups and SET handling; default flush to 100ms (#124)\n\n* perf(storage): keep the SET key guard in the writer coroutine\n\n* perf(redis): omit disabled latency trace batch storage\n\n* perf(storage): use SIMD fingerprints for index lookups\n\n* perf(storage): default partial-block flushing to 100 ms",
+      "url": "https://github.com/eloqdata/lavik/commit/5c38e5d8bc4258e40af7446fa6a8f1a704ea9793"
+    },
+    {
+      "sha": "c684061affd938737dd902dc60269950903def9c",
+      "message": "fix: avoid allocation deadlock in grouped auxiliary relocation (#126)\n\n* fix: avoid allocation deadlock in grouped auxiliary relocation\n\n* style: format grouped relocation call",
+      "url": "https://github.com/eloqdata/lavik/commit/c684061affd938737dd902dc60269950903def9c"
+    },
+    {
+      "sha": "dda0389251033a09e0ce76a2985fe1cd397424d7",
+      "message": "fix(replication): encode recovered cluster population group identity (#127)",
+      "url": "https://github.com/eloqdata/lavik/commit/dda0389251033a09e0ce76a2985fe1cd397424d7"
+    },
+    {
+      "sha": "abc23fd8e17a37b07f769040f613aaa6cfb13dde",
+      "message": "fix: order Meta startup after recovery and stabilize expiration fault test (#125)\n\n* test: stabilize grouped expiration handoff fault coverage\n\n* fix(cluster): wait for startup recovery before Meta control",
+      "url": "https://github.com/eloqdata/lavik/commit/abc23fd8e17a37b07f769040f613aaa6cfb13dde"
+    },
+    {
+      "sha": "df422d9f6e180255cfe4f032503cd87253e73739",
+      "message": "Fix collection FULL validation overhead and replica abort stack growth (#129)\n\n* fix(replication): bound collection validation and abort cleanup\n\n* test(replication): verify dense Hash and Set FULL snapshots\n\n* perf(replication): reuse grouped collection validation",
+      "url": "https://github.com/eloqdata/lavik/commit/df422d9f6e180255cfe4f032503cd87253e73739"
+    },
+    {
+      "sha": "ba2166b402cbcfe61063a95fc3ed9f5dfceff22c",
+      "message": "fix(replication): queue storage changes after snapshot handoff (#146)",
+      "url": "https://github.com/eloqdata/lavik/commit/ba2166b402cbcfe61063a95fc3ed9f5dfceff22c"
+    },
+    {
+      "sha": "63a76070d9e5c640d33f16400014b319c6a8fac7",
+      "message": "fix(replication): retain FULL apply context for wrapped TTL effects (#147)",
+      "url": "https://github.com/eloqdata/lavik/commit/63a76070d9e5c640d33f16400014b319c6a8fac7"
+    },
+    {
+      "sha": "053042361a194ea53d1d7631ebb6c8b05e425786",
+      "message": "feat(meta): serve managed Single with committed modes and replica reads (#130)\n\nMeta owns the immutable Single/Cluster client mode, committed in the\nTopology root at creation and fixed for the deployment lifetime. Data\nwith Meta seeds completes a bounded bootstrap that validates mode and\nserving capabilities before storage initialization (fixed 100 ms\nretry); obsolete local mode/management switches return migration\nguidance. No-seed standalone and Redis/Redis Cluster followers remain\nsupported, and managed nodes reject REPLICAOF and other external role\ndirectives. Unauthorized bootstrap identities receive no committed\ntopology or service metadata.\n\nManaged Single serves DB0 operations through the same Group authority\nlifecycle as Cluster (Recovery, Prepare, Promote/Activate, Follow\nOwner); one Group covers all slots. Owner reads and writes require a\nlive finite lease; complete replicas serve ordinary reads without\nREADONLY, and replica-serve-stale-data defaults to yes with CONFIG\nGET/SET support. Nonzero databases and unintegrated advanced commands\nstay explicitly refused rather than falling back to non-Meta paths.\n\nReplication: contiguous completed events are acknowledged with\nnegotiated ACK ranges (legacy frame fallback preserved), and ready ACK\nframes batch into single socket writes.\n\nRequest-path admission uses worker-local caches keyed on exact\ntopology/authority publication fingerprints: successful Single read\nverdicts skip snapshot walks, the lease clock is sampled lazily\n(replica stale reads consume population authority with no Owner lease\nclock), and write rechecks compare admission fingerprints before\nborrowing snapshots.\n\nVerified against the pre-removal non-Meta native pair with controlled\ninterleaved benchmarks: Owner SET P1/P16/1KiB +7.4%/+16.9%/+5.3% with\np99 -20%/-29%; Owner reads at parity; managed replica reads faster\nthan the historical baseline. Full software suite green (CTest, large\nnative List/Hash/RDB, Valkey TCL) plus the dual-mode recovery/fault\nmatrix.\n\nRefs #90.",
+      "url": "https://github.com/eloqdata/lavik/commit/053042361a194ea53d1d7631ebb6c8b05e425786"
+    },
+    {
+      "sha": "c9d46e1a40ca03f802e0ea951ed9d9e269914835",
+      "message": "fix(replication): preserve FULL ordering and publish-only replay (#148)\n\n* fix(replication): keep covered-key storage effects in the FULL FIFO\n\n* fix(replication): replay publish-only envelopes before FULL reset\n\n* style(replication): format covered-key FIFO changes",
+      "url": "https://github.com/eloqdata/lavik/commit/c9d46e1a40ca03f802e0ea951ed9d9e269914835"
+    },
+    {
+      "sha": "fe03bc9da7fcdb7fcd2f79c60c43ba79902de08f",
+      "message": "chore: consolidate documentation and release packaging (#152)\n\n* docs: consolidate current guidance and remove obsolete project records\n\n* fix(packaging): derive nightly metadata from the CMake project version\n\n* chore(packaging): keep TLS configuration guidance out of binary archives\n\n* fix(packaging): collect bundled dependency licenses and notices",
+      "url": "https://github.com/eloqdata/lavik/commit/fe03bc9da7fcdb7fcd2f79c60c43ba79902de08f"
+    },
+    {
+      "sha": "9d6b212da5da820b4bed63fc047b5c2ed6be1fa5",
+      "message": "Add Lavik Admin with shared CLI management and Docker quick start (#155)\n\n* Implemented Lavik Admin, running at localhost:4173.\n\n  It includes:\n\n  - Valkey-style dashboard, topology, key browser, command console, and slow logs.\n  - Shared fleet database and operation tracking with lavik-ctl.\n  - Cluster initialization, controlled failover, and replica expansion/shrink using already-running nodes.\n  - Docker packaging and persistent storage.\n\n  Get the login token:\n\n  docker exec lavik-admin-dev cat /data/admin-workspace-v2/token\n\n  Verified on this Mac with Docker: 6 browser workflows, 11 Admin tests, native regression/protocol checks, and persistence across container replacement passed.\n\n  Limitation: resizing currently adds/removes replicas within existing primary groups. Changing primary-group count requires online data migration, which Lavik does not\n  yet implement.\n\n  Setup, compatibility requirements, and verification guide (docs/operations/lavik-admin.md)\n\n* I added a three-node Docker quick start (admin/quickstart/README.md) and verified initialization and restart on this Mac.\n\n  It runs one primary + two replicas, plus three Meta voters and Admin—seven containers on one machine. Docker starts the processes; you initialize the cluster through\n  Admin.\n\n  1. Prepare the new machine.\n\n     Install Git and Docker with Compose. On Mac, use Docker Desktop.\n\n     Copy this updated checkout, or use a branch containing the newly added admin/quickstart/ files. From the repository root:\n\n     git submodule update --init bycorf third_party/mimalloc\n     git -C bycorf submodule update --init third_party/liburing third_party/abseil\n\n     docker build -f admin/Dockerfile.toolchain -t lavik-admin-toolchain:local .\n     docker compose -f admin/quickstart/compose.yaml run --rm build\n\n     The first build can take several minutes. No compiler or Node installation is needed on the host.\n\n  2. Start the containers and get your login token.\n\n     docker compose -f admin/quickstart/compose.yaml up -d\n     docker compose -f admin/quickstart/compose.yaml exec admin \\\n       cat /data/lavik-admin/token\n\n     Open http://localhost:4173 and enter the token.\n\n  3. Initialize through Lavik Admin.\n\n     Click Connect cluster and enter:\n\n      Field                 Value\n     ━━━━━━━━━━━━━━━━━━━━  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n      Cluster name          demo\n     ────────────────────  ───────────────────────────────────────────────────────\n      Meta seeds            172.29.91.11:7200,172.29.91.12:7200,172.29.91.13:7200\n     ────────────────────  ───────────────────────────────────────────────────────\n      Connection profile    default\n\n     Open Topology → Initialize cluster. Paste the contents printed by:\n\n     cat admin/quickstart/cluster.toml\n\n     Type demo to confirm. Wait for Healthy. Topology should show one primary and two replicas.\n\n  4. Try a write and read.\n\n     In Admin’s Send command view, run these separately, confirming the write:\n\n     SET greeting \"hello from Lavik\"\n     GET greeting\n\n     To see the same cluster through lavik-ctl:\n\n     docker compose -f admin/quickstart/compose.yaml exec admin \\\n       /build/lavik-ctl --socket /data/lavik-admin/admin.sock fleet-status demo\n\n  5. Stop and resume without losing data.\n\n     docker compose -f admin/quickstart/compose.yaml down\n     docker compose -f admin/quickstart/compose.yaml up -d\n\n     Volumes preserve data, cluster state, and the Admin catalog. Do not initialize again or use down -v when retaining data.\n\n  This is a local demonstration; all three nodes share one physical machine.\n\n* Correct—172.29.91.* is inside Docker Desktop’s Linux VM. From your Mac, use published localhost ports. Docker networking documentation\n\n  I’ve added and applied these mappings:\n\n   Node                        Host endpoint\n  ━━━━━━━━━━━━━━━━━━━━━━━━━━  ━━━━━━━━━━━━━━━━━\n   data-1 — current primary    127.0.0.1:16379\n  ──────────────────────────  ─────────────────\n   data-2                      127.0.0.1:16380\n  ──────────────────────────  ─────────────────\n   data-3                      127.0.0.1:16381\n\n  Port 6379 was already occupied by your separate lavik-local container.\n\n  Connect from your Mac:\n\n  redis-cli -h 127.0.0.1 -p 16379\n\n  For automatic redirects after failover, run the CLI inside Docker:\n\n  docker compose -f admin/quickstart/compose.yaml exec data-1 \\\n    redis-cli -c -h 172.29.91.21 -p 6379\n\n  Host-side redis-cli -c can still hang after a redirect because MOVED replies contain internal Docker addresses.\n\n  Verified all three published ports with PING, plus host-side SET/GET. The cluster is Healthy; Meta moved the primary to data-1 during the rolling update.",
+      "url": "https://github.com/eloqdata/lavik/commit/9d6b212da5da820b4bed63fc047b5c2ed6be1fa5"
+    },
+    {
+      "sha": "46b971ce0e4719dbfc228ff46a5c68565502fda3",
+      "message": "docs: add a unified contributing guide (#156)",
+      "url": "https://github.com/eloqdata/lavik/commit/46b971ce0e4719dbfc228ff46a5c68565502fda3"
+    },
+    {
+      "sha": "e98232754fb071b346ab91441ee06f8f8dcbad55",
+      "message": "feat(cluster): isolate Meta sessions on a dedicated worker (#128)\n\n* feat(cluster): dedicate a control worker to Meta sessions\n\n* fix(cluster): close Meta handshake streams and retain session storage\n\n* test(dpdk): cover local control-to-data connections\n\n* Renew unchanged Meta leases through one shared atomic deadline\n\n* Wake full replica ingress queues when stage or ACK processing exits\n\n* Preserve finite owner authority across compatible lease policy updates\n\n* Keep the pending lease cadence across unrelated control updates\n\n* Reuse validated publication views to keep Meta lease responses timely\n\n* Anchor heartbeat cadence to its actual write time\n\n* Publish heartbeat observations and support exclusive Meta CPU placement\n\n* fix(recovery): use bounded Task transfers for Debug startup\n\n* fix(startup): stop the control worker after recovery failure\n\n* build: enable GCC coroutine tail transfers in Debug\n\n* refactor(shutdown): publish replication quiescence with atomics\n\n* perf(storage): cache expiration grant ownership per worker\n\n* style(storage): format expiration grant cache changes\n\n* fix(replication): check FULL command coverage before replay\n\n* fix(cluster): retain live lease capabilities in admission caches\n\n* fix(cluster): reject expired lease installs and address review checks\n\n* fix(cluster): count fast policy installs and align creation test timing",
+      "url": "https://github.com/eloqdata/lavik/commit/e98232754fb071b346ab91441ee06f8f8dcbad55"
+    },
+    {
+      "sha": "5197bb7e89a7f552a42c7b79157a2cdc599e5cda",
+      "message": "perf(cluster): encode control messages once per send (#157)\n\nThe control send path encoded every message payload three times\n(writer admission check, queue accounting, actual write), and\nheartbeats plus frame-sized DirectiveResult/NodeControlUpdate a fourth\ntime for a discarded size/fit probe.\n\nEncodeMessage now returns an EncodedMessage (type + canonical payload)\nthat is threaded through admission accounting, the write queue, and the\nframe sink, so each message is encoded exactly once per send. Callers\nthat already hold canonical bytes (heartbeat fit-check, frame-or-\ntransfer size probes, retained canonical FullDesiredState bytes) hand\nthem to a new pre-encoded Write overload. Frame header assembly and\nsequence assignment deliberately stay at write time. Wire format and\nall admission/error semantics are unchanged.\n\nIssue: https://github.com/eloqdata/lavik/issues/140",
+      "url": "https://github.com/eloqdata/lavik/commit/5197bb7e89a7f552a42c7b79157a2cdc599e5cda"
+    },
+    {
+      "sha": "6691831f763373d5f35cc9206512e4a9bc6d428f",
+      "message": "fix(replication): wait for replica backup cuts before EXEC and COPY (#159)\n\n* fix(replication): wait for replica backup cuts before EXEC and COPY\n\n* fix(storage): release staging capacity held by live transaction streams (#164)\n\n* test(replication): synchronize backup gate contention on the replica\n\nHold the backup cut with a bounded fault-only checkpoint until the native process test observes EXEC waiting for database admission. Release the hold before verifying replay, 16 completed backups, and no additional FULL.\n\nValidation: GCC 13 Debug build with pinned Bycorf; deterministic replica_backup_during_exec process test; lavik_replication_log_e2e; Python compilation; pre-commit formatting.\n\n* fix(storage): rearm cleaning for durable pressure-sealed blocks\n\nNotify transaction cleaning when the no-new-I/O flush path seals a transaction block, matching normal flush completion. Extend the pressure regression to consume prior cleaner notifications and verify sealing re-arms cleaning before commit.\n\nForward worker finalization in the pressure test service so storage state is released on its owner. The regression fails before the fix for both inline and extent writes; all 719 unit tests and replication-log e2e pass afterward.",
+      "url": "https://github.com/eloqdata/lavik/commit/6691831f763373d5f35cc9206512e4a9bc6d428f"
+    },
+    {
+      "sha": "f827486d4b94615a74a04a654da0ae4644673a49",
+      "message": "build: simplify configuration workflow (#168)",
+      "url": "https://github.com/eloqdata/lavik/commit/f827486d4b94615a74a04a654da0ae4644673a49"
+    },
+    {
+      "sha": "328518b538a5c5caf573f189a18e5c09716202ae",
+      "message": "perf(storage): index batched collection writes and reuse encoders (#166)\n\n* perf(storage): index batched Hash field lookups\n\n* perf(storage): reuse group encoders and bound ZSet presence checks",
+      "url": "https://github.com/eloqdata/lavik/commit/328518b538a5c5caf573f189a18e5c09716202ae"
+    },
+    {
+      "sha": "88d2b8067dfd2261207be6342716328c87748536",
+      "message": "style: expand pre-commit formatting coverage (#173)",
+      "url": "https://github.com/eloqdata/lavik/commit/88d2b8067dfd2261207be6342716328c87748536"
+    },
+    {
+      "sha": "c3b234de79a59b6e2a75b4193146f3de961d7a60",
+      "message": "feat(redis): support scheduled background saves (#172)\n\n* feat(redis): support scheduled background saves\n\n* fix(redis): stop automatic save scheduler\n\n* style: format scheduled background saves\n\n* fix(redis): retain latest scheduled backup context\n\n* build: update Bycorf for split SPDK toolchain",
+      "url": "https://github.com/eloqdata/lavik/commit/c3b234de79a59b6e2a75b4193146f3de961d7a60"
+    },
+    {
+      "sha": "a8e8c281cd5d90326f6c38799a49b0a032c7c291",
+      "message": "test(cluster): add fixed-version standard Cluster client compatibility matrix (#170) (#176)\n\nverify the Meta-managed Cluster surface\nwith the pinned, unpatched standard clients — redis-py 8.1.0 RedisCluster and\ngo-redis 9.22.0 ClusterClient, each at RESP2 and RESP3, plaintext and TLS\nclient ports, with requirepass authentication on every Data node.",
+      "url": "https://github.com/eloqdata/lavik/commit/a8e8c281cd5d90326f6c38799a49b0a032c7c291"
+    },
+    {
+      "sha": "30988b76929084d1c212b2e1aaa151f087769ff4",
+      "message": "feat(storage): split streams into grouped logical records (#169)\n\n* feat(storage): split streams into grouped logical records\n\n* Complete incremental Stream mutation, transfer and reply paths\n\nRoute deletion and trimming through sparse page plans, stream message replies from pinned graphs, and ingest native/RDB logical records without a whole Stream image. Preserve PEL and command-position snapshots, including cross-worker retained memory ownership.\n\nValidate large Streams under 256 MiB admission, crash rollback, Redis compatibility and Meta-authorized FULL/replay. Document temporary-file conversion costs and metadata scaling.\n\n* Preserve bounded inline Stream cleanup above maxmemory\n\nAllow small inline Streams to use the existing bounded compact workspace, so XACK, XDEL, XTRIM and group destruction can reclaim state after a low-memory restart. Keep the 16 KiB workspace bound independent of Stream's 1 MiB promotion threshold.\n\nExtend the CI regression to reject growth and larger compact Stream decoding while preserving DEL as the cleanup path.\n\n* Unify collection promotion and group size policies\n\n* Harden grouped Stream validation and decoder ownership\n\n* Bound atomicity stress writes independently of host throughput\n\n* Stabilize atomicity stress reader progress and cleaner cadence",
+      "url": "https://github.com/eloqdata/lavik/commit/30988b76929084d1c212b2e1aaa151f087769ff4"
+    },
+    {
+      "sha": "4adaffb66d95320e579bbb674fd6570d05d7d057",
+      "message": "feat(cluster): admit Single cross-slot multi-key and blocking commands (#175)\n\nMeta-managed Single now serves DB0 cross-slot multi-key commands and the\nblocking List/Sorted Set family through the sole Group's authority.\nCluster keeps CROSSSLOT; transactions, scripts/Functions, keyless global\ndata commands, nonzero DBs, stream blocking, and WAIT stay deferred to\ntheir own integration work.\n\n* Reuse the existing key extraction, worker routing, and tx fan-out;\n  every mutation still passes admission, per-shard validators, and the\n  storage-publication precondition.\n* Unify managed reads on one contract: authority is checked once at\n  admission, and only the serving-generation population fence is\n  revalidated after queueing, blocking, or worker hops. Write\n  re-validation is unchanged.\n* Reuse the retained admission proof across blocking attempts: atomic\n  fingerprint loads in steady state, fresh capture only after a real\n  authority change. In-flight guards cover only the concrete storage\n  attempt, so dormant waiters never hold a failover drain, and a woken\n  waiter whose re-admission fails terminates honestly instead of\n  consuming elements.\n* Share EmitClusterDecision with the blocking path so Single maps\n  unavailable authority to MASTERDOWN there too.\n* gate_managed_single flips to cross-slot positives; new\n  gate_managed_single_blocking covers cross-worker waits, CLIENT\n  UNBLOCK/timeout, Controlled Pause, controlled cutover and uncontrolled\n  crash failover with active waiters, lease-expiry dormancy, drain\n  non-blocking, and the Cluster CROSSSLOT counter-example.\n* Docs: unified read contract, Single admission matrix, waiter\n  lifecycle, and the Serving Generation glossary entry.\n\nPerf (valkey-benchmark, paired A/B, managed Single): SET/GET throughput\nmedian delta +0.00%/-0.08%; p99 median delta +1.23%/+0.39%.\nSteady-state rechecks took the fingerprint fast path exclusively\n(607485 fast, 0 slow; 1840 blocking reuses, 0 fresh captures; temporary\ncounters removed after verification).\n\nCloses #92",
+      "url": "https://github.com/eloqdata/lavik/commit/4adaffb66d95320e579bbb674fd6570d05d7d057"
+    },
+    {
+      "sha": "3ed788c49b082a8bebb9671dc35b762c57b028bf",
+      "message": "feat(meta): serve authoritative Sentinel topology discovery (#177)\n\nThe Discovery Entry answers SENTINEL GET-MASTER-ADDR-BY-NAME,\nMASTER/MASTERS and REPLICAS/SLAVES for Meta-managed Single deployments,\nleader-only and projected from committed state joined with the\nleader-local health registries. Publication is gated on committed\nauthority alone; health only sets flags; objective failure withdraws\npublication instead of emitting o_down. Replica listings follow\ncommitted membership with flags from observation truth and a full\nreplication-identity anchor. Reply shapes match Redis 7.2.14\nbyte-for-byte under RESP2 and RESP3.\n\nAcceptance runs real pinned redis-py 8.1.0 Sentinel pools over both\nprotocols, including follower-seed retry, fenced-primary windows, and\npost-cutover rediscovery; the go-redis reply contract is pinned by\nshape assertions, and the unknown-service null/error replies are\nrecorded byte-exact from a real Redis 7.2.14 sentinel.\n\nCloses eloqdata/lavik#103",
+      "url": "https://github.com/eloqdata/lavik/commit/3ed788c49b082a8bebb9671dc35b762c57b028bf"
+    },
+    {
+      "sha": "f44e58cf0f85ddecc35b35b31aa82478470be29f",
+      "message": "feat(storage): group large Strings into fixed 8 KiB segments (#174)\n\n* feat(storage): group large Strings into fixed 8 KiB segments\n\n* fix(storage): bound grouped String commit pressure and repair CI fixtures\n\nDo not rotate another generation while a closed generation still has live transaction leases. Reserve String decision space for outstanding local leases so asynchronous commits cannot be stranded by segment writes at ENOSPC.\n\nRetain ordinary layouts in prefetch and defrag fixtures, use sequential grouped FULL reads, enable prompt transaction reclaim in replica tests, and preserve RDB failure diagnostics. Add deterministic generation-rotation and bounded-device expiration/restart regressions.\n\n* fix(storage): preserve String and Stream kind-specific validation after rebase\n\n* test(storage): wait for asynchronous grouped replica reclamation\n\nA 10 MiB grouped String has over a thousand records, and promotion plus flush completion can outlast the old 500 one-millisecond polling attempts. Use a bounded wall-clock deadline and less frequent metrics polling while preserving the capacity-increase and retained-memory assertions. Report both capacity values if reclaim still times out.\n\n* fix(ci): await Redis readiness and imported String commits\n\n* fix(storage): release String index admission after allocation\n\n* docs(storage): clarify whole-value String fallback\n\n* test(storage): allow grouped replica reclaim under CI load\n\n* test(storage): tie replica reclaim check to pinned generation",
+      "url": "https://github.com/eloqdata/lavik/commit/f44e58cf0f85ddecc35b35b31aa82478470be29f"
+    },
+    {
+      "sha": "62bde017c546cdaef77c13da61c99869ca241ee0",
+      "message": "perf(storage): batch large sorted-set RESTORE creation (#182)\n\nKeep sorted-set ingest pages together within a worker-memory-scaled 24 MiB cap, so common large DUMP payloads build the ordered and member indexes once instead of repeating indexed ZADD per 1 MiB batch. Preserve bounded streaming for larger values and other collection types.\n\nRefs #161.",
+      "url": "https://github.com/eloqdata/lavik/commit/62bde017c546cdaef77c13da61c99869ca241ee0"
+    },
+    {
+      "sha": "7ed6795086ec33806f2c9cdcf4f9b2661b160ae2",
+      "message": "feat(single): enable managed logical databases (#180)\n\n* feat(single): enable managed logical databases (#94)\n\nAdmit DB0-15 and DBSIZE, SCAN, RANDOMKEY, and KEYS through the existing\nSingle Group authority and complete-population fence. Reuse cross-DB COPY\nand native replication/recovery semantics, retaining Cluster restrictions\nand the existing streamed KEYS gate lifetime.\n\nCover database isolation, COPY TTL/types/rollback/fencing, FULL cleanup,\npartial-import restart, and multi-DB failover and recovery. Document the\nsupported surface and repair stale FULL database-gate commentary.\n\nRun the complete software suite, large-object/RDB and Valkey gates. Fix\nan existing replica-readiness assumption and rerun the full native gate.\nThe hardware-only safety gate remains opt-in.\n\n* docs: remove implementation plan from change",
+      "url": "https://github.com/eloqdata/lavik/commit/7ed6795086ec33806f2c9cdcf4f9b2661b160ae2"
+    },
+    {
+      "sha": "a8526c19ca10818319d5388c3908a93289252a7b",
+      "message": "doc: update readme (#185)",
+      "url": "https://github.com/eloqdata/lavik/commit/a8526c19ca10818319d5388c3908a93289252a7b"
+    },
+    {
+      "sha": "f963d7a02bcc0c433818ca85452ae916f20917a6",
+      "message": "feat(storage): compact grouped collections below 8 KiB (#181)\n\n* feat(storage): compact grouped collections below 8 KiB\n\n* test(storage): keep grouped fault coverage above compact threshold\n\n* test(storage): verify returned blocks after replica promotion\n\n* docs(storage): describe completed-import compaction",
+      "url": "https://github.com/eloqdata/lavik/commit/f963d7a02bcc0c433818ca85452ae916f20917a6"
+    },
+    {
+      "sha": "25e584529f57443008902e3e87e1be60eef945ff",
+      "message": "perf(redis): batch pending Pub/Sub and MONITOR writes (#184)\n\n* perf(redis): batch queued Pub/Sub and MONITOR writes\n\nDrain only frames already queued at wakeup and gather-write bounded batches. Keep in-flight frames charged to session and worker limits until their socket write completes, while retaining the single-frame WriteAll path. Cover queued burst ordering for both streaming modes.\n\nFixes #136\n\n* test(meta): stop Raft before exhausting Sentinel test descriptors",
+      "url": "https://github.com/eloqdata/lavik/commit/25e584529f57443008902e3e87e1be60eef945ff"
+    },
+    {
+      "sha": "a389b9e1c36277c53d4673912407876450b3362b",
+      "message": "feat(meta): add Sentinel peer discovery and failover events\n\nManaged Single clients need reliable Primary rediscovery when a Meta leader or Sentinel seed fails. Persist each Sentinel address in committed Meta membership and serve peer discovery from the effective registered members.\n\nBind discovery queries and subscriptions to the admitted Raft leader term and Data-control eligibility continuity. Revoke stale sessions when authority is lost, carry the term through leader-owned work, and fence delayed requests. Emit +switch-master only for committed, publishable Primary transitions; emit +replica-reconf-done only after accepted evidence of the replica's current source. Keep subscription output bounded and support RESP2/RESP3.\n\nShare immutable committed discovery views across monitor and response cuts, refresh them by applied index, and reject diagnostics from a different term, revision, or applied cut. Keep the volatile runtime and diagnostics snapshots under short locks after profiling their cost.\n\nAdd stock redis-py and go-redis HA gates plus architecture and operations documentation. The complete local runner passed: 1,565 CTest cases passed, one hardware gate was skipped, and the large List, Hash, RDB, and Valkey TCL suites passed. Hosted amd64, arm64, and clang-format checks passed.\n\nThe old Data-session revocation work remains in #100. Closes #105.",
+      "url": "https://github.com/eloqdata/lavik/commit/a389b9e1c36277c53d4673912407876450b3362b"
+    },
+    {
+      "sha": "ca14447f51493539aab830a14f8d6cddbb6152d3",
+      "message": "feat(function): authorize catalog mutations through the local Group (#188)\n\n* feat(function): authorize catalog mutations through the local Group\n\nMeta-managed Single and Cluster previously rejected client Function catalog\nchanges even though catalog durability, native replication, and recovery were\nalready shared. Resolve a catalog request to the node's member Group, then\nreuse its captured lease, token, and in-flight drain proof. Check that proof\nbefore hidden staging and at the first irreversible system-state root write;\ncomplete mirrored roots and reserved publication after that point.\n\nAllow complete replicas to inspect their local catalog while keeping writes\nread-only. Retain independent catalogs across Cluster Groups and reject\ncatalog changes inside managed MULTI until transaction publication carries\nthe same Group admission. Add real Meta/replica, fault-cut, failover, and\ncandidate-recovery coverage; update architecture and deployment contracts.\n\nValidation: Debug build and formatting passed; 19 authority unit tests,\nFunction catalog gate, two-Group integration, and both complete recovery\ngates passed. The full CTest run had one obsolete policy assertion among\n1,569 cases; that assertion was corrected and its gate passed on rerun.\nLarge native List/Hash, >1 GiB RDB, and Valkey suites passed.\n\nCloses #97\n\n* test(meta): wait for bootstrap identity before cluster create",
+      "url": "https://github.com/eloqdata/lavik/commit/ca14447f51493539aab830a14f8d6cddbb6152d3"
+    },
+    {
+      "sha": "bda60b77815b0b53e00ffc7eac86321c27a1c41d",
+      "message": "feat(redis): enable Group-scoped managed FLUSH (#190)\n\nEnable FLUSHDB and FLUSHALL in managed Single and Cluster through local Group authority. Single preserves selected-DB/all-DB scope; Cluster clears only the receiving Group's DB0, retaining Function libraries and existing SYNC/ASYNC and transaction semantics.\n\nValidate captured authority on the first device owner after allocator and buffer waits, before epoch metadata changes. Hold Group drain through durable epoch commit, index detach and replication publication. Prepare all flow barriers before irreversible IO; preserve ordinary asynchronous history recovery, existing storage errors and fault protection, and start every worker's reclaimer before SYNC waits.\n\nAdd managed FLUSH semantic, authority, storage/crash, drain, reclamation and replication gates. Update ADR 0027, architecture and deployment documentation. No Meta protocol, disk format or replication wire-format changes; SYNC does not wait for replica acknowledgements.\n\nValidation: local full CTest suite plus corrected reruns completed with 1,565 passed and one hardware gate skipped; hook-free Release build and formatting/lint passed. GitHub CI clang-format, AMD64 tests and ARM64 tests passed.\n\nCloses #98.",
+      "url": "https://github.com/eloqdata/lavik/commit/bda60b77815b0b53e00ffc7eac86321c27a1c41d"
+    },
+    {
+      "sha": "a3ff9fb1155d1a1653abbcc013c140791f1b1381",
+      "message": "Added a Dockerfile with both build targets (deploy/docker/Dockerfile), Compose configuration (deploy/docker/compose.yaml) for one primary, one follower, and three Meta voters, plus build and quick-start instructions (deploy/docker/README.md).\n\nMac ARM64 verification passed: persistence, replication, controlled failover, and full-cluster recovery. AMD64 binary/version checks passed; full runtime testing requires native AMD64 Linux because this Mac’s emulator lacks io_uring support.",
+      "url": "https://github.com/eloqdata/lavik/commit/a3ff9fb1155d1a1653abbcc013c140791f1b1381"
+    },
+    {
+      "sha": "149a3258da21fd47544191bb5866714ca68354d4",
+      "message": "Share long keys through UUID records and group large Strings (#192)\n\n* Group large Strings regardless of key length\n\nRemove the String-only key length gate from normal writes and replica snapshot apply. Large parent keys now use the same grouped segment graph as other collections, with the existing external-key payload path. Preserve ordinary-block and replication queue coverage using compact String fixtures, and document the disk-space amplification from repeated parent keys.\n\n* Store long keys once in dedicated UUID blocks\n\n* Update full-device fixtures for grouped Strings and indirect keys\n\n* Integrate whole-value String removal from PR #191\n\n* Remove historical String format rejection checks\n\n* Fix indirect-key value accounting and recovery progress\n\n* Remove obsolete key-prefix plumbing\n\nRemove unused key-size and extent arguments, dead verification helpers, and constant key-prefix branches after indirect keys moved to UUID records. Read value extents directly and simplify recovery to bounded payload prefixes while retaining full extent validation.\n\nValidation: focused build and formatting passed; 9 String/indirect-key E2Es, 27 grouped recovery E2Es, and replication log E2E passed.\n\n* Admit parent-key copies in remote grouped reads\n\nReserve the allocator-sized key copy at both common grouped loaders before constructing a remote reader closure, and retain admission through the awaited read. This covers all callers without retaining key-sized page reservations for local reads or cached pages.\n\nAdd a regression with 16 MiB parent keys, worker-count recovery, and a constrained memory budget. It fails on the previous implementation and now verifies Hash/List OOM rejection, released admission, and successful reads after restart with headroom. Validation: 11 focused E2Es, 4 scratch-budget unit tests, build, and formatting passed.\n\n* Use ScanHashMap for the indirect key UUID registry\n\n* Remove dead extent plumbing from replica reset tombstones",
+      "url": "https://github.com/eloqdata/lavik/commit/149a3258da21fd47544191bb5866714ca68354d4"
+    },
+    {
+      "sha": "a23043be072bd8f2da22461ee6b256f8e821b166",
+      "message": "fix(replication): retire Redis clients at managed serving boundaries\n\nDisconnect ordinary Redis clients when a managed Data node loses Owner authority, changes serving role, or invalidates its population, so persistent pools and Pub/Sub clients can rediscover a serving Owner. Each owning worker retires its current clients without waiting for reply delivery; Meta control and recognized native replication/donor channels retain their own lifecycles.\n\nKeep standard ROLE/INFO role reporting and expose authority/readability separately. Diagnostics and subscriptions remain available after reconnecting, while normal admission errors do not themselves disconnect new clients. A lost reply can leave a write outcome uncertain, and Pub/Sub messages during interruption are not replayed.\n\nRemove the redundant authority generation while retaining committed identity and live-lease checks. Preserve the boot-local serving population fence and WATCH registrations across Cluster CONTINUE; FULL and population/role invalidation still retire the old context. No retirement counter or durable/wire-format change is introduced.\n\nAdd persistent redis-py and go-redis pool/PubSub recovery coverage, extend Cluster and authority regressions, and synchronize domain, architecture and operations documentation. Align fixtures with actual data-plane readiness and completed request drain, and recover independent clients concurrently within the existing deadline.\n\nValidation: CI on 7dae955b passed for amd64 and arm64, including all 1,583 CTest cases, large native list/hash, >1 GiB RDB import/export and Valkey TCL compatibility. Formatting, targeted real-process regressions, and Standards/Spec reviews passed.\n\nFinal integration: rebased onto main 149a3258 without conflicts; all ten patches are unchanged by git range-diff and git diff --check passed. Merged directly after rebase at maintainer request without waiting for a new CI run.\n\nCloses #100.",
+      "url": "https://github.com/eloqdata/lavik/commit/a23043be072bd8f2da22461ee6b256f8e821b166"
+    },
+    {
+      "sha": "9e31d073b50a593e7eced45b81c5117441f8cea0",
+      "message": "feat(redis): enable managed transactions, scripts and Stream reads\n\nReuse standalone execution in managed Single and keep Cluster limited to DB0 and same-slot keys. Fence composite writes and Stream retries across authority changes.\n\nCloses #96 and #167.",
+      "url": "https://github.com/eloqdata/lavik/commit/9e31d073b50a593e7eced45b81c5117441f8cea0"
+    },
+    {
+      "sha": "b9149bfab612b3ffafca507f9097b91a2ecdedad",
+      "message": "feat(redis): support managed SORT_RO, SAVE and BGSAVE\n\nAdd Redis 7.2.14-compatible managed sorting and node-local RDB exports.\nPreserve backup lifecycle and bound pattern transaction admission retries.\n\nCloses #199.",
+      "url": "https://github.com/eloqdata/lavik/commit/b9149bfab612b3ffafca507f9097b91a2ecdedad"
+    },
+    {
+      "sha": "3e03dcd5cc485360cb14a96af68f32c13c3e6737",
+      "message": "feat(redis): support RedisShake imports\n\nEnable managed Single WAIT and RedisShake import coverage, and expand native replication command capacity.\n\nCloses #115",
+      "url": "https://github.com/eloqdata/lavik/commit/3e03dcd5cc485360cb14a96af68f32c13c3e6737"
+    },
+    {
+      "sha": "872394e0907d35cadfadd0599ee87eb1da7615e4",
+      "message": "fix(meta): wait for source lease before cluster-create rebuild (#202)",
+      "url": "https://github.com/eloqdata/lavik/commit/872394e0907d35cadfadd0599ee87eb1da7615e4"
+    },
+    {
+      "sha": "f0c26bbb53d6e037057c77238d8790654a75fd04",
+      "message": "feat(replication): add standalone LAVIK.REPLICAOF (#198)\n\n* feat: add explicit native LAVIK.REPLICAOF for standalone nodes\n\n* test: settle cleaner before measuring replica promotion capacity\n\n* docs: clarify native replica security and test platform",
+      "url": "https://github.com/eloqdata/lavik/commit/f0c26bbb53d6e037057c77238d8790654a75fd04"
+    },
+    {
+      "sha": "305f49dcfa1cf7b7246ef7f0ac56b56374b932bc",
+      "message": "feat(replication): support RedisShake emergency export from serving Primaries (#206)\n\nEnable full and continuous Redis PSYNC export from currently serving Lavik Primaries to RedisShake 4.6.2 and Redis 7.2.14. Reuse the snapshot, multi-flow merge and temporary disk staging from #197; every connection starts FULLRESYNC and failed exports restart against a clean isolated target.\n\nBind export lifetime to current population, history, serving generation and authority. Share replication-backlog-backpressure with native replication (default yes), release only exporter retention on cancellation, and unblock controlled failover when that retention obstructs its drain. Add redis-export-disk-backlog-size with an independent 1 GiB session quota.\n\nFix RDB final-fragment draining, require a nonzero initial ACK, translate current private events and report fenced flow progress plus independent Redis byte offsets. Preserve shared lease capabilities across same-authority refreshes. Enforce MULTI/RESET handshake boundaries and accept optional FACK.\n\nAdd protocol, real RedisShake, HA, disk exhaustion, native coexistence and restart coverage; document migration verification, target isolation and authenticated transport. Native LVPSYNC disk staging remains #205.\n\nValidation: pre-rebase amd64, arm64, formatting and CodeRabbit checks passed on a713e4c7. Rebased onto f0c26bbb, resolving one architecture-document conflict; range-diff, formatting and whitespace checks passed. Merged directly at the user's request without waiting for post-rebase CI.\n\nCloses #122.",
+      "url": "https://github.com/eloqdata/lavik/commit/305f49dcfa1cf7b7246ef7f0ac56b56374b932bc"
+    },
+    {
+      "sha": "3cd698eab10ab88c7fdafbdeefee235d78f6c5e2",
+      "message": "Optimize Stream page routing and range reads (#207)\n\n* Keep Stream page routing bounds in resident directory\n\n* Avoid full ordered directory rebuild for local page writes\n\n* Pin only selected Stream pages for range replies\n\n* Reuse admitted Stream range probe for reply page\n\n* Cover sparse ordered page identity lookup\n\n* Document tri-state Stream boundary comparisons",
+      "url": "https://github.com/eloqdata/lavik/commit/3cd698eab10ab88c7fdafbdeefee235d78f6c5e2"
+    },
+    {
+      "sha": "0920ae569830ddd65083fb8eba4107e5338ea55c",
+      "message": "Bound Tx backlog and parallelize cleanup and external reads (#203)",
+      "url": "https://github.com/eloqdata/lavik/commit/0920ae569830ddd65083fb8eba4107e5338ea55c"
+    },
+    {
+      "sha": "bde3120e07442484974a7190a15895b909113dab",
+      "message": "Optimize grouped HGET and Set single-field reads (#212)\n\n* Optimize grouped Hash and Set single-field reads\n\n* Simplify grouped Hash point reads and test lookup ownership\n\nExtract checked field lookup and retained-result construction, removing envelope checks already enforced by the loader and redundant route hashing. Reuse the fast path for single-field HMGET and SMISMEMBER, and document its validation boundary.\n\nValidation: Debug build; 37 GroupedHash/lookup-memory unit tests; 3 targeted grouped Hash/Set e2e tests; pre-commit.\n\n* Scan grouped Hash pages directly for multi-field reads\n\nGroup HMGET and SMISMEMBER request positions by leaf and scan each encoded page once. Binary-search sorted request views without hashing or materializing unrelated fields, preserve duplicate operands and result order, and admit output copies before releasing each page lease. Keep the existing single-field fast path unchanged.\n\nValidation: Debug build; 39 grouped Hash and lookup-memory unit tests; 12 grouped Hash/Set and read-ownership e2e tests; pre-commit.\n\n* Handle grouped lookup limits explicitly without exception recovery\n\nRemove allocation exception catches from the multi-field reader. Reject vector max_size and accounting overflow before allocation; retain explicit memory admission failures as command statuses, while actual allocator failures follow the runtime's fatal policy.\n\nValidation: Debug build; 39 grouped Hash/lookup-memory unit tests; 4 targeted grouped Hash/Set e2e tests; pre-commit.\n\n* Mark grouped Hash lookup error branches unlikely\n\nAnnotate allocation admission, size overflow, corrupt encoding and failed read branches in the point-read paths. Leave ordinary misses, empty leaves and empty values unannotated.\n\nValidation: Debug build; 39 grouped Hash/lookup-memory unit tests; 4 targeted grouped Hash/Set e2e tests; pre-commit.",
+      "url": "https://github.com/eloqdata/lavik/commit/bde3120e07442484974a7190a15895b909113dab"
+    },
+    {
+      "sha": "9acd7b6fefb7a9cc5df6bc536fe604e8cc9fc5e1",
+      "message": "Preserve native FULL errors during handoff teardown (#213)",
+      "url": "https://github.com/eloqdata/lavik/commit/9acd7b6fefb7a9cc5df6bc536fe604e8cc9fc5e1"
+    },
+    {
+      "sha": "d1ce200e174adcb07820b5431c77b024350e85b6",
+      "message": "feat(meta): support Sentinel TLS and advertised hostnames (#210)\n\n* feat(meta): support Sentinel TLS and advertised hostnames (#109)\n\nAdd independent Sentinel TLS listeners and local publication policies while\npreserving committed advertised routes and legacy membership representations.\nKeep missing TLS endpoints outside promotion eligibility and never downgrade.\n\nShare bounded asynchronous DNS across discovery and native replication, retain\noriginal names for TLS verification, and project replies/events consistently.\nCover pinned stock clients, separate credentials, mapped routes, hostname\nreplication/recovery, and connection-pool/PubSub recovery after failover.\n\nValidation: focused acceptance and final 36-case Sentinel/DNS regression pass;\nGo tests/vet and formatting pass. Full CTest completed with six test-only\nfailures corrected and retested; large list/hash/RDB pass, Valkey Tcl ongoing.\n\n* fix(replication): wait for asynchronous DNS capacity\n\nTreat the shared DNS work limit as cancellable backpressure so hostname\nreplication with more flows than resolver slots can make progress. Preserve\nthe existing session cancellation and absolute Recovery deadline.\n\nExercise 64 concurrent resolutions against the 32-job cap, including worker\ntimer progress and cancellation. Both new cases fail before the fix and pass\nafter it. Also correct Sentinel listener and Data endpoint diagnostics, and\nmake the documented scratch directory portable.\n\nValidation: 20 affected CTest cases passed, including hostname Recovery,\nPARTIAL replication, TLS client failover and handshake coverage; changed-file\nformat checks passed. Addresses the four CodeRabbit findings on PR #210.\n\n* test(meta): check both disabled Sentinel listeners\n\nThe startup log now names plaintext and TLS listeners separately, but the\nexisting default-disabled gate still waited for the removed sentinel=disabled\nfield. This deterministically failed on both amd64 and arm64 CI.\n\nCheck sentinel-tcp=disabled and sentinel-tls=disabled together, preserving the\nbind-failure rollback checks. The isolated failing test reproduces before the\nchange and passes afterward. Rebase onto origin/main at 0920ae56 before this\nfix; the original feature and DNS follow-up patches are unchanged by rebase.",
+      "url": "https://github.com/eloqdata/lavik/commit/d1ce200e174adcb07820b5431c77b024350e85b6"
+    },
+    {
+      "sha": "4dd472d7f9615576e0cdacf4f94206bb1a9c9958",
+      "message": "Bound grouped auxiliary memory during cold recovery (#209)",
+      "url": "https://github.com/eloqdata/lavik/commit/4dd472d7f9615576e0cdacf4f94206bb1a9c9958"
+    },
+    {
+      "sha": "c42871d62cc39fac3eb005c9aa1afb1a52068ce0",
+      "message": "Reduce grouped index work and wake durability waits on completion (#215)\n\n* Compress common prefixes in grouped physical indexes\n\n* Merge physical index leaf updates without temporary maps\n\n* Cover compressed index branches in Hash prefix-length bits\n\n* Reduce latency of short durability fence waits with bounded backoff\n\n* Wake durability fences on owner-local flush completion\n\n* Keep durability wakeups out of coroutine frame destruction",
+      "url": "https://github.com/eloqdata/lavik/commit/c42871d62cc39fac3eb005c9aa1afb1a52068ce0"
+    },
+    {
+      "sha": "37b7e45ace4408c675caf6805af396769b0ff3bb",
+      "message": "perf: streamline write requests and vectorize Redis replies (#214)\n\n* perf: streamline write requests and vectorize Redis replies\n\n* test: update replication reply continuation check\n\n* perf: vectorize bitmap operations over disjoint buffers\n\n* refactor: separate grouped write metadata validation\n\n* perf: compact record write request metadata\n\n* refactor: extract latency trace reporting from server\n\n* perf: omit append trace argument from disabled builds",
+      "url": "https://github.com/eloqdata/lavik/commit/37b7e45ace4408c675caf6805af396769b0ff3bb"
+    },
+    {
+      "sha": "e1c8fd59efb9a3cfe653d42c8b277849a1662602",
+      "message": "Decouple directive result proposals from the Meta session reader (#216)",
+      "url": "https://github.com/eloqdata/lavik/commit/e1c8fd59efb9a3cfe653d42c8b277849a1662602"
+    },
+    {
+      "sha": "d68fa4545e092ea951fea203dd73b6e6e421f406",
+      "message": "Bound GEO and Sorted Set point, random, and range-removal work (#218)",
+      "url": "https://github.com/eloqdata/lavik/commit/d68fa4545e092ea951fea203dd73b6e6e421f406"
+    },
+    {
+      "sha": "4c26af7b122bc64fc902b5e72481de803c1c56af",
+      "message": "fix(meta): deliver shutdown signals on the alternate stack (#220)",
+      "url": "https://github.com/eloqdata/lavik/commit/4c26af7b122bc64fc902b5e72481de803c1c56af"
+    },
+    {
+      "sha": "244cd16bc181dbd14594b9a2810dd785f8a095b8",
+      "message": "perf(meta): share bounded audit pages across committed views (#221)\n\n* perf(meta): share bounded audit pages across committed views\n\n* fix(storage): preserve compact range deletion at maxmemory",
+      "url": "https://github.com/eloqdata/lavik/commit/244cd16bc181dbd14594b9a2810dd785f8a095b8"
+    },
+    {
+      "sha": "e5d6492662d9dd2868f9b326b7d7ce2c31fd0677",
+      "message": "perf(storage): size RESTORE batches by build memory requirements (#219)\n\nProbe current worker admission for input growth, typed build metadata, ordered directory publication, and commit/rollback receipts instead of a fixed batch cap or a fraction of available memory. Correct vector replacement accounting, deduplicate touched Hash groups, and hash-index RDB duplicate validation while retaining exact collision checks.",
+      "url": "https://github.com/eloqdata/lavik/commit/e5d6492662d9dd2868f9b326b7d7ce2c31fd0677"
+    },
+    {
+      "sha": "ebe28dd5a60b083c13826580c93623c6c5686b2d",
+      "message": "fix(cluster): race bounded Meta TCP connection attempts (#223)\n\n* fix(cluster): bound Meta reconnect waits behind unreachable endpoints\n\n* build: pin Bycorf to merged cancellable-connect commit\n\n* refactor(cluster): let Meta dial allocation failures terminate",
+      "url": "https://github.com/eloqdata/lavik/commit/ebe28dd5a60b083c13826580c93623c6c5686b2d"
+    },
+    {
+      "sha": "31a1e13025a4cdde2d58184dbe7db8b6a4eeb97a",
+      "message": "perf(storage): reduce ZSet RESTORE index build work (#224)\n\n* perf(storage): splice ordered ZSet RESTORE batches\n\n* perf(storage): reduce ZSet bulk index build work",
+      "url": "https://github.com/eloqdata/lavik/commit/31a1e13025a4cdde2d58184dbe7db8b6a4eeb97a"
+    },
+    {
+      "sha": "b89310ff3c7694dc775dc0802135e160d0e2b7d6",
+      "message": "fix(meta): isolate cluster creation progress across groups (#225)",
+      "url": "https://github.com/eloqdata/lavik/commit/b89310ff3c7694dc775dc0802135e160d0e2b7d6"
+    },
+    {
+      "sha": "7b2a3c7c19221d66c0ada7f934d00c3305e7ec82",
+      "message": "perf(meta): overlap bounded failover proposals across groups (#226)",
+      "url": "https://github.com/eloqdata/lavik/commit/7b2a3c7c19221d66c0ada7f934d00c3305e7ec82"
+    },
+    {
+      "sha": "a6e93d3d508bddec310ec4e5d8a61ae6d26d8afa",
+      "message": "perf(storage): reduce grouped write indexing and transaction admission overhead (#222)",
+      "url": "https://github.com/eloqdata/lavik/commit/a6e93d3d508bddec310ec4e5d8a61ae6d26d8afa"
+    },
+    {
+      "sha": "a8c926d49f056dde97c4a7d12f7d765f2c891c79",
+      "message": "fix(storage): preserve publication headroom during collection ingest (#229)",
+      "url": "https://github.com/eloqdata/lavik/commit/a8c926d49f056dde97c4a7d12f7d765f2c891c79"
+    },
+    {
+      "sha": "87552be27ebf7bbb3d0ca5f561b71152fdb555d8",
+      "message": "perf(storage): trim grouped Hash and Set write allocations and lookups (#228)",
+      "url": "https://github.com/eloqdata/lavik/commit/87552be27ebf7bbb3d0ca5f561b71152fdb555d8"
+    },
+    {
+      "sha": "f12680146756f167e1e57420e5a5fbd14a2473d2",
+      "message": "fix(redis): preserve FULL transaction effects and initial blocking attempts (#232)\n\n* fix(redis): preserve FULL transaction effects and initial blocking attempts\n\n* refactor(storage): centralize transaction participant settlement",
+      "url": "https://github.com/eloqdata/lavik/commit/f12680146756f167e1e57420e5a5fbd14a2473d2"
+    },
+    {
+      "sha": "895a441d1ccb4908b12168797cfcb4647b9d2012",
+      "message": "test(meta): handle reconnect retirement after storage failure (#234)",
+      "url": "https://github.com/eloqdata/lavik/commit/895a441d1ccb4908b12168797cfcb4647b9d2012"
+    },
+    {
+      "sha": "e5f663552a5e54e4bb15143be6c31f345e000f8e",
+      "message": "Upgrade Lavik Admin\n\nSupport running on macbook with Docker Desktop.",
+      "url": "https://github.com/eloqdata/lavik/commit/e5f663552a5e54e4bb15143be6c31f345e000f8e"
+    },
+    {
+      "sha": "065623811791bf90e67b3d87248c1f1dd7ebf8f3",
+      "message": "perf: reduce ordered collection metadata and page work (#233)",
+      "url": "https://github.com/eloqdata/lavik/commit/065623811791bf90e67b3d87248c1f1dd7ebf8f3"
+    },
+    {
+      "sha": "6ab8273ed9a1113cde5b861f2cc46d3ec2458534",
+      "message": "refactor(replication): bind FULL admission and drain to native sessions (#239)\n\nShare one source FULL lifecycle between control admission and late flow fallback. Retain cancelled work until control setup and source flows drain, and release completed FULL work independently of ONLINE connection lifetime.\n\nCloses #236",
+      "url": "https://github.com/eloqdata/lavik/commit/6ab8273ed9a1113cde5b861f2cc46d3ec2458534"
+    },
+    {
+      "sha": "efe5bba0118a49739a947ae0f79a38145363a4d8",
+      "message": "feat(replication): limit FollowOwner FULL to one session per Group (#240)\n\nLimit Meta-managed automatic FollowOwner FULL admission to one target session per Group, with all source flows sharing the session-owned lifecycle. Return a source-scoped busy response before withdrawing trusted population evidence and retry the exact desired relationship with cancellable backoff capped at one second.\n\nRoute late continuation coverage misses through fresh control admission using the existing protocol-v1 FULL mode. Preserve ONLINE, CONTINUE and direct-parent partial recovery while retaining cancelled FULL ownership until source work drains. Add manager and real-process regressions for contention, preserved evidence, cancellation, reconnects and Meta Leader replacement.\n\nCloses #237",
+      "url": "https://github.com/eloqdata/lavik/commit/efe5bba0118a49739a947ae0f79a38145363a4d8"
+    },
+    {
+      "sha": "3e104b38d4b08cbfced6d1e0d5b5ea176ad0d89e",
+      "message": "feat(replication): share native FULL admission with explicit rebuilds (#241)\n\nExplicit Meta population rebuilds share the source's one-FULL-per-Group admission with FollowOwner. Busy requests retain their exact directive and trusted population until admitted; cancellation and session replacement join pending publication and ingress. Destructive admission retires the previous client serving generation before storage mutation.\n\nRequire ACKRANGE in native LVFLOW handshakes and remove old-peer negotiation and fallback paths. Keep individual ACKs for singleton events and FULL boundaries. Add admission/token regressions and bound the cancellation test's asynchronous source-slot wait.\n\nCloses #238.",
+      "url": "https://github.com/eloqdata/lavik/commit/3e104b38d4b08cbfced6d1e0d5b5ea176ad0d89e"
+    },
+    {
+      "sha": "e6a6aecaad30bda513345b3067718b138b6adbf0",
+      "message": "fix(storage): update Bycorf to prevent SPDK qpair polling starvation (#243)",
+      "url": "https://github.com/eloqdata/lavik/commit/e6a6aecaad30bda513345b3067718b138b6adbf0"
+    },
+    {
+      "sha": "44761b91d356f9f3f5ba1afeb91de13364ba98c3",
+      "message": "storage: pipeline owner-local grouped successors through shared commits (#235)",
+      "url": "https://github.com/eloqdata/lavik/commit/44761b91d356f9f3f5ba1afeb91de13364ba98c3"
+    },
+    {
+      "sha": "6111d0b1e232cac2b572647a3d536916b0889b6d",
+      "message": "fix(storage): run Tomb Raider for complete local populations (#242)\n\nRun physical tombstone cleanup for complete local populations on standalone\nand Meta-managed primaries and replicas using one storage-owned scheduler.\nKeep user scheduling independent of serving authority and internal pauses.\n\nStorage owns population generations and drains maintenance before destructive\nFULL admission. Replication reports lifecycle completion after all flow cuts\nand local records, without carrying a Tomb Raider maintenance token. Publish\nnative readiness only after finalization succeeds; fail-stop and resolve the\nrebuild error if finalization fails after promotion.\n\nBind mark/sweep/reap to DB epochs and index generations so FLUSH and replay\ncancel stale rounds without a global lock. Keep key/index lifetime protection\nand finish accounting for erased records. Wait for record-block retirement\ndurability and continue the same sweep instead of repeatedly restarting under\ndefrag churn. Expose eligibility and blocking reasons in STATUS and INFO.\n\nAdd deterministic lifecycle, FLUSH, retirement, failure and replication\ncoverage, and update storage, replication and operations documentation.\n\nValidation: CI run 37110875744 passed formatting and complete amd64/arm64\nsoftware suites on 4b4509c4. Local coverage includes 761 unit tests, ten\nselected integration/e2e tests and final controller/manager regressions.\nAll review findings are addressed. CodeRabbit rate-limited the final test-only\nincrement; that increment was independently reviewed and tested.\n\nCloses #227.",
+      "url": "https://github.com/eloqdata/lavik/commit/6111d0b1e232cac2b572647a3d536916b0889b6d"
+    },
+    {
+      "sha": "dc736ec00e416a18fb9648b1ba7550ea1253c7ab",
+      "message": "storage: reduce immutable grouped publication allocations (#244)",
+      "url": "https://github.com/eloqdata/lavik/commit/dc736ec00e416a18fb9648b1ba7550ea1253c7ab"
+    },
+    {
+      "sha": "14d2c08196998c136ec7b5e48556d9166459b176",
+      "message": "storage: preserve adjacent ZSet pages during score moves (#246)",
+      "url": "https://github.com/eloqdata/lavik/commit/14d2c08196998c136ec7b5e48556d9166459b176"
+    },
+    {
+      "sha": "5d7d12ec064d562955531cfc1fabf1e13d779f02",
+      "message": "perf(storage): apply structural ordered metadata without recovery reselection (#247)",
+      "url": "https://github.com/eloqdata/lavik/commit/5d7d12ec064d562955531cfc1fabf1e13d779f02"
+    },
+    {
+      "sha": "d14d1b0d0c57bdaf538311049c3f855050a732c9",
+      "message": "fix(cluster): revisit responsive Meta peers during leader discovery (#248)",
+      "url": "https://github.com/eloqdata/lavik/commit/d14d1b0d0c57bdaf538311049c3f855050a732c9"
+    },
+    {
+      "sha": "25e159418603a95c1b2cca68173b329067e3ef48",
+      "message": "perf(ci): deduplicate shared HA tests and shard software suites (#245)\n\nBuild the complete Debug test runtime once per architecture and distribute\nCTest and all four external suites across six isolated, balanced shards.\nVerify bundled runtime identity and coverage, cache compiler outputs, and\npreserve existing required check names with fail-closed completion gates.\n\nRemove 21 redundant test registrations and 21 repeated internal mode/fault\ncombinations while preserving Single multi-DB, Cluster authority/routing and\nSentinel client/transport contracts. Batch SORT fixture setup without changing\nits 49 cases or data. Document the resulting local and CI coverage boundary.\n\nFix native FULL fixture startup by waiting for committed Meta membership before\nData bootstrap. Keep original assertions and timeouts, and add two regressions\nagainst the actual scenario orchestration.\n\nValidation: 21 targeted CTest entries, 16 CI-tooling regressions, 50 accelerated\nstartup repetitions, and all 17 hosted CI jobs passed. Both architecture suites\npassed with 1,681 registered tests plus four external suites each; the complete\nhosted workflow took 37 minutes.",
+      "url": "https://github.com/eloqdata/lavik/commit/25e159418603a95c1b2cca68173b329067e3ef48"
+    },
+    {
+      "sha": "97aa2b73d4f1a82af47edc31d1c6305abd2ea856",
+      "message": "perf: reuse ordered metadata across tail appends and retirements (#249)",
+      "url": "https://github.com/eloqdata/lavik/commit/97aa2b73d4f1a82af47edc31d1c6305abd2ea856"
+    },
+    {
+      "sha": "67985350d070a79ad6002cab0f9c70d5df4a6750",
+      "message": "perf(storage): reduce List read copies and inline encoding overhead (#258)\n\n* perf(storage): reduce List read copies and inline encoding overhead\n\n* test(meta): bound recovery probes and leave lease retry headroom",
+      "url": "https://github.com/eloqdata/lavik/commit/67985350d070a79ad6002cab0f9c70d5df4a6750"
+    },
+    {
+      "sha": "594c752943950079a8413a56f0914b95c6574c79",
+      "message": "perf(storage): avoid materializing Sorted Set scan members (#260)\n\n* perf(storage): borrow Sorted Set members during page scans\n\n* perf(storage): retain owned snapshots for mutation probes",
+      "url": "https://github.com/eloqdata/lavik/commit/594c752943950079a8413a56f0914b95c6574c79"
+    },
+    {
+      "sha": "6a7730218da8fb1564a5a83a0bc7707d3aa611fc",
+      "message": "perf(storage): reuse prepared Hash and Set record payloads (#259)",
+      "url": "https://github.com/eloqdata/lavik/commit/6a7730218da8fb1564a5a83a0bc7707d3aa611fc"
+    },
+    {
+      "sha": "a565d603523467ed7bbb9ed9227ddd6b18a9ca8c",
+      "message": "refactor(storage): organize grouped code and share page writing (#262)",
+      "url": "https://github.com/eloqdata/lavik/commit/a565d603523467ed7bbb9ed9227ddd6b18a9ca8c"
+    },
+    {
+      "sha": "19496654cc43b21df11fb59be60e174dc4c89dbc",
+      "message": "Stop recovering from C++ allocation failures (#264)",
+      "url": "https://github.com/eloqdata/lavik/commit/19496654cc43b21df11fb59be60e174dc4c89dbc"
+    },
+    {
+      "sha": "4610d6077e8e32d59639a5ee88dbe8cbd305aab2",
+      "message": "perf(meta): capture owned observation facts for revalidation (#257)\n\n* perf(meta): capture owned observation facts for revalidation\n\nCapture narrow committed facts and paired state indices under the state lock, then build lookup indices and revalidate outside it. Share race-safe capture and registration across full, observation, and cursor-only subscriptions.\n\nKeep full recovery/admission views, durable formats, policy boundaries, and apply paths unchanged. Cover differential observation behavior, retained-view lifetime, concurrent commit/Advance/Install, subscription replay, overflow, and callback teardown.\n\nRefs #250\n\n* docs(meta): clarify full-state capture purpose\n\n* test: wait for local readiness in integration fixtures",
+      "url": "https://github.com/eloqdata/lavik/commit/4610d6077e8e32d59639a5ee88dbe8cbd305aab2"
+    },
+    {
+      "sha": "55c57e4e96790fd60072c1ea18ae3e39fa1e4dfb",
+      "message": "perf(meta): capture scoped creation and membership inputs (#277)\n\nReplace Cluster Create and Meta Membership aggregate snapshots and live-journal copies with owned, purpose-specific discovery and planning captures.\n\nKeep complete selected operations, exact directives and receipts, full creation topology validation, archive distinctions and all-child failure precedence. Derive selectors outside the state lock and revalidate their operation identity, revision, intent and lifecycle inside the atomic capture. Refresh cursor subscriptions after proposals, overflow and either cursor component changing; retain membership dispatch-time authority and configuration checks.\n\nUpdate the Meta control-plane architecture and recovery/concurrency regressions. No wire or durable format, Policy activation, audit reservation or apply-path behavior changes.\n\nValidation: 86 focused unit tests, seven Debug fault-enabled integration gates, all 12 AMD64/ARM64 CI shards and required checks passed. Paired component measurements show fixed selected-record capture allocation remains independent of unrelated operation, archive, Policy, manifest and audit growth; selector/planner costs are reported separately in the PR.\n\nCloses #252.",
+      "url": "https://github.com/eloqdata/lavik/commit/55c57e4e96790fd60072c1ea18ae3e39fa1e4dfb"
+    },
+    {
+      "sha": "086ffb26e58f380a71a305ddaec12142951c1c74",
+      "message": "perf(meta): capture command-specific proposal views (#278)\n\n* perf(meta): capture command-specific proposal views (#251)\n\n* docs(meta): clarify capture and recovery lock ownership\n\n* test(meta): cover reservation release before Raft dispatch\n\n* perf(meta): finalize current Policy values outside the state lock\n\n* test(meta): wait for discovery authority after election\n\nA bootstrap node can report leader=1 before state catch-up and runtime authority admission. Sentinel correctly drops discovery connections in that window, making the steady-state wire tests flaky on both the baseline and this branch. Wait for authoritative clusterstatus before running the unchanged discovery assertions.",
+      "url": "https://github.com/eloqdata/lavik/commit/086ffb26e58f380a71a305ddaec12142951c1c74"
+    },
+    {
+      "sha": "62c8185e43b0f8ff0715922fdc833b738b46a38b",
+      "message": "perf(meta): capture failover planning and detection inputs (#279)\n\n* perf(meta): capture failover planning and detection inputs (#253)\n\n* test(meta): exercise detector capture races and leadership timing",
+      "url": "https://github.com/eloqdata/lavik/commit/62c8185e43b0f8ff0715922fdc833b738b46a38b"
+    },
+    {
+      "sha": "741dc3265d7c93ce9124e565015e6af5efcacc9c",
+      "message": "perf(storage): reuse Stream directory prefixes across suffix inserts (#265)\n\n* perf(storage): update Stream tail directories incrementally\n\n* perf(storage): reuse Stream directory prefixes across suffix inserts",
+      "url": "https://github.com/eloqdata/lavik/commit/741dc3265d7c93ce9124e565015e6af5efcacc9c"
+    },
+    {
+      "sha": "330738d9a483abc3cb43247d47ef2c594d890f3b",
+      "message": "fix(storage): recover expired grouped roots after full-device reclamation (#268)\n\n* test: observe expiration before asserting grouped capacity recovery\n\n* test(storage): retain startup diagnostics for full-disk expiration recovery\n\n* fix(storage): recover expired grouped roots after full-device reclamation\n\n* test(meta): wait for discovery authority before subscription checks\n\n* test(meta): allow fenced SET disconnects after partition fault cut\n\n* docs(storage): consolidate expired grouped recovery invariants\n\n* fix(storage): validate reclaimed extents and persist recovery deletions\n\nClassify missing extent identities as data loss and validate the complete selected graph before publication or live accounting. Preserve strict failures for live/shielding roots, reads, and payload checksum errors.\n\nWait for detached recovery tombstones to become durable before serving and accept only tagged foreground disk exhaustion as the repair escape. Add reclaimed Hash/List extent and crash-plus-clock-rollback regressions.\n\n* refactor(storage): reduce recovery tombstone padding",
+      "url": "https://github.com/eloqdata/lavik/commit/330738d9a483abc3cb43247d47ef2c594d890f3b"
+    },
+    {
+      "sha": "e18aed7aafe66f2d2054fd8c2404ce706a0ae33e",
+      "message": "perf(storage): reuse member-index leaves for point Sorted Set writes (#266)\n\n* perf(storage): reuse member-index leaves for point Sorted Set writes\n\n* perf(storage): preserve member preparation scheduling when reusing leaves",
+      "url": "https://github.com/eloqdata/lavik/commit/e18aed7aafe66f2d2054fd8c2404ce706a0ae33e"
+    },
+    {
+      "sha": "2765fea5538ad48d705995d95a4054fcf4fbaba6",
+      "message": "perf(stream): coalesce reply chunks and serialize borrowed fields (#270)\n\n* perf(stream): coalesce reply fragments and serialize borrowed fields\n\n* test(replication): verify deadline cuts against applied donor data\n\n* test(sentinel): probe independent clients within the same recovery deadline",
+      "url": "https://github.com/eloqdata/lavik/commit/2765fea5538ad48d705995d95a4054fcf4fbaba6"
+    },
+    {
+      "sha": "838a290f049ed4a11723f5ef93eb5d6d666e8d1a",
+      "message": "perf(zset): read indexed scores from validated page views (#280)\n\n* perf(zset): read indexed scores from validated page views\n\n* test(grouped): retain live diagnostics when full-disk RESTORE stalls",
+      "url": "https://github.com/eloqdata/lavik/commit/838a290f049ed4a11723f5ef93eb5d6d666e8d1a"
+    },
+    {
+      "sha": "5a3903d9b3c0632e3b34e827b779d9daa58455c2",
+      "message": "perf(storage): overlap List range reads and reduce reply allocation and copying (#267)\n\n* perf(storage): overlap bounded List range page reads and admit one reply copy\n\n* perf(redis): reserve complete List array reply capacity before encoding\n\n* test(storage): match List batch admission fault after rebase",
+      "url": "https://github.com/eloqdata/lavik/commit/5a3903d9b3c0632e3b34e827b779d9daa58455c2"
+    },
+    {
+      "sha": "d88a5e8fdcc5702272b26f9853f4baad7a146988",
+      "message": "perf(meta): share Data publication views and read exact directive results (#281)\n\nReplace full MetaStores captures on Data control paths with an owned, atomically captured publication view shared by sessions. Preserve projection, same-cut identity validation, subscription freshness and transfer fencing.\n\nRead DirectiveResult operations and committed receipts by exact key, preserving retry and ACK semantics. Add lifetime, freshness, handshake and transfer regressions, and update the Meta architecture documentation.\n\nCloses #254.",
+      "url": "https://github.com/eloqdata/lavik/commit/d88a5e8fdcc5702272b26f9853f4baad7a146988"
+    },
+    {
+      "sha": "c8d5c788468d2afb04e734b8158c4705aa7fae8d",
+      "message": "perf(meta): capture Admin and Sentinel reads by purpose (#284)\n\nReplace all 26 Admin aggregate captures with owned same-cut records,\ncompact facts, scalar predicates and domain-only exports. Preserve complete\nselected operations, membership identity checks and absolute slot-map\nverification. Share typed failover validation and keep Sentinel's compact\napplied-index cache with cursor-only subscription registration.\n\nEncode audit and operation archives outside the state lock. Retain the full\nslot-owner table directly to avoid lock-held range compression. Document\nownership and the current Meta read flows.\n\nRebased onto d88a5e8f, preserving Data publication and Admin architecture.\nOriginal PR head passed all 17 hosted CI jobs plus CodeRabbit. Rebased head\npassed the local build, formatting and 117 focused unit/process checks;\nnew hosted CI was not awaited for the direct merge.\n\nCloses #255",
+      "url": "https://github.com/eloqdata/lavik/commit/c8d5c788468d2afb04e734b8158c4705aa7fae8d"
+    },
+    {
+      "sha": "646439ed406bd993139359b7efab5ce8ef422542",
+      "message": "perf: buffer repeated updates to large Hash and Set routing metadata (#285)\n\n* perf: buffer recent grouped hash routing metadata replacements\n\n* perf: fold routing replacements with shared ancestor copies\n\n* perf: retain direct routing updates for small maps and recovery\n\n* perf: keep small hash routing maps on path copies",
+      "url": "https://github.com/eloqdata/lavik/commit/646439ed406bd993139359b7efab5ce8ef422542"
+    },
+    {
+      "sha": "a043658b39ebce66a371d64e31b5adbd135a602c",
+      "message": "perf: overlap pinned Stream range reads within an admitted page window (#275)\n\n* perf: read pinned Stream ranges through bounded owned page windows\n\n* Assert read-window metadata and delivery invariants\n\n* Return each Stream read window as one admitted logical page\n\n* Avoid visiting an empty Stream upper-bound page\n\n* test: wait for bootstrap creation membership admission\n\n* test: share bounded creation admission across bootstrap fixtures\n\n* test: align creation admission mocks after main rebase",
+      "url": "https://github.com/eloqdata/lavik/commit/a043658b39ebce66a371d64e31b5adbd135a602c"
+    },
+    {
+      "sha": "920f879b05636d066ef0485f1ee1121813ef79ac",
+      "message": "Reuse verified physical root identity when refreshing grouped reads (#282)",
+      "url": "https://github.com/eloqdata/lavik/commit/920f879b05636d066ef0485f1ee1121813ef79ac"
+    },
+    {
+      "sha": "945837ec6e2d81c8ca7895e12bbf1040266dfd2a",
+      "message": "refactor: simplify shared grouped metadata types (#286)\n\n* refactor: rename shared grouped object types\n\n* refactor: give shared grouped record metadata neutral names\n\n* refactor: alias grouped index entries to compact values\n\n* refactor: use compact record values directly in grouped indexes",
+      "url": "https://github.com/eloqdata/lavik/commit/945837ec6e2d81c8ca7895e12bbf1040266dfd2a"
+    },
+    {
+      "sha": "ca191f1b234b8301ececec23b40162a101ff430c",
+      "message": "test(meta): complete purpose-specific view acceptance (#287)\n\nComplete the final purpose-specific committed-view acceptance batch.\n\nRemove obsolete full-aggregate read APIs while retaining the explicit paired\nrecovery capture. Exercise owned payloads and subscription freshness across\nAdvance/Install, move aggregate test oracles to test support, and update the\narchitecture's read-flow boundaries.\n\nCap the grouped test client's loopback MSS at 16 KiB to avoid window-probe\npaced large uploads in ARM64 CI. Production networking, timeouts, payloads,\nand recovery assertions remain unchanged.\n\nValidation: 805 distinct local acceptance tests; exact-head CI on amd64 and\narm64 with all 12 shards passing; 40/40 ARM64 full-device repetitions.\nBenchmark tooling and reports are excluded from this change; evidence and\nmeasurement scope are recorded in #256.\n\nRefs #256, #144.",
+      "url": "https://github.com/eloqdata/lavik/commit/ca191f1b234b8301ececec23b40162a101ff430c"
+    },
+    {
+      "sha": "c55e52c98d785dec9603d33ddcf55eab299eb11e",
+      "message": "refactor(storage): unify grouped indexes and ZSet routing (#288)\n\n* refactor(storage): extract grouped metadata and rank components\n\n* test(storage): consolidate grouped map coverage\n\n* refactor(storage): require member graphs for grouped ZSets\n\n* refactor(storage): unify ordered ranks on Fenwick indexes\n\n* refactor: extract reusable copy-on-write array and allocator\n\n* refactor: separate generic indexes from grouped storage\n\n* refactor: organize reusable indexes under containers\n\n* refactor: name containers CowMap and FenwickTree",
+      "url": "https://github.com/eloqdata/lavik/commit/c55e52c98d785dec9603d33ddcf55eab299eb11e"
+    },
+    {
+      "sha": "cc31b3a6250d0fcf2fa0d985b1ece3a8602e09f9",
+      "message": "perf(storage): optimize grouped directory updates, ranks and memory (#289)\n\n* perf(storage): keep List end edits on stable ring slots\n\n* perf(storage): route ZSet member ranks through score index and Fenwick counts\n\n* fix(containers): size CowMap budgets from combined allocation layout\n\n* perf(storage): reduce chunk slack in small ordered directories\n\n* perf(storage): compact COW chunks and grouped resident metadata\n\n* refactor(storage): name borrowed group view GroupsView\n\n* refactor(storage): share ordered page metadata and update validation",
+      "url": "https://github.com/eloqdata/lavik/commit/cc31b3a6250d0fcf2fa0d985b1ece3a8602e09f9"
+    },
+    {
+      "sha": "1dd8a5b35aefc9215e0090204a0680efe9848e4a",
+      "message": "fix(storage): reduce single-pass recovery memory (#290)\n\n* fix(storage): compact single-pass recovery metadata\n\n* test(storage): keep focused recovery ownership coverage\n\n* fix(storage): release recovery tables and share ordered bounds\n\n* test(storage): cover mixed ordered cold recovery in CI\n\n* Allow full memory shares during storage recovery and gate online transition\n\n* test(replication): wait for replica read admission after cluster creation",
+      "url": "https://github.com/eloqdata/lavik/commit/1dd8a5b35aefc9215e0090204a0680efe9848e4a"
+    },
+    {
+      "sha": "9dfccd899fa2cc0fa25ecdfce6202b56e9a149c1",
+      "message": "Updated the live [Lavik Admin](<http://127.0.0.1:4173>):\n\n- Added a labeled QPS y-axis with automatic scaling.\n- Removed Key browser, including its API endpoints.\n\nVerified desktop/mobile layouts, live chart behavior, and all 34 unit tests plus three browser tests. Refresh the dashboard to see the changes.",
+      "url": "https://github.com/eloqdata/lavik/commit/9dfccd899fa2cc0fa25ecdfce6202b56e9a149c1"
+    },
+    {
+      "sha": "ce359d5fd52ab50f7911bc3c7731d37182bb42e9",
+      "message": "perf(storage): avoid redundant grouped reads and point-write encoding (#291)\n\n* perf(storage): skip unchanged List neighbours for queue writes\n\n* perf(storage): reuse grouped probes and encode point edits directly",
+      "url": "https://github.com/eloqdata/lavik/commit/ce359d5fd52ab50f7911bc3c7731d37182bb42e9"
+    },
+    {
+      "sha": "1f04480de4aa1de13a54bb8a358bf9d8b502dfc9",
+      "message": "test: inject online OOM after successful recovery (#293)",
+      "url": "https://github.com/eloqdata/lavik/commit/1f04480de4aa1de13a54bb8a358bf9d8b502dfc9"
+    },
+    {
+      "sha": "cdcaf6d3648e17a540efe5bc81d253a607294cb3",
+      "message": "Support grouped and indirect-key shutdown checkpoints (#295)",
+      "url": "https://github.com/eloqdata/lavik/commit/cdcaf6d3648e17a540efe5bc81d253a607294cb3"
+    },
+    {
+      "sha": "2a342b7b149b1841e31a19e74cec4df1b7e87852",
+      "message": "Implemented the button-driven workflow:\n\n1. Extract the tarball and run `./lavik-admin`.\n2. Choose **Create cluster → Try a demo cluster**.\n3. Admin prepares Docker, starts three Meta and three Data containers, and creates `demo-cluster`, with live progress and retryable errors.\n\nIt reuses the running Admin and included Lavik binaries. No source checkout or separate setup command is needed. Docker must be running.\n\nARM64 preview tarball (/private/tmp/lavik-admin-demo-preview-linux-aarch64.tar.gz) — on macOS, install Node.js 24.15+.\n\nVerified the actual extracted-package flow, dashboard commands, data-preserving restart, and teardown that keeps Admin running. All 47 unit, five browser, and four downloader tests passed.",
+      "url": "https://github.com/eloqdata/lavik/commit/2a342b7b149b1841e31a19e74cec4df1b7e87852"
+    },
+    {
+      "sha": "54b3b3b481f82e20fc2f431f319dae5c537833c6",
+      "message": "test(meta): tolerate delayed startup probes in CI (#296)",
+      "url": "https://github.com/eloqdata/lavik/commit/54b3b3b481f82e20fc2f431f319dae5c537833c6"
+    },
+    {
+      "sha": "101a72544ef99cd17514b452e32e1138e15d290a",
+      "message": "fix(storage): restore checkpoints across SPDK ownership changes (#298)",
+      "url": "https://github.com/eloqdata/lavik/commit/101a72544ef99cd17514b452e32e1138e15d290a"
+    },
+    {
+      "sha": "e1a069d1b5e4647cfc880902333e3c511ea1c1e4",
+      "message": "fix(ci): separate Admin tests from release packaging (#299)\n\nRun Admin functional suites in dedicated AMD64 and ARM64 CI jobs and include them in the existing completion gates. Keep archived runtime smoke checks in the release workflow.\n\nScope the real-process teardown test to its own child so unrelated same-UID processes with restricted procfs access cannot invalidate the test. Preserve fail-closed production deletion checks and cover process scanning with deterministic regression fixtures.",
+      "url": "https://github.com/eloqdata/lavik/commit/e1a069d1b5e4647cfc880902333e3c511ea1c1e4"
+    },
+    {
+      "sha": "80049819549d8647cb930c886ac339af6682174c",
+      "message": "refactor(config): describe scalar startup options in a table (#300)",
+      "url": "https://github.com/eloqdata/lavik/commit/80049819549d8647cb930c886ac339af6682174c"
+    },
+    {
+      "sha": "874c882f0381f227b9932ad1e82713715efc9918",
+      "message": "Reduce default registered read payload to 32 KiB (#302)\n\n* Reduce default registered read slots to 32 KiB\n\n* Record SPDK slot-size comparison and scheduler diagnosis\n\n* Use compact SPDK retry metadata\n\n* Use worker TLS for SPDK completion ownership\n\n* Update Bycorf SPDK submission and polling fast paths\n\n* Pin Bycorf hardware-free SPDK backpressure regression\n\n* Pin Bycorf merged SPDK backpressure fix",
+      "url": "https://github.com/eloqdata/lavik/commit/874c882f0381f227b9932ad1e82713715efc9918"
+    },
+    {
+      "sha": "100cb8ea4b8ca4a3392fa67e65c0820e5c04bd89",
+      "message": "Remove obsolete 32 KiB read-slot performance report (#304)",
+      "url": "https://github.com/eloqdata/lavik/commit/100cb8ea4b8ca4a3392fa67e65c0820e5c04bd89"
+    },
+    {
+      "sha": "266244d9e4692c62286f5ba54a2d4e7743234993",
+      "message": "refactor: simplify codegen-checked character checks and value operations (#306)",
+      "url": "https://github.com/eloqdata/lavik/commit/266244d9e4692c62286f5ba54a2d4e7743234993"
+    },
+    {
+      "sha": "5abb2ecaf19f7d5e7c299d7dcfe035ff51df7396",
+      "message": "perf: avoid repeated Pub/Sub order-vector removal during cleanup (#307)",
+      "url": "https://github.com/eloqdata/lavik/commit/5abb2ecaf19f7d5e7c299d7dcfe035ff51df7396"
+    },
+    {
+      "sha": "7aa2203706d2602eb0cd1bd81749c19a4bb2a68e",
+      "message": "Share io_uring storage buffer arenas and retry registration within memlock (#305)\n\n* Retry io_uring buffer registration within memlock with read priority\n\n* Share io_uring buffer allocations across read and write slots\n\n* Use total read slot sizes and remove registered-buffer sentinel",
+      "url": "https://github.com/eloqdata/lavik/commit/7aa2203706d2602eb0cd1bd81749c19a4bb2a68e"
+    },
+    {
+      "sha": "52845a91b6cd0987ade1b5ea9d2b61d8871d10bf",
+      "message": "Inline storage read lease accessors in hot coroutine paths (#308)",
+      "url": "https://github.com/eloqdata/lavik/commit/52845a91b6cd0987ade1b5ea9d2b61d8871d10bf"
+    },
+    {
+      "sha": "2ee66162e95ca4e863b22a00dffdcdefbbf27458",
+      "message": "perf: avoid validation substring copies and repeated page lookups (#309)",
+      "url": "https://github.com/eloqdata/lavik/commit/2ee66162e95ca4e863b22a00dffdcdefbbf27458"
+    },
+    {
+      "sha": "633307fead5afae81a3498cc2f15c079c1095910",
+      "message": "Avoid standalone control worker and silent DPDK adaptive fallback (#310)\n\n* Avoid creating a control worker in standalone mode\n\n* Clarify when Meta CPU placement requirements apply\n\n* Format runtime worker comment\n\n* test: expect only standalone data-worker rings\n\n* deps: require explicit RX notification support for adaptive DPDK\n\n* deps: pin merged Bycorf adaptive notification fix",
+      "url": "https://github.com/eloqdata/lavik/commit/633307fead5afae81a3498cc2f15c079c1095910"
+    },
+    {
+      "sha": "1eacae54af3aeed92135bb8456d6648a218ec8c3",
+      "message": "Guarantee compile-time initialization of scan arena tables (#311)",
+      "url": "https://github.com/eloqdata/lavik/commit/1eacae54af3aeed92135bb8456d6648a218ec8c3"
+    },
+    {
+      "sha": "3c22669d28701f96880b4b9c0cbb7f13e9a23c5c",
+      "message": "perf(storage): use direct awaitables for value and extent reads (#313)\n\n* Avoid loader coroutine frames for owner-local disk GET\n\n* Unify value loading behind a direct awaitable\n\n* Remove grouped forwarding and buffered extent loader frames\n\n* Trim awaitable tests and remove redundant read epoch checks\n\n* Split physical value reads from logical retry state\n\n* Revert \"Split physical value reads from logical retry state\"\n\nThis reverts commit 6af2d397d9503e2eed664a7575e3d54423191664.",
+      "url": "https://github.com/eloqdata/lavik/commit/3c22669d28701f96880b4b9c0cbb7f13e9a23c5c"
+    },
+    {
+      "sha": "bdb0d2e121262f6d1a3d98aefa860321af9c8ef2",
+      "message": "perf(storage): read eligible disk GETs on the connection worker (#314)\n\n* perf(storage): prefetch flush lookups and filter address tags on main\n\n* Preallocate worker index arena directories for concurrent resolution\n\nKeep primary arena directories at a stable address and publish page descriptors atomically. Concurrent resolution requires callers to protect entry and arena lifetimes; private auxiliary arenas retain incremental directory growth.\n\n* Reserve cache-line read states and minimum buckets for record indexes\n\nSelect 32 read stripes and a 32-bucket floor through a compile-time parameter only for RecordIndex. Preserve empty bucket allocation, recovery sizing, shrink limits, and first-insert admission estimates. Read states remain closed pending integration of the concurrent reader protocol.\n\n* Add admitted connection-worker disk GET with index reader and block pin protocols\n\n* Expand SPDK qpair access independently of home write placement\n\n* Reuse drained index admission across nested rehash writes\n\n* perf(storage): skip uncontended index reader-drain coroutines\n\n* Mark index reader drain waits as unlikely\n\n* perf(redis): reuse routing slot and prefetch remote GET metadata\n\n* Avoid child coroutine frames in connection-worker disk GET\n\n* Fix remote read flush wakeups and GET latency traces\n\nClose remote pin admission before testing whether a sealed staging buffer can\nbe released. Both flush completion paths use the same helper so the last\nremote unpin either precedes the zero-count check or notifies the owner;\nwrite buffers cannot be stranded behind release_pending with no wakeup.\n\nInitialize GET tracing before remote admission and attach it to fast hits,\nmisses, and errors. Preserve the original request start across fallback while\nresetting per-path stages. Trace-only I/O completion records the actual CQE\ntime; trace-disabled builds retain the existing awaitable layout and I/O path.\n\nValidation: 856 Debug unit tests, 20 trace-enabled awaitable tests, remote GET\nand defrag payload end-to-end tests. Live trace logs contain all 1,025 requests\nin each of fast miss, durable hit, and indirect-key owner fallback workloads,\nwith the expected remote/hit/disk ratios.\n\n* test: cover last remote unpin during flush release decision\n\n* refactor(storage): share read validation and reader guard waits\n\n* Restore independent read validation and reader guard waits\n\n* Fix CI memory budgets and late blocking-wait cancellation",
+      "url": "https://github.com/eloqdata/lavik/commit/bdb0d2e121262f6d1a3d98aefa860321af9c8ef2"
+    },
+    {
+      "sha": "8028ec3e32ada72939104a95fec6b252e911651f",
+      "message": "test(meta): check publication session at its Applied receipt (#316)",
+      "url": "https://github.com/eloqdata/lavik/commit/8028ec3e32ada72939104a95fec6b252e911651f"
+    },
+    {
+      "sha": "658cc58c87e712a294d73584c9b7d78a769c38b7",
+      "message": "fix(storage): preserve detached index alignment during reclamation (#319)",
+      "url": "https://github.com/eloqdata/lavik/commit/658cc58c87e712a294d73584c9b7d78a769c38b7"
+    },
+    {
+      "sha": "3d6141b8909f6e70e057bbffe7b80fbd316e4ffe",
+      "message": "perf(storage): extend remote reads to compact collections (#318)",
+      "url": "https://github.com/eloqdata/lavik/commit/3d6141b8909f6e70e057bbffe7b80fbd316e4ffe"
+    },
+    {
+      "sha": "6508dc1c64aef33f5f460dbd6c16fb1a902ebbed",
+      "message": "fix: clean compiler warnings without redundant initialization (#321)\n\n* fix: clean compiler warnings without redundant initialization\n\n* chore: pin merged Bycorf warning fix",
+      "url": "https://github.com/eloqdata/lavik/commit/6508dc1c64aef33f5f460dbd6c16fb1a902ebbed"
+    },
+    {
+      "sha": "feb61224e414c5653fd09560e20c9d214db1e3ac",
+      "message": "refactor(redis): remove obsolete managed Single command gate (#320)",
+      "url": "https://github.com/eloqdata/lavik/commit/feb61224e414c5653fd09560e20c9d214db1e3ac"
+    }
+  ]
+}

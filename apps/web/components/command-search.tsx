@@ -4,10 +4,12 @@ import Link from "next/link";
 
 export function CommandSearch({
   locale,
+  version = "0.1.0-beta.1",
   commands,
   groups,
 }: {
   locale: "en" | "zh-CN";
+  version?: string;
   commands: { name: string; group: string; summary: string; scope: string }[];
   groups: Record<string, string>;
 }) {
@@ -55,7 +57,7 @@ export function CommandSearch({
         {visible.map((command) => (
           <Link
             key={command.name}
-            href={`/${locale}/docs/0.1.0/commands/${command.name.toLowerCase()}/`}
+            href={`/${locale}/docs/${version}/commands/${command.name.toLowerCase()}/`}
           >
             <div>
               <strong>{command.name}</strong>

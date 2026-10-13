@@ -174,3 +174,30 @@
     gap: 1rem;
   }
 }
+
+.doc-version-select {
+  display: grid;
+  gap: 0.4rem;
+  max-width: 26rem;
+  margin: 1rem 0 1.5rem;
+}
+.doc-version-select label {
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+.doc-version-select select {
+  width: 100%;
+  min-width: 0;
+  border: 1px solid var(--line, #cfc7bb);
+  border-radius: 6px;
+  padding: 0.65rem 0.5rem;
+  font: inherit;
+  font-size: 0.86rem;
+  font-weight: 600;
+  color: var(--ink, #211e19);
+  background: var(--paper, #f4f0e8);
+}
+.doc-version-select select:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 3px;
+}

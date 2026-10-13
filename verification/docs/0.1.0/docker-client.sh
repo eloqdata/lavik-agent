@@ -1,0 +1,4 @@
+docker exec lavik redis-cli PING
+docker exec lavik redis-cli SET greeting 'hello from Lavik'
+docker exec lavik redis-cli GET greeting
+docker logs --tail 50 lavik

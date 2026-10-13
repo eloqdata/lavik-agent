@@ -9,7 +9,7 @@ const names = [
 test("docs categories collapse, expand by keyboard, preserve active location and search across hidden groups", async ({
   page,
 }) => {
-  await page.goto("/en/docs/0.1.0/");
+  await page.goto("/en/docs/0.1.0-beta.1/");
   const categories = page.locator(".docs-nav-group");
   expect(await categories.locator("summary").allTextContents()).toEqual(
     names.map((n) => n + "›"),
@@ -36,7 +36,7 @@ test("docs categories collapse, expand by keyboard, preserve active location and
     "Migrating To Lavik",
   );
   await page.setViewportSize({ width: 375, height: 900 });
-  await page.goto("/zh-CN/docs/0.1.0/");
+  await page.goto("/zh-CN/docs/0.1.0-beta.1/");
   await page.getByRole("button", { name: "文档目录" }).click();
   await page
     .locator(".docs-nav-group summary")
@@ -58,7 +58,7 @@ test("user documentation exposes complete guides without internal audit sections
   request,
 }) => {
   const manifest = await (await request.get("/manual-manifest.json")).json();
-  expect(manifest.userGuides).toHaveLength(10);
+  expect(manifest.userGuides).toHaveLength(20);
   for (const locale of ["en", "zh-CN"])
     for (const route of [
       "install-packages",
@@ -72,7 +72,7 @@ test("user documentation exposes complete guides without internal audit sections
       "commands/get",
       "clients/valkey-go",
     ]) {
-      await page.goto(`/${locale}/docs/0.1.0/${route}/`);
+      await page.goto(`/${locale}/docs/0.1.0-beta.1/${route}/`);
       await expect(page.locator("h1")).not.toBeEmpty();
       await expect(
         page.locator(
@@ -86,7 +86,7 @@ test("user documentation exposes complete guides without internal audit sections
         "Test environment & reproducible evidence",
       );
     }
-  await page.goto("/en/docs/0.1.0/migrate-redis-cluster/");
+  await page.goto("/en/docs/0.1.0-beta.1/migrate-redis-cluster/");
   await expect(page.locator("article")).toContainText("ADDREPLICAOF");
   await expect(page.locator("article")).toContainText("LOADING");
   await expect(page.locator("article")).toContainText("standalone");
@@ -98,7 +98,7 @@ test("official Docker installation snippets copy correctly in both languages", a
 }) => {
   await context.grantPermissions(["clipboard-read", "clipboard-write"]);
   for (const locale of ["en", "zh-CN"]) {
-    await page.goto(`/${locale}/docs/0.1.0/install-docker/`);
+    await page.goto(`/${locale}/docs/0.1.0-beta.1/install-docker/`);
     await expect(page.locator("#start pre")).toContainText(
       "docker pull eloqdata/lavik:0.1.0-beta.1",
     );
@@ -106,7 +106,7 @@ test("official Docker installation snippets copy correctly in both languages", a
     expect(await page.evaluate(() => navigator.clipboard.readText())).toContain(
       "-v lavik-data:/data",
     );
-    await page.goto(`/${locale}/docs/0.1.0/install-docker-compose/`);
+    await page.goto(`/${locale}/docs/0.1.0-beta.1/install-docker-compose/`);
     await expect(page.locator("#start pre")).toContainText(
       "a1770a78b52e0bb9ec32e20b92af6282e73efabd",
     );
@@ -131,7 +131,7 @@ test("package guide exposes signed APT and service commands in both languages", 
   page,
 }) => {
   for (const locale of ["en", "zh-CN"]) {
-    await page.goto(`/${locale}/docs/0.1.0/install-packages/`);
+    await page.goto(`/${locale}/docs/0.1.0-beta.1/install-packages/`);
     await expect(page.locator("#install pre")).toContainText(
       "Signed-By: /etc/apt/keyrings/lavik.asc",
     );

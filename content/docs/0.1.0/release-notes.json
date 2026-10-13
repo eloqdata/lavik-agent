@@ -1,0 +1,343 @@
+{
+  "id": "release-0-1-0-stable",
+  "title": {
+    "en": "Lavik 0.1.0",
+    "zh-CN": "Lavik 0.1.0"
+  },
+  "summary": {
+    "en": "The first stable release: packaged Lavik Admin, expanded managed Redis compatibility, a new Meta Raft engine, and extensive storage and recovery improvements across 135 commits since beta.1.",
+    "zh-CN": "首个稳定版本：内置 Lavik Admin、更完整的托管 Redis 兼容性、新 Meta Raft 引擎，以及 beta.1 以来 135 次提交中的存储和恢复改进。"
+  },
+  "sources": [
+    "commits",
+    "README.md",
+    "admin/RELEASE-README.md",
+    "docs/architecture/02-request-serving.md",
+    "docs/architecture/10-meta-raft.md",
+    "docs/operations/redis-import.md"
+  ],
+  "sections": [
+    {
+      "id": "release",
+      "title": {
+        "en": "Release At A Glance",
+        "zh-CN": "版本概览"
+      },
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "Released October 13, 2026. v0.1.0 identifies commit feb61224e414c5653fd09560e20c9d214db1e3ac. These notes summarize the 135 commits after v0.1.0-beta.1 (3955b98d43b312324aa8d52775df52cfb111c0d0), grouped by their impact on deployment, applications and operations. Lavik remains Apache 2.0.",
+            "zh-CN": "发布于 2026 年 10 月 13 日。v0.1.0 对应提交 feb61224e414c5653fd09560e20c9d214db1e3ac。本文按部署、应用和运维影响，总结 v0.1.0-beta.1（3955b98d43b312324aa8d52775df52cfb111c0d0）之后的 135 次提交。Lavik 继续采用 Apache 2.0 许可证。"
+          }
+        },
+        {
+          "type": "link",
+          "text": {
+            "en": "Full Beta-To-Stable Commit Comparison",
+            "zh-CN": "Beta 到稳定版的完整提交对比"
+          },
+          "href": "https://github.com/eloqdata/lavik/compare/v0.1.0-beta.1...v0.1.0"
+        },
+        {
+          "type": "link",
+          "text": {
+            "en": "GitHub Release And Assets",
+            "zh-CN": "GitHub 发布与软件包"
+          },
+          "href": "https://github.com/eloqdata/lavik/releases/tag/v0.1.0"
+        }
+      ]
+    },
+    {
+      "id": "admin",
+      "title": {
+        "en": "Deployment And Lavik Admin",
+        "zh-CN": "部署与 Lavik Admin"
+      },
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "Linux AMD64 and ARM64 archives are available in Minimal and Standard variants. They now bundle Lavik Admin and its Node.js runtime alongside lavik, lavik-meta and lavik-ctl. Admin adds host preparation over SSH, version selection, node placement, deployment progress, topology management and monitoring setup. Its CLI shares the same workspace and operation records.",
+            "zh-CN": "Linux AMD64 和 ARM64 均提供 Minimal 和 Standard 压缩包。除 lavik、lavik-meta 和 lavik-ctl 外，现内置 Lavik Admin 和 Node.js 运行时。Admin 提供 SSH 主机准备、版本选择、节点分布、部署进度、拓扑管理及监控配置；其 CLI 共享相同工作目录和操作记录。"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "The website also provides signed APT packages at Debian version 0.1.0-1 and multi-architecture Docker tags eloqdata/lavik:0.1.0 and eloqdata/lavik:0.1.0-cluster. APT packages and these server images exclude Admin; use an archive for the UI.",
+            "zh-CN": "网站同时提供 Debian 版本 0.1.0-1 的签名 APT 包，以及多架构 Docker 标签 eloqdata/lavik:0.1.0 和 eloqdata/lavik:0.1.0-cluster。APT 包和这些服务端镜像不含 Admin；界面请使用压缩包。"
+          }
+        },
+        {
+          "type": "link",
+          "text": {
+            "en": "Admin And Shared CLI Management",
+            "zh-CN": "Admin 与共享 CLI 管理"
+          },
+          "href": "https://github.com/eloqdata/lavik/pull/155"
+        },
+        {
+          "type": "link",
+          "text": {
+            "en": "Get Started With 0.1.0",
+            "zh-CN": "开始使用 0.1.0"
+          },
+          "href": "/{locale}/docs/0.1.0/"
+        }
+      ]
+    },
+    {
+      "id": "meta",
+      "title": {
+        "en": "Meta, Replication And Discovery",
+        "zh-CN": "Meta、复制与发现"
+      },
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "Meta replaces NuRaft with an asynchronous etcd Raft runtime. The new persistence layout uses RAFT identity, WAL and snapshot state, and requires the initial manifest only for fresh genesis. Data nodes obtain their immutable Single or Cluster client mode from the committed Meta manifest. Control sessions move to a dedicated worker, with bounded connection races and improved leader discovery.",
+            "zh-CN": "Meta 将 NuRaft 替换为异步 etcd Raft 运行时。新持久化布局使用 RAFT 身份、WAL 和快照状态；初始清单仅用于全新 genesis。Data 从 Meta 提交的清单获取不可变的 Single 或 Cluster 客户端模式。控制会话移至专用工作线程，并改进有界连接尝试和主节点发现。"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "Meta adds independently authenticated Sentinel-compatible discovery for managed Single, including peer discovery, failover events, TLS and advertised hostnames. Replication changes accelerate FULL transfer and replica startup, preserve ordering across snapshot handoff, share bounded FULL admission, and improve candidate recovery and failover progress. Stale client connections are retired at serving boundaries.",
+            "zh-CN": "Meta 为托管 Single 增加独立认证的 Sentinel 兼容发现，包括成员发现、故障转移事件、TLS 及通告主机名。复制改进加速 FULL 传输和副本启动，保持快照交接顺序，共享有界 FULL 准入，并改进候选恢复及故障转移进展。服务边界变化时会关闭过期客户端连接。"
+          }
+        },
+        {
+          "type": "link",
+          "text": {
+            "en": "Asynchronous etcd Raft Runtime",
+            "zh-CN": "异步 etcd Raft 运行时"
+          },
+          "href": "https://github.com/eloqdata/lavik/pull/85"
+        },
+        {
+          "type": "link",
+          "text": {
+            "en": "Client Mode And Meta Configuration Changes",
+            "zh-CN": "客户端模式与 Meta 配置变更"
+          },
+          "href": "https://github.com/eloqdata/lavik/pull/121"
+        },
+        {
+          "type": "link",
+          "text": {
+            "en": "Sentinel TLS And Hostname Support",
+            "zh-CN": "Sentinel TLS 与主机名支持"
+          },
+          "href": "https://github.com/eloqdata/lavik/pull/210"
+        }
+      ]
+    },
+    {
+      "id": "compatibility",
+      "title": {
+        "en": "Redis Compatibility And Data Movement",
+        "zh-CN": "Redis 兼容性与数据迁移"
+      },
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "Managed Single expands to all 16 logical databases and cross-slot multi-key operations. Managed command handling adds transactions, Lua/Functions, Stream reads, SORT_RO and RDB saves; the final release removes the obsolete Single-specific command gate. Cluster mode retains DB0 and same-slot constraints. Function catalogs and FLUSH operations remain scoped to each receiving Group.",
+            "zh-CN": "托管 Single 扩展到全部 16 个逻辑数据库及跨槽多键操作。托管命令处理增加事务、Lua/Functions、Stream 读取、SORT_RO 和 RDB 保存；最终发布移除了过时的 Single 专用命令门控。Cluster 模式仍要求 DB0 和多键同槽。Function 库及 FLUSH 操作仍限定于接收请求的 Group。"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "Scheduled background saves are available through save rules and remain disabled unless configured. LAVIK.REPLICAOF explicitly selects native standalone Lavik replication; REPLICAOF remains the Redis-upstream path. RedisShake import into fresh managed targets and emergency export from serving primaries gain dedicated procedures and acceptance tests, including object/expiry and cutover boundaries.",
+            "zh-CN": "现可通过 save 规则配置后台定时保存，未配置时仍默认关闭。LAVIK.REPLICAOF 显式选择独立 Lavik 原生复制，REPLICAOF 仍用于 Redis 上游。向全新托管目标的 RedisShake 导入和从服务主节点紧急导出具备专门流程及验收测试，包含对象、过期时间及切换边界。"
+          }
+        },
+        {
+          "type": "link",
+          "text": {
+            "en": "Managed Composite Commands And Streams",
+            "zh-CN": "托管复合命令与 Streams"
+          },
+          "href": "https://github.com/eloqdata/lavik/pull/195"
+        },
+        {
+          "type": "link",
+          "text": {
+            "en": "Remove The Obsolete Managed Single Gate",
+            "zh-CN": "移除过时的托管 Single 门控"
+          },
+          "href": "https://github.com/eloqdata/lavik/pull/320"
+        },
+        {
+          "type": "link",
+          "text": {
+            "en": "Native Standalone Replication Command",
+            "zh-CN": "独立节点原生复制命令"
+          },
+          "href": "https://github.com/eloqdata/lavik/pull/198"
+        },
+        {
+          "type": "link",
+          "text": {
+            "en": "RedisShake Import Into Managed Targets",
+            "zh-CN": "RedisShake 导入托管目标"
+          },
+          "href": "https://github.com/eloqdata/lavik/pull/200"
+        },
+        {
+          "type": "link",
+          "text": {
+            "en": "Stable Compatibility Overview",
+            "zh-CN": "稳定版兼容性概览"
+          },
+          "href": "/{locale}/docs/0.1.0/compatibility/"
+        }
+      ]
+    },
+    {
+      "id": "storage",
+      "title": {
+        "en": "Storage, Memory And Request Processing",
+        "zh-CN": "存储、内存与请求处理"
+      },
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "Large Strings use fixed 8 KiB segments, Streams move to grouped logical records, and small grouped collections can compact below 8 KiB. Long keys are shared through UUID records. The release reduces Hash/Set write allocation and lookup work, pipelines grouped successors through shared commits, improves Sorted Set routing and RESTORE construction, and overlaps List/Stream range reads.",
+            "zh-CN": "大字符串使用固定 8 KiB 分段，Streams 采用分组逻辑记录，小型分组集合可压缩到 8 KiB 以下。长键通过 UUID 记录共享。发布减少 Hash/Set 写入分配和查找开销，通过共享提交流水化分组后继版本，改进 Sorted Set 路由及 RESTORE 构建，并重叠 List/Stream 范围读取。"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "The default flush interval changes to 100 ms and the registered read payload defaults to 32 KiB. io_uring storage shares buffer arenas and retries registration within the memlock budget. Eligible disk GETs and compact collection reads can run on the connection worker; reply assembly and Pub/Sub cleanup also avoid repeated allocation and copying. These are implementation changes, not a new benchmark result or an SLA promise.",
+            "zh-CN": "默认刷新间隔改为 100 ms，注册读取负载默认为 32 KiB。io_uring 存储共享缓冲区 arena，并在 memlock 预算内重试注册。符合条件的磁盘 GET 和紧凑集合读取可在连接工作线程运行；回复组装和 Pub/Sub 清理也减少重复分配及复制。这些是实现改进，不是新的基准测试结果或 SLA 承诺。"
+          }
+        },
+        {
+          "type": "link",
+          "text": {
+            "en": "Segment Large Strings",
+            "zh-CN": "大型字符串分段"
+          },
+          "href": "https://github.com/eloqdata/lavik/pull/174"
+        },
+        {
+          "type": "link",
+          "text": {
+            "en": "Grouped Stream Storage",
+            "zh-CN": "分组 Stream 存储"
+          },
+          "href": "https://github.com/eloqdata/lavik/pull/169"
+        },
+        {
+          "type": "link",
+          "text": {
+            "en": "Shared io_uring Buffer Arenas",
+            "zh-CN": "共享 io_uring 缓冲区"
+          },
+          "href": "https://github.com/eloqdata/lavik/pull/305"
+        },
+        {
+          "type": "link",
+          "text": {
+            "en": "Disk GET On The Connection Worker",
+            "zh-CN": "连接工作线程上的磁盘 GET"
+          },
+          "href": "https://github.com/eloqdata/lavik/pull/314"
+        }
+      ]
+    },
+    {
+      "id": "recovery",
+      "title": {
+        "en": "Recovery And Correctness Fixes",
+        "zh-CN": "恢复与正确性修复"
+      },
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "Shutdown checkpoints now cover grouped collections and indirect keys, including restoration after SPDK ownership changes. Fixes address grouped auxiliary relocation deadlocks, cold-recovery memory bounds, detached-index alignment during reclamation, expired grouped roots, adjacent Sorted Set pages during score changes, and SPDK qpair polling starvation. Native AMD64/ARM64 and client compatibility coverage continues to exercise release behavior.",
+            "zh-CN": "关机检查点现覆盖分组集合和间接键，并支持 SPDK 所有权变化后的恢复。修复包括分组辅助搬迁死锁、冷恢复内存界限、回收时分离索引对齐、过期分组根、分值变化时相邻 Sorted Set 页，以及 SPDK qpair 轮询饥饿。原生 AMD64/ARM64 及客户端兼容测试持续验证发布行为。"
+          }
+        },
+        {
+          "type": "link",
+          "text": {
+            "en": "Grouped And Indirect-Key Checkpoints",
+            "zh-CN": "分组与间接键检查点"
+          },
+          "href": "https://github.com/eloqdata/lavik/pull/295"
+        },
+        {
+          "type": "link",
+          "text": {
+            "en": "Checkpoints Across SPDK Ownership Changes",
+            "zh-CN": "SPDK 所有权变化后的检查点恢复"
+          },
+          "href": "https://github.com/eloqdata/lavik/pull/298"
+        },
+        {
+          "type": "link",
+          "text": {
+            "en": "Detached Index Alignment Fix",
+            "zh-CN": "分离索引对齐修复"
+          },
+          "href": "https://github.com/eloqdata/lavik/pull/319"
+        }
+      ]
+    },
+    {
+      "id": "upgrade",
+      "title": {
+        "en": "Before Upgrading From Beta.1",
+        "zh-CN": "从 Beta.1 升级前"
+      },
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "Use matching 0.1.0 Data, Meta and ctl binaries. Data startup now uses --node-id, --announce-ip and --meta-seed. The old --cluster-enabled and --cluster-* forms are removed; local --client-mode and --meta-managed flags are also removed. Set client_mode in the initial Meta manifest instead.",
+            "zh-CN": "Data、Meta 和 ctl 应使用匹配的 0.1.0 程序。Data 启动现使用 --node-id、--announce-ip 和 --meta-seed。旧 --cluster-enabled 和 --cluster-* 形式已移除，本地 --client-mode 和 --meta-managed 也已移除。应在初始 Meta 清单中设置 client_mode。"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "For a stable Meta restart, retain the same member ID and state directory and omit --initial-cluster-manifest once RAFT exists. Do not translate beta NuRaft state by renaming markers or deleting metadata. This release does not establish a supported mixed-version rolling upgrade or automatic in-place beta data migration. Retain backups and rehearse a fresh stable deployment with verified logical data transfer and a rollback plan.",
+            "zh-CN": "重启稳定版 Meta 时，应保留相同成员 ID 和状态目录；RAFT 存在后省略 --initial-cluster-manifest。不要通过重命名标记或删除元数据转换 Beta NuRaft 状态。本发布不确立受支持的混合版本滚动升级或自动原地 Beta 数据迁移。保留备份，演练全新稳定版部署、验证逻辑数据迁移并准备回滚计划。"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "Platform requirements remain Linux 6.1+, usable io_uring and Ubuntu 24.04-compatible glibc, including SPDK/DPDK deployments. Minimal stays on kernel TCP/io_uring; Standard requires explicit backend setup. Existing benchmark pages retain their original tested releases and conditions.",
+            "zh-CN": "平台要求仍为 Linux 6.1+、可用的 io_uring 及兼容 Ubuntu 24.04 的 glibc，包括 SPDK/DPDK 部署。Minimal 使用内核 TCP/io_uring，Standard 需要显式配置后端。现有基准测试页保留其原始测试版本和条件。"
+          }
+        },
+        {
+          "type": "link",
+          "text": {
+            "en": "0.1.0 Installation And Operations",
+            "zh-CN": "0.1.0 安装与运维"
+          },
+          "href": "/{locale}/docs/0.1.0/"
+        },
+        {
+          "type": "link",
+          "text": {
+            "en": "Archived Beta.1 Documentation",
+            "zh-CN": "历史 Beta.1 文档"
+          },
+          "href": "/{locale}/docs/0.1.0-beta.1/"
+        }
+      ]
+    }
+  ]
+}

@@ -1,4 +1,8 @@
 import {
+  stableGuideRoutes,
+  stableManualRoutes,
+} from "../../../../packages/docs/stable";
+import {
   comparisonProducts,
   comparisonRoute,
 } from "../../../../packages/comparisons/catalog";
@@ -29,6 +33,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
       "about/",
       "privacy/",
       "docs/0.1.0/",
+      "docs/0.1.0-beta.1/",
+      "download/0.1.0-beta.1/",
+      "releases/0-1-0/",
     ].map((route) => `/${locale}/${route}`),
   );
   const entries: MetadataRoute.Sitemap = [
@@ -48,12 +55,14 @@ export default function sitemap(): MetadataRoute.Sitemap {
       })),
     ),
     ...["en", "zh-CN"].flatMap((locale) =>
-      [...operationsRoutes(), ...userGuideRoutes()].map((route) => ({
-        url: `https://lavik.dev/${locale}/${route}/`,
-      })),
+      [...operationsRoutes(), ...userGuideRoutes(), ...stableGuideRoutes()].map(
+        (route) => ({
+          url: `https://lavik.dev/${locale}/${route}/`,
+        }),
+      ),
     ),
     ...["en", "zh-CN"].flatMap((locale) =>
-      manualRoutes().map((route) => ({
+      [...manualRoutes(), ...stableManualRoutes()].map((route) => ({
         url: `https://lavik.dev/${locale}/${route}/`,
       })),
     ),

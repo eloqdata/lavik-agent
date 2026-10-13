@@ -72,7 +72,7 @@ export const userGuides = schema
   .parse(JSON.parse(readText("packages/docs/guides.json")));
 export type UserGuide = z.infer<typeof schema>;
 export const userGuideRoutes = () =>
-  userGuides.map((g) => `docs/0.1.0/${g.id}`);
+  userGuides.map((g) => `docs/0.1.0-beta.1/${g.id}`);
 export const onboardingFiles = () =>
   fs
     .readdirSync("verification/onboarding")

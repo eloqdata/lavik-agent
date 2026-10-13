@@ -17,7 +17,7 @@ test("download choices expose verified links, checksums and commands in both lan
 }) => {
   await context.grantPermissions(["clipboard-read", "clipboard-write"]);
   for (const locale of ["en", "zh-CN"]) {
-    await page.goto(`/${locale}/download/`);
+    await page.goto(`/${locale}/download/0.1.0-beta.1/`);
     await expect(page.locator("h1")).toContainText("Lavik");
     await expect(page.locator("main")).toContainText("v0.1.0-beta.1");
     for (const [index, pkg] of downloadPackages.entries()) {

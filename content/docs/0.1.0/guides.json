@@ -1,0 +1,2296 @@
+[
+  {
+    "id": "overview",
+    "title": {
+      "en": "About Lavik",
+      "zh-CN": "Lavik 概览"
+    },
+    "summary": {
+      "en": "Redis-compatible development, with value capacity on NVMe SSD.",
+      "zh-CN": "兼容 Redis 的开发体验，将值容量放在 NVMe SSD 上。"
+    },
+    "sources": [
+      "README.md",
+      "docs/architecture/04-storage-and-recovery.md"
+    ],
+    "sections": [
+      {
+        "id": "design",
+        "title": {
+          "en": "What Lavik Does",
+          "zh-CN": "Lavik 的设计"
+        },
+        "blocks": [
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "Lavik is an Apache 2.0 key-value store. It uses the Redis wire protocol and familiar clients, keeps its key index in DRAM, and stores values on NVMe SSD. Strings, Hashes, Sets, Sorted Sets, Lists and Streams use the storage engine; SSD storage is not limited to String values.",
+              "zh-CN": "Lavik 是采用 Apache 2.0 许可证的键值存储。它使用 Redis 协议及常用客户端，键索引保留在 DRAM，值存放在 NVMe SSD。字符串、哈希、集合、有序集合、列表和流都使用存储引擎；SSD 存储不限于字符串。"
+            }
+          },
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "This documentation targets the v0.1.0 stable release. Choose a version in the sidebar to view the earlier beta. Start with the command and client forms documented here, then rehearse your workload, recovery procedure and latency objective.",
+              "zh-CN": "本文档面向 v0.1.0 稳定版。可在侧栏选择历史 Beta。先采用本文档中的命令和客户端配置，再演练实际工作负载、恢复流程和延迟目标。"
+            }
+          }
+        ]
+      },
+      {
+        "id": "deployment",
+        "title": {
+          "en": "Choose Your Deployment",
+          "zh-CN": "选择部署方式"
+        },
+        "blocks": [
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "Standalone runs one lavik process. Managed Single adds Meta authority with one Group, all 16 logical databases, and Single-mode client behavior. Managed Cluster uses Redis Cluster routing, DB0 and same-slot multi-key rules. Run Meta voters and replicas on separate failure domains for host-level availability.",
+              "zh-CN": "独立模式运行一个 lavik 进程。托管 Single 使用 Meta 管理一个 Group，支持 16 个逻辑数据库和 Single 客户端行为。托管 Cluster 使用 Redis Cluster 路由、DB0 和多键同槽规则。需要主机级可用性时，应将 Meta 投票成员及副本分布在不同故障域。"
+            }
+          },
+          {
+            "type": "link",
+            "text": {
+              "en": "Install With Binary",
+              "zh-CN": "使用二进制安装"
+            },
+            "href": "/{locale}/docs/0.1.0/quick-start/"
+          },
+          {
+            "type": "link",
+            "text": {
+              "en": "What Changed In 0.1.0",
+              "zh-CN": "0.1.0 的变更"
+            },
+            "href": "/{locale}/releases/0-1-0/"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "quick-start",
+    "title": {
+      "en": "Install With Binary",
+      "zh-CN": "使用二进制安装"
+    },
+    "summary": {
+      "en": "Download Minimal or Standard, verify its checksum, and start Lavik 0.1.0 from the extracted directory.",
+      "zh-CN": "下载并校验 Minimal 或 Standard，从解压目录启动 Lavik 0.1.0。"
+    },
+    "sources": [
+      "README.md",
+      "docs/operations/quick-start-tuning.md",
+      "docs/operations/spdk-storage.md"
+    ],
+    "sections": [
+      {
+        "id": "requirements",
+        "title": {
+          "en": "Before You Start",
+          "zh-CN": "开始之前"
+        },
+        "blocks": [
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "Use Linux 6.1+ with io_uring enabled and Ubuntu 24.04-compatible glibc. The Linux server binaries do not execute directly on macOS or Windows; use a suitable Linux VM or the Docker guide. Minimal uses kernel TCP/io_uring. Standard also includes opt-in SPDK/DPDK and needs x86-64-v2 or ARMv8-A + CRC32 plus NUMA/UUID libraries.",
+              "zh-CN": "使用 Linux 6.1+、可用的 io_uring 和兼容 Ubuntu 24.04 的 glibc。Linux 服务端二进制不能直接在 macOS 或 Windows 上执行，请使用 Linux 虚拟机或 Docker。Minimal 使用内核 TCP/io_uring。Standard 另含可选 SPDK/DPDK，要求 x86-64-v2 或 ARMv8-A + CRC32 及 NUMA/UUID 运行库。"
+            }
+          }
+        ]
+      },
+      {
+        "id": "start",
+        "title": {
+          "en": "2. Start And Connect",
+          "zh-CN": "2. 启动并连接"
+        },
+        "blocks": [
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "Run the following in Bash from the extracted directory. Leave this terminal running and use a second terminal for redis-cli. The same file-backed example works with Minimal and Standard. The loopback listener and /tmp directory are intended for a disposable local evaluation.",
+              "zh-CN": "在解压目录的 Bash 中执行以下命令。保持此终端运行，在另一个终端执行 redis-cli。Minimal 和 Standard 均可运行此文件式示例。回环监听和 /tmp 目录适用于临时本地评估。"
+            }
+          },
+          {
+            "type": "code",
+            "file": "verification/docs/0.1.0/binary-start.sh"
+          },
+          {
+            "type": "code",
+            "file": "verification/docs/0.1.0/binary-client.sh"
+          }
+        ]
+      },
+      {
+        "id": "restart",
+        "title": {
+          "en": "3. Stop And Restart",
+          "zh-CN": "3. 停止并重启"
+        },
+        "blocks": [
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "Press Ctrl-C, then rerun the same startup block from the same directory. The script preserves an existing data file. Use a persistent data directory for data you intend to keep. Extracting an archive does not add its directory to PATH: ./lavik runs the local executable. A systemd service is optional; the APT guide provides one.",
+              "zh-CN": "按 Ctrl-C 停止，然后从同一目录重新执行启动代码。脚本保留现有数据文件。需要保留的数据应使用持久目录。解压不会把目录加入 PATH；./lavik 执行当前目录的程序。systemd 服务是可选项，APT 指南提供了相应服务。"
+            }
+          },
+          {
+            "type": "link",
+            "text": {
+              "en": "Install From Packages And Use systemd",
+              "zh-CN": "从软件包安装并使用 systemd"
+            },
+            "href": "/{locale}/docs/0.1.0/install-packages/"
+          }
+        ]
+      },
+      {
+        "id": "spdk",
+        "title": {
+          "en": "Use SPDK With Standard",
+          "zh-CN": "使用 Standard 的 SPDK"
+        },
+        "blocks": [
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "Installing Standard does not switch the storage backend. Provision a dedicated empty NVMe namespace, IOMMU/VFIO, hugepages and locked-memory limits before selecting --storage=spdk and a spdk://PCI_BDF/NSID data path. Kernel TCP can remain enabled. File-backed examples do not measure NVMe/SPDK performance.",
+              "zh-CN": "安装 Standard 不会自动切换存储后端。选择 --storage=spdk 及 spdk://PCI_BDF/NSID 路径前，需准备专用空 NVMe 命名空间、IOMMU/VFIO、hugepages 和锁定内存限额。网络仍可使用内核 TCP。文件式示例不衡量 NVMe/SPDK 性能。"
+            }
+          },
+          {
+            "type": "link",
+            "text": {
+              "en": "SPDK Setup For This Release",
+              "zh-CN": "本版本的 SPDK 配置"
+            },
+            "href": "https://github.com/eloqdata/lavik/blob/feb61224e414c5653fd09560e20c9d214db1e3ac/docs/operations/spdk-storage.md"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "install-packages",
+    "title": {
+      "en": "Install From Packages",
+      "zh-CN": "从软件包安装"
+    },
+    "summary": {
+      "en": "Install the signed 0.1.0 APT package on Ubuntu 24.04 and manage it with systemd.",
+      "zh-CN": "在 Ubuntu 24.04 上安装签名的 0.1.0 APT 包，并用 systemd 管理。"
+    },
+    "sources": [
+      "README.md"
+    ],
+    "sections": [
+      {
+        "id": "install",
+        "title": {
+          "en": "1. Add The Signed APT Repository",
+          "zh-CN": "1. 添加签名 APT 仓库"
+        },
+        "blocks": [
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "Packages support Ubuntu 24.04 (noble), AMD64 and ARM64, with Linux 6.1+ and usable io_uring. The stable Debian version is 0.1.0-1. The repository keeps beta.1 available, but apt install lavik selects stable by default. The existing signing key remains valid.",
+              "zh-CN": "软件包支持 Ubuntu 24.04（noble）的 AMD64 和 ARM64，要求 Linux 6.1+ 及可用的 io_uring。稳定版 Debian 版本为 0.1.0-1。仓库保留 beta.1，但 apt install lavik 默认选择稳定版。现有签名密钥继续有效。"
+            }
+          },
+          {
+            "type": "code",
+            "file": "verification/docs/0.1.0/apt-install.sh"
+          }
+        ]
+      },
+      {
+        "id": "start",
+        "title": {
+          "en": "2. Start The Service",
+          "zh-CN": "2. 启动服务"
+        },
+        "blocks": [
+          {
+            "type": "code",
+            "file": "verification/docs/0.1.0/apt-start.sh"
+          },
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "Fresh installation leaves the service stopped. It runs as the lavik system user, binds to 127.0.0.1:6379, and allocates its data file only when absent. Data lives under /var/lib/lavik; logs live under /var/log/lavik. Set service options in /etc/default/lavik, then restart the service.",
+              "zh-CN": "全新安装后服务默认停止。服务使用 lavik 系统用户，监听 127.0.0.1:6379，仅在数据文件不存在时分配文件。数据位于 /var/lib/lavik，日志位于 /var/log/lavik。在 /etc/default/lavik 配置选项后重启服务。"
+            }
+          }
+        ]
+      },
+      {
+        "id": "standard",
+        "title": {
+          "en": "Choose Minimal Or Standard",
+          "zh-CN": "选择 Minimal 或 Standard"
+        },
+        "blocks": [
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "lavik is Minimal; lavik-standard adds compiled SPDK/DPDK support. Both install the same executable names and conflict, so select one variant. Standard still defaults to kernel TCP/io_uring. The APT packages contain lavik, lavik-meta and lavik-ctl; download a release archive for Lavik Admin and its Node.js runtime.",
+              "zh-CN": "lavik 为 Minimal；lavik-standard 另含编译的 SPDK/DPDK 支持。两者安装相同名称的程序，互相冲突，需选择其一。Standard 默认仍使用内核 TCP/io_uring。APT 包包含 lavik、lavik-meta 和 lavik-ctl；如需 Lavik Admin 和 Node.js 运行时，请下载发布压缩包。"
+            }
+          },
+          {
+            "type": "code",
+            "file": "verification/docs/0.1.0/apt-standard.sh"
+          }
+        ]
+      },
+      {
+        "id": "manage",
+        "title": {
+          "en": "Manage And Upgrade",
+          "zh-CN": "管理与升级"
+        },
+        "blocks": [
+          {
+            "type": "code",
+            "file": "verification/docs/0.1.0/apt-manage.sh"
+          },
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "Before upgrading an existing beta deployment, read the 0.1.0 release notes. A package upgrade is not proof of on-disk or Meta-state compatibility. Rehearse export/import and recovery, retain a rollback copy, and do not mix beta and stable cluster members.",
+              "zh-CN": "升级现有 Beta 部署前，请阅读 0.1.0 版本说明。包管理器升级并不证明磁盘格式或 Meta 状态兼容。应演练导出/导入与恢复、保留回滚副本，并避免混用 Beta 和稳定版集群成员。"
+            }
+          },
+          {
+            "type": "link",
+            "text": {
+              "en": "0.1.0 Release Notes",
+              "zh-CN": "0.1.0 版本说明"
+            },
+            "href": "/{locale}/releases/0-1-0/"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "install-docker",
+    "title": {
+      "en": "Install With Docker",
+      "zh-CN": "使用 Docker 安装"
+    },
+    "summary": {
+      "en": "Run the official 0.1.0 image with a persistent volume and a loopback-only client port.",
+      "zh-CN": "使用官方 0.1.0 镜像、持久卷及仅回环开放的客户端端口。"
+    },
+    "sources": [
+      "README.md"
+    ],
+    "sections": [
+      {
+        "id": "requirements",
+        "title": {
+          "en": "Requirements",
+          "zh-CN": "运行要求"
+        },
+        "blocks": [
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "Use Docker with Linux containers, Linux 6.1+ and usable io_uring. The image supports linux/amd64 and linux/arm64 and contains the Minimal server build: kernel TCP/io_uring, without SPDK/DPDK or Lavik Admin. The seccomp option allows io_uring in this container; privileged mode is not needed.",
+              "zh-CN": "使用 Linux 容器的 Docker、Linux 6.1+ 及可用的 io_uring。镜像支持 linux/amd64 和 linux/arm64，包含 Minimal 服务端：内核 TCP/io_uring，不含 SPDK/DPDK 或 Lavik Admin。seccomp 选项允许容器使用 io_uring，无需 privileged 模式。"
+            }
+          }
+        ]
+      },
+      {
+        "id": "start",
+        "title": {
+          "en": "1. Start A Standalone Server",
+          "zh-CN": "1. 启动独立服务"
+        },
+        "blocks": [
+          {
+            "type": "code",
+            "file": "verification/docs/0.1.0/docker-start.sh"
+          },
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "The image runs as UID/GID 10001. A named volume avoids host-directory ownership problems. The data file is allocated once; reusing a volume preserves its existing allocation and data. Choose an unused container name and port if another server is running.",
+              "zh-CN": "镜像以 UID/GID 10001 运行。命名卷避免主机目录权限问题。数据文件只分配一次，复用卷会保留现有文件大小和数据。如已有服务运行，请选择未使用的容器名和端口。"
+            }
+          }
+        ]
+      },
+      {
+        "id": "connect",
+        "title": {
+          "en": "2. Connect",
+          "zh-CN": "2. 连接"
+        },
+        "blocks": [
+          {
+            "type": "code",
+            "file": "verification/docs/0.1.0/docker-client.sh"
+          }
+        ]
+      },
+      {
+        "id": "restart",
+        "title": {
+          "en": "3. Preserve Data Across Restarts",
+          "zh-CN": "3. 重启并保留数据"
+        },
+        "blocks": [
+          {
+            "type": "code",
+            "file": "verification/docs/0.1.0/docker-restart.sh"
+          },
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "For container replacement, stop and remove only the container, then run the start command again with the same lavik-data volume. Do not delete that volume unless you intend to erase its data. For replication and failover, use the Compose guide.",
+              "zh-CN": "替换容器时，仅停止并移除容器，再使用同一个 lavik-data 卷执行启动命令。仅在确实要删除数据时才删除卷。复制与故障转移请参阅 Compose 指南。"
+            }
+          },
+          {
+            "type": "link",
+            "text": {
+              "en": "Install With Docker Compose",
+              "zh-CN": "使用 Docker Compose 安装"
+            },
+            "href": "/{locale}/docs/0.1.0/install-docker-compose/"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "install-docker-compose",
+    "title": {
+      "en": "Install With Docker Compose",
+      "zh-CN": "使用 Docker Compose 安装"
+    },
+    "summary": {
+      "en": "Start three Meta voters and one primary–follower Group with the 0.1.0 cluster image.",
+      "zh-CN": "使用 0.1.0 集群镜像启动三个 Meta 投票成员和一组主从 Data 节点。"
+    },
+    "sources": [
+      "docs/operations/meta-control-plane.md",
+      "docs/architecture/02-request-serving.md"
+    ],
+    "sections": [
+      {
+        "id": "layout",
+        "title": {
+          "en": "Understand The Example",
+          "zh-CN": "理解示例"
+        },
+        "blocks": [
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "This single-host lab uses eloqdata/lavik:0.1.0-cluster, three Meta voters and two Data nodes in Redis Cluster mode. One Group owns all 16,384 slots. Named volumes preserve Meta and Data state. Three containers on one host do not provide host-level HA; place members on separate hosts for that failure domain.",
+              "zh-CN": "这个单机实验使用 eloqdata/lavik:0.1.0-cluster，在 Redis Cluster 模式下运行三个 Meta 投票成员和两个 Data 节点。一个 Group 持有全部 16,384 个槽。命名卷保留 Meta 和 Data 状态。单台主机上的三个容器不提供主机级高可用；应将成员分布到不同主机。"
+            }
+          },
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "The private Docker network is 172.30.92.0/24; check for conflicts before starting. Host ports 6379 and 6380 bind only to loopback. Cluster clients must reach the advertised container addresses, so run these client examples inside the Compose network. Internal control traffic is plaintext in this local lab.",
+              "zh-CN": "私有 Docker 网络为 172.30.92.0/24，启动前检查冲突。主机端口 6379 和 6380 仅绑定回环。Cluster 客户端必须能访问通告的容器地址，因此示例客户端在 Compose 网络内运行。本地实验的内部控制流量使用明文。"
+            }
+          }
+        ]
+      },
+      {
+        "id": "start",
+        "title": {
+          "en": "1. Download And Start",
+          "zh-CN": "1. 下载并启动"
+        },
+        "blocks": [
+          {
+            "type": "code",
+            "file": "verification/docs/0.1.0/compose-download.sh"
+          },
+          {
+            "type": "code",
+            "file": "verification/docs/0.1.0/compose-start.sh"
+          },
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "Data nodes open their Redis port after Meta commits creation. The bootstrap service waits for Meta health and Data process startup, then creates the topology once. Exit status 2 or 3 from cluster-status means not ready or unavailable; inspect progress and retry the status read, not cluster-create.",
+              "zh-CN": "Data 在 Meta 提交创建后才开放 Redis 端口。bootstrap 服务等待 Meta 健康和 Data 进程启动，然后仅创建一次拓扑。cluster-status 返回 2 或 3 表示未就绪或不可用；应检查进度并重试状态读取，不要重复 cluster-create。"
+            }
+          }
+        ]
+      },
+      {
+        "id": "connect",
+        "title": {
+          "en": "2. Read And Write",
+          "zh-CN": "2. 读写数据"
+        },
+        "blocks": [
+          {
+            "type": "code",
+            "file": "verification/docs/0.1.0/compose-client.sh"
+          },
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "The follower read can lag the primary. READONLY and GET must use the same connection. Multi-key requests in Cluster mode must use keys in the same hash slot.",
+              "zh-CN": "从节点读取可能落后于主节点。READONLY 和 GET 必须使用同一连接。Cluster 模式的多键请求必须位于同一哈希槽。"
+            }
+          }
+        ]
+      },
+      {
+        "id": "restart",
+        "title": {
+          "en": "3. Restart Without Reinitializing",
+          "zh-CN": "3. 保留状态重启"
+        },
+        "blocks": [
+          {
+            "type": "code",
+            "file": "verification/docs/0.1.0/compose-restart.sh"
+          },
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "Keep the five named volumes. Do not run docker compose down -v to restart: that deletes stored state. The 0.1.0 image recognizes Meta’s RAFT marker and omits the initial manifest on restart. Keep the original member identities and manifest.",
+              "zh-CN": "保留五个命名卷。不要用 docker compose down -v 重启，这会删除状态。0.1.0 镜像通过 Meta 的 RAFT 标记识别重启，并省略初始清单参数。应保留原成员标识和清单。"
+            }
+          },
+          {
+            "type": "link",
+            "text": {
+              "en": "Manage Failover And Monitoring With lavik-ctl",
+              "zh-CN": "使用 lavik-ctl 管理故障转移和监控"
+            },
+            "href": "/{locale}/docs/0.1.0/lavik-ctl-ha-cluster/"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "compatibility",
+    "title": {
+      "en": "Compatibility Overview",
+      "zh-CN": "兼容性概览"
+    },
+    "summary": {
+      "en": "Choose the correct client mode and check the exact commands your application uses.",
+      "zh-CN": "选择正确客户端模式，并检查应用实际使用的命令。"
+    },
+    "sources": [
+      "docs/architecture/02-request-serving.md",
+      "docs/operations/redis-import.md",
+      "docs/operations/cluster-deployment.md"
+    ],
+    "sections": [
+      {
+        "id": "protocol",
+        "title": {
+          "en": "Protocol And Data Types",
+          "zh-CN": "协议与数据类型"
+        },
+        "blocks": [
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "Lavik uses the Redis protocol, including RESP2 and RESP3 negotiation, and targets Redis 7.2 semantics for the exposed commands. Supported families include Strings, Hashes, Sets, Sorted Sets, Lists, Streams, Geo, bitmaps, transactions, Lua/Functions and Pub/Sub. Compatibility is command- and option-specific; it is not a claim to implement every Redis module or later extension.",
+              "zh-CN": "Lavik 使用 Redis 协议，支持 RESP2 和 RESP3 协商，已公开命令以 Redis 7.2 语义为目标。支持字符串、哈希、集合、有序集合、列表、流、Geo、位图、事务、Lua/Functions 及 Pub/Sub 等。兼容性取决于具体命令和选项，不代表实现所有 Redis 模块或后续扩展。"
+            }
+          },
+          {
+            "type": "link",
+            "text": {
+              "en": "Browse The Command Reference",
+              "zh-CN": "查看命令参考"
+            },
+            "href": "/{locale}/docs/0.1.0/commands/"
+          },
+          {
+            "type": "link",
+            "text": {
+              "en": "Choose A Tested Client Configuration",
+              "zh-CN": "选择已测试的客户端配置"
+            },
+            "href": "/{locale}/docs/0.1.0/clients/"
+          }
+        ]
+      },
+      {
+        "id": "modes",
+        "title": {
+          "en": "Standalone, Managed Single And Cluster",
+          "zh-CN": "独立模式、托管 Single 与 Cluster"
+        },
+        "blocks": [
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "A Data node with --meta-seed gets client_mode from Meta’s committed manifest. Single has one Group spanning all slots and DB0–15, without MOVED redirects. Cluster uses DB0, MOVED routing and CROSSSLOT checks; complete replicas require READONLY for cluster reads. Transactions, scripts and Stream operations are admitted through the same authority and storage rules as other commands in 0.1.0.",
+              "zh-CN": "配置 --meta-seed 的 Data 节点从 Meta 提交的清单获取 client_mode。Single 用一个 Group 覆盖所有槽和 DB0–15，不发送 MOVED 重定向。Cluster 使用 DB0、MOVED 路由及 CROSSSLOT 检查；完整副本的集群读取需要 READONLY。0.1.0 中事务、脚本和 Stream 操作使用与其他命令一致的权限及存储规则。"
+            }
+          },
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "Cluster Function libraries and keyless FLUSH operations are scoped to the receiving Group. Do not assume one request updates every Group. Live slot migration and CLUSTER SHARDS are not supported; use CLUSTER SLOTS with compatible clients.",
+              "zh-CN": "Cluster 的 Function 库和无键 FLUSH 操作仅作用于接收请求的 Group，不要假设一次请求更新所有 Group。不支持在线槽迁移及 CLUSTER SHARDS；应使用支持 CLUSTER SLOTS 的客户端。"
+            }
+          }
+        ]
+      },
+      {
+        "id": "limits",
+        "title": {
+          "en": "Known Boundaries",
+          "zh-CN": "已知边界"
+        },
+        "blocks": [
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "CLIENT TRACKING and COMMAND INFO are not supported. Disable client-side caching in valkey-go. The command reference records rejected examples for ACL, HyperLogLog, RedisJSON/search module commands, field-level expiry and sharded Pub/Sub. WAIT is a bounded replica-acknowledgement fence, not a synchronous commit or a lossless-failover guarantee.",
+              "zh-CN": "不支持 CLIENT TRACKING 和 COMMAND INFO；valkey-go 需禁用客户端缓存。命令参考记录了 ACL、HyperLogLog、RedisJSON/搜索模块、字段级过期及分片 Pub/Sub 的拒绝示例。WAIT 是有界的副本确认屏障，不是同步提交或无损故障转移保证。"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "migrate-redis",
+    "title": {
+      "en": "From Redis",
+      "zh-CN": "从 Redis 迁移"
+    },
+    "summary": {
+      "en": "Rehearse baseline import, incremental catch-up and application cutover into a fresh Lavik deployment.",
+      "zh-CN": "在全新 Lavik 部署上演练全量导入、增量追平与应用切换。"
+    },
+    "sources": [
+      "docs/operations/redis-import.md",
+      "docs/operations/redis-export.md"
+    ],
+    "sections": [
+      {
+        "id": "plan",
+        "title": {
+          "en": "Choose The Migration Path",
+          "zh-CN": "选择迁移路径"
+        },
+        "blocks": [
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "For a Meta-managed target, create an empty Single or Cluster deployment with replicas first, then import with RedisShake v4.6.2. Upstream acceptance uses Redis 7.2.14 sources. Source and target node counts need not match. Direct REPLICAOF from Redis is a separate non-Meta import path; a populated standalone import node cannot simply become a managed target.",
+              "zh-CN": "对于 Meta 托管目标，应先创建带副本的空 Single 或 Cluster 部署，再使用 RedisShake v4.6.2 导入。上游验收使用 Redis 7.2.14 源。源与目标节点数量无需相同。直接 REPLICAOF 是另一种非 Meta 导入路径；已导入数据的独立节点不能直接转为托管目标。"
+            }
+          },
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "Inventory every source primary, hash slot, database, data type, function library and advertised endpoint. Set the reader’s cluster option for a Cluster source and the writer’s option for the chosen target. Single supports DB0–15; Cluster supports only DB0 and same-slot multi-key requests.",
+              "zh-CN": "盘点每个源主节点、哈希槽、数据库、数据类型、Function 库及通告端点。Cluster 源需要相应 reader cluster 选项，writer 选项应匹配目标。Single 支持 DB0–15；Cluster 仅支持 DB0 和多键同槽请求。"
+            }
+          }
+        ]
+      },
+      {
+        "id": "import",
+        "title": {
+          "en": "Import And Catch Up",
+          "zh-CN": "导入并追平"
+        },
+        "blocks": [
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "Keep application traffic off the target. Use a private working directory for each attempt and enough space for the RDB/AOF spool. Restrict credentials and status access. With RedisShake v4.6.2, use peer-authenticated encrypted tunnels for non-loopback connections; its TLS setting alone does not verify server certificates. Stop on unsupported types or encodings instead of silently skipping them.",
+              "zh-CN": "导入期间不要让应用访问目标。每次尝试使用私有工作目录，并为 RDB/AOF 缓冲预留空间。限制凭据及状态接口访问。RedisShake v4.6.2 的非回环连接应使用对端认证加密隧道，其 TLS 选项本身不验证服务器证书。遇到不支持的类型或编码应停止，不可静默跳过。"
+            }
+          },
+          {
+            "type": "link",
+            "text": {
+              "en": "Release-Pinned RedisShake Configuration And Procedure",
+              "zh-CN": "本版本的 RedisShake 配置与步骤"
+            },
+            "href": "https://github.com/eloqdata/lavik/blob/feb61224e414c5653fd09560e20c9d214db1e3ac/docs/operations/redis-import.md"
+          },
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "Compare full logical values and absolute expiry times, not only key counts. Baseline import can introduce TTL drift; agree a tolerance or reconcile expiry before cutover. Keep Streams on the tested RESTORE path to retain consumer-group and pending-entry metadata. Function catalogs and keyless operations need explicit per-Group mapping.",
+              "zh-CN": "应比较完整逻辑值和绝对过期时间，而不只是键数量。全量导入可能引入 TTL 偏移；需约定容差或切换前校正。Streams 应使用经过测试的 RESTORE 路径以保留消费者组和待处理元数据。Function 库和无键操作需要明确的逐 Group 映射。"
+            }
+          }
+        ]
+      },
+      {
+        "id": "cutover",
+        "title": {
+          "en": "Freeze Writes, Verify And Switch",
+          "zh-CN": "暂停写入、验证并切换"
+        },
+        "blocks": [
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "Stop all source writers and record each source primary’s final replication offset and identity. Require every reader to reach syncing aof, received/sent offsets to reach the recorded tail, and all writer queues to drain. Check every target Group and replica, including extra target keys, values, expiry, Stream state and Function code. Then change application endpoints and watch errors, latency and connection recovery.",
+              "zh-CN": "停止全部源写入并记录各源主节点的最终复制偏移及标识。要求每个 reader 达到 syncing aof、接收及发送偏移追上记录尾部、所有 writer 队列排空。检查全部目标 Group 和副本，包括多余键、值、过期时间、Stream 状态及 Function 代码。随后切换应用端点，观察错误、延迟及连接恢复。"
+            }
+          },
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "Preserve the source and a rollback plan. Once writes go to Lavik, switching back requires reconciling those new writes. The RedisShake emergency export path is a separate procedure, not an automatic bidirectional replication promise.",
+              "zh-CN": "保留源和回滚计划。开始向 Lavik 写入后，切回源需要协调这些新写入。RedisShake 紧急导出是独立流程，不代表自动双向复制。"
+            }
+          },
+          {
+            "type": "link",
+            "text": {
+              "en": "Export And Recovery Boundaries",
+              "zh-CN": "导出与恢复边界"
+            },
+            "href": "https://github.com/eloqdata/lavik/blob/feb61224e414c5653fd09560e20c9d214db1e3ac/docs/operations/redis-export.md"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "migrate-redis-cluster",
+    "title": {
+      "en": "From Redis Cluster",
+      "zh-CN": "从 Redis Cluster 迁移"
+    },
+    "summary": {
+      "en": "Rehearse baseline import, incremental catch-up and application cutover into a fresh Lavik deployment.",
+      "zh-CN": "在全新 Lavik 部署上演练全量导入、增量追平与应用切换。"
+    },
+    "sources": [
+      "docs/operations/redis-import.md",
+      "docs/operations/redis-export.md"
+    ],
+    "sections": [
+      {
+        "id": "plan",
+        "title": {
+          "en": "Choose The Migration Path",
+          "zh-CN": "选择迁移路径"
+        },
+        "blocks": [
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "For a Meta-managed target, create an empty Single or Cluster deployment with replicas first, then import with RedisShake v4.6.2. Upstream acceptance uses Redis 7.2.14 sources. Source and target node counts need not match. Direct REPLICAOF from Redis is a separate non-Meta import path; a populated standalone import node cannot simply become a managed target.",
+              "zh-CN": "对于 Meta 托管目标，应先创建带副本的空 Single 或 Cluster 部署，再使用 RedisShake v4.6.2 导入。上游验收使用 Redis 7.2.14 源。源与目标节点数量无需相同。直接 REPLICAOF 是另一种非 Meta 导入路径；已导入数据的独立节点不能直接转为托管目标。"
+            }
+          },
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "Inventory every source primary, hash slot, database, data type, function library and advertised endpoint. Set the reader’s cluster option for a Cluster source and the writer’s option for the chosen target. Single supports DB0–15; Cluster supports only DB0 and same-slot multi-key requests.",
+              "zh-CN": "盘点每个源主节点、哈希槽、数据库、数据类型、Function 库及通告端点。Cluster 源需要相应 reader cluster 选项，writer 选项应匹配目标。Single 支持 DB0–15；Cluster 仅支持 DB0 和多键同槽请求。"
+            }
+          }
+        ]
+      },
+      {
+        "id": "import",
+        "title": {
+          "en": "Import And Catch Up",
+          "zh-CN": "导入并追平"
+        },
+        "blocks": [
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "Keep application traffic off the target. Use a private working directory for each attempt and enough space for the RDB/AOF spool. Restrict credentials and status access. With RedisShake v4.6.2, use peer-authenticated encrypted tunnels for non-loopback connections; its TLS setting alone does not verify server certificates. Stop on unsupported types or encodings instead of silently skipping them.",
+              "zh-CN": "导入期间不要让应用访问目标。每次尝试使用私有工作目录，并为 RDB/AOF 缓冲预留空间。限制凭据及状态接口访问。RedisShake v4.6.2 的非回环连接应使用对端认证加密隧道，其 TLS 选项本身不验证服务器证书。遇到不支持的类型或编码应停止，不可静默跳过。"
+            }
+          },
+          {
+            "type": "link",
+            "text": {
+              "en": "Release-Pinned RedisShake Configuration And Procedure",
+              "zh-CN": "本版本的 RedisShake 配置与步骤"
+            },
+            "href": "https://github.com/eloqdata/lavik/blob/feb61224e414c5653fd09560e20c9d214db1e3ac/docs/operations/redis-import.md"
+          },
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "Compare full logical values and absolute expiry times, not only key counts. Baseline import can introduce TTL drift; agree a tolerance or reconcile expiry before cutover. Keep Streams on the tested RESTORE path to retain consumer-group and pending-entry metadata. Function catalogs and keyless operations need explicit per-Group mapping.",
+              "zh-CN": "应比较完整逻辑值和绝对过期时间，而不只是键数量。全量导入可能引入 TTL 偏移；需约定容差或切换前校正。Streams 应使用经过测试的 RESTORE 路径以保留消费者组和待处理元数据。Function 库和无键操作需要明确的逐 Group 映射。"
+            }
+          }
+        ]
+      },
+      {
+        "id": "cutover",
+        "title": {
+          "en": "Freeze Writes, Verify And Switch",
+          "zh-CN": "暂停写入、验证并切换"
+        },
+        "blocks": [
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "Stop all source writers and record each source primary’s final replication offset and identity. Require every reader to reach syncing aof, received/sent offsets to reach the recorded tail, and all writer queues to drain. Check every target Group and replica, including extra target keys, values, expiry, Stream state and Function code. Then change application endpoints and watch errors, latency and connection recovery.",
+              "zh-CN": "停止全部源写入并记录各源主节点的最终复制偏移及标识。要求每个 reader 达到 syncing aof、接收及发送偏移追上记录尾部、所有 writer 队列排空。检查全部目标 Group 和副本，包括多余键、值、过期时间、Stream 状态及 Function 代码。随后切换应用端点，观察错误、延迟及连接恢复。"
+            }
+          },
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "Preserve the source and a rollback plan. Once writes go to Lavik, switching back requires reconciling those new writes. The RedisShake emergency export path is a separate procedure, not an automatic bidirectional replication promise.",
+              "zh-CN": "保留源和回滚计划。开始向 Lavik 写入后，切回源需要协调这些新写入。RedisShake 紧急导出是独立流程，不代表自动双向复制。"
+            }
+          },
+          {
+            "type": "link",
+            "text": {
+              "en": "Export And Recovery Boundaries",
+              "zh-CN": "导出与恢复边界"
+            },
+            "href": "https://github.com/eloqdata/lavik/blob/feb61224e414c5653fd09560e20c9d214db1e3ac/docs/operations/redis-export.md"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "storage",
+    "title": {
+      "en": "Storage & Durability",
+      "zh-CN": "存储与持久化"
+    },
+    "summary": {
+      "en": "Understand SSD values, memory indexes, grouped records and recovery boundaries.",
+      "zh-CN": "理解 SSD 值、内存索引、分组记录与恢复边界。"
+    },
+    "sources": [
+      "docs/architecture/04-storage-and-recovery.md",
+      "docs/architecture/09-grouped-collections.md",
+      "docs/operations/quick-start-tuning.md"
+    ],
+    "sections": [
+      {
+        "id": "layout",
+        "title": {
+          "en": "Memory And SSD",
+          "zh-CN": "内存与 SSD"
+        },
+        "blocks": [
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "Keys and lookup metadata still require DRAM. Values live in an append-oriented SSD store with immutable record versions. The stable release splits large collections and Streams into grouped records, uses fixed 8 KiB segments for large Strings, and shares long keys through UUID records. These designs reduce whole-value rewriting and bound work for large objects.",
+              "zh-CN": "键和查找元数据仍需 DRAM。值保存在追加写 SSD 存储中，采用不可变记录版本。稳定版将大型集合和 Streams 拆为分组记录，大字符串使用固定 8 KiB 分段，长键通过 UUID 记录共享。这些设计减少整值重写并限制大对象处理开销。"
+            }
+          }
+        ]
+      },
+      {
+        "id": "durability",
+        "title": {
+          "en": "Acknowledgements And Recovery",
+          "zh-CN": "确认与恢复"
+        },
+        "blocks": [
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "A successful write reply is not a universal power-loss guarantee. Storage flush policy and native asynchronous replication have separate boundaries. WAIT asks for replica acknowledgement of a connection’s write history; it does not create a global durable commit. Choose the policy for your recovery objective and rehearse failure modes.",
+              "zh-CN": "成功写入回复不等于通用断电保证。存储刷新策略与原生异步复制有各自边界。WAIT 请求对连接写入历史的副本确认，不会创建全局持久提交。应根据恢复目标选择策略并演练故障。"
+            }
+          },
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "Clean-shutdown index checkpoints accelerate restart and now cover grouped collections and indirect keys. They complement durable records rather than replace them. RDB SAVE/BGSAVE are logical, node-local exports; scheduled save rules are available, but automatic RDB snapshots remain disabled unless configured. Back up every required Group and the separate Meta/Admin state.",
+              "zh-CN": "正常关机索引检查点可加速重启，现覆盖分组集合和间接键；它们不能替代持久记录。RDB SAVE/BGSAVE 是节点本地的逻辑导出，可配置定时 save 规则，未配置时自动 RDB 快照仍默认关闭。备份应涵盖所需 Group，以及独立的 Meta/Admin 状态。"
+            }
+          }
+        ]
+      },
+      {
+        "id": "upgrade",
+        "title": {
+          "en": "Upgrading From Beta",
+          "zh-CN": "从 Beta 升级"
+        },
+        "blocks": [
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "0.1.0 changes Meta’s Raft persistence and storage internals. Do not reuse beta Meta state as a stable genesis, delete identity markers to force startup, or assume a mixed-version rolling upgrade is supported. Preserve existing state and rehearse a fresh stable deployment with verified data transfer.",
+              "zh-CN": "0.1.0 修改了 Meta 的 Raft 持久化及存储内部结构。不要把 Beta Meta 状态当作稳定版 genesis，不要删除身份标记强制启动，也不要假定支持混合版本滚动升级。应保留现有状态，并演练经过数据验证的新稳定版部署。"
+            }
+          },
+          {
+            "type": "link",
+            "text": {
+              "en": "Read The Upgrade Notes",
+              "zh-CN": "阅读升级说明"
+            },
+            "href": "/{locale}/releases/0-1-0/"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "lavik-ctl-single-node",
+    "title": {
+      "en": "Start a single node with lavik-ctl",
+      "zh-CN": "使用 lavik-ctl 启动单节点"
+    },
+    "summary": {
+      "en": "Install 0.1.0, start one Meta and one Data process, initialize them with lavik-ctl, and add Grafana monitoring.",
+      "zh-CN": "安装 0.1.0，启动一个 Meta 和一个 Data 进程，用 lavik-ctl 初始化，并添加 Grafana 监控。"
+    },
+    "sections": [
+      {
+        "id": "layout",
+        "title": {
+          "en": "Understand the deployment",
+          "zh-CN": "理解部署结构"
+        },
+        "blocks": [
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "This guide uses the lavik, lavik-meta and lavik-ctl binaries shipped together in v0.1.0. lavik-ctl administers Meta; it does not install a version, launch OS processes, or implement a start/stop service manager. First launch Meta and Data, then use cluster-create to initialize the fresh topology.",
+              "zh-CN": "本指南使用 v0.1.0 软件包中一同发布的 lavik、lavik-meta 和 lavik-ctl。lavik-ctl 用于管理 Meta，并不安装版本、启动操作系统进程或提供 start/stop 服务管理。先启动 Meta 和 Data，再用 cluster-create 初始化全新拓扑。"
+            }
+          },
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "Here “single node” means one Meta voter plus one Meta-managed Data process, with one Group owning all 16,384 slots. This is not the standalone ./lavik example and it is not highly available. Losing the only Meta voter or Data process can stop service.",
+              "zh-CN": "这里的“单节点”指一个 Meta 投票成员加一个受 Meta 管理的 Data 进程，一个 Group 持有全部 16,384 个槽。它不同于直接运行 ./lavik 的独立实例，也不具备高可用性。唯一的 Meta 或 Data 进程不可用，都可能导致服务停止。"
+            }
+          },
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "The single-node and HA labs reuse the same ports. Stop the earlier lab before starting the other, and keep its original state directory if you want to return to it.",
+              "zh-CN": "单节点与 HA 实验会复用相同端口。启动另一套实验前先停止前一套；若之后还要返回，请保留原状态目录。"
+            }
+          },
+          {
+            "type": "table",
+            "headers": [
+              {
+                "en": "Process",
+                "zh-CN": "进程"
+              },
+              {
+                "en": "Loopback ports",
+                "zh-CN": "回环地址端口"
+              },
+              {
+                "en": "Purpose",
+                "zh-CN": "用途"
+              }
+            ],
+            "rows": [
+              [
+                {
+                  "en": "Meta 1",
+                  "zh-CN": "Meta 1"
+                },
+                {
+                  "en": "7101 / 7201 / 7301",
+                  "zh-CN": "7101 / 7201 / 7301"
+                },
+                {
+                  "en": "Raft / Admin / Data control",
+                  "zh-CN": "Raft / 管理 / Data 控制"
+                }
+              ],
+              [
+                {
+                  "en": "Data 1",
+                  "zh-CN": "Data 1"
+                },
+                {
+                  "en": "6371 / 9101",
+                  "zh-CN": "6371 / 9101"
+                },
+                {
+                  "en": "Initial primary / metrics",
+                  "zh-CN": "初始主节点 / 指标"
+                }
+              ]
+            ]
+          },
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "All endpoints bind to 127.0.0.1. This managed node still needs Meta to grant finite write authority; running the Data process alone is not sufficient.",
+              "zh-CN": "所有端点绑定 127.0.0.1。受管 Data 节点仍需要 Meta 授予有限期的写权限，仅让 Data 进程运行并不足以提供服务。"
+            }
+          },
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "The manifest explicitly selects client_mode = \"single\". This exposes DB0–15 and ordinary Single-mode clients. lavik-ctl still uses the cluster-create and cluster-status names for this managed deployment.",
+              "zh-CN": "清单显式选择 client_mode = \"single\"，提供 DB0–15 及普通 Single 客户端行为。lavik-ctl 对此托管部署仍使用 cluster-create 和 cluster-status 命令名。"
+            }
+          }
+        ]
+      },
+      {
+        "id": "install",
+        "title": {
+          "en": "1. Install exactly v0.1.0",
+          "zh-CN": "1. 安装确切的 v0.1.0"
+        },
+        "blocks": [
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "Use Linux 6.1+ with usable io_uring and Ubuntu 24.04-compatible glibc. On a Mac or Windows machine, use a Linux VM. Minimal is the simplest option; Standard works with these same kernel TCP / io_uring settings. This guide does not configure SPDK devices. Allow at least 4 GiB RAM for the HA lab and additional memory for monitoring.",
+              "zh-CN": "使用支持 io_uring 的 Linux 6.1+ 和兼容 Ubuntu 24.04 的 glibc。Mac 或 Windows 用户需要 Linux 虚拟机。Minimal 最容易上手；Standard 也可使用相同的内核 TCP / io_uring 设置。本指南不配置 SPDK 设备。HA 实验建议至少预留 4 GiB 内存，监控需要额外内存。"
+            }
+          },
+          {
+            "type": "link",
+            "text": {
+              "en": "Download packages and SHA-256 checksums",
+              "zh-CN": "下载软件包与 SHA-256 校验和"
+            },
+            "href": "/{locale}/download/"
+          },
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "Use the linked package selector and installation instructions, then stay in the extracted directory. Use Bash and the same terminal for subsequent blocks; stop and inspect any failed command. On Ubuntu, install redis-tools, curl and python3; Python is used by the status and process-management snippets. No global PATH change or systemd installation is required.",
+              "zh-CN": "使用下方链接中的软件包选择器与安装命令，然后留在解压目录。后续代码块使用 Bash，并在同一终端依次运行；遇到失败应先检查原因。Ubuntu 需要 redis-tools、curl 和 python3；Python 用于恢复前的状态校验。无需修改全局 PATH 或安装 systemd 服务。"
+            }
+          },
+          {
+            "type": "link",
+            "text": {
+              "en": "Package selector and copyable installation commands",
+              "zh-CN": "软件包选择器与可复制安装命令"
+            },
+            "href": "/{locale}/docs/0.1.0/quick-start/#install-heading"
+          },
+          {
+            "type": "code",
+            "file": "verification/docs/0.1.0/operations/snippets/versions.sh"
+          },
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "All three outputs must identify 0.1.0. lavik-meta also prints its etcd Raft engine version. Do not mix nightly binaries, another Meta version, or a newer lavik-ctl with this release.",
+              "zh-CN": "三个输出都必须包含 0.1.0；lavik-meta 还会打印 etcd Raft 引擎版本。不要混用 nightly 二进制、其他版本的 Meta 或更新的 lavik-ctl。"
+            }
+          },
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "The Docker checks used a 512 MiB soft and hard locked-memory limit per process. Check your login or service memlock limits before launch; buffer-registration failures may require raising them through the service manager or login policy. In Docker, the verified limit was --ulimit memlock=536870912:536870912.",
+              "zh-CN": "Docker 验证为每个进程设置了 512 MiB 的锁定内存软、硬限额。启动前请检查登录会话或服务的 memlock 限额；若缓冲区注册失败，可能需要通过服务管理器或登录策略提高限额。Docker 中验证过的配置为 --ulimit memlock=536870912:536870912。"
+            }
+          }
+        ]
+      },
+      {
+        "id": "initialize",
+        "title": {
+          "en": "2. Create fresh state and a manifest",
+          "zh-CN": "2. 创建全新状态目录与清单"
+        },
+        "blocks": [
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "This creates a private directory beside the extracted binaries, one 512 MiB data file per Data process, and the complete initial manifest. It refuses an existing directory. For a real service, choose an absolute path on persistent storage before initializing; keep it independent of future package upgrades. Never point cluster-create at data you need to preserve.",
+              "zh-CN": "此步骤在二进制旁创建私有目录，为每个 Data 进程分配一个 512 MiB 数据文件，并写入完整初始清单；已有目录会被拒绝。实际服务应在初始化前选择持久存储上的绝对路径，并与后续的软件包升级分开。不要让 cluster-create 指向需要保留的数据。"
+            }
+          },
+          {
+            "type": "code",
+            "file": "verification/docs/0.1.0/operations/snippets/single-init.sh"
+          },
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "Node IDs, Meta IDs, endpoints and Group membership must match the startup arguments. The initial primary is node 111…111. Each listed node ID has exactly 40 hexadecimal characters. The manifest allocates all slots to group-1.",
+              "zh-CN": "节点 ID、Meta ID、端点和 Group 成员必须与启动参数一致。初始主节点为 111…111；清单里的每个 Data ID 均为 40 个十六进制字符。全部槽分配给 group-1。"
+            }
+          }
+        ]
+      },
+      {
+        "id": "start",
+        "title": {
+          "en": "3. Start Meta, then Data",
+          "zh-CN": "3. 先启动 Meta，再启动 Data"
+        },
+        "blocks": [
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "The following block starts background processes, waits for a Meta leader, and then starts Data. Each process gets its own logs, state directory and PID file. The small worker, memory and file settings are for this lab, not the published performance benchmark.",
+              "zh-CN": "下面的代码块先启动后台 Meta 进程，等待选出 Leader，再启动 Data。每个进程使用独立的日志、状态目录和 PID 文件。这里的小规模线程、内存和文件设置用于实验，并不是已发布性能基准的配置。"
+            }
+          },
+          {
+            "type": "code",
+            "file": "verification/docs/0.1.0/operations/snippets/single-start.sh"
+          },
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "Before creation, Data waits for Meta to commit the manifest and does not open its Redis listener. Check the process logs if Meta does not elect a leader. Pass the initial manifest only before the RAFT marker exists.",
+              "zh-CN": "创建前，Data 等待 Meta 提交清单，不开放 Redis 监听端口。如 Meta 未选出主节点，应检查进程日志。仅在 RAFT 标记尚不存在时传入初始清单。"
+            }
+          }
+        ]
+      },
+      {
+        "id": "create",
+        "title": {
+          "en": "4. Initialize with lavik-ctl and wait for readiness",
+          "zh-CN": "4. 用 lavik-ctl 初始化并等待就绪"
+        },
+        "blocks": [
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "cluster-create is destructive initialization, not a restart or an attach command. Review the manifest first. --yes accepts the normalized plan without prompting; omit it if you prefer to type yes interactively. Run this once against this fresh environment.",
+              "zh-CN": "cluster-create 是会初始化并清除目标 Data 数据的操作，不是重启或接入已有集群的命令。先审阅清单。--yes 会直接接受规范化计划；若希望交互输入 yes，可去掉它。仅在这套全新环境上执行一次。"
+            }
+          },
+          {
+            "type": "code",
+            "file": "verification/docs/0.1.0/operations/snippets/create.sh"
+          },
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "An exit code of 0 means the Genesis request committed, not that clients can already use the cluster. Follow readiness separately. If creation exits 3, the result is uncertain: inspect cluster-status and the printed operation ID instead of submitting another create.",
+              "zh-CN": "退出码 0 表示 Genesis 请求已提交，不代表客户端已能使用集群。接下来单独检查就绪状态。若创建退出码为 3，表示结果不确定，应检查 cluster-status 和打印的操作 ID，而不是再次提交 create。"
+            }
+          },
+          {
+            "type": "code",
+            "file": "verification/docs/0.1.0/operations/snippets/wait-ready.sh"
+          },
+          {
+            "type": "code",
+            "file": "verification/docs/0.1.0/operations/snippets/status.sh"
+          },
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "Expect cluster_state=created, result=ready, serving_ready=true and an empty blockers list. cluster-status exits 0 for READY, 2 for NOT READY, 3 for RETRYABLE, and 1 for a fatal local/transport error. Read status_explanation and next_action when it is not ready.",
+              "zh-CN": "预期看到 cluster_state=created、result=ready、serving_ready=true，且 blockers 为空。cluster-status 的退出码分别为：0 READY、2 NOT READY、3 RETRYABLE、1 本地或传输致命错误。未就绪时请阅读 status_explanation 和 next_action。"
+            }
+          }
+        ]
+      },
+      {
+        "id": "verify",
+        "title": {
+          "en": "5. Write and read your first key",
+          "zh-CN": "5. 写入并读取第一个键"
+        },
+        "blocks": [
+          {
+            "type": "code",
+            "file": "verification/docs/0.1.0/operations/snippets/single-client.sh"
+          },
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "Expect OK and hello from Lavik, followed by replication information. Connect on port 6371. This manifest selects Single mode, so use ordinary Redis clients; switching to Cluster requires a separately created deployment with the matching client routing.",
+              "zh-CN": "应返回 OK、hello from Lavik，随后显示复制信息。客户端连接端口为 6371。本清单选择 Single 模式，使用普通 Redis 客户端；Cluster 需要单独创建部署并采用匹配的客户端路由。"
+            }
+          }
+        ]
+      },
+      {
+        "id": "manage",
+        "title": {
+          "en": "Manage and inspect with lavik-ctl",
+          "zh-CN": "使用 lavik-ctl 管理与检查"
+        },
+        "blocks": [
+          {
+            "type": "code",
+            "file": "verification/docs/0.1.0/operations/snippets/inspect.sh"
+          },
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "status is a local committed view of the selected Meta member. The member reporting leader=1 is the current leader. cluster-status discovers the leader for a cluster-wide readiness view. After a leader change, rediscover it before issuing direct reads such as observations or getop.",
+              "zh-CN": "status 返回所选 Meta 成员本地已提交的视图。报告 leader=1 的成员是当前 Leader。cluster-status 会发现 Leader 并返回集群级就绪视图。Leader 变更后，执行 observations 或 getop 等直接读取前应重新发现 Leader。"
+            }
+          },
+          {
+            "type": "code",
+            "file": "verification/docs/0.1.0/operations/snippets/leader-reads.sh"
+          },
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "observations group-1 shows the reporters’ population and source-history evidence. getpolicy returns the current policy version and document. getop takes the operation ID printed by cluster-create or failover; use it on the current leader to follow the operation. These checks are different from merely checking whether a process exists.",
+              "zh-CN": "observations group-1 展示各节点上报的数据副本与来源历史证据；getpolicy 返回策略当前版本和文档；getop 接收 cluster-create 或 failover 打印的操作 ID，应在当前 Leader 上查询。它们不同于仅检查进程是否存在。"
+            }
+          }
+        ]
+      },
+      {
+        "id": "restart",
+        "title": {
+          "en": "Stop and restart without reinitializing",
+          "zh-CN": "停止并重启，不重复初始化"
+        },
+        "blocks": [
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "Record the absolute LAVIK_BIN_DIR and LAVIK_ROOT paths. In a new terminal, export those same paths before using the commands. The stop block validates each recorded process against the executable and state directory, then sends SIGTERM. It preserves all data and Meta state. This full stop intentionally interrupts the lab service.",
+              "zh-CN": "记录 LAVIK_BIN_DIR 和 LAVIK_ROOT 的绝对路径。在新终端里先重新 export 相同路径，再执行命令。停止脚本会核对 PID 对应的可执行文件和状态目录，然后发送 SIGTERM，保留所有 Data 和 Meta 状态。整套停止会主动中断实验服务。"
+            }
+          },
+          {
+            "type": "code",
+            "file": "verification/docs/0.1.0/operations/snippets/stop.sh"
+          },
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "Run the start block from step 3 again, then the readiness checks from step 4. Do not rerun directory initialization, fallocate, or cluster-create. Existing Meta state must restart without --initial-cluster-manifest. Keep the same IDs, data paths and advertised endpoints.",
+              "zh-CN": "重新运行第 3 步的启动块，再执行第 4 步的就绪检查。不要重复目录初始化、fallocate 或 cluster-create。已有 Meta 状态必须在不传 --initial-cluster-manifest 的情况下重启，保留原 ID、数据路径和公告端点。"
+            }
+          },
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "For an unattended service, place these same process arguments under your Linux service manager, with absolute binary paths, persistent directories and an appropriate locked-memory limit. lavik-ctl is the administrative client, not the process supervisor. Use planned failover and maintenance procedures for individual production nodes instead of stopping the whole cluster.",
+              "zh-CN": "无人值守运行时，可将相同进程参数交给 Linux 服务管理器，使用绝对二进制路径、持久目录和合适的锁定内存限额。lavik-ctl 是管理客户端，不是进程监督器。生产环境单节点维护应先做计划内切换，不应停止整个集群。"
+            }
+          },
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "Roles can change during recovery. Discover the current owner with cluster-status after restarting; the initial primary in cluster.toml is not a promise about the current primary.",
+              "zh-CN": "恢复过程中角色可能变化。重启后使用 cluster-status 发现当前主节点；cluster.toml 中的初始主节点不代表当前主节点。"
+            }
+          }
+        ]
+      },
+      {
+        "id": "monitoring",
+        "title": {
+          "en": "Set up Prometheus and Grafana",
+          "zh-CN": "配置 Prometheus 与 Grafana"
+        },
+        "blocks": [
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "The startup commands enabled metrics on 9101. A nonzero metrics port is required. Confirm the endpoint first; it has no authentication or TLS, so keep it on loopback or a protected monitoring network.",
+              "zh-CN": "启动命令已在 9101 启用指标。metrics-port 必须非零。先检查端点；它不提供身份认证或 TLS，应仅放在回环地址或受保护的监控网络。"
+            }
+          },
+          {
+            "type": "code",
+            "file": "verification/docs/0.1.0/operations/snippets/metrics-single.sh"
+          },
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "Install Docker Engine and Docker Compose v2.24.4+ on this same Linux host. Fetch the monitoring directory at 0.1.0’s exact source commit; it provisions Prometheus v3.11.3, Grafana 13.1.0 and the Lavik Overview dashboard. This is separate from the Lavik binaries.",
+              "zh-CN": "在同一 Linux 主机安装 Docker Engine 和 Docker Compose v2.24.4+。下载 0.1.0 对应确切源码提交的监控目录，其中配置了 Prometheus v3.11.3、Grafana 13.1.0 和 Lavik Overview 仪表盘；它与 Lavik 二进制软件包分开提供。"
+            }
+          },
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "If you already set up monitoring while following the other guide, reuse its directory and existing .env. Change LAVIK_TARGETS with the update procedure below rather than creating new credentials for existing volumes.",
+              "zh-CN": "若已经按照另一篇指南配置过监控，请复用其目录和已有 .env。使用下方更新流程修改 LAVIK_TARGETS，不要为已有数据卷生成另一套凭据。"
+            }
+          },
+          {
+            "type": "code",
+            "file": "verification/docs/0.1.0/operations/snippets/monitor-download.sh"
+          },
+          {
+            "type": "code",
+            "file": "verification/docs/0.1.0/operations/snippets/monitor-config-single.sh"
+          },
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "The generated .env contains only this monitoring installation’s settings and a new random Grafana password. Keep it private. Read GRAFANA_ADMIN_PASSWORD locally to sign in as admin; do not paste the file into tickets or logs. Reusing existing Grafana volumes does not reset the original admin password.",
+              "zh-CN": "生成的 .env 仅包含这套监控的配置和新随机 Grafana 密码，请妥善保管。登录时在本地查看 GRAFANA_ADMIN_PASSWORD，用户名为 admin；不要把文件粘贴到工单或日志中。复用已有 Grafana 卷不会重置原管理员密码。"
+            }
+          },
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "The lab binds Lavik to loopback. A normal bridge-network container cannot scrape that loopback address. This Linux-only override shares the host network and binds both monitoring UIs to loopback too. It also makes the provisioned prometheus datasource name resolve to the host-network Prometheus.",
+              "zh-CN": "实验中的 Lavik 绑定回环地址，普通桥接网络容器无法抓取该回环端点。下面的 Linux 专用覆盖配置共享主机网络，并将两个监控界面也绑定回环地址，同时让预配置数据源的 prometheus 名称解析到主机网络中的 Prometheus。"
+            }
+          },
+          {
+            "type": "code",
+            "file": "verification/docs/0.1.0/operations/snippets/monitor-local.sh"
+          },
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "Open http://127.0.0.1:3000/d/lavik-overview/lavik-overview for Grafana. Prometheus targets are at http://127.0.0.1:9090/targets. On a remote Linux host, use an SSH tunnel to these loopback ports. The dashboard’s Lavik instance selector filters nodes; allow at least one scrape interval before expecting data.",
+              "zh-CN": "打开 http://127.0.0.1:3000/d/lavik-overview/lavik-overview 访问 Grafana；Prometheus 目标状态位于 http://127.0.0.1:9090/targets。若 Linux 主机位于远程，请用 SSH 隧道访问这些回环端口。仪表盘的 Lavik instance 选择器可筛选节点，至少等待一个抓取周期后再观察数据。"
+            }
+          },
+          {
+            "type": "link",
+            "text": {
+              "en": "Open the Lavik Overview dashboard",
+              "zh-CN": "打开 Lavik Overview 仪表盘"
+            },
+            "href": "http://127.0.0.1:3000/d/lavik-overview/lavik-overview"
+          },
+          {
+            "type": "link",
+            "text": {
+              "en": "Open Prometheus target status",
+              "zh-CN": "查看 Prometheus 目标状态"
+            },
+            "href": "http://127.0.0.1:9090/targets"
+          },
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "Monitor target up/down, command throughput and latency, available storage, replication health, control-session connectivity and lease expirations. Command-duration histograms exclude socket response writes and are not end-to-end application latency. The stack provides collection and dashboards; configure your own alert rules and notification routing.",
+              "zh-CN": "监控目标在线状态、命令吞吐与延迟、可用存储、复制健康、控制会话连接和权限到期。命令耗时直方图不包含套接字响应写出时间，也不等于应用端到端延迟。这套配置提供采集和仪表盘，告警规则及通知路由需按需配置。"
+            }
+          },
+          {
+            "type": "code",
+            "file": "verification/docs/0.1.0/query-0.txt"
+          },
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "To change the node list, edit LAVIK_TARGETS in this directory’s .env and recreate only target-config. Prometheus discovers the file change within 30 seconds. In host-network mode use the lab’s 127.0.0.1 ports; for a separate monitoring host use reachable private node IPs and the original compose.yaml without compose.local.yaml. Never use a container’s own loopback as a remote node address.",
+              "zh-CN": "要修改节点列表，编辑本目录 .env 中的 LAVIK_TARGETS，并仅重建 target-config。Prometheus 会在 30 秒内发现目标文件变化。主机网络模式使用本实验的 127.0.0.1 端口；独立监控主机应使用可达的节点私网 IP，并仅使用原始 compose.yaml，不加载 compose.local.yaml。不要把容器自身的回环地址误当作远程节点地址。"
+            }
+          },
+          {
+            "type": "code",
+            "file": "verification/docs/0.1.0/operations/snippets/monitor-update.sh"
+          },
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "Stop monitoring without deleting history. Do not add -v unless you intentionally want to delete its stored data and generated targets.",
+              "zh-CN": "停止监控时保留历史；除非确实打算删除监控数据和生成的目标文件，否则不要加 -v。"
+            }
+          },
+          {
+            "type": "code",
+            "file": "verification/docs/0.1.0/operations/snippets/monitor-stop.sh"
+          }
+        ]
+      },
+      {
+        "id": "troubleshooting",
+        "title": {
+          "en": "Troubleshooting and recovery boundaries",
+          "zh-CN": "排障与恢复边界"
+        },
+        "blocks": [
+          {
+            "type": "table",
+            "headers": [
+              {
+                "en": "Symptom",
+                "zh-CN": "现象"
+              },
+              {
+                "en": "Action",
+                "zh-CN": "处理方式"
+              }
+            ],
+            "rows": [
+              [
+                {
+                  "en": "lavik-ctl: not found / unknown start command",
+                  "zh-CN": "找不到 lavik-ctl / start 命令不支持"
+                },
+                {
+                  "en": "Run the package’s ./lavik-ctl or the absolute path. Use the three real binaries; 0.1.0 has no start command.",
+                  "zh-CN": "运行软件包中的 ./lavik-ctl 或绝对路径。使用三个真实二进制；0.1.0 不提供 start 命令。"
+                }
+              ],
+              [
+                {
+                  "en": "Meta socket missing / permission denied",
+                  "zh-CN": "Meta 套接字不存在 / 权限不足"
+                },
+                {
+                  "en": "Check the Meta log and run the CLI as the same service user. Meta state directories must be private; do not loosen socket permissions to bypass authentication.",
+                  "zh-CN": "检查 Meta 日志，并以相同服务用户运行 CLI。Meta 状态目录应保持私有，不应放宽套接字权限来绕过认证。"
+                }
+              ],
+              [
+                {
+                  "en": "LOADING / NOT READY",
+                  "zh-CN": "LOADING / NOT READY"
+                },
+                {
+                  "en": "Inspect cluster_state, blockers, Data sessions and logs. A running process is not enough. Preserve the directories; do not rerun cluster-create.",
+                  "zh-CN": "检查 cluster_state、blockers、Data 会话与日志；进程存活并不充分。保留状态目录，不要重跑 cluster-create。"
+                }
+              ],
+              [
+                {
+                  "en": "Replica missing / WAIT returns 0",
+                  "zh-CN": "副本缺失 / WAIT 返回 0"
+                },
+                {
+                  "en": "Check INFO replication and Meta observations; allow full synchronization and verify the current owner/source domain before maintenance.",
+                  "zh-CN": "检查 INFO replication 与 Meta observations；等待全量同步，并在维护前确认当前主节点和源历史域。"
+                }
+              ],
+              [
+                {
+                  "en": "Grafana has no data",
+                  "zh-CN": "Grafana 没有数据"
+                },
+                {
+                  "en": "Check /metrics, Prometheus /targets, target addresses and firewall rules. The loopback lab needs the Linux host-network override.",
+                  "zh-CN": "检查 /metrics、Prometheus /targets、目标地址与防火墙。回环实验需要 Linux 主机网络覆盖配置。"
+                }
+              ],
+              [
+                {
+                  "en": "io_uring / memlock error",
+                  "zh-CN": "io_uring / memlock 错误"
+                },
+                {
+                  "en": "Check the Linux kernel, container seccomp and locked-memory limits. A Linux package cannot run directly on macOS.",
+                  "zh-CN": "检查 Linux 内核、容器 seccomp 与锁定内存限额。Linux 发布包不能直接在 macOS 上运行。"
+                }
+              ]
+            ]
+          },
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "Never delete Meta state or edit its durable configuration to force recovery. cluster-create is not a repair tool. An uncleanly stopped Data node may need population rebuild or operator recovery; a process restart alone is not proof that redundancy has returned. Preserve logs and follow the pinned recovery runbook when the group remains blocked.",
+              "zh-CN": "不要删除 Meta 状态或改写持久配置来强制恢复；cluster-create 不是修复工具。非正常停止的 Data 节点可能需要重建副本或人工恢复，进程重启不代表冗余已经恢复。若 Group 持续被阻塞，应保留日志并遵循固定版本的恢复手册。"
+            }
+          }
+        ]
+      }
+    ],
+    "sources": [
+      "docs/operations/meta-control-plane.md",
+      "docs/architecture/02-request-serving.md",
+      "docs/operations/metrics.md"
+    ]
+  },
+  {
+    "id": "lavik-ctl-ha-cluster",
+    "title": {
+      "en": "Primary–follower HA with lavik-ctl",
+      "zh-CN": "使用 lavik-ctl 部署主从高可用集群"
+    },
+    "summary": {
+      "en": "Create a three-Meta, two-Data 0.1.0 cluster, verify replication, manage failover, and monitor it with Grafana.",
+      "zh-CN": "创建三个 Meta、两个 Data 的 0.1.0 集群，验证复制、管理切换并使用 Grafana 监控。"
+    },
+    "sections": [
+      {
+        "id": "layout",
+        "title": {
+          "en": "Understand the deployment",
+          "zh-CN": "理解部署结构"
+        },
+        "blocks": [
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "This guide uses the lavik, lavik-meta and lavik-ctl binaries shipped together in v0.1.0. lavik-ctl administers Meta; it does not install a version, launch OS processes, or implement a start/stop service manager. First launch Meta and Data, then use cluster-create to initialize the fresh topology.",
+              "zh-CN": "本指南使用 v0.1.0 软件包中一同发布的 lavik、lavik-meta 和 lavik-ctl。lavik-ctl 用于管理 Meta，并不安装版本、启动操作系统进程或提供 start/stop 服务管理。先启动 Meta 和 Data，再用 cluster-create 初始化全新拓扑。"
+            }
+          },
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "The runnable example puts three Meta voters and two Data processes on one Linux host. It demonstrates primary–follower behavior, but a host outage still stops everything. The separate-host deployment section explains the required failure-domain and endpoint changes.",
+              "zh-CN": "可执行示例在一台 Linux 主机上运行三个 Meta 投票成员和两个 Data 进程，演示主从行为；整机故障仍会让所有进程停止。独立主机部署章节说明了故障域和端点必须如何调整。"
+            }
+          },
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "The single-node and HA labs reuse the same ports. Stop the earlier lab before starting the other, and keep its original state directory if you want to return to it.",
+              "zh-CN": "单节点与 HA 实验会复用相同端口。启动另一套实验前先停止前一套；若之后还要返回，请保留原状态目录。"
+            }
+          },
+          {
+            "type": "table",
+            "headers": [
+              {
+                "en": "Process",
+                "zh-CN": "进程"
+              },
+              {
+                "en": "Loopback ports",
+                "zh-CN": "回环地址端口"
+              },
+              {
+                "en": "Purpose",
+                "zh-CN": "用途"
+              }
+            ],
+            "rows": [
+              [
+                {
+                  "en": "Meta 1",
+                  "zh-CN": "Meta 1"
+                },
+                {
+                  "en": "7101 / 7201 / 7301",
+                  "zh-CN": "7101 / 7201 / 7301"
+                },
+                {
+                  "en": "Raft / Admin / Data control",
+                  "zh-CN": "Raft / 管理 / Data 控制"
+                }
+              ],
+              [
+                {
+                  "en": "Meta 2",
+                  "zh-CN": "Meta 2"
+                },
+                {
+                  "en": "7102 / 7202 / 7302",
+                  "zh-CN": "7102 / 7202 / 7302"
+                },
+                {
+                  "en": "Raft / Admin / Data control",
+                  "zh-CN": "Raft / 管理 / Data 控制"
+                }
+              ],
+              [
+                {
+                  "en": "Meta 3",
+                  "zh-CN": "Meta 3"
+                },
+                {
+                  "en": "7103 / 7203 / 7303",
+                  "zh-CN": "7103 / 7203 / 7303"
+                },
+                {
+                  "en": "Raft / Admin / Data control",
+                  "zh-CN": "Raft / 管理 / Data 控制"
+                }
+              ],
+              [
+                {
+                  "en": "Data 1",
+                  "zh-CN": "Data 1"
+                },
+                {
+                  "en": "6371 / 9101",
+                  "zh-CN": "6371 / 9101"
+                },
+                {
+                  "en": "Initial primary / metrics",
+                  "zh-CN": "初始主节点 / 指标"
+                }
+              ],
+              [
+                {
+                  "en": "Data 2",
+                  "zh-CN": "Data 2"
+                },
+                {
+                  "en": "6372 / 9102",
+                  "zh-CN": "6372 / 9102"
+                },
+                {
+                  "en": "Initial follower / metrics",
+                  "zh-CN": "初始从节点 / 指标"
+                }
+              ]
+            ]
+          },
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "The lab uses plaintext loopback listeners. --allow-plaintext-admin explicitly permits local leader discovery; it is not authentication. Keep these ports private. Three Meta voters need a majority of two; data replication is asynchronous, so automatic failover does not promise zero data loss.",
+              "zh-CN": "实验使用明文回环监听。--allow-plaintext-admin 显式允许本地 Leader 发现，并不是身份认证；不要公开这些端口。三个 Meta 投票成员需要至少两个构成多数派。数据复制是异步的，自动故障转移不保证零数据丢失。"
+            }
+          }
+        ]
+      },
+      {
+        "id": "install",
+        "title": {
+          "en": "1. Install exactly v0.1.0",
+          "zh-CN": "1. 安装确切的 v0.1.0"
+        },
+        "blocks": [
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "Use Linux 6.1+ with usable io_uring and Ubuntu 24.04-compatible glibc. On a Mac or Windows machine, use a Linux VM. Minimal is the simplest option; Standard works with these same kernel TCP / io_uring settings. This guide does not configure SPDK devices. Allow at least 4 GiB RAM for the HA lab and additional memory for monitoring.",
+              "zh-CN": "使用支持 io_uring 的 Linux 6.1+ 和兼容 Ubuntu 24.04 的 glibc。Mac 或 Windows 用户需要 Linux 虚拟机。Minimal 最容易上手；Standard 也可使用相同的内核 TCP / io_uring 设置。本指南不配置 SPDK 设备。HA 实验建议至少预留 4 GiB 内存，监控需要额外内存。"
+            }
+          },
+          {
+            "type": "link",
+            "text": {
+              "en": "Download packages and SHA-256 checksums",
+              "zh-CN": "下载软件包与 SHA-256 校验和"
+            },
+            "href": "/{locale}/download/"
+          },
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "Use the linked package selector and installation instructions, then stay in the extracted directory. Use Bash and the same terminal for subsequent blocks; stop and inspect any failed command. On Ubuntu, install redis-tools, curl and python3; Python is used by the status and process-management snippets. No global PATH change or systemd installation is required.",
+              "zh-CN": "使用下方链接中的软件包选择器与安装命令，然后留在解压目录。后续代码块使用 Bash，并在同一终端依次运行；遇到失败应先检查原因。Ubuntu 需要 redis-tools、curl 和 python3；Python 用于恢复前的状态校验。无需修改全局 PATH 或安装 systemd 服务。"
+            }
+          },
+          {
+            "type": "link",
+            "text": {
+              "en": "Package selector and copyable installation commands",
+              "zh-CN": "软件包选择器与可复制安装命令"
+            },
+            "href": "/{locale}/docs/0.1.0/quick-start/#install-heading"
+          },
+          {
+            "type": "code",
+            "file": "verification/docs/0.1.0/operations/snippets/versions.sh"
+          },
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "All three outputs must identify 0.1.0. lavik-meta also prints its etcd Raft engine version. Do not mix nightly binaries, another Meta version, or a newer lavik-ctl with this release.",
+              "zh-CN": "三个输出都必须包含 0.1.0；lavik-meta 还会打印 etcd Raft 引擎版本。不要混用 nightly 二进制、其他版本的 Meta 或更新的 lavik-ctl。"
+            }
+          },
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "The Docker checks used a 512 MiB soft and hard locked-memory limit per process. Check your login or service memlock limits before launch; buffer-registration failures may require raising them through the service manager or login policy. In Docker, the verified limit was --ulimit memlock=536870912:536870912.",
+              "zh-CN": "Docker 验证为每个进程设置了 512 MiB 的锁定内存软、硬限额。启动前请检查登录会话或服务的 memlock 限额；若缓冲区注册失败，可能需要通过服务管理器或登录策略提高限额。Docker 中验证过的配置为 --ulimit memlock=536870912:536870912。"
+            }
+          }
+        ]
+      },
+      {
+        "id": "initialize",
+        "title": {
+          "en": "2. Create fresh state and a manifest",
+          "zh-CN": "2. 创建全新状态目录与清单"
+        },
+        "blocks": [
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "This creates a private directory beside the extracted binaries, one 512 MiB data file per Data process, and the complete initial manifest. It refuses an existing directory. For a real service, choose an absolute path on persistent storage before initializing; keep it independent of future package upgrades. Never point cluster-create at data you need to preserve.",
+              "zh-CN": "此步骤在二进制旁创建私有目录，为每个 Data 进程分配一个 512 MiB 数据文件，并写入完整初始清单；已有目录会被拒绝。实际服务应在初始化前选择持久存储上的绝对路径，并与后续的软件包升级分开。不要让 cluster-create 指向需要保留的数据。"
+            }
+          },
+          {
+            "type": "code",
+            "file": "verification/docs/0.1.0/operations/snippets/ha-init.sh"
+          },
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "Node IDs, Meta IDs, endpoints and Group membership must match the startup arguments. The initial primary is node 111…111. Each listed node ID has exactly 40 hexadecimal characters. The manifest allocates all slots to group-1.",
+              "zh-CN": "节点 ID、Meta ID、端点和 Group 成员必须与启动参数一致。初始主节点为 111…111；清单里的每个 Data ID 均为 40 个十六进制字符。全部槽分配给 group-1。"
+            }
+          }
+        ]
+      },
+      {
+        "id": "start",
+        "title": {
+          "en": "3. Start Meta, then Data",
+          "zh-CN": "3. 先启动 Meta，再启动 Data"
+        },
+        "blocks": [
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "The following block starts background processes, waits for a Meta leader, and then starts Data. Each process gets its own logs, state directory and PID file. The small worker, memory and file settings are for this lab, not the published performance benchmark.",
+              "zh-CN": "下面的代码块先启动后台 Meta 进程，等待选出 Leader，再启动 Data。每个进程使用独立的日志、状态目录和 PID 文件。这里的小规模线程、内存和文件设置用于实验，并不是已发布性能基准的配置。"
+            }
+          },
+          {
+            "type": "code",
+            "file": "verification/docs/0.1.0/operations/snippets/ha-start.sh"
+          },
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "Before creation, Data waits for Meta to commit the manifest and does not open its Redis listener. Check the process logs if Meta does not elect a leader. Pass the initial manifest only before the RAFT marker exists.",
+              "zh-CN": "创建前，Data 等待 Meta 提交清单，不开放 Redis 监听端口。如 Meta 未选出主节点，应检查进程日志。仅在 RAFT 标记尚不存在时传入初始清单。"
+            }
+          }
+        ]
+      },
+      {
+        "id": "create",
+        "title": {
+          "en": "4. Initialize with lavik-ctl and wait for readiness",
+          "zh-CN": "4. 用 lavik-ctl 初始化并等待就绪"
+        },
+        "blocks": [
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "Keep all three initial Meta members online during creation. The bootstrap workflow waits for every initial Meta state machine to catch up at its creation barrier; a majority alone does not complete that phase. Normal control-plane mutations use majority completion after it advances.",
+              "zh-CN": "创建过程中应保持三个初始 Meta 成员都在线。引导工作流会在创建屏障等待每个初始 Meta 状态机追上进度，只有多数派在线并不足以完成这一阶段；该阶段之后，常规控制面修改使用多数派完成条件。"
+            }
+          },
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "cluster-create is destructive initialization, not a restart or an attach command. Review the manifest first. --yes accepts the normalized plan without prompting; omit it if you prefer to type yes interactively. Run this once against this fresh environment.",
+              "zh-CN": "cluster-create 是会初始化并清除目标 Data 数据的操作，不是重启或接入已有集群的命令。先审阅清单。--yes 会直接接受规范化计划；若希望交互输入 yes，可去掉它。仅在这套全新环境上执行一次。"
+            }
+          },
+          {
+            "type": "code",
+            "file": "verification/docs/0.1.0/operations/snippets/create.sh"
+          },
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "An exit code of 0 means the Genesis request committed, not that clients can already use the cluster. Follow readiness separately. If creation exits 3, the result is uncertain: inspect cluster-status and the printed operation ID instead of submitting another create.",
+              "zh-CN": "退出码 0 表示 Genesis 请求已提交，不代表客户端已能使用集群。接下来单独检查就绪状态。若创建退出码为 3，表示结果不确定，应检查 cluster-status 和打印的操作 ID，而不是再次提交 create。"
+            }
+          },
+          {
+            "type": "code",
+            "file": "verification/docs/0.1.0/operations/snippets/wait-ready.sh"
+          },
+          {
+            "type": "code",
+            "file": "verification/docs/0.1.0/operations/snippets/status.sh"
+          },
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "Expect cluster_state=created, result=ready, serving_ready=true and an empty blockers list. cluster-status exits 0 for READY, 2 for NOT READY, 3 for RETRYABLE, and 1 for a fatal local/transport error. Read status_explanation and next_action when it is not ready.",
+              "zh-CN": "预期看到 cluster_state=created、result=ready、serving_ready=true，且 blockers 为空。cluster-status 的退出码分别为：0 READY、2 NOT READY、3 RETRYABLE、1 本地或传输致命错误。未就绪时请阅读 status_explanation 和 next_action。"
+            }
+          }
+        ]
+      },
+      {
+        "id": "verify",
+        "title": {
+          "en": "5. Check the follower and exercise clients",
+          "zh-CN": "5. 检查从节点并运行客户端"
+        },
+        "blocks": [
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "Wait until the follower has a readable, complete population before testing failover. If it does not converge, inspect cluster-status and node logs; do not recreate the cluster or automatically restart a member.",
+              "zh-CN": "测试故障转移前，应等待从节点具有可读的完整数据集。如无法收敛，应检查 cluster-status 和节点日志，不要重新创建集群或自动重启成员。"
+            }
+          },
+          {
+            "type": "code",
+            "file": "verification/docs/0.1.0/operations/snippets/wait-follower.sh"
+          },
+          {
+            "type": "code",
+            "file": "verification/docs/0.1.0/operations/snippets/ha-client.sh"
+          },
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "The first connection should return OK, 1 and hello from Lavik. SET and WAIT share that connection. WAIT requests a replica acknowledgement within five seconds; it does not guarantee a lossless future failover. -c follows Cluster redirects.",
+              "zh-CN": "第一个连接应返回 OK、1 及 hello from Lavik。SET 和 WAIT 使用同一连接。WAIT 请求五秒内的副本确认，不保证未来故障转移无损。-c 会跟随 Cluster 重定向。"
+            }
+          }
+        ]
+      },
+      {
+        "id": "manage",
+        "title": {
+          "en": "Manage and inspect with lavik-ctl",
+          "zh-CN": "使用 lavik-ctl 管理与检查"
+        },
+        "blocks": [
+          {
+            "type": "code",
+            "file": "verification/docs/0.1.0/operations/snippets/inspect.sh"
+          },
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "status is a local committed view of the selected Meta member. The member reporting leader=1 is the current leader. cluster-status discovers the leader for a cluster-wide readiness view. After a leader change, rediscover it before issuing direct reads such as observations or getop.",
+              "zh-CN": "status 返回所选 Meta 成员本地已提交的视图。报告 leader=1 的成员是当前 Leader。cluster-status 会发现 Leader 并返回集群级就绪视图。Leader 变更后，执行 observations 或 getop 等直接读取前应重新发现 Leader。"
+            }
+          },
+          {
+            "type": "code",
+            "file": "verification/docs/0.1.0/operations/snippets/leader-reads.sh"
+          },
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "observations group-1 shows the reporters’ population and source-history evidence. getpolicy returns the current policy version and document. getop takes the operation ID printed by cluster-create or failover; use it on the current leader to follow the operation. These checks are different from merely checking whether a process exists.",
+              "zh-CN": "observations group-1 展示各节点上报的数据副本与来源历史证据；getpolicy 返回策略当前版本和文档；getop 接收 cluster-create 或 failover 打印的操作 ID，应在当前 Leader 上查询。它们不同于仅检查进程是否存在。"
+            }
+          }
+        ]
+      },
+      {
+        "id": "failover",
+        "title": {
+          "en": "Planned failover before maintenance",
+          "zh-CN": "维护前的计划内切换"
+        },
+        "blocks": [
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "Start only after the follower is synchronized and the current primary is healthy. A controlled failover pauses mutations while the candidate catches up to the stable source frontier. Applications should handle bounded TRYAGAIN/LOADING responses and refresh cluster topology.",
+              "zh-CN": "只有在从节点已同步、当前主节点健康时才开始。受控切换会暂停修改操作，让候选节点追上稳定的源端进度。应用应处理短暂 TRYAGAIN / LOADING 回复，并更新集群拓扑。"
+            }
+          },
+          {
+            "type": "code",
+            "file": "verification/docs/0.1.0/operations/snippets/failover.sh"
+          },
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "Exit 0 means the request committed. Copy the printed operation ID, discover the current Meta leader, then query getop until it reports OK completed failover-completed. An aborted result is not a successful cutover. If the submission exits 3, resolve that same operation before submitting anything new.",
+              "zh-CN": "退出码 0 仅表示请求已提交。复制打印的操作 ID，找到当前 Meta Leader，然后用 getop 查询，直到返回 OK completed failover-completed。aborted 不代表切换成功。若提交退出码为 3，应先确认同一个操作的结果，再决定后续动作。"
+            }
+          },
+          {
+            "type": "code",
+            "file": "verification/docs/0.1.0/operations/snippets/follow-operation.sh"
+          },
+          {
+            "type": "code",
+            "file": "verification/docs/0.1.0/operations/snippets/status.sh"
+          },
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "Check groups[].owner_node_id and connect to the new primary. For the first handoff in this exact lab, that is node 222…222 on 6372. The former primary can still be LOADING while it reparents; the new primary may already serve. Recheck INFO replication, observations and a same-connection SET/WAIT probe before another handoff. Never infer candidate eligibility from process count alone.",
+              "zh-CN": "检查 groups[].owner_node_id 并连接新的主节点。在本实验第一次切换后，新主节点为 6372 上的 222…222。旧主节点重新跟随时仍可能返回 LOADING，此时新主节点可能已能服务。再次切换前，应重新检查 INFO replication、observations 以及同一连接上的 SET / WAIT 探针。不能仅凭进程数量判断候选节点是否可用。"
+            }
+          },
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "Automatic failover is already active in 0.1.0. The default suspicion threshold is 5,000 ms; it is a debounce policy, not an outage-duration SLA. Detection, authority expiry, elections, candidate recovery and client retries also take time. Uncontrolled recovery may lose writes acknowledged only by the failed owner. Do not use promote --accept-data-loss as an ordinary restart step.",
+              "zh-CN": "0.1.0 已默认启用自动故障转移。默认怀疑阈值为 5,000 ms，是去抖策略而不是停机时间 SLA；检测、权限到期、选举、候选恢复和客户端重试也需要时间。非受控恢复可能丢失只在故障主节点上得到确认的写入。不要把 promote --accept-data-loss 当成普通重启步骤。"
+            }
+          }
+        ]
+      },
+      {
+        "id": "restart",
+        "title": {
+          "en": "Stop and restart without reinitializing",
+          "zh-CN": "停止并重启，不重复初始化"
+        },
+        "blocks": [
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "Record the absolute LAVIK_BIN_DIR and LAVIK_ROOT paths. In a new terminal, export those same paths before using the commands. The stop block validates each recorded process against the executable and state directory, then sends SIGTERM. It preserves all data and Meta state. This full stop intentionally interrupts the lab service.",
+              "zh-CN": "记录 LAVIK_BIN_DIR 和 LAVIK_ROOT 的绝对路径。在新终端里先重新 export 相同路径，再执行命令。停止脚本会核对 PID 对应的可执行文件和状态目录，然后发送 SIGTERM，保留所有 Data 和 Meta 状态。整套停止会主动中断实验服务。"
+            }
+          },
+          {
+            "type": "code",
+            "file": "verification/docs/0.1.0/operations/snippets/stop.sh"
+          },
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "Run the start block from step 3 again, then the readiness checks from step 4. Do not rerun directory initialization, fallocate, or cluster-create. Existing Meta state must restart without --initial-cluster-manifest. Keep the same IDs, data paths and advertised endpoints.",
+              "zh-CN": "重新运行第 3 步的启动块，再执行第 4 步的就绪检查。不要重复目录初始化、fallocate 或 cluster-create。已有 Meta 状态必须在不传 --initial-cluster-manifest 的情况下重启，保留原 ID、数据路径和公告端点。"
+            }
+          },
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "For an unattended service, place these same process arguments under your Linux service manager, with absolute binary paths, persistent directories and an appropriate locked-memory limit. lavik-ctl is the administrative client, not the process supervisor. Use planned failover and maintenance procedures for individual production nodes instead of stopping the whole cluster.",
+              "zh-CN": "无人值守运行时，可将相同进程参数交给 Linux 服务管理器，使用绝对二进制路径、持久目录和合适的锁定内存限额。lavik-ctl 是管理客户端，不是进程监督器。生产环境单节点维护应先做计划内切换，不应停止整个集群。"
+            }
+          },
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "Roles can change during recovery. Discover the current owner with cluster-status after restarting; the initial primary in cluster.toml is not a promise about the current primary.",
+              "zh-CN": "恢复过程中角色可能变化。重启后使用 cluster-status 发现当前主节点；cluster.toml 中的初始主节点不代表当前主节点。"
+            }
+          }
+        ]
+      },
+      {
+        "id": "monitoring",
+        "title": {
+          "en": "Set up Prometheus and Grafana",
+          "zh-CN": "配置 Prometheus 与 Grafana"
+        },
+        "blocks": [
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "The startup commands enabled metrics on 9101 and 9102. A nonzero metrics port is required. Confirm the endpoint first; it has no authentication or TLS, so keep it on loopback or a protected monitoring network.",
+              "zh-CN": "启动命令已在 9101 和 9102 启用指标。metrics-port 必须非零。先检查端点；它不提供身份认证或 TLS，应仅放在回环地址或受保护的监控网络。"
+            }
+          },
+          {
+            "type": "code",
+            "file": "verification/docs/0.1.0/operations/snippets/metrics-ha.sh"
+          },
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "Install Docker Engine and Docker Compose v2.24.4+ on this same Linux host. Fetch the monitoring directory at 0.1.0’s exact source commit; it provisions Prometheus v3.11.3, Grafana 13.1.0 and the Lavik Overview dashboard. This is separate from the Lavik binaries.",
+              "zh-CN": "在同一 Linux 主机安装 Docker Engine 和 Docker Compose v2.24.4+。下载 0.1.0 对应确切源码提交的监控目录，其中配置了 Prometheus v3.11.3、Grafana 13.1.0 和 Lavik Overview 仪表盘；它与 Lavik 二进制软件包分开提供。"
+            }
+          },
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "If you already set up monitoring while following the other guide, reuse its directory and existing .env. Change LAVIK_TARGETS with the update procedure below rather than creating new credentials for existing volumes.",
+              "zh-CN": "若已经按照另一篇指南配置过监控，请复用其目录和已有 .env。使用下方更新流程修改 LAVIK_TARGETS，不要为已有数据卷生成另一套凭据。"
+            }
+          },
+          {
+            "type": "code",
+            "file": "verification/docs/0.1.0/operations/snippets/monitor-download.sh"
+          },
+          {
+            "type": "code",
+            "file": "verification/docs/0.1.0/operations/snippets/monitor-config-ha.sh"
+          },
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "The generated .env contains only this monitoring installation’s settings and a new random Grafana password. Keep it private. Read GRAFANA_ADMIN_PASSWORD locally to sign in as admin; do not paste the file into tickets or logs. Reusing existing Grafana volumes does not reset the original admin password.",
+              "zh-CN": "生成的 .env 仅包含这套监控的配置和新随机 Grafana 密码，请妥善保管。登录时在本地查看 GRAFANA_ADMIN_PASSWORD，用户名为 admin；不要把文件粘贴到工单或日志中。复用已有 Grafana 卷不会重置原管理员密码。"
+            }
+          },
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "The lab binds Lavik to loopback. A normal bridge-network container cannot scrape that loopback address. This Linux-only override shares the host network and binds both monitoring UIs to loopback too. It also makes the provisioned prometheus datasource name resolve to the host-network Prometheus.",
+              "zh-CN": "实验中的 Lavik 绑定回环地址，普通桥接网络容器无法抓取该回环端点。下面的 Linux 专用覆盖配置共享主机网络，并将两个监控界面也绑定回环地址，同时让预配置数据源的 prometheus 名称解析到主机网络中的 Prometheus。"
+            }
+          },
+          {
+            "type": "code",
+            "file": "verification/docs/0.1.0/operations/snippets/monitor-local.sh"
+          },
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "Open http://127.0.0.1:3000/d/lavik-overview/lavik-overview for Grafana. Prometheus targets are at http://127.0.0.1:9090/targets. On a remote Linux host, use an SSH tunnel to these loopback ports. The dashboard’s Lavik instance selector filters nodes; allow at least one scrape interval before expecting data.",
+              "zh-CN": "打开 http://127.0.0.1:3000/d/lavik-overview/lavik-overview 访问 Grafana；Prometheus 目标状态位于 http://127.0.0.1:9090/targets。若 Linux 主机位于远程，请用 SSH 隧道访问这些回环端口。仪表盘的 Lavik instance 选择器可筛选节点，至少等待一个抓取周期后再观察数据。"
+            }
+          },
+          {
+            "type": "link",
+            "text": {
+              "en": "Open the Lavik Overview dashboard",
+              "zh-CN": "打开 Lavik Overview 仪表盘"
+            },
+            "href": "http://127.0.0.1:3000/d/lavik-overview/lavik-overview"
+          },
+          {
+            "type": "link",
+            "text": {
+              "en": "Open Prometheus target status",
+              "zh-CN": "查看 Prometheus 目标状态"
+            },
+            "href": "http://127.0.0.1:9090/targets"
+          },
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "Monitor target up/down, command throughput and latency, available storage, replication health, control-session connectivity and lease expirations. Command-duration histograms exclude socket response writes and are not end-to-end application latency. The stack provides collection and dashboards; configure your own alert rules and notification routing.",
+              "zh-CN": "监控目标在线状态、命令吞吐与延迟、可用存储、复制健康、控制会话连接和权限到期。命令耗时直方图不包含套接字响应写出时间，也不等于应用端到端延迟。这套配置提供采集和仪表盘，告警规则及通知路由需按需配置。"
+            }
+          },
+          {
+            "type": "code",
+            "file": "verification/docs/0.1.0/query-1.txt"
+          },
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "To change the node list, edit LAVIK_TARGETS in this directory’s .env and recreate only target-config. Prometheus discovers the file change within 30 seconds. In host-network mode use the lab’s 127.0.0.1 ports; for a separate monitoring host use reachable private node IPs and the original compose.yaml without compose.local.yaml. Never use a container’s own loopback as a remote node address.",
+              "zh-CN": "要修改节点列表，编辑本目录 .env 中的 LAVIK_TARGETS，并仅重建 target-config。Prometheus 会在 30 秒内发现目标文件变化。主机网络模式使用本实验的 127.0.0.1 端口；独立监控主机应使用可达的节点私网 IP，并仅使用原始 compose.yaml，不加载 compose.local.yaml。不要把容器自身的回环地址误当作远程节点地址。"
+            }
+          },
+          {
+            "type": "code",
+            "file": "verification/docs/0.1.0/operations/snippets/monitor-update.sh"
+          },
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "Stop monitoring without deleting history. Do not add -v unless you intentionally want to delete its stored data and generated targets.",
+              "zh-CN": "停止监控时保留历史；除非确实打算删除监控数据和生成的目标文件，否则不要加 -v。"
+            }
+          },
+          {
+            "type": "code",
+            "file": "verification/docs/0.1.0/operations/snippets/monitor-stop.sh"
+          }
+        ]
+      },
+      {
+        "id": "production",
+        "title": {
+          "en": "Place the HA topology on separate hosts",
+          "zh-CN": "将 HA 拓扑部署到独立主机"
+        },
+        "blocks": [
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "Do this as a separate, fresh deployment. Do not rewrite an already-created lab’s manifest to move durable endpoints. Use three stable private addresses and place the primary and follower in separate failure domains. A third Meta voter must survive either Data host failing. Clients must reach every advertised Data endpoint.",
+              "zh-CN": "这应是一套独立的全新部署，不能通过改写已创建实验集群的清单来移动持久端点。使用三个稳定私网地址，将主从节点放在不同故障域；第三个 Meta 投票成员必须能在任一 Data 主机故障时继续存活。客户端必须能够访问所有公告的 Data 端点。"
+            }
+          },
+          {
+            "type": "table",
+            "headers": [
+              {
+                "en": "Host",
+                "zh-CN": "主机"
+              },
+              {
+                "en": "Processes",
+                "zh-CN": "进程"
+              },
+              {
+                "en": "Private endpoints",
+                "zh-CN": "私网端点"
+              }
+            ],
+            "rows": [
+              [
+                {
+                  "en": "A · 10.0.0.11",
+                  "zh-CN": "A · 10.0.0.11"
+                },
+                {
+                  "en": "Meta 1 + initial primary",
+                  "zh-CN": "Meta 1 + 初始主节点"
+                },
+                {
+                  "en": "7100 / 7200 / 7300; 6379 / 9100",
+                  "zh-CN": "7100 / 7200 / 7300；6379 / 9100"
+                }
+              ],
+              [
+                {
+                  "en": "B · 10.0.0.12",
+                  "zh-CN": "B · 10.0.0.12"
+                },
+                {
+                  "en": "Meta 2 + initial follower",
+                  "zh-CN": "Meta 2 + 初始从节点"
+                },
+                {
+                  "en": "7100 / 7200 / 7300; 6379 / 9100",
+                  "zh-CN": "7100 / 7200 / 7300；6379 / 9100"
+                }
+              ],
+              [
+                {
+                  "en": "C · 10.0.0.13",
+                  "zh-CN": "C · 10.0.0.13"
+                },
+                {
+                  "en": "Meta 3",
+                  "zh-CN": "Meta 3"
+                },
+                {
+                  "en": "7100 / 7200 / 7300",
+                  "zh-CN": "7100 / 7200 / 7300"
+                }
+              ]
+            ]
+          },
+          {
+            "type": "list",
+            "items": [
+              {
+                "en": "Give every Meta member the same complete initial manifest, replacing each endpoint with this host map. Keep the 40-character Data IDs and Group membership consistent.",
+                "zh-CN": "向每个 Meta 成员提供相同的完整初始清单，并按主机映射替换端点；40 位 Data ID 与 Group 成员保持一致。"
+              },
+              {
+                "en": "On each host, start only its assigned Meta ID with --addr HOST_IP:7100, --ctl-addr HOST_IP:7200 and --data-control-addr HOST_IP:7300, plus a private persistent directory.",
+                "zh-CN": "每台主机仅启动分配给自己的 Meta ID，使用 --addr HOST_IP:7100、--ctl-addr HOST_IP:7200、--data-control-addr HOST_IP:7300，以及私有持久目录。"
+              },
+              {
+                "en": "On A and B, start the assigned Data ID with --bind HOST_IP --port 6379 --metrics-port 9100 --cluster-announce-ip HOST_IP. Supply all three --cluster-meta-seed addresses on port 7300. Keep each data file private to its process.",
+                "zh-CN": "在 A、B 上启动各自的 Data ID，设置 --bind HOST_IP --port 6379 --metrics-port 9100 --cluster-announce-ip HOST_IP，并传入三个 7300 端口的 --cluster-meta-seed 地址。各进程独占自己的数据文件。"
+              },
+              {
+                "en": "Initialize once with lavik-ctl against a reachable Meta Admin endpoint. Allow Meta-to-Meta Raft, Data-to-Meta control, Data replication, client-to-Data and monitoring-to-metrics traffic on their respective private ports.",
+                "zh-CN": "用 lavik-ctl 通过可达的 Meta 管理端点初始化一次。按用途放行 Meta 间 Raft、Data 到 Meta 控制、Data 复制、客户端到 Data、监控到指标端点的私网流量。"
+              },
+              {
+                "en": "Use mTLS and the 0.1.0 certificate-identity rules for networks you do not fully trust. Meta Raft/Data-control TLS, Admin TLS and Data replication/client TLS have separate settings; an Admin client certificate does not secure all traffic.",
+                "zh-CN": "对于非完全可信网络，使用 mTLS 并遵守 0.1.0 的证书身份规则。Meta Raft / Data 控制、管理端以及 Data 复制 / 客户端 TLS 的设置不同，管理客户端证书不会自动保护所有流量。"
+              },
+              {
+                "en": "Measure application retry behavior, sustained lag, recovery and failure-domain loss yourself before adopting a production availability target. The co-located Docker tests are not a multi-host, TLS or partition certification.",
+                "zh-CN": "采用生产可用性目标前，应自行测量应用重试、持续复制延迟、恢复和故障域丢失行为。同机 Docker 测试不代表多主机、TLS 或网络分区认证。"
+              }
+            ]
+          },
+          {
+            "type": "link",
+            "text": {
+              "en": "Pinned 0.1.0 Meta, TLS and membership runbook",
+              "zh-CN": "固定到 0.1.0 的 Meta、TLS 与成员管理手册"
+            },
+            "href": "https://github.com/eloqdata/lavik/blob/feb61224e414c5653fd09560e20c9d214db1e3ac/docs/operations/meta-control-plane.md"
+          },
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "Configure a cluster-aware application client with both Data endpoints as seeds and let it refresh slot ownership after redirects or connection loss. Meta Admin and Data-control ports are for the control plane, not application Redis connections. Validate the exact client’s reconnect behavior in your own failure drill.",
+              "zh-CN": "应用应使用具备集群感知能力的客户端，以两个 Data 端点作为种子地址，并在重定向或连接断开后刷新槽归属。Meta 管理端口和 Data 控制端口属于控制面，不是应用的 Redis 连接端口。请在自己的故障演练中验证具体客户端的重连行为。"
+            }
+          }
+        ]
+      },
+      {
+        "id": "troubleshooting",
+        "title": {
+          "en": "Troubleshooting and recovery boundaries",
+          "zh-CN": "排障与恢复边界"
+        },
+        "blocks": [
+          {
+            "type": "table",
+            "headers": [
+              {
+                "en": "Symptom",
+                "zh-CN": "现象"
+              },
+              {
+                "en": "Action",
+                "zh-CN": "处理方式"
+              }
+            ],
+            "rows": [
+              [
+                {
+                  "en": "lavik-ctl: not found / unknown start command",
+                  "zh-CN": "找不到 lavik-ctl / start 命令不支持"
+                },
+                {
+                  "en": "Run the package’s ./lavik-ctl or the absolute path. Use the three real binaries; 0.1.0 has no start command.",
+                  "zh-CN": "运行软件包中的 ./lavik-ctl 或绝对路径。使用三个真实二进制；0.1.0 不提供 start 命令。"
+                }
+              ],
+              [
+                {
+                  "en": "Meta socket missing / permission denied",
+                  "zh-CN": "Meta 套接字不存在 / 权限不足"
+                },
+                {
+                  "en": "Check the Meta log and run the CLI as the same service user. Meta state directories must be private; do not loosen socket permissions to bypass authentication.",
+                  "zh-CN": "检查 Meta 日志，并以相同服务用户运行 CLI。Meta 状态目录应保持私有，不应放宽套接字权限来绕过认证。"
+                }
+              ],
+              [
+                {
+                  "en": "LOADING / NOT READY",
+                  "zh-CN": "LOADING / NOT READY"
+                },
+                {
+                  "en": "Inspect cluster_state, blockers, Data sessions and logs. A running process is not enough. Preserve the directories; do not rerun cluster-create.",
+                  "zh-CN": "检查 cluster_state、blockers、Data 会话与日志；进程存活并不充分。保留状态目录，不要重跑 cluster-create。"
+                }
+              ],
+              [
+                {
+                  "en": "Replica missing / WAIT returns 0",
+                  "zh-CN": "副本缺失 / WAIT 返回 0"
+                },
+                {
+                  "en": "Check INFO replication and Meta observations; allow full synchronization and verify the current owner/source domain before maintenance.",
+                  "zh-CN": "检查 INFO replication 与 Meta observations；等待全量同步，并在维护前确认当前主节点和源历史域。"
+                }
+              ],
+              [
+                {
+                  "en": "Grafana has no data",
+                  "zh-CN": "Grafana 没有数据"
+                },
+                {
+                  "en": "Check /metrics, Prometheus /targets, target addresses and firewall rules. The loopback lab needs the Linux host-network override.",
+                  "zh-CN": "检查 /metrics、Prometheus /targets、目标地址与防火墙。回环实验需要 Linux 主机网络覆盖配置。"
+                }
+              ],
+              [
+                {
+                  "en": "io_uring / memlock error",
+                  "zh-CN": "io_uring / memlock 错误"
+                },
+                {
+                  "en": "Check the Linux kernel, container seccomp and locked-memory limits. A Linux package cannot run directly on macOS.",
+                  "zh-CN": "检查 Linux 内核、容器 seccomp 与锁定内存限额。Linux 发布包不能直接在 macOS 上运行。"
+                }
+              ]
+            ]
+          },
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "Never delete Meta state or edit its durable configuration to force recovery. cluster-create is not a repair tool. An uncleanly stopped Data node may need population rebuild or operator recovery; a process restart alone is not proof that redundancy has returned. Preserve logs and follow the pinned recovery runbook when the group remains blocked.",
+              "zh-CN": "不要删除 Meta 状态或改写持久配置来强制恢复；cluster-create 不是修复工具。非正常停止的 Data 节点可能需要重建副本或人工恢复，进程重启不代表冗余已经恢复。若 Group 持续被阻塞，应保留日志并遵循固定版本的恢复手册。"
+            }
+          }
+        ]
+      }
+    ],
+    "sources": [
+      "docs/operations/meta-control-plane.md",
+      "docs/architecture/02-request-serving.md",
+      "docs/operations/metrics.md"
+    ]
+  },
+  {
+    "id": "lavik-admin",
+    "title": {
+      "en": "Lavik Admin",
+      "zh-CN": "Lavik Admin"
+    },
+    "summary": {
+      "en": "Deploy and operate Lavik clusters through the Admin UI bundled with 0.1.0.",
+      "zh-CN": "使用 0.1.0 内置的 Admin 界面部署和管理 Lavik 集群。"
+    },
+    "sources": [
+      "admin/RELEASE-README.md",
+      "docs/operations/lavik-admin.md"
+    ],
+    "sections": [
+      {
+        "id": "launch",
+        "title": {
+          "en": "Start The Included Admin",
+          "zh-CN": "启动内置 Admin"
+        },
+        "blocks": [
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "Download a 0.1.0 release archive from Download and extract it. Run ./lavik-admin from that directory, open http://localhost:4173, and sign in using the access token printed in the terminal. Linux uses the included Node.js runtime; macOS needs Node.js 24.15 or newer and uses SSH to install Linux binaries on hosts. APT packages and server Docker images do not include Admin.",
+              "zh-CN": "从下载页获取并解压 0.1.0 压缩包。在该目录运行 ./lavik-admin，打开 http://localhost:4173，使用终端显示的访问令牌登录。Linux 使用内置 Node.js 运行时；macOS 需 Node.js 24.15 或更高版本，并通过 SSH 在主机上安装 Linux 程序。APT 包和服务端 Docker 镜像不含 Admin。"
+            }
+          },
+          {
+            "type": "link",
+            "text": {
+              "en": "Download Release Archives",
+              "zh-CN": "下载发布压缩包"
+            },
+            "href": "/{locale}/download/"
+          }
+        ]
+      },
+      {
+        "id": "deploy",
+        "title": {
+          "en": "Deploy A Version-Pinned Cluster",
+          "zh-CN": "部署固定版本集群"
+        },
+        "blocks": [
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "Choose Create cluster → Set up machines. Prepare hosts, verify SSH access and private cluster addresses, then select the v0.1.0 GitHub release in Node placement. Keep the selected release explicit: choosing nightly or an architecture-mismatched demo may download a nightly build. Review placement and storage before deploying.",
+              "zh-CN": "选择 Create cluster → Set up machines。准备主机、验证 SSH 和私有集群地址，然后在 Node placement 中选择 v0.1.0 GitHub 发布版。明确固定版本：选择 nightly 或架构不匹配的演示可能下载 nightly。部署前检查节点分布及存储配置。"
+            }
+          },
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "Use Dashboard, Topology and Operations to observe readiness, add replicas and follow operations. Three separate hosts provide a useful starting point for host-level redundancy. Dedicated SPDK deployment requires explicit device selection and its own host prerequisites; do not select a disk containing data you need.",
+              "zh-CN": "使用 Dashboard、Topology 和 Operations 查看就绪状态、添加副本和跟踪操作。三个独立主机可作为主机级冗余的起点。专用 SPDK 部署需要明确选择设备并满足主机要求，不要选择存有需保留数据的磁盘。"
+            }
+          }
+        ]
+      },
+      {
+        "id": "monitoring",
+        "title": {
+          "en": "Monitoring And Workspace",
+          "zh-CN": "监控与工作目录"
+        },
+        "blocks": [
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "Admin can provision Prometheus, Grafana and the Lavik dashboard on prepared monitoring hosts with Docker Engine and Compose v2. Back up the private Admin workspace, including its SSH identity and trust files, separately from each cluster’s Meta and Data files. Stopping Admin does not stop managed clusters.",
+              "zh-CN": "Admin 可在安装 Docker Engine 和 Compose v2 的监控主机上部署 Prometheus、Grafana 及 Lavik 仪表盘。Admin 私有工作目录（含 SSH 身份和信任文件）需单独备份，不能替代各集群 Meta 和 Data 文件备份。停止 Admin 不会停止其管理的集群。"
+            }
+          },
+          {
+            "type": "link",
+            "text": {
+              "en": "Full Admin Operations Guide",
+              "zh-CN": "完整 Admin 运维指南"
+            },
+            "href": "https://github.com/eloqdata/lavik/blob/feb61224e414c5653fd09560e20c9d214db1e3ac/docs/operations/lavik-admin.md"
+          }
+        ]
+      }
+    ]
+  }
+]

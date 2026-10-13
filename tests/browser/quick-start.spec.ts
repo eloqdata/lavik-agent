@@ -4,10 +4,10 @@ test("quick-start package selection produces complete local-executable instructi
   page,
 }) => {
   for (const locale of ["en", "zh-CN"]) {
-    await page.goto(`/${locale}/docs/0.1.0/quick-start/`);
+    await page.goto(`/${locale}/docs/0.1.0-beta.1/quick-start/`);
     await expect(page.locator(".download-box a")).toHaveAttribute(
       "href",
-      `/${locale}/download/`,
+      `/${locale}/download/0.1.0-beta.1/`,
     );
     const choices = page.locator(".quick-start-options select");
     for (const variant of ["minimal", "standard"])
