@@ -1,0 +1,31 @@
+{
+  "review": {
+    "decision": "changes_required",
+    "findings": [
+      {
+        "severity": "blocking",
+        "message": "Live publication verification is not bound to the reviewed artifact. scripts/verify-apt.py skips manifest file checks in live mode, while test-install.sh trusts the public key downloaded from that same endpoint. The resulting receipt copies fingerprint and artifactSha256 from the local manifest without verifying them against deployed bytes. A replacement key and altered packages retaining the expected version/REVISION could therefore pass. Verify the deployed key and repository files against the locked manifest, and install using the reviewed key, before recording live publication success."
+      },
+      {
+        "severity": "note",
+        "message": "The supplied locks and code preserve signing continuity, beta packages and immutable by-hash indexes, enforce Cloudflare size limits, and support stable candidate selection and ordered cluster bootstrap/recovery. Coordinator/native CI receipts report passing AMD64 and ARM64 checks; I ran no tools or tests."
+      },
+      {
+        "severity": "note",
+        "message": "Unchanged beta manual approval is inherited only within the stated scope. This review does not establish beta database/cluster migration, SPDK hardware support, or runtime lifecycle behavior under a booted systemd manager."
+      }
+    ]
+  },
+  "reviewer": {
+    "role": "reviewer",
+    "model": "gpt-6-astra",
+    "provider": "openai",
+    "authentication": "chatgpt",
+    "reasoning": "high",
+    "startedAt": "2026-10-13T08:46:01.799Z",
+    "finishedAt": "2026-10-13T08:48:46.886Z",
+    "promptSha256": "3c4d33b4e02e1838456940f57e5ef3fc756ff8610557c35cc929fc3f5b48e5e6",
+    "outputSha256": "a0d5c2eb22ca1085fc977936e1320cc63b30aa78f85d8fffd2f2b1a8e70735d1"
+  },
+  "correction": "Live checks now hash all deployed files against the locked manifest, install with the pinned reviewed public key and verify its fingerprint, and recheck metadata after installation. Regression tests reject changed keys, indexes, packages and extra bytes."
+}
