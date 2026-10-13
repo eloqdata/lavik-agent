@@ -122,6 +122,19 @@ test("admin activates, tracks groups, generates share links and QR codes, export
   const saved = await (await page.request.get("/api/links")).json();
   expect(saved.links[0].taggedUrl).toMatch(/utm_content=wg0[12]/);
   expect(saved.links[0].url).toMatch(/^https:\/\/lavik.dev\/go\/[a-f0-9]{20}$/);
+  // Exercise the public Worker through a real object binding, which follows redirects by default.
+  const sharePath = new URL(saved.links[0].url).pathname;
+  for (const method of ["GET", "HEAD"]) {
+    const redirect = await request.fetch(sharePath, {
+      method,
+      maxRedirects: 0,
+    });
+    expect(redirect.status()).toBe(302);
+    expect(redirect.headers().location).toBe(saved.links[0].taggedUrl);
+    expect(redirect.headers()["cache-control"]).toBe("no-store");
+    expect(await redirect.body()).toHaveLength(0);
+  }
+  expect((await request.get("/api/report")).status()).toBe(401);
   await page
     .locator("#link-table")
     .getByRole("button", { name: "QR", exact: true })

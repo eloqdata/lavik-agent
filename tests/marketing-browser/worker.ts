@@ -1,5 +1,6 @@
 // Local integration harness only. This file is never a production Worker entrypoint.
 import consoleWorker from "../../apps/marketing/worker";
+import siteWorker from "../../apps/worker/index";
 import { AnalyticsStore as BaseStore } from "../../packages/marketing/analytics";
 import { PlacementStore } from "../../packages/marketing/placements";
 export class AnalyticsStore extends BaseStore {
@@ -33,6 +34,14 @@ export default {
     env: Parameters<typeof consoleWorker.fetch>[1],
   ) {
     const url = new URL(request.url);
+    if (
+      url.origin === "http://127.0.0.1:4175" &&
+      url.pathname.startsWith("/go/")
+    )
+      return siteWorker.fetch(request, {
+        ...env,
+        ADMIN_STORE: env.ANALYTICS_STORE,
+      });
     if (
       url.origin === "http://127.0.0.1:4175" &&
       url.pathname.startsWith("/test/") &&

@@ -85,6 +85,8 @@ export default {
       return store.fetch(
         new Request(`https://internal/share/${analyticsPath.slice(4)}`, {
           method: request.method,
+          // Return the redirect to the browser; following it on the object binding reads its report instead.
+          redirect: "manual",
         }),
       );
     }
