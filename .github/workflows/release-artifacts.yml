@@ -13,6 +13,40 @@ on:
 permissions:
   contents: read
 jobs:
+  published:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: ubuntu-24.04
+            arch: amd64
+          - runner: ubuntu-24.04-arm
+            arch: arm64
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 15
+    env:
+      SINGLE: eloqdata/lavik@sha256:b9e84e08de65f7a73543ead849ada46e8f2d3860075d71c614a49bc3e51967ba
+      CLUSTER: eloqdata/lavik@sha256:f78849ba3ba4253f7cd93567054a138512763a380a35da2de9bc712914ab3cf2
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - run: sudo sysctl -w kernel.io_uring_disabled=0
+      - run: docker pull "$SINGLE" && docker pull "$CLUSTER"
+      - name: Verify the exact published images on the native architecture
+        run: |
+          mkdir -p .cache/published-verification
+          set -o pipefail
+          python3 packaging/docker/0.1.0/smoke-test.py \
+            --platform linux/${{ matrix.arch }} --single-image "$SINGLE" --cluster-image "$CLUSTER" \
+            --receipt .cache/published-verification/docker-${{ matrix.arch }}.json \
+            | tee .cache/published-verification/docker-${{ matrix.arch }}.log
+      - uses: actions/upload-artifact@v6
+        if: always()
+        with:
+          name: published-verification-${{ matrix.arch }}
+          path: .cache/published-verification
+          include-hidden-files: true
   native:
     strategy:
       fail-fast: false

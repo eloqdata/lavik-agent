@@ -4,6 +4,8 @@
 """Exercise locally built images with private volumes and random host ports."""
 
 import argparse
+import hashlib
+from datetime import datetime, timezone
 import json
 import os
 from pathlib import Path
@@ -68,13 +70,21 @@ def main():
     """Verify persistence, native replication, controlled failover, and recovery."""
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--platform", choices=("linux/arm64", "linux/amd64"))
+    parser.add_argument("--single-image", default=SINGLE)
+    parser.add_argument("--cluster-image", default=CLUSTER)
+    parser.add_argument("--receipt", type=Path)
     args = parser.parse_args()
+    single_image, cluster_image = args.single_image, args.cluster_image
     if args.platform:
         os.environ["DOCKER_DEFAULT_PLATFORM"] = args.platform
     os.environ["LAVIK_PRIMARY_PORT"] = "0"
     os.environ["LAVIK_FOLLOWER_PORT"] = "0"
     os.environ["LAVIK_DATA_SIZE"] = "1G"
     os.environ["LAVIK_THREADS"] = "2"
+    os.environ["LAVIK_DOCKER_IMAGE"] = cluster_image
+    inspected_files = [p for p in Path(__file__).parent.iterdir() if p.is_file()]
+    file_hashes = {p.name: hashlib.sha256(p.read_bytes()).hexdigest() for p in inspected_files}
+    identities = {}
     project = "lavik-stable-smoke-" + uuid.uuid4().hex[:10]
     standalone = project + "-single"
     volume = standalone + "-data"
@@ -106,7 +116,7 @@ def main():
             f"{volume}:/data",
             "-e",
             f"LAVIK_DATA_SIZE={size}",
-            SINGLE,
+            single_image,
         )
         endpoint = port(standalone)
         wait_for("standalone PING", lambda: redis(endpoint, ["PING"]) == "PONG")
@@ -144,7 +154,11 @@ def main():
         return True
 
     try:
-        for image in (SINGLE, CLUSTER):
+        for image in (single_image, cluster_image):
+            identity = json.loads(run("docker", "image", "inspect", image))[0]
+            identities[image] = {"configDigest": identity["Id"], "architecture": identity["Architecture"], "os": identity["Os"]}
+            if args.platform and f'{identity["Os"]}/{identity["Architecture"]}' != args.platform:
+                raise RuntimeError("Test image architecture differs from requested native platform")
             version = run("docker", "run", "--rm", image, "lavik", "--version")
             if version != "lavik 0.1.0":
                 raise RuntimeError(f"Unexpected release version: {version}")
@@ -242,6 +256,14 @@ def main():
             flush=True,
         )
         print("All Docker release smoke checks passed.", flush=True)
+        for image, identity in identities.items():
+            if json.loads(run("docker", "image", "inspect", image))[0]["Id"] != identity["configDigest"]:
+                raise RuntimeError("Image changed during smoke verification")
+        if file_hashes != {p.name: hashlib.sha256(p.read_bytes()).hexdigest() for p in inspected_files}:
+            raise RuntimeError("Packaging inputs changed during smoke verification")
+        if args.receipt:
+            args.receipt.parent.mkdir(parents=True, exist_ok=True)
+            args.receipt.write_text(json.dumps({"status": "passed", "checkedAt": datetime.now(timezone.utc).isoformat(), "platform": args.platform, "images": identities, "fileHashes": file_hashes, "scope": "Native standalone PING/write/restart/allocation; cluster bootstrap, replication, controlled failover and full recovery."}, indent=2) + "\n")
     except Exception:
         print(
             run("docker", "logs", "--tail", "80", standalone, check=False), flush=True
