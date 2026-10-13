@@ -8,8 +8,6 @@ import shutil
 import subprocess
 import tarfile
 
-VERSION = '0.1.0~beta.1-1'
-REVISION = '3955b98d43b312324aa8d52775df52cfb111c0d0'
 WORK = Path('/work')
 INPUTS = Path('/inputs')
 DOWNLOADS = Path('/downloads')
@@ -21,6 +19,15 @@ def run(*argv, **kw):
 
 def main():
     lock = json.loads(Path('/release-lock.json').read_text())
+    version = lock['debianVersion']
+    tag = lock['tag_name']
+    release_version = tag.removeprefix('v')
+    revision = lock['commit']
+    previous = json.loads((INPUTS / 'previous.json').read_text())
+    prior_public = Path('/previous')
+    for f in previous['files']:
+        data = (prior_public / f['path']).read_bytes()
+        assert hashlib.sha256(data).hexdigest() == f['sha256'] and len(data) == f['size']
     out = WORK / 'debs'
     out.mkdir(exist_ok=True)
     for arch, upstream_arch in [('amd64', 'x86_64'), ('arm64', 'aarch64')]:
@@ -28,7 +35,7 @@ def main():
             package = 'lavik' if variant == 'minimal' else 'lavik-standard'
             other = 'lavik-standard' if variant == 'minimal' else 'lavik'
             suffix = '-minimal' if variant == 'minimal' else ''
-            name = f'lavik-v0.1.0-beta.1-linux-{upstream_arch}{suffix}.tar.gz'
+            name = f'lavik-{tag}-linux-{upstream_arch}{suffix}.tar.gz'
             asset = next(a for a in lock['assets'] if a['name'] == name)
             archive = DOWNLOADS / name
             if not archive.exists():
@@ -40,15 +47,16 @@ def main():
             with tarfile.open(archive) as tf:
                 tf.extractall(unpack, filter='data')
             release = next(unpack.iterdir())
-            assert (release / 'REVISION').read_text().strip() == REVISION
-            assert (release / 'VERSION').read_text().strip() == 'v0.1.0-beta.1'
+            assert (release / 'REVISION').read_text().strip() == revision
+            assert (release / 'VERSION').read_text().strip() == tag
             for directory in ['usr/bin', 'usr/lib/lavik', 'usr/lib/systemd/system', 'etc/default', f'usr/share/doc/{package}', 'DEBIAN']:
                 (root / directory).mkdir(parents=True)
             for metadata in ['VERSION', 'REVISION']:
                 shutil.copy2(release / metadata, root / 'usr/lib/lavik' / metadata)
             for binary in ['lavik', 'lavik-meta', 'lavik-ctl']:
                 shutil.move(release / binary, root / 'usr/bin' / binary)
-            for item in release.iterdir():
+            # Server packages exclude the separately distributed Admin/Node runtime.
+            for item in [release / name for name in ['LICENSE', 'THIRD_PARTY_NOTICES', 'VERSION', 'REVISION']]:
                 target = root / f'usr/share/doc/{package}' / item.name
                 if item.is_dir(): shutil.copytree(item, target)
                 else: shutil.copy2(item, target)
@@ -59,7 +67,7 @@ def main():
             deps = 'libc6 (>= 2.39), libstdc++6 (>= 13.1), libgcc-s1, adduser, init-system-helpers, util-linux'
             if variant == 'standard': deps += ', libnuma1, libuuid1'
             (root / 'DEBIAN/control').write_text(f'''Package: {package}
-Version: {VERSION}
+Version: {version}
 Architecture: {arch}
 Maintainer: Lavik Project <packages@lavik.dev>
 Section: database
@@ -68,12 +76,12 @@ Depends: {deps}
 Conflicts: {other}
 Replaces: {other}
 Homepage: https://lavik.dev
-Description: Lavik key-value store ({variant} beta.1 release)
- Official beta.1 binaries, Meta and lavik-ctl, with a standalone systemd unit.
+Description: Lavik key-value store ({variant} {release_version} release)
+ Official {release_version} binaries, Meta and lavik-ctl, with a standalone systemd unit.
  Requires Linux 6.1+ with io_uring enabled and Ubuntu 24.04-compatible glibc.
 ''')
             (root / 'DEBIAN/conffiles').write_text('/etc/default/lavik\n')
-            run('dpkg-deb', '--root-owner-group', '-Zxz', '--build', str(root), str(out / f'{package}_{VERSION}_{arch}.deb'))
+            run('dpkg-deb', '--root-owner-group', '-Zxz', '--build', str(root), str(out / f'{package}_{version}_{arch}.deb'))
     keyhome = Path(os.environ['GNUPGHOME'])
     keyhome.mkdir(mode=0o700, exist_ok=True)
     os.chmod(keyhome, 0o700)
@@ -95,25 +103,40 @@ Description: Lavik key-value store ({variant} beta.1 release)
         elif item.is_file() and not item.name.endswith('.lock'):
             shutil.copy2(item, persistent / item.name)
     fingerprint = next(l.split(':')[9] for l in keys.splitlines() if l.startswith('fpr:'))
+    assert fingerprint == previous['fingerprint'], 'Refusing to rotate the production signing key'
     config = WORK / 'aptly.json'
     config.write_text(json.dumps({'rootDir': str(WORK / 'aptly'), 'architectures': ['amd64','arm64']}))
     aptly = ['aptly', '-config='+str(config)]
-    run(*aptly, 'repo', 'create', '-distribution=noble', '-component=main', 'lavik-beta1')
-    run(*aptly, 'repo', 'add', 'lavik-beta1', str(out))
-    run(*aptly, 'snapshot', 'create', 'lavik-beta1-1', 'from', 'repo', 'lavik-beta1')
-    run(*aptly, 'publish', 'snapshot', '-batch', '-gpg-key='+fingerprint, '-acquire-by-hash', '-origin=Lavik', '-label=Lavik', 'lavik-beta1-1')
+    run(*aptly, 'repo', 'create', '-distribution=noble', '-component=main', 'lavik')
+    run(*aptly, 'repo', 'add', 'lavik', str(prior_public / 'pool'))
+    run(*aptly, 'repo', 'add', 'lavik', str(out))
+    run(*aptly, 'snapshot', 'create', 'lavik-' + version, 'from', 'repo', 'lavik')
+    run(*aptly, 'publish', 'snapshot', '-batch', '-gpg-key='+fingerprint, '-acquire-by-hash', '-origin=Lavik', '-label=Lavik', 'lavik-' + version)
     public = WORK / 'aptly/public'
     with (public / 'lavik-archive-keyring.asc').open('w') as f:
         subprocess.run(['gpg','--batch','--armor','--export',fingerprint],stdout=f,check=True)
+    # Keep old immutable packages and by-hash indexes for cached Release metadata.
+    for f in previous['files']:
+        name = f['path']
+        if name.startswith('pool/') or '/by-hash/' in name:
+            target = public / name
+            if target.exists():
+                # Aptly also writes mutable aliases inside by-hash directories.
+                if name.startswith('pool/') or len(target.name) in (32, 40, 64, 128):
+                    assert hashlib.sha256(target.read_bytes()).hexdigest() == f['sha256'], name
+            else:
+                target.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copyfile(prior_public / name, target)
+    assert (public / 'lavik-archive-keyring.asc').read_bytes() == (prior_public / 'lavik-archive-keyring.asc').read_bytes()
     files = []
     for p in sorted(public.rglob('*')):
         if p.is_file():
             assert p.stat().st_size < 25*1024*1024, f'Cloudflare static asset too large: {p}'
             files.append(dict(path=str(p.relative_to(public)), sha256=hashlib.sha256(p.read_bytes()).hexdigest(), size=p.stat().st_size))
-    manifest = dict(version=VERSION,release='0.1.0-beta.1',sourceCommit=REVISION,distribution='noble',architectures=['amd64','arm64'],fingerprint=fingerprint,files=files)
+    manifest = dict(version=version,release=release_version,sourceCommit=revision,distribution='noble',architectures=['amd64','arm64'],fingerprint=fingerprint,files=files)
     (WORK / 'manifest.json').write_text(json.dumps(manifest,indent=2)+'\n')
     # Only public assets are archived. No signing key, private aptly database or build tree.
-    with tarfile.open(WORK / 'lavik-apt-0.1.0-beta.1-1.tar.gz','w:gz',dereference=True) as tf:
+    with tarfile.open(WORK / f'lavik-apt-{version}.tar.gz','w:gz',dereference=True) as tf:
         for item in public.iterdir(): tf.add(item,arcname=item.name)
     print(json.dumps({'status':'built','fingerprint':fingerprint,'files':len(files),'aptly':run('aptly','version')}))
 

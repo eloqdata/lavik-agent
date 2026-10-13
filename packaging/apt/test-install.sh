@@ -1,6 +1,7 @@
 #!/bin/bash
 # Test inside a disposable Ubuntu 24.04 container. No host service or data mounts.
 set -euo pipefail
+trap 'printf "APT check failed at line %s: %s\n" "$LINENO" "$BASH_COMMAND" >&2' ERR
 export DEBIAN_FRONTEND=noninteractive
 apt-get update -qq
 apt-get install -y --no-install-recommends ca-certificates curl gnupg redis-tools systemd procps >/dev/null
@@ -21,11 +22,14 @@ Signed-By: /etc/apt/keyrings/lavik.asc
 SOURCE
 # No trusted=yes or unsigned fallback: APT must validate the real repository.
 apt-get update -qq
+# Both versions remain installable; unversioned installation selects stable.
 for package in lavik lavik-standard; do
-  apt-get install -y "$package=0.1.0~beta.1-1" >/dev/null
-  test "$(dpkg-query -W -f='${Version}' "$package")" = '0.1.0~beta.1-1'
-  test "$(lavik --version)" = 'lavik 0.1.0-beta.1'
-  test "$(cat /usr/lib/lavik/REVISION)" = '3955b98d43b312324aa8d52775df52cfb111c0d0'
+  apt-cache policy "$package" | grep -F 'Candidate: 0.1.0-1' >/dev/null
+  apt-cache madison "$package" | grep -F '0.1.0~beta.1-1' >/dev/null
+  apt-get install -y "$package" >/dev/null
+  test "$(dpkg-query -W -f='${Version}' "$package")" = '0.1.0-1'
+  test "$(lavik --version)" = 'lavik 0.1.0'
+  test "$(cat /usr/lib/lavik/REVISION)" = 'feb61224e414c5653fd09560e20c9d214db1e3ac'
   command -v lavik-meta
   command -v lavik-ctl
   cmp /templates/start /usr/lib/lavik/start
@@ -72,14 +76,14 @@ for package in lavik lavik-standard; do
   trap - EXIT
   # Debian conffile edits survive a reinstall.
   printf '\n# local customization\n' >> /etc/default/lavik
-  apt-get install --reinstall -y "$package=0.1.0~beta.1-1" >/dev/null
+  apt-get install --reinstall -y "$package=0.1.0-1" >/dev/null
   grep -q 'local customization' /etc/default/lavik
   apt-get purge -y "$package" >/dev/null
   test -s /var/lib/lavik/data
   test ! -e /usr/bin/lavik
   test ! -L /etc/systemd/system/multi-user.target.wants/lavik.service
   # Reinstallation still recovers the old database.
-  apt-get install -y "$package=0.1.0~beta.1-1" >/dev/null
+  apt-get install -y "$package=0.1.0-1" >/dev/null
   runuser -u lavik -- /usr/lib/lavik/start > /tmp/lavik.log 2>&1 &
   runner=$!
   trap 'kill -TERM "$runner" 2>/dev/null || true; wait "$runner" || true' EXIT

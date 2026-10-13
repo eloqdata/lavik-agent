@@ -2,15 +2,61 @@
 
 The public endpoint is `https://lavik.dev/apt/`, distribution `noble`, component
 `main`, architectures `amd64` and `arm64`. `lavik` packages Minimal; the mutually
-exclusive `lavik-standard` packages Standard. Debian version `0.1.0~beta.1-1`
-represents upstream `0.1.0-beta.1` plus packaging revision 1. A final `0.1.0-1`
-sorts above this prerelease. Only Ubuntu 24.04 is supported initially.
+exclusive `lavik-standard` packages Standard. The default candidate is stable
+`0.1.0-1`, built from upstream `v0.1.0`. The beta package `0.1.0~beta.1-1` is
+retained so the existing beta manual's version-pinned commands continue to work.
+Only Ubuntu 24.04 is supported. Lavik Admin and its Node runtime remain in the
+upstream release tarballs; the APT server packages contain Lavik, Meta and lavik-ctl.
 
 `packaging/apt/build.py` checks the upstream download SHA-256, VERSION and
 REVISION before packaging all three binaries and their release license notices.
 It uses aptly's local repo → immutable snapshot → signed filesystem publication,
 with by-hash indexes. Clients use a dedicated `Signed-By` key, never `apt-key`,
 `trusted=yes` or an unsigned repository.
+
+## Publishing a new release
+
+`lavik-archive-keyring.asc` is the **public signing key**, not an upload endpoint.
+It is exported by the package build and staged with the complete signed APT
+repository. Cloudflare receives it through the normal GitHub website deployment.
+The private signing key stays on the release machine.
+
+For the stable 0.1.0 release:
+
+```sh
+LAVIK_APT_BUILD_DIR=.cache/apt-build-0.1.0-1 sh scripts/build-apt.sh
+```
+
+The release inputs are `packaging/apt/release.json` (upstream tag, commit,
+checksums and Debian version) and `packaging/apt/previous.json` (the previous
+public repository). The builder restores the previous artifact, verifies every
+file, preserves old packages and immutable by-hash indexes, and signs a new
+aptly snapshot with the original key. A fresh build directory is mandatory.
+
+After installation checks pass, upload only the public archive to a new GitHub
+release in `eloqdata/lavik-agent`, without `--clobber`. Copy the generated manifest
+to `packages/apt/manifest.json` and add the archive URL and SHA-256 in `artifact`.
+Refresh runtime evidence and complete independent packaging review before
+pushing the website changes to `main`. GitHub stages the locked archive,
+checks signed installation on native AMD64, builds the site, and deploys it to
+Cloudflare. The separate release-artifact workflow checks native ARM64 as well.
+Verify the deployed repository with `python3 scripts/verify-apt.py live
+.cache/apt-live.json`.
+
+For an existing configured Ubuntu host, a fresh stable installation is:
+
+```sh
+sudo apt-get update
+sudo apt-get install lavik
+lavik --version
+sudo systemctl enable --now lavik
+```
+
+Use `lavik-standard` instead for the Standard binary. Both packages start with
+io_uring; installing Standard does not configure SPDK hardware. The public key
+URL and source configuration remain unchanged. Stable cluster deployment and
+migration from beta require the stable CLI and data-format guidance; changing
+an image or package version is not a certified beta cluster migration.
 
 ## Signing and release artifacts
 
@@ -25,10 +71,10 @@ Record a renewed key/signature snapshot before key expiration. Keep the old
 public key available while clients transition. Key generation must never
 silently replace a lost production key.
 
-The public-only archive is `lavik-apt-0.1.0-beta.1-1.tar.gz`. It contains the
+The public-only archive is `lavik-apt-0.1.0-1.tar.gz`. It contains the
 aptly publication tree and armored public key, not the private aptly database
 or signing directory. It is stored in this repository's GitHub release
-`apt-v0.1.0-beta.1-1`. The exact archive SHA-256 and every asset's SHA-256/size
+`apt-v0.1.0-1`. The exact archive SHA-256 and every asset's SHA-256/size
 are locked in `packages/apt/manifest.json`; public-key bytes are also tracked.
 Do not overwrite published packages at an existing version or clobber this
 release asset. Increment the Debian packaging revision for packaging fixes.

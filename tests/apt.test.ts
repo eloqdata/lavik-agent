@@ -6,7 +6,7 @@ test("APT publication requires signed package lifecycle evidence and current inp
   assert.deepEqual(aptEvidenceErrors(), []);
   assert.equal(
     aptManifest.files.filter((f: any) => f.path.endsWith(".deb")).length,
-    4,
+    8,
   );
   for (const mutate of [
     (r: any) => r.checks.pop(),

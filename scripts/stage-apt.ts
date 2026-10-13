@@ -3,8 +3,12 @@ import path from "node:path";
 import { createHash } from "node:crypto";
 import { execFileSync } from "node:child_process";
 import os from "node:os";
+const previous = process.argv[2] === "--previous";
 const manifest = JSON.parse(
-  fs.readFileSync("packages/apt/manifest.json", "utf8"),
+  fs.readFileSync(
+    previous ? "packaging/apt/previous.json" : "packages/apt/manifest.json",
+    "utf8",
+  ),
 );
 const sha = (file: string) =>
   createHash("sha256").update(fs.readFileSync(file)).digest("hex");
@@ -60,9 +64,15 @@ try {
     )
       throw new Error(`APT file mismatch: ${file.path}`);
   }
-  const output = process.argv[2] ?? "apps/web/out/apt";
+  const output = previous
+    ? ".cache/apt-previous"
+    : (process.argv[2] ?? "apps/web/out/apt");
   // Never allow this build helper to replace arbitrary directories.
-  if (!["apps/web/out/apt", ".cache/apt-staged"].includes(output))
+  if (
+    !["apps/web/out/apt", ".cache/apt-staged", ".cache/apt-previous"].includes(
+      output,
+    )
+  )
     throw new Error("Unsupported APT output directory");
   fs.rmSync(output, { recursive: true, force: true });
   fs.cpSync(scratch, output, { recursive: true });
