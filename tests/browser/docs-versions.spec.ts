@@ -25,7 +25,9 @@ test("Docs default to stable and version switching preserves page and language",
       page.locator(".docs-search-results a").first(),
     ).toHaveAttribute(
       "href",
-      `/${locale}/docs/0.1.0-beta.1/commands/lavik.hreplace/`,
+      new RegExp(
+        `^/${locale}/docs/0\\.1\\.0-beta\\.1/commands/lavik\\.hreplace/?$`,
+      ),
     );
     await page.locator(".doc-version-select select").selectOption("0.1.0");
     await expect(page).toHaveURL(

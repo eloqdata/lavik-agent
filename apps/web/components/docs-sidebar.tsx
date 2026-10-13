@@ -27,7 +27,9 @@ export function DocsSidebar({
   route: string;
 }) {
   const zh = locale === "zh-CN";
-  const version = docVersionForRoute(route) ?? defaultDocVersion;
+  const version =
+    docVersionForRoute(route) ??
+    (route === "releases/0-1-0-beta-1" ? "0.1.0-beta.1" : defaultDocVersion);
   const stable = version === "0.1.0";
   const root = `/${locale}/docs/${version}`;
   const groups = [
