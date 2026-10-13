@@ -1,0 +1,27 @@
+[sync_reader]
+# One source seed; every discovered primary must also be reachable.
+address = "127.0.0.1:7000"
+username = ""
+password = "replace-source-password"
+cluster = true
+prefer_replica = false
+tls = false
+sync_rdb = true
+sync_aof = true
+
+[redis_writer]
+# One target seed; every advertised Lavik endpoint must be reachable.
+address = "127.0.0.1:6371"
+username = ""
+password = "replace-target-password"
+cluster = true
+tls = false
+off_reply = false
+
+[advanced]
+dir = "/var/tmp/lavik-import-01/spool"
+log_file = "/var/tmp/lavik-import-01/shake.log"
+status_port = 18080
+log_interval = 1
+rdb_restore_command_behavior = "panic"
+target_redis_proto_max_bulk_len = 512000000

@@ -13,6 +13,7 @@ import {
   stableCases,
   stableGuideRoutes,
   stableManualRoutes,
+  stableGuides,
 } from "../packages/docs/stable.ts";
 import {
   release,
@@ -27,6 +28,46 @@ import {
   ownerAcceptsManualChanges,
 } from "../packages/docs/authorization.ts";
 import { pageMetadata } from "../packages/seo/site.ts";
+import { userGuideRoutes } from "../packages/docs/repository.ts";
+
+test("stable migration has one canonical guide with both source configurations; beta keeps its routes", () => {
+  assert.deepEqual(
+    stableGuideRoutes().filter((route) => route.includes("migrate-")),
+    ["docs/0.1.0/migrate-redis"],
+  );
+  assert.ok(
+    userGuideRoutes().includes("docs/0.1.0-beta.1/migrate-redis-cluster"),
+  );
+  const guide = stableGuides().find((guide) => guide.id === "migrate-redis")!;
+  for (const locale of ["en", "zh-CN"] as const)
+    assert.match(guide.summary[locale], /RedisShake/);
+  assert.ok(guide.sections.some((section) => section.id === "redis-cluster"));
+  const files = guide.sections.flatMap((section) =>
+    section.blocks.flatMap((block) =>
+      block.type === "code" ? [block.file] : [],
+    ),
+  );
+  for (const name of [
+    "redis-single.toml",
+    "redis-cluster.toml",
+    "install.sh",
+    "start.sh",
+    "status.sh",
+    "source-tail.sh",
+  ])
+    assert.ok(files.includes(`verification/docs/0.1.0/migration/${name}`));
+  const redirects = fs.readFileSync("apps/web/public/_redirects", "utf8");
+  for (const locale of ["en", "zh-CN"])
+    for (const slash of ["", "/"])
+      assert.ok(
+        redirects
+          .split("\n")
+          .includes(
+            `/${locale}/docs/0.1.0/migrate-redis-cluster${slash} /${locale}/docs/0.1.0/migrate-redis/ 301`,
+          ),
+      );
+  assert.ok(!redirects.includes("0.1.0-beta.1/migrate-redis"));
+});
 
 test("stable docs/download are defaults; historical release and benchmark locks remain beta", () => {
   assert.equal(defaultDocVersion, "0.1.0");

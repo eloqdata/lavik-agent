@@ -257,7 +257,7 @@ export function HomepageStory({
                 "回放实际键值大小、命令组合、并发、过期和持久性设置。在持续负载、复制与故障切换下测量尾延迟，再决定最终节点数。",
               )}
             </p>
-            <Link href={`${docs}/migrate-redis-cluster/`}>
+            <Link href={`${docs}/migrate-redis/#redis-cluster`}>
               {t(
                 "Plan a Redis Cluster evaluation",
                 "规划 Redis Cluster 迁移评估",

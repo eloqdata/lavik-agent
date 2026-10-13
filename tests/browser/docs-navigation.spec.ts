@@ -1,4 +1,5 @@
 import { test, expect } from "@playwright/test";
+import { stableGuideRoutes } from "../../packages/docs/stable";
 const names = [
   "Get Started",
   "Build With Lavik",
@@ -58,7 +59,13 @@ test("user documentation exposes complete guides without internal audit sections
   request,
 }) => {
   const manifest = await (await request.get("/manual-manifest.json")).json();
-  expect(manifest.userGuides).toHaveLength(20);
+  expect(manifest.userGuides).toEqual(
+    ["en", "zh-CN"].flatMap((locale) =>
+      stableGuideRoutes()
+        .filter((route) => !route.includes("/lavik-ctl-"))
+        .map((route) => `/${locale}/${route}/`),
+    ),
+  );
   for (const locale of ["en", "zh-CN"])
     for (const route of [
       "install-packages",

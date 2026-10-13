@@ -9,10 +9,7 @@
       "en": "Redis-compatible development, with value capacity on NVMe SSD.",
       "zh-CN": "兼容 Redis 的开发体验，将值容量放在 NVMe SSD 上。"
     },
-    "sources": [
-      "README.md",
-      "docs/architecture/04-storage-and-recovery.md"
-    ],
+    "sources": ["README.md", "docs/architecture/04-storage-and-recovery.md"],
     "sections": [
       {
         "id": "design",
@@ -187,9 +184,7 @@
       "en": "Install the signed 0.1.0 APT package on Ubuntu 24.04 and manage it with systemd.",
       "zh-CN": "在 Ubuntu 24.04 上安装签名的 0.1.0 APT 包，并用 systemd 管理。"
     },
-    "sources": [
-      "README.md"
-    ],
+    "sources": ["README.md"],
     "sections": [
       {
         "id": "install",
@@ -291,9 +286,7 @@
       "en": "Run the official 0.1.0 image with a persistent volume and a loopback-only client port.",
       "zh-CN": "使用官方 0.1.0 镜像、持久卷及仅回环开放的客户端端口。"
     },
-    "sources": [
-      "README.md"
-    ],
+    "sources": ["README.md"],
     "sections": [
       {
         "id": "requirements",
@@ -582,198 +575,590 @@
       "zh-CN": "从 Redis 迁移"
     },
     "summary": {
-      "en": "Rehearse baseline import, incremental catch-up and application cutover into a fresh Lavik deployment.",
-      "zh-CN": "在全新 Lavik 部署上演练全量导入、增量追平与应用切换。"
+      "en": "Migrate Redis or Redis Cluster to Lavik 0.1.0 with RedisShake: copy the initial dataset, follow live writes, verify catch-up and replicas, then switch your application.",
+      "zh-CN": "使用 RedisShake 将 Redis 或 Redis Cluster 迁移至 Lavik 0.1.0：复制初始数据、同步增量写入、验证追平及副本，最后切换应用。"
     },
     "sources": [
       "docs/operations/redis-import.md",
-      "docs/operations/redis-export.md"
+      "docs/operations/redis-export.md",
+      "docs/operations/tls-and-auth.md",
+      "scripts/install_test_redisshake.sh"
     ],
     "sections": [
       {
         "id": "plan",
         "title": {
-          "en": "Choose The Migration Path",
-          "zh-CN": "选择迁移路径"
+          "en": "Migration With RedisShake",
+          "zh-CN": "使用 RedisShake 迁移"
         },
         "blocks": [
           {
             "type": "paragraph",
             "text": {
-              "en": "For a Meta-managed target, create an empty Single or Cluster deployment with replicas first, then import with RedisShake v4.6.2. Upstream acceptance uses Redis 7.2.14 sources. Source and target node counts need not match. Direct REPLICAOF from Redis is a separate non-Meta import path; a populated standalone import node cannot simply become a managed target.",
-              "zh-CN": "对于 Meta 托管目标，应先创建带副本的空 Single 或 Cluster 部署，再使用 RedisShake v4.6.2 导入。上游验收使用 Redis 7.2.14 源。源与目标节点数量无需相同。直接 REPLICAOF 是另一种非 Meta 导入路径；已导入数据的独立节点不能直接转为托管目标。"
+              "en": "Use RedisShake v4.6.2 with `sync_reader` and `redis_writer`. It reads an initial RDB snapshot from Redis, restores it into Lavik, and continues forwarding the source replication stream. Your application can keep writing to Redis during import; reserve a write pause for final verification and cutover. This page covers both Redis and Redis Cluster sources.",
+              "zh-CN": "使用 RedisShake v4.6.2 的 `sync_reader` 与 `redis_writer`。工具读取 Redis 的初始 RDB 快照，将其恢复到 Lavik，然后持续转发源复制流。导入期间应用可继续写入 Redis；最终验证和切换需要预留暂停写入的窗口。本页同时涵盖 Redis 与 Redis Cluster 源。"
             }
           },
           {
             "type": "paragraph",
             "text": {
-              "en": "Inventory every source primary, hash slot, database, data type, function library and advertised endpoint. Set the reader’s cluster option for a Cluster source and the writer’s option for the chosen target. Single supports DB0–15; Cluster supports only DB0 and same-slot multi-key requests.",
-              "zh-CN": "盘点每个源主节点、哈希槽、数据库、数据类型、Function 库及通告端点。Cluster 源需要相应 reader cluster 选项，writer 选项应匹配目标。Single 支持 DB0–15；Cluster 仅支持 DB0 和多键同槽请求。"
+              "en": "This procedure targets a fresh Meta-managed Lavik Single or Cluster deployment. Create the target and its replicas before importing; RedisShake writes through the current Group Owners and Lavik replicates those writes. Direct `REPLICAOF` import into a non-Meta node is a different deployment path.",
+              "zh-CN": "本流程面向全新的 Meta 托管 Lavik Single 或 Cluster 部署。导入前创建目标及其副本；RedisShake 向当前 Group Owner 写入，再由 Lavik 复制这些写入。通过 `REPLICAOF` 导入非 Meta 节点属于另一种部署路径。"
+            }
+          },
+          {
+            "type": "table",
+            "headers": [
+              {
+                "en": "Source → Target",
+                "zh-CN": "源 → 目标"
+              },
+              {
+                "en": "Reader `cluster`",
+                "zh-CN": "Reader `cluster`"
+              },
+              {
+                "en": "Writer `cluster`",
+                "zh-CN": "Writer `cluster`"
+              },
+              {
+                "en": "Database Scope",
+                "zh-CN": "数据库范围"
+              }
+            ],
+            "rows": [
+              [
+                {
+                  "en": "Redis → Lavik Single",
+                  "zh-CN": "Redis → Lavik Single"
+                },
+                {
+                  "en": "`false`",
+                  "zh-CN": "`false`"
+                },
+                {
+                  "en": "`false`",
+                  "zh-CN": "`false`"
+                },
+                {
+                  "en": "DB0–15",
+                  "zh-CN": "DB0–15"
+                }
+              ],
+              [
+                {
+                  "en": "Redis → Lavik Cluster",
+                  "zh-CN": "Redis → Lavik Cluster"
+                },
+                {
+                  "en": "`false`",
+                  "zh-CN": "`false`"
+                },
+                {
+                  "en": "`true`",
+                  "zh-CN": "`true`"
+                },
+                {
+                  "en": "DB0; same-slot multi-key operations",
+                  "zh-CN": "DB0；多键操作必须同槽"
+                }
+              ],
+              [
+                {
+                  "en": "Redis Cluster → Lavik Single",
+                  "zh-CN": "Redis Cluster → Lavik Single"
+                },
+                {
+                  "en": "`true`",
+                  "zh-CN": "`true`"
+                },
+                {
+                  "en": "`false`",
+                  "zh-CN": "`false`"
+                },
+                {
+                  "en": "DB0",
+                  "zh-CN": "DB0"
+                }
+              ],
+              [
+                {
+                  "en": "Redis Cluster → Lavik Cluster",
+                  "zh-CN": "Redis Cluster → Lavik Cluster"
+                },
+                {
+                  "en": "`true`",
+                  "zh-CN": "`true`"
+                },
+                {
+                  "en": "`true`",
+                  "zh-CN": "`true`"
+                },
+                {
+                  "en": "DB0; same-slot multi-key operations",
+                  "zh-CN": "DB0；多键操作必须同槽"
+                }
+              ]
+            ]
+          },
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "The flags describe each side’s client protocol, not its number of machines. A Single deployment can have replicas. Source shards and target Groups do not need a one-to-one mapping.",
+              "zh-CN": "这些开关描述两端的客户端协议，而非机器数量。Single 部署也可以带副本。源分片和目标 Group 无需一一对应。"
             }
           }
         ]
       },
       {
-        "id": "import",
+        "id": "prepare",
         "title": {
-          "en": "Import And Catch Up",
-          "zh-CN": "导入并追平"
+          "en": "1. Prepare The Source And Empty Target",
+          "zh-CN": "1. 准备源与空目标"
+        },
+        "blocks": [
+          {
+            "type": "list",
+            "items": [
+              {
+                "en": "Rehearse with a copy of your actual workload first. The release-qualified source is Redis 7.2.14; rehearse other versions separately, especially newer RDB encodings, module types, Lua Functions and Streams.",
+                "zh-CN": "先使用真实工作负载的副本演练。本版本已验证的源为 Redis 7.2.14；其他版本需单独演练，尤其是更新的 RDB 编码、模块类型、Lua Functions 和 Streams。"
+              },
+              {
+                "en": "Inventory every source primary, logical DB, data type, command and Function library. Lavik Single accepts DB0–15; Cluster accepts DB0 only. Resolve nonzero DBs and cross-slot application operations before selecting a Cluster target. Do not silently discard databases or commands with filters.",
+                "zh-CN": "盘点每个源主节点、逻辑 DB、数据类型、命令和 Function 库。Lavik Single 支持 DB0–15；Cluster 仅支持 DB0。选择 Cluster 目标前，先处理非零 DB 和跨槽应用操作，不要用过滤器静默丢弃数据库或命令。"
+              },
+              {
+                "en": "Create an isolated, empty Lavik target using the deployment guides below. Require every Group to be serving and all intended replicas to be synchronized and readable. Use v0.1.0 on every target node. Keep all application reads and writes off the target until cutover.",
+                "zh-CN": "使用下方部署指南创建隔离的空 Lavik 目标。要求每个 Group 可服务，全部预期副本均已同步且可读。所有目标节点使用 v0.1.0。切换前禁止应用读写目标。"
+              },
+              {
+                "en": "The migration host needs Linux x86_64 or ARM64, Bash, curl, tar, sha256sum, Python 3 and redis-cli. Budget disk for both the RDB snapshot and the incremental spool; watch disk usage, source snapshot load, replication backlog and target memory during rehearsal.",
+                "zh-CN": "迁移主机需要 Linux x86_64 或 ARM64、Bash、curl、tar、sha256sum、Python 3 和 redis-cli。为 RDB 快照及增量缓冲预留磁盘空间；演练时观察磁盘使用、源快照负载、复制积压与目标内存。"
+              },
+              {
+                "en": "Allow the tool to authenticate, read replication and discover source topology, and write the required commands to the target. Managed Redis services may restrict PSYNC; confirm availability before scheduling the migration. Keep source topology stable throughout the attempt.",
+                "zh-CN": "允许工具认证、读取复制流、发现源拓扑，并向目标写入所需命令。托管 Redis 服务可能限制 PSYNC；安排迁移前先确认可用性。整个迁移期间保持源拓扑稳定。"
+              }
+            ]
+          },
+          {
+            "type": "link",
+            "text": {
+              "en": "Set Up A Managed Single Deployment",
+              "zh-CN": "部署托管 Single"
+            },
+            "href": "/{locale}/docs/0.1.0/lavik-ctl-single-node/"
+          },
+          {
+            "type": "link",
+            "text": {
+              "en": "Set Up A Primary–Follower Cluster",
+              "zh-CN": "部署主从集群"
+            },
+            "href": "/{locale}/docs/0.1.0/lavik-ctl-ha-cluster/"
+          },
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "The loopback examples below use Redis at `127.0.0.1:6379` (Cluster seed `127.0.0.1:7000`) and Lavik at `127.0.0.1:6371`, matching the binary deployment guides. Replace these with endpoints reachable from the migration process; Docker’s `127.0.0.1` means that container, not another container or the host.",
+              "zh-CN": "以下回环示例使用 `127.0.0.1:6379` 上的 Redis（Cluster 种子为 `127.0.0.1:7000`）及 `127.0.0.1:6371` 上的 Lavik，与二进制部署指南一致。请替换为迁移进程可访问的端点；Docker 中的 `127.0.0.1` 指当前容器，不是另一个容器或宿主机。"
+            }
+          },
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "For non-loopback traffic, use peer-authenticated encrypted tunnels for every source and target connection, including discovered Cluster nodes. RedisShake v4.6.2’s `tls = true` does not verify server certificates. Its status listener binds all interfaces: block external access to port 18080 and query it locally.",
+              "zh-CN": "非回环流量应为所有源、目标连接配置对端认证的加密隧道，包括发现的 Cluster 节点。RedisShake v4.6.2 的 `tls = true` 不验证服务端证书。状态监听器绑定所有接口：应阻止外部访问 18080 端口，仅在本机查询。"
+            }
+          }
+        ]
+      },
+      {
+        "id": "install",
+        "title": {
+          "en": "2. Install RedisShake v4.6.2",
+          "zh-CN": "2. 安装 RedisShake v4.6.2"
         },
         "blocks": [
           {
             "type": "paragraph",
             "text": {
-              "en": "Keep application traffic off the target. Use a private working directory for each attempt and enough space for the RDB/AOF spool. Restrict credentials and status access. With RedisShake v4.6.2, use peer-authenticated encrypted tunnels for non-loopback connections; its TLS setting alone does not verify server certificates. Stop on unsupported types or encodings instead of silently skipping them.",
-              "zh-CN": "导入期间不要让应用访问目标。每次尝试使用私有工作目录，并为 RDB/AOF 缓冲预留空间。限制凭据及状态接口访问。RedisShake v4.6.2 的非回环连接应使用对端认证加密隧道，其 TLS 选项本身不验证服务器证书。遇到不支持的类型或编码应停止，不可静默跳过。"
+              "en": "Run the following in Bash on the migration host. It selects the Linux architecture, verifies the release archive against its pinned SHA-256, and installs the binary in your user directory. Keep this shell open so `SHAKE_BIN` remains set.",
+              "zh-CN": "在迁移主机的 Bash 中运行以下命令。它会选择 Linux 架构，用固定的 SHA-256 校验发布包，并将二进制安装到用户目录。保留此终端以继续使用 `SHAKE_BIN`。"
             }
           },
           {
-            "type": "link",
-            "text": {
-              "en": "Release-Pinned RedisShake Configuration And Procedure",
-              "zh-CN": "本版本的 RedisShake 配置与步骤"
-            },
-            "href": "https://github.com/eloqdata/lavik/blob/feb61224e414c5653fd09560e20c9d214db1e3ac/docs/operations/redis-import.md"
+            "type": "code",
+            "file": "verification/docs/0.1.0/migration/install.sh"
           },
           {
             "type": "paragraph",
             "text": {
-              "en": "Compare full logical values and absolute expiry times, not only key counts. Baseline import can introduce TTL drift; agree a tolerance or reconcile expiry before cutover. Keep Streams on the tested RESTORE path to retain consumer-group and pending-entry metadata. Function catalogs and keyless operations need explicit per-Group mapping.",
-              "zh-CN": "应比较完整逻辑值和绝对过期时间，而不只是键数量。全量导入可能引入 TTL 偏移；需约定容差或切换前校正。Streams 应使用经过测试的 RESTORE 路径以保留消费者组和待处理元数据。Function 库和无键操作需要明确的逐 Group 映射。"
+              "en": "Create a private directory for this attempt. If you choose a different directory or disk, update both absolute paths in the configuration. Never reuse an old spool after a failed attempt.",
+              "zh-CN": "为本次迁移创建私有目录。如果选择其他目录或磁盘，请同时更新配置中的两个绝对路径。失败后不要复用旧缓冲目录。"
             }
+          },
+          {
+            "type": "code",
+            "file": "verification/docs/0.1.0/migration/prepare.sh"
+          }
+        ]
+      },
+      {
+        "id": "redis-single",
+        "title": {
+          "en": "3. Configure A Redis Source",
+          "zh-CN": "3. 配置 Redis 源"
+        },
+        "blocks": [
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "Paste this complete TOML into `shake.toml`. It migrates Redis to managed Lavik Single. To write to Lavik Cluster, change only `[redis_writer].cluster` to `true`. Keep `sync_rdb` and `sync_aof` enabled to perform both baseline import and incremental catch-up.",
+              "zh-CN": "将这份完整 TOML 粘贴到 `shake.toml`。它将 Redis 迁移至托管 Lavik Single。写入 Lavik Cluster 时，仅将 `[redis_writer].cluster` 改为 `true`。保留 `sync_rdb` 和 `sync_aof`，同时完成全量导入与增量追平。"
+            }
+          },
+          {
+            "type": "code",
+            "file": "verification/docs/0.1.0/migration/redis-single.toml"
+          },
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "Replace both password placeholders with the credentials for each endpoint. Set the source `username` if Redis uses a named ACL user. Lavik 0.1.0 uses its `default` user with `requirepass`; leave the target username empty or use `default`. For an intentionally unauthenticated local rehearsal, set the corresponding password to `\"\"`. TOML does not expand shell environment variables. Keep this file mode 0600 and out of Git.",
+              "zh-CN": "将两端密码占位符替换为对应凭据。若 Redis 使用命名 ACL 用户，请设置源 `username`。Lavik 0.1.0 通过 `requirepass` 使用 `default` 用户；目标用户名留空或填写 `default`。仅在明确无需认证的本地演练中，将对应密码设为 `\"\"`。TOML 不会展开 shell 环境变量。配置文件权限应保持 0600，不要提交到 Git。"
+            }
+          }
+        ]
+      },
+      {
+        "id": "redis-cluster",
+        "title": {
+          "en": "4. Configure A Redis Cluster Source",
+          "zh-CN": "4. 配置 Redis Cluster 源"
+        },
+        "blocks": [
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "Use this alternative complete configuration instead of the previous one. It discovers the source primaries from one seed and writes to a Lavik Cluster seed. If consolidating into managed Lavik Single, change only `[redis_writer].cluster` to `false`. Do not concatenate the two configurations or run both against the same target.",
+              "zh-CN": "用这份完整配置替代上一份。工具通过一个种子发现源主节点，并向 Lavik Cluster 种子写入。若整合至托管 Lavik Single，仅将 `[redis_writer].cluster` 改为 `false`。不要拼接两份配置，也不要同时将两者运行在同一目标上。"
+            }
+          },
+          {
+            "type": "code",
+            "file": "verification/docs/0.1.0/migration/redis-cluster.toml"
+          },
+          {
+            "type": "list",
+            "items": [
+              {
+                "en": "Before starting, use `CLUSTER NODES` and `CLUSTER SLOTS` to inventory the source primaries, slots and advertised addresses. Verify authentication and reachability to every discovered source primary and target Owner from the migration host. A reachable seed alone is insufficient.",
+                "zh-CN": "开始前用 `CLUSTER NODES` 和 `CLUSTER SLOTS` 盘点源主节点、槽位及通告地址。从迁移主机验证每个源主节点和目标 Owner 的认证及可达性；仅种子可达还不够。"
+              },
+              {
+                "en": "Keep resharding, source failovers and topology changes out of the migration window. The source and target can have different shard counts, but you must validate every source primary and every target Group independently.",
+                "zh-CN": "迁移窗口内不要进行重新分片、源故障转移或拓扑变更。源与目标的分片数量可以不同，但必须独立验证每个源主节点和每个目标 Group。"
+              },
+              {
+                "en": "Plan Function libraries and keyless commands explicitly per target Group. Combining multiple source primaries can expose conflicting library definitions or different meanings of FLUSH operations; shard-count matching does not resolve them.",
+                "zh-CN": "按目标 Group 明确规划 Function 库和无键命令。合并多个源主节点可能遇到库定义冲突或 FLUSH 操作作用域差异；分片数量相同也不能解决这些问题。"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "run",
+        "title": {
+          "en": "5. Start Import And Follow Live Writes",
+          "zh-CN": "5. 开始导入并同步实时写入"
+        },
+        "blocks": [
+          {
+            "type": "code",
+            "file": "verification/docs/0.1.0/migration/start.sh"
+          },
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "Keep this terminal running. In a second terminal, inspect the status and watch the configured `shake.log`; check free spool space with `df -h /var/tmp/lavik-import-01`. Errors about authentication, unsupported types, busy keys or failed commands require stopping and investigating the attempt. A running process does not establish successful import.",
+              "zh-CN": "保留此终端运行。在第二个终端检查状态并查看配置中的 `shake.log`；使用 `df -h /var/tmp/lavik-import-01` 检查缓冲所在磁盘空间。认证、不支持的类型、已有键或命令失败等错误需要停止并调查本次尝试。进程仍在运行不代表导入成功。"
+            }
+          },
+          {
+            "type": "code",
+            "file": "verification/docs/0.1.0/migration/status.sh"
+          },
+          {
+            "type": "table",
+            "headers": [
+              {
+                "en": "Setting",
+                "zh-CN": "配置项"
+              },
+              {
+                "en": "Why It Matters",
+                "zh-CN": "作用"
+              }
+            ],
+            "rows": [
+              [
+                {
+                  "en": "`prefer_replica = false`",
+                  "zh-CN": "`prefer_replica = false`"
+                },
+                {
+                  "en": "Read each primary directly so final offsets refer to that primary.",
+                  "zh-CN": "直接读取各主节点，最终偏移与对应主节点一致。"
+                }
+              ],
+              [
+                {
+                  "en": "`off_reply = false`",
+                  "zh-CN": "`off_reply = false`"
+                },
+                {
+                  "en": "Receive target replies; do not disable error and queue accounting.",
+                  "zh-CN": "接收目标回复，不要关闭错误及队列核算。"
+                }
+              ],
+              [
+                {
+                  "en": "`rdb_restore_command_behavior = \"panic\"`",
+                  "zh-CN": "`rdb_restore_command_behavior = \"panic\"`"
+                },
+                {
+                  "en": "Stop on baseline key conflicts. Changing to rewrite or skip does not make a partial attempt safe to resume.",
+                  "zh-CN": "遇到全量恢复键冲突时停止。改为 rewrite 或 skip 不会让部分完成的迁移变得可安全续跑。"
+                }
+              ],
+              [
+                {
+                  "en": "`target_redis_proto_max_bulk_len = 512000000`",
+                  "zh-CN": "`target_redis_proto_max_bulk_len = 512000000`"
+                },
+                {
+                  "en": "Keep the release-qualified RESTORE path. Larger values can fall back to individual commands; Streams must retain the RESTORE path for consumer-group and pending-entry metadata.",
+                  "zh-CN": "保留本版本已验证的 RESTORE 路径。超过阈值的大值可能转为逐命令重建；Streams 必须保留 RESTORE 路径以维护消费者组及待处理条目元数据。"
+                }
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "id": "freeze",
+        "title": {
+          "en": "6. Freeze Source Writes And Prove Catch-Up",
+          "zh-CN": "6. 暂停源写入并确认追平"
+        },
+        "blocks": [
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "Stop all source writers, including jobs, administrative scripts and stream consumers that change group state. Keep Redis available for replication and verification. Record the following for each primary; for Cluster, connect directly to each primary’s address rather than repeatedly querying the seed.",
+              "zh-CN": "停止全部源写入，包括任务、管理脚本及会改变消费者组状态的 Stream 消费者。保持 Redis 可用于复制和验证。为每个主节点记录以下信息；Cluster 应直连各主节点地址，不要反复只查询种子。"
+            }
+          },
+          {
+            "type": "code",
+            "file": "verification/docs/0.1.0/migration/source-tail.sh"
+          },
+          {
+            "type": "list",
+            "items": [
+              {
+                "en": "Match each RedisShake reader to its source address. Every reader must report `syncing aof`, with both `aof_received_offset` and `aof_sent_offset` at or beyond that primary’s recorded `master_repl_offset`.",
+                "zh-CN": "将每个 RedisShake reader 与源地址对应。每个 reader 均须为 `syncing aof`，且 `aof_received_offset` 和 `aof_sent_offset` 都达到或超过该主节点记录的 `master_repl_offset`。"
+              },
+              {
+                "en": "Every target writer must have `unanswered_entries = 0` and `unanswered_bytes = 0`. A single reader caught up, zero RDB work, or `consistent = true` alone is not a cutover decision.",
+                "zh-CN": "每个目标 writer 均须满足 `unanswered_entries = 0` 和 `unanswered_bytes = 0`。仅一个 reader 追平、RDB 工作归零或 `consistent = true` 都不足以决定切换。"
+              },
+              {
+                "en": "Recheck source identity and target ownership through the verification window. A source primary change, restart or target Owner transition invalidates that proof; stop the attempt and follow the recovery procedure below.",
+                "zh-CN": "在验证窗口持续复核源身份和目标所有权。源主节点变更、重启或目标 Owner 切换都会使这次证明失效；应停止本次尝试并按下方恢复流程处理。"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "verify",
+        "title": {
+          "en": "7. Verify Every Group, Replica And Data Type",
+          "zh-CN": "7. 验证每个 Group、副本和数据类型"
+        },
+        "blocks": [
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "After queues drain, confirm replica progress with a private write/delete marker and `WAIT` on the same connection to each current Owner. A fresh connection running only `WAIT` is not proof that the imported writes reached replicas. Pick an unused marker key in that Owner’s slot range; do not use redirection between the marker and WAIT.",
+              "zh-CN": "队列排空后，分别连接当前 Owner，在同一连接上执行私有标记的写入、删除及 `WAIT`，确认副本进度。新建连接只执行 `WAIT`，无法证明导入写入已到达副本。选择属于该 Owner 槽位范围的未使用标记键；标记和 WAIT 之间不要发生重定向。"
+            }
+          },
+          {
+            "type": "code",
+            "file": "verification/docs/0.1.0/migration/replica-barrier.sh"
+          },
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "If SET does not return OK, stop: choose another unused key before deleting anything. If WAIT returns fewer replicas than required, keep the application off the target and investigate. This is a per-Group progress check, not a global commit barrier or a guarantee against acknowledged-write loss during asynchronous failover.",
+              "zh-CN": "若 SET 未返回 OK，应停止，并在删除任何键之前选择另一未使用键。若 WAIT 返回的副本数少于要求，应继续禁止应用访问目标并排查。这是逐 Group 的进度检查，不是全局提交屏障，也不保证异步故障转移时绝不丢失已确认写入。"
+            }
+          },
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "Compare the complete source and target key sets using a full cursor-based SCAN of every database and every primary/Group; reject missing AND extra keys. Also read every intended target replica. For a direct Cluster replica connection, issue READONLY and the reads on the same connection. Key counts and a few sampled GETs are useful diagnostics, but insufficient for final verification.",
+              "zh-CN": "对每个数据库及每个主节点/Group 完整遍历 SCAN 游标，比较源与目标的完整键集合，同时检查缺失键及多余键。还应读取每个预期目标副本。直连 Cluster 副本时，在同一连接中先执行 READONLY 再读取。键数量和少量 GET 抽样可辅助诊断，但不足以作为最终验证。"
+            }
+          },
+          {
+            "type": "table",
+            "headers": [
+              {
+                "en": "Data",
+                "zh-CN": "数据"
+              },
+              {
+                "en": "Compare On Source And Target",
+                "zh-CN": "在源与目标上比较"
+              }
+            ],
+            "rows": [
+              [
+                {
+                  "en": "Strings and binary values",
+                  "zh-CN": "String 与二进制值"
+                },
+                {
+                  "en": "TYPE and byte-exact GET values; preserve binary keys and values in your checker.",
+                  "zh-CN": "TYPE 和逐字节一致的 GET 值；校验器需保留二进制键和值。"
+                }
+              ],
+              [
+                {
+                  "en": "Hashes, lists, sets, sorted sets",
+                  "zh-CN": "Hash、List、Set、Sorted Set"
+                },
+                {
+                  "en": "All fields/values with HSCAN or HGETALL; list order with LRANGE; full set membership with SSCAN; members and scores with ZSCAN or ZRANGE WITHSCORES. Iterate all cursors and compare unordered collections independent of reply order.",
+                  "zh-CN": "用 HSCAN 或 HGETALL 比较全部字段和值，LRANGE 比较列表顺序，SSCAN 比较完整集合成员，ZSCAN 或 ZRANGE WITHSCORES 比较成员及分数。遍历全部游标；无序集合比较不应依赖返回顺序。"
+                }
+              ],
+              [
+                {
+                  "en": "Expiry",
+                  "zh-CN": "过期时间"
+                },
+                {
+                  "en": "Compare PEXPIRETIME, including persistent keys (-1) and expired keys (-2), with an agreed absolute-expiry tolerance. RDB restore queues can extend TTL; reconcile deadlines before cutover if your application needs exact expiry.",
+                  "zh-CN": "比较 PEXPIRETIME，包括永久键（-1）和已过期键（-2），并约定绝对过期时间容差。RDB 恢复排队可能延长 TTL；应用要求精确过期时，应在切换前校正截止时间。"
+                }
+              ],
+              [
+                {
+                  "en": "Streams",
+                  "zh-CN": "Streams"
+                },
+                {
+                  "en": "Compare entries/IDs with paginated XRANGE, XINFO STREAM/GROUPS/CONSUMERS, and all XPENDING entries (consumer, ID and delivery count). Redis 7.2 propagation can omit the entries-read diagnostic; reconcile it explicitly if needed.",
+                  "zh-CN": "用分页 XRANGE 比较条目及 ID，并比较 XINFO STREAM/GROUPS/CONSUMERS 及完整 XPENDING 条目（消费者、ID、投递次数）。Redis 7.2 传播可能遗漏 entries-read 诊断计数；如业务依赖该值，应明确校正。"
+                }
+              ],
+              [
+                {
+                  "en": "Function libraries",
+                  "zh-CN": "Function 库"
+                },
+                {
+                  "en": "Compare FUNCTION LIST WITHCODE on each mapped target Group and its replicas, and rehearse real FCALL invocations.",
+                  "zh-CN": "对每个映射后的目标 Group 及其副本比较 FUNCTION LIST WITHCODE，并演练实际 FCALL 调用。"
+                }
+              ]
+            ]
           }
         ]
       },
       {
         "id": "cutover",
         "title": {
-          "en": "Freeze Writes, Verify And Switch",
-          "zh-CN": "暂停写入、验证并切换"
+          "en": "8. Stop RedisShake And Switch The Application",
+          "zh-CN": "8. 停止 RedisShake 并切换应用"
         },
         "blocks": [
           {
-            "type": "paragraph",
-            "text": {
-              "en": "Stop all source writers and record each source primary’s final replication offset and identity. Require every reader to reach syncing aof, received/sent offsets to reach the recorded tail, and all writer queues to drain. Check every target Group and replica, including extra target keys, values, expiry, Stream state and Function code. Then change application endpoints and watch errors, latency and connection recovery.",
-              "zh-CN": "停止全部源写入并记录各源主节点的最终复制偏移及标识。要求每个 reader 达到 syncing aof、接收及发送偏移追上记录尾部、所有 writer 队列排空。检查全部目标 Group 和副本，包括多余键、值、过期时间、Stream 状态及 Function 代码。随后切换应用端点，观察错误、延迟及连接恢复。"
-            }
-          },
-          {
-            "type": "paragraph",
-            "text": {
-              "en": "Preserve the source and a rollback plan. Once writes go to Lavik, switching back requires reconciling those new writes. The RedisShake emergency export path is a separate procedure, not an automatic bidirectional replication promise.",
-              "zh-CN": "保留源和回滚计划。开始向 Lavik 写入后，切回源需要协调这些新写入。RedisShake 紧急导出是独立流程，不代表自动双向复制。"
-            }
-          },
-          {
-            "type": "link",
-            "text": {
-              "en": "Export And Recovery Boundaries",
-              "zh-CN": "导出与恢复边界"
-            },
-            "href": "https://github.com/eloqdata/lavik/blob/feb61224e414c5653fd09560e20c9d214db1e3ac/docs/operations/redis-export.md"
-          }
-        ]
-      }
-    ]
-  },
-  {
-    "id": "migrate-redis-cluster",
-    "title": {
-      "en": "From Redis Cluster",
-      "zh-CN": "从 Redis Cluster 迁移"
-    },
-    "summary": {
-      "en": "Rehearse baseline import, incremental catch-up and application cutover into a fresh Lavik deployment.",
-      "zh-CN": "在全新 Lavik 部署上演练全量导入、增量追平与应用切换。"
-    },
-    "sources": [
-      "docs/operations/redis-import.md",
-      "docs/operations/redis-export.md"
-    ],
-    "sections": [
-      {
-        "id": "plan",
-        "title": {
-          "en": "Choose The Migration Path",
-          "zh-CN": "选择迁移路径"
-        },
-        "blocks": [
-          {
-            "type": "paragraph",
-            "text": {
-              "en": "For a Meta-managed target, create an empty Single or Cluster deployment with replicas first, then import with RedisShake v4.6.2. Upstream acceptance uses Redis 7.2.14 sources. Source and target node counts need not match. Direct REPLICAOF from Redis is a separate non-Meta import path; a populated standalone import node cannot simply become a managed target.",
-              "zh-CN": "对于 Meta 托管目标，应先创建带副本的空 Single 或 Cluster 部署，再使用 RedisShake v4.6.2 导入。上游验收使用 Redis 7.2.14 源。源与目标节点数量无需相同。直接 REPLICAOF 是另一种非 Meta 导入路径；已导入数据的独立节点不能直接转为托管目标。"
-            }
-          },
-          {
-            "type": "paragraph",
-            "text": {
-              "en": "Inventory every source primary, hash slot, database, data type, function library and advertised endpoint. Set the reader’s cluster option for a Cluster source and the writer’s option for the chosen target. Single supports DB0–15; Cluster supports only DB0 and same-slot multi-key requests.",
-              "zh-CN": "盘点每个源主节点、哈希槽、数据库、数据类型、Function 库及通告端点。Cluster 源需要相应 reader cluster 选项，writer 选项应匹配目标。Single 支持 DB0–15；Cluster 仅支持 DB0 和多键同槽请求。"
-            }
+            "type": "list",
+            "items": [
+              {
+                "en": "Once the offset, queue, replica and data checks all pass with stable identities, stop RedisShake with Ctrl+C in its original terminal. Confirm the process has exited and no importer is still writing before allowing application traffic. Keep the source write-frozen.",
+                "zh-CN": "偏移、队列、副本及数据检查全部通过，且身份稳定后，在原终端用 Ctrl+C 停止 RedisShake。允许应用流量前确认进程已退出，且没有其他导入进程仍在写入。继续保持源暂停写入。"
+              },
+              {
+                "en": "Update application endpoints and credentials. Use the normal Lavik Single/Sentinel or Redis Cluster client discovery appropriate to the target; Cluster clients must discover every advertised node. Reconnect existing pools and resume writers against Lavik only.",
+                "zh-CN": "更新应用端点与凭据。按目标使用正常的 Lavik Single/Sentinel 或 Redis Cluster 客户端发现方式；Cluster 客户端必须能发现所有通告节点。重建现有连接池，并仅恢复向 Lavik 写入。"
+              },
+              {
+                "en": "Run your application’s real read/write paths, transactions, Lua/Function calls and stream consumers. Monitor errors, latency, replication health and capacity. Retain the stopped source and backups for the agreed rollback window.",
+                "zh-CN": "运行应用真实的读写路径、事务、Lua/Function 调用及 Stream 消费者。监控错误、延迟、复制健康与容量。在约定回滚窗口保留停止写入的源及备份。"
+              },
+              {
+                "en": "Before Lavik accepts new writes, reverting endpoints can return to the frozen source. After new writes reach Lavik, a switch back requires reconciling those writes; this procedure does not provide automatic reverse replication.",
+                "zh-CN": "在 Lavik 接受新写入前，可将端点切回冻结的源。Lavik 开始接受新写入后，回切必须协调这些新增写入；本流程不提供自动反向复制。"
+              }
+            ]
           }
         ]
       },
       {
-        "id": "import",
+        "id": "recovery",
         "title": {
-          "en": "Import And Catch Up",
-          "zh-CN": "导入并追平"
+          "en": "If An Attempt Fails",
+          "zh-CN": "迁移失败时如何处理"
         },
         "blocks": [
           {
             "type": "paragraph",
             "text": {
-              "en": "Keep application traffic off the target. Use a private working directory for each attempt and enough space for the RDB/AOF spool. Restrict credentials and status access. With RedisShake v4.6.2, use peer-authenticated encrypted tunnels for non-loopback connections; its TLS setting alone does not verify server certificates. Stop on unsupported types or encodings instead of silently skipping them.",
-              "zh-CN": "导入期间不要让应用访问目标。每次尝试使用私有工作目录，并为 RDB/AOF 缓冲预留空间。限制凭据及状态接口访问。RedisShake v4.6.2 的非回环连接应使用对端认证加密隧道，其 TLS 选项本身不验证服务器证书。遇到不支持的类型或编码应停止，不可静默跳过。"
+              "en": "For this v4.6.2 workflow, do not assume reliable checkpoint resume. A lost reply may correspond to a committed write; replaying an uncertain INCR, list push or other non-idempotent suffix can change the result. RESTORE REPLACE does not make the whole migration idempotent.",
+              "zh-CN": "本 v4.6.2 流程不能假定具备可靠的断点续传。丢失回复的写入可能已提交；重放状态不明的 INCR、列表追加等非幂等增量会改变结果。RESTORE REPLACE 不能使整个迁移幂等。"
+            }
+          },
+          {
+            "type": "list",
+            "items": [
+              {
+                "en": "Stop the importer on process exit, connectivity loss, target Owner transition or verification failure. Keep application traffic off the target; let Meta complete target recovery and preserve logs for diagnosis.",
+                "zh-CN": "发生进程退出、连接丢失、目标 Owner 切换或验证失败时，停止导入进程。继续隔离目标应用流量，让 Meta 完成目标恢复，并保留日志供排查。"
+              },
+              {
+                "en": "Prefer a fresh, isolated target and a new attempt/spool directory. Ensure all old importers have exited and in-flight commands have drained. Restart from a complete baseline with both sync_rdb and sync_aof enabled, then repeat every cutover check. Source writes may resume while rebuilding the new attempt.",
+                "zh-CN": "优先使用新的隔离目标及新的迁移/缓冲目录。确保旧导入进程全部退出，且在途命令已排空。保留 sync_rdb 和 sync_aof，从完整基线重新导入，再重复全部切换检查。重建新迁移期间可以恢复源写入。"
+              },
+              {
+                "en": "Reusing an isolated import target requires explicitly clearing both keys and Function catalogs on every current Owner and confirming the empty state on replicas after all writers stop. Never clear a serving production database to repair an import.",
+                "zh-CN": "复用隔离的导入目标，需要在全部写入进程停止后，明确清理每个当前 Owner 的键和 Function 库，并确认副本也为空。不要为了修复导入而清空正在服务的生产数据库。"
+              }
+            ]
+          },
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "RedisShake forwards writes without preserving MULTI/EXEC transaction boundaries and does not create a global snapshot across shards. Keep the partial target out of service until the write-frozen comparison passes.",
+              "zh-CN": "RedisShake 转发写入时不保留 MULTI/EXEC 事务边界，也不会创建跨分片的全局快照。在暂停源写入后的完整比较通过前，不要让部分导入的目标对外服务。"
             }
           },
           {
             "type": "link",
             "text": {
-              "en": "Release-Pinned RedisShake Configuration And Procedure",
-              "zh-CN": "本版本的 RedisShake 配置与步骤"
+              "en": "Redis Import Details For Lavik 0.1.0",
+              "zh-CN": "Lavik 0.1.0 Redis 导入详细说明"
             },
             "href": "https://github.com/eloqdata/lavik/blob/feb61224e414c5653fd09560e20c9d214db1e3ac/docs/operations/redis-import.md"
-          },
-          {
-            "type": "paragraph",
-            "text": {
-              "en": "Compare full logical values and absolute expiry times, not only key counts. Baseline import can introduce TTL drift; agree a tolerance or reconcile expiry before cutover. Keep Streams on the tested RESTORE path to retain consumer-group and pending-entry metadata. Function catalogs and keyless operations need explicit per-Group mapping.",
-              "zh-CN": "应比较完整逻辑值和绝对过期时间，而不只是键数量。全量导入可能引入 TTL 偏移；需约定容差或切换前校正。Streams 应使用经过测试的 RESTORE 路径以保留消费者组和待处理元数据。Function 库和无键操作需要明确的逐 Group 映射。"
-            }
-          }
-        ]
-      },
-      {
-        "id": "cutover",
-        "title": {
-          "en": "Freeze Writes, Verify And Switch",
-          "zh-CN": "暂停写入、验证并切换"
-        },
-        "blocks": [
-          {
-            "type": "paragraph",
-            "text": {
-              "en": "Stop all source writers and record each source primary’s final replication offset and identity. Require every reader to reach syncing aof, received/sent offsets to reach the recorded tail, and all writer queues to drain. Check every target Group and replica, including extra target keys, values, expiry, Stream state and Function code. Then change application endpoints and watch errors, latency and connection recovery.",
-              "zh-CN": "停止全部源写入并记录各源主节点的最终复制偏移及标识。要求每个 reader 达到 syncing aof、接收及发送偏移追上记录尾部、所有 writer 队列排空。检查全部目标 Group 和副本，包括多余键、值、过期时间、Stream 状态及 Function 代码。随后切换应用端点，观察错误、延迟及连接恢复。"
-            }
-          },
-          {
-            "type": "paragraph",
-            "text": {
-              "en": "Preserve the source and a rollback plan. Once writes go to Lavik, switching back requires reconciling those new writes. The RedisShake emergency export path is a separate procedure, not an automatic bidirectional replication promise.",
-              "zh-CN": "保留源和回滚计划。开始向 Lavik 写入后，切回源需要协调这些新写入。RedisShake 紧急导出是独立流程，不代表自动双向复制。"
-            }
-          },
-          {
-            "type": "link",
-            "text": {
-              "en": "Export And Recovery Boundaries",
-              "zh-CN": "导出与恢复边界"
-            },
-            "href": "https://github.com/eloqdata/lavik/blob/feb61224e414c5653fd09560e20c9d214db1e3ac/docs/operations/redis-export.md"
           }
         ]
       }
@@ -2215,10 +2600,7 @@
       "en": "Deploy and operate Lavik clusters through the Admin UI bundled with 0.1.0.",
       "zh-CN": "使用 0.1.0 内置的 Admin 界面部署和管理 Lavik 集群。"
     },
-    "sources": [
-      "admin/RELEASE-README.md",
-      "docs/operations/lavik-admin.md"
-    ],
+    "sources": ["admin/RELEASE-README.md", "docs/operations/lavik-admin.md"],
     "sections": [
       {
         "id": "launch",

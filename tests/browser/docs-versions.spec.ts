@@ -1,6 +1,41 @@
 import { test, expect } from "@playwright/test";
 import fs from "node:fs";
 
+test("stable migration navigation, search and version switch resolve to the combined RedisShake guide", async ({
+  page,
+  request,
+}) => {
+  for (const locale of ["en", "zh-CN"]) {
+    await page.goto(`/${locale}/docs/0.1.0/migrate-redis/`);
+    const migration = page.locator(".docs-nav-group[open]");
+    await expect(migration.locator("a")).toHaveCount(1);
+    await expect(migration.locator("a")).toHaveAttribute(
+      "href",
+      `/${locale}/docs/0.1.0/migrate-redis/`,
+    );
+    await page.locator(".docs-sidebar input").fill("RedisShake");
+    await expect(
+      page.locator(
+        `.docs-search-results a[href="/${locale}/docs/0.1.0/migrate-redis/"]`,
+      ),
+    ).toBeVisible();
+    await expect(page.locator("#redis-cluster pre")).toContainText(
+      "cluster = true",
+    );
+    await page.goto(`/${locale}/docs/0.1.0-beta.1/migrate-redis-cluster/`);
+    await page.locator(".doc-version-select select").selectOption("0.1.0");
+    await expect(page).toHaveURL(
+      new RegExp(`/${locale}/docs/0\\.1\\.0/migrate-redis/$`),
+    );
+    await expect(page.locator("#install")).toContainText("4.6.2");
+    const sitemap = await (await request.get("/sitemap.xml")).text();
+    expect(sitemap).toContain(`/${locale}/docs/0.1.0/migrate-redis/`);
+    expect(sitemap).not.toContain(
+      `/${locale}/docs/0.1.0/migrate-redis-cluster/`,
+    );
+  }
+});
+
 test("Docs default to stable and version switching preserves page and language", async ({
   page,
 }) => {

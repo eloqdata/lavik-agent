@@ -33,7 +33,7 @@ fs.writeFileSync(
       instruction: ownerInstruction,
       authorizedAt: "2026-10-13",
       scope:
-        "0.1.0 versioned Docs, Download, release notes, and the pending 0.1.0 artifact verification correction. Runtime evidence and CI remain required. No additional model review was run.",
+        "0.1.0 versioned Docs, Download, release notes, artifact verification, and the requested RedisShake migration-guide consolidation. Runtime evidence and CI remain required. No additional model review was run.",
       previousReviewBundleHash: manualPublication().bundleHash,
       manualFiles,
       files,

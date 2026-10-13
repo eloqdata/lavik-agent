@@ -159,22 +159,24 @@ export function DocsHome({
               <h3>{zh ? "从 Redis 迁移" : "From Redis"} →</h3>
               <p>
                 {zh
-                  ? "规划复制、追平、暂停写入和应用切换。"
-                  : "Plan replication, catch-up, a write pause and application cutover."}
-              </p>
-            </Link>
-            <Link href={`${root}/migrate-redis-cluster/`}>
-              <h3>{zh ? "从 Redis Cluster 迁移" : "From Redis Cluster"} →</h3>
-              <p>
-                {zh
                   ? stable
-                    ? "盘点源主节点与槽位，规划导入 Single 或 Cluster。"
-                    : "盘点源主节点与槽位，汇入独立 Lavik。"
+                    ? "使用 RedisShake 迁移 Redis 或 Redis Cluster：配置、全量导入、增量追平及切换。"
+                    : "规划复制、追平、暂停写入和应用切换。"
                   : stable
-                    ? "Inventory source primaries and slots, then plan import into Single or Cluster."
-                    : "Inventory source primaries and slots, then consolidate into standalone Lavik."}
+                    ? "Migrate Redis or Redis Cluster with RedisShake: configuration, baseline import, catch-up and cutover."
+                    : "Plan replication, catch-up, a write pause and application cutover."}
               </p>
             </Link>
+            {!stable && (
+              <Link href={`${root}/migrate-redis-cluster/`}>
+                <h3>{zh ? "从 Redis Cluster 迁移" : "From Redis Cluster"} →</h3>
+                <p>
+                  {zh
+                    ? "盘点源主节点与槽位，汇入独立 Lavik。"
+                    : "Inventory source primaries and slots, then consolidate into standalone Lavik."}
+                </p>
+              </Link>
+            )}
           </div>
         </section>
         <section aria-labelledby="evaluate">

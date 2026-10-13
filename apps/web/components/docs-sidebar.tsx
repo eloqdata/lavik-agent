@@ -104,10 +104,14 @@ export function DocsSidebar({
           title: zh ? "从 Redis 迁移" : "From Redis",
           href: `${root}/migrate-redis/`,
         },
-        {
-          title: zh ? "从 Redis Cluster 迁移" : "From Redis Cluster",
-          href: `${root}/migrate-redis-cluster/`,
-        },
+        ...(!stable
+          ? [
+              {
+                title: zh ? "从 Redis Cluster 迁移" : "From Redis Cluster",
+                href: `${root}/migrate-redis-cluster/`,
+              },
+            ]
+          : []),
       ],
     },
     {
@@ -209,7 +213,10 @@ export function DocsSidebar({
                       /\/(lavik-admin|commands\/lavik\.replicaof)\/$/,
                       "/",
                     )
-                  : option.href,
+                  : option.href.replace(
+                      /\/migrate-redis-cluster\/$/,
+                      "/migrate-redis/",
+                    ),
             }))}
         />
         <DocsNavigation

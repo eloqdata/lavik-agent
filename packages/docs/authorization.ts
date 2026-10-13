@@ -59,6 +59,9 @@ export function stableDocumentationFiles() {
   const walk = (dir: string): string[] =>
     fs
       .readdirSync(dir, { withFileTypes: true })
+      .filter(
+        (entry) => entry.name !== "__pycache__" && !entry.name.endsWith(".pyc"),
+      )
       .flatMap((entry) =>
         entry.isDirectory()
           ? walk(`${dir}/${entry.name}`)
@@ -92,6 +95,8 @@ export function stableDocumentationFiles() {
       "scripts/verify-stable-operations.py",
       "scripts/verify-stable-install.py",
       "scripts/verify-stable-monitoring.py",
+      "scripts/verify-stable-migration.py",
+      "apps/web/public/_redirects",
       "tests/docs-versions.test.ts",
       "tests/browser/docs-versions.spec.ts",
     ]),

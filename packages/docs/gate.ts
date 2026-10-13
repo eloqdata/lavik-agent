@@ -128,6 +128,50 @@ export function stableDocumentationErrors({
     for (const [file, digest] of Object.entries(monitoring.fileHashes))
       if (hash(readText(file)) !== digest)
         errors.push(`Stable monitoring inputs changed: ${file}`);
+    const migration = readJson("evidence/docs/0.1.0/migration.json") as {
+      status: string;
+      sourceCommit: string;
+      fileHashes: Record<string, string>;
+      runs: {
+        source: string;
+        target: string;
+        status: string;
+        redisVersion: string;
+        redisShakeVersion: string;
+      }[];
+    };
+    if (
+      migration.status !== "passed" ||
+      migration.sourceCommit !== stableRelease.commit ||
+      migration.runs.length !== 4 ||
+      new Set(migration.runs.map((run) => `${run.source}/${run.target}`))
+        .size !== 4 ||
+      migration.runs.some(
+        (run) =>
+          run.status !== "passed" ||
+          run.redisVersion !== "7.2.14" ||
+          run.redisShakeVersion !== "4.6.2",
+      )
+    )
+      errors.push("Incomplete stable RedisShake migration evidence");
+    for (const [file, digest] of Object.entries(migration.fileHashes))
+      if (hash(readText(file)) !== digest)
+        errors.push(`Stable migration instructions changed: ${file}`);
+    const migrationInstaller = readJson(
+      "evidence/docs/0.1.0/migration-installer.json",
+    ) as {
+      status: string;
+      redisShakeVersion: string;
+      fileHashes: Record<string, string>;
+    };
+    if (
+      migrationInstaller.status !== "passed" ||
+      migrationInstaller.redisShakeVersion !== "4.6.2"
+    )
+      errors.push("Incomplete RedisShake installer evidence");
+    for (const [file, digest] of Object.entries(migrationInstaller.fileHashes))
+      if (hash(readText(file)) !== digest)
+        errors.push(`RedisShake installer changed: ${file}`);
     const commits = readJson("evidence/docs/0.1.0/commits.json") as {
       head: string;
       total: number;
