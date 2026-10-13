@@ -1,5 +1,5 @@
 import { test, expect } from "@playwright/test";
-import { stableGuideRoutes } from "../../packages/docs/stable";
+import fs from "node:fs";
 const names = [
   "Get Started",
   "Build With Lavik",
@@ -59,11 +59,14 @@ test("user documentation exposes complete guides without internal audit sections
   request,
 }) => {
   const manifest = await (await request.get("/manual-manifest.json")).json();
+  const stableGuides = JSON.parse(
+    fs.readFileSync("content/docs/0.1.0/guides.json", "utf8"),
+  ) as { id: string }[];
   expect(manifest.userGuides).toEqual(
     ["en", "zh-CN"].flatMap((locale) =>
-      stableGuideRoutes()
-        .filter((route) => !route.includes("/lavik-ctl-"))
-        .map((route) => `/${locale}/${route}/`),
+      stableGuides
+        .filter((guide) => !guide.id.startsWith("lavik-ctl-"))
+        .map((guide) => `/${locale}/docs/0.1.0/${guide.id}/`),
     ),
   );
   for (const locale of ["en", "zh-CN"])
