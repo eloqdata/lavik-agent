@@ -1,0 +1,583 @@
+{
+  "scope": "title-only; prior body/source checks inherited unchanged",
+  "reviewedAt": "2026-10-13T13:56:23.136Z",
+  "reviewer": {
+    "role": "reviewer",
+    "model": "gpt-6-astra",
+    "provider": "openai",
+    "authentication": "chatgpt",
+    "reasoning": "high",
+    "startedAt": "2026-10-13T13:55:53.717Z",
+    "finishedAt": "2026-10-13T13:56:23.136Z",
+    "promptSha256": "5bd769897130317426fb03eb8b1961b8b4417743889fe2890181d86050ba477b",
+    "outputSha256": "1ba31e2059a55b2b27f3923625dcaa3159d821031ac68c19ccab5ffd186ada18"
+  },
+  "review": {
+    "decision": "pass",
+    "findings": [
+      "Both titles compare Lavik storing values on NVMe SSD with Redis holding its dataset in DRAM; neither asserts that raw SSD hardware is faster than DRAM. English and Chinese convey the same comparison.",
+      "Read together with the unchanged bodies, the headlines describe the disclosed historical beta.1 peak-throughput results, without establishing universal workload superiority, an SLA, equivalent crash durability, or fresh stable-binary measurements.",
+      "Unchanged-body approvals can safely be inherited under the supplied verified context. Incremental publication is authorized with explicit provenance from publication 9a897a9c-1c63-4ae8-ab7a-49a7cc537f8b and a new immutable manifest linking the prior approvals and this title-only review. Unrelated primary sources were not re-reviewed."
+    ],
+    "editions": [
+      {
+        "locale": "en",
+        "verdict": "pass",
+        "findings": [
+          "The opening paragraph scopes 'Faster Than Redis' to measured peak GET and SET throughput; the benchmark section explicitly identifies beta.1 and its conditions and limits.",
+          "Inherited body approval: original contentHash 3b62d42e91a64b3d5a3399c73369d0214323ca84d1400323208f3979b0e2753e."
+        ],
+        "checkedSourceIds": [
+          "stable-010-benchmark",
+          "stable-010-readme"
+        ]
+      },
+      {
+        "locale": "zh-CN",
+        "verdict": "pass",
+        "findings": [
+          "The opening paragraph scopes '性能超越' to measured GET and SET peak throughput. The historical beta.1 attribution and limitations align with the English edition.",
+          "Inherited body approval: original contentHash 358e6fd7cc868ef66e1dfccff29187a9fe1a21a54ca1949afe111edea7309b3c."
+        ],
+        "checkedSourceIds": [
+          "stable-010-benchmark",
+          "stable-010-readme"
+        ]
+      }
+    ]
+  },
+  "publication": {
+    "schemaVersion": 1,
+    "taskId": "049c0e7c-a193-4c74-a6dc-b7906c2049d6",
+    "artifactHash": "6078a6b00dad0c351107b516c2870e614f55df5d0f6305ce20a31d125d875ad3",
+    "editions": [
+      {
+        "locale": "en",
+        "id": "lavik-0-1-0-released",
+        "contentHash": "f17b1d35c4be071136269eb557c482b3a7513a36c843d110fbf20732505e8f3f",
+        "path": "/en/blog/lavik-0-1-0-released/",
+        "receiptHashes": {}
+      },
+      {
+        "locale": "zh-CN",
+        "id": "lavik-0-1-0-released",
+        "contentHash": "5ba3bfefcada4399e08ee5872fae946ce56ec958ee6efb835a17d6eeaad03d66",
+        "path": "/zh-CN/blog/lavik-0-1-0-released/",
+        "receiptHashes": {}
+      }
+    ]
+  },
+  "originalEditions": [
+    {
+      "article": {
+        "id": "lavik-0-1-0-released",
+        "locale": "en",
+        "version": "0.1.0",
+        "kind": "blog",
+        "slug": "lavik-0-1-0-released",
+        "title": "Announcing Lavik 0.1.0: NVMe SSD Speed, Big-Key Optimizations, and Easier Operations",
+        "summary": "Our first stable release brings Redis-compatible storage on NVMe SSD, 8 KiB segments for large strings, improved collections, bundled Lavik Admin, and a more capable managed deployment.",
+        "updatedAt": "2026-10-13",
+        "publishedAt": "2026-10-13",
+        "sourceRevision": "feb61224e414c5653fd09560e20c9d214db1e3ac",
+        "topics": [
+          "news",
+          "architecture"
+        ],
+        "blocks": [
+          {
+            "type": "paragraph",
+            "text": "Lavik 0.1.0 is here. Our first stable release brings Redis-compatible key-value storage on NVMe SSD, major big-key optimizations, and a more complete path from first deployment to day-to-day operations. It builds on a simple result from our published benchmark: Lavik with values on NVMe SSD achieved higher peak GET and SET throughput than the tested Redis and Valkey configurations with their datasets in DRAM.",
+            "sources": [
+              "stable-010-readme",
+              "stable-010-benchmark"
+            ]
+          },
+          {
+            "type": "paragraph",
+            "text": "The goal is practical: keep using familiar Redis data structures and clients as your dataset grows, without making DRAM the home of every value. Lavik retains a compact key index in memory and puts values on storage. Version 0.1.0 makes that foundation more useful for large strings, growing collections, stream workloads, and managed deployments. Lavik remains open source under Apache 2.0.",
+            "sources": [
+              "stable-010-readme",
+              "stable-010-storage",
+              "stable-010-collections"
+            ]
+          },
+          {
+            "type": "heading",
+            "text": "Fast on NVMe SSD: the published numbers"
+          },
+          {
+            "type": "paragraph",
+            "text": "The performance foundation is the September 18 SPDK comparison, which tested the downloadable Lavik 0.1.0-beta.1 package. For 10 million keys with 1 KiB values, Lavik reached 1,012,180 GET requests per second at 3.599 ms p99. Redis 8.8.0 reached 976,801 at 4.671 ms p99; Valkey 9.1.0 reached 965,697 at 4.543 ms p99. For SET, the respective peaks were 930,465, 910,426, and 802,519 requests per second.",
+            "sources": [
+              "stable-010-benchmark"
+            ]
+          },
+          {
+            "type": "paragraph",
+            "text": "The larger dataset is where the capacity argument becomes concrete. At one billion keys with 1 KiB values, Lavik SPDK reached 952,560 GET requests per second at 3.599 ms p99. Dragonfly 1.40.2 Tiered Storage reached 466,039 at 38.911 ms p99, and Garnet 2.1.5 with its storage tier reached 446,366 at 4.223 ms p99. Lavik had the highest measured peak GET and SET throughput among those three tested storage-backed configurations. For this report’s large-dataset GET workload, it was also the lowest-p99 system at the selected peaks.",
+            "sources": [
+              "stable-010-benchmark"
+            ]
+          },
+          {
+            "type": "paragraph",
+            "text": "These are measured results for the beta.1 build, not a new benchmark of the stable binary or of its big-key changes. The report used pipeline 1, uniform random GET or overwriting SET, 16-CPU affinity, and fresh SPDK datasets on six NVMe devices. Peaks use each product’s selected connection count and thread configuration; peer-control measurements were reused from an earlier sweep on the same hosts. The report also discloses Garnet’s omitted post-test exact key count. SET latency rankings differ from GET, and the report does not establish equivalent crash durability. Use the complete report to reproduce the workload and compare the latency percentile your application needs.",
+            "sources": [
+              "stable-010-benchmark"
+            ]
+          },
+          {
+            "type": "heading",
+            "text": "Big keys deserve a storage design, not just a larger memory budget"
+          },
+          {
+            "type": "paragraph",
+            "text": "A large Redis key may be a multi-megabyte string, a hash with many fields, a long list, a sorted set, or a stream with consumer state. Their access patterns differ: reading a short range is different from reading the whole object, and changing one field is different from replacing every field. Lavik 0.1.0 develops its grouped storage around those distinctions across String, Hash, Set, List, Sorted Set, and Stream.",
+            "sources": [
+              "stable-010-collections"
+            ]
+          },
+          {
+            "type": "paragraph",
+            "text": "Large strings now use fixed 8 KiB byte segments. Range operations can address the relevant segments, while small strings retain a compact representation. The design gives a small range read or partial update a more focused storage path instead of requiring every operation to treat the entire large value as one unit. Whole-value requests still have to transfer the requested bytes; segmentation does not make a huge GET response free.",
+            "sources": [
+              "stable-010-collections"
+            ]
+          },
+          {
+            "type": "paragraph",
+            "text": "Collections grow into independently addressed groups with an 8 KiB target. Compact values promote at 16 KiB of encoded size; complete updates can compact them again when active primary group payloads fall below 8 KiB. Those sizes are representation rules, not universal hard limits: an indivisible entry or a hash collision can exceed the group target. Long keys share an immutable key record referenced by UUID, reducing repetition across the object’s records.",
+            "sources": [
+              "stable-010-collections"
+            ]
+          },
+          {
+            "type": "paragraph",
+            "text": "The same release improves Hash/Set point-write allocation and lookup work, Sorted Set routing and RESTORE construction, and the overlap of List/Stream range reads. Streams use grouped logical records. Together, these changes focus work on the parts of a collection that an operation actually needs, while retaining the ordering and lifetime rules needed by concurrent readers, replication, and recovery.",
+            "sources": [
+              "stable-010-collections",
+              "stable-010-storage",
+              "stable-010-requests"
+            ]
+          },
+          {
+            "type": "heading",
+            "text": "Redis-compatible development, with clearer deployment modes"
+          },
+          {
+            "type": "paragraph",
+            "text": "Lavik speaks RESP2 and RESP3. The stable release expands managed Single mode to all 16 logical databases and cross-slot multi-key operations. Its managed command handling includes transactions, Lua and Functions, Stream reads, SORT_RO, and RDB saves. Cluster mode retains DB0 and same-slot constraints, so choose the mode against the commands and client behavior your application actually uses.",
+            "sources": [
+              "stable-010-readme",
+              "stable-010-compatibility"
+            ]
+          },
+          {
+            "type": "paragraph",
+            "text": "Moving an existing application also needs a practical data path. The release documents RedisShake v4.6.2 import from Redis or Redis Cluster into a fresh managed Lavik target: baseline copy, incremental catch-up, a final write pause, and verification before cutover. Source and target shard counts need not match. The website’s combined From Redis guide now includes the configurations and steps directly on the page.",
+            "sources": [
+              "stable-010-import"
+            ]
+          },
+          {
+            "type": "heading",
+            "text": "Operations are part of the release"
+          },
+          {
+            "type": "paragraph",
+            "text": "The Linux release archives now bundle Lavik Admin and its Node.js runtime alongside lavik, lavik-meta, and lavik-ctl. Admin provides a deployment and management interface for the database: SSH host preparation, version selection, node placement, deployment progress, topology management, and monitoring setup. The UI and CLI share a workspace and operation records, making the same deployment accessible through either interface.",
+            "sources": [
+              "stable-010-admin",
+              "stable-010-readme"
+            ]
+          },
+          {
+            "type": "paragraph",
+            "text": "Meta moves to an asynchronous etcd Raft runtime with an explicit RAFT identity, WAL, and snapshot state. Data nodes take their Single or Cluster client mode from the committed Meta manifest. The release also adds Sentinel-compatible discovery for managed Single deployments, with independent authentication, TLS, and advertised hostnames, and improves replica startup and full-transfer handling. These capabilities make deployment and discovery more complete; application availability still depends on the topology and failure behavior you configure and rehearse.",
+            "sources": [
+              "stable-010-meta",
+              "stable-010-readme",
+              "stable-010-admin"
+            ]
+          },
+          {
+            "type": "heading",
+            "text": "Make SSD capacity useful to growing applications"
+          },
+          {
+            "type": "paragraph",
+            "text": "Session records, application caches, feature data, and agent state can grow faster than the application’s request rate. With Lavik, value growth can consume NVMe SSD capacity while DRAM remains available for the index and serving work. That changes the capacity-planning question from keeping every value resident in memory to sizing the index, storage headroom, I/O, CPU, and recovery path together.",
+            "sources": [
+              "stable-010-readme",
+              "stable-010-storage"
+            ]
+          },
+          {
+            "type": "paragraph",
+            "text": "Big-key improvements make that trade more useful for structured workloads, but good sizing still matters. The key index needs memory; storage needs reclamation and free-space reserves; large replies consume network and client buffers. Rehearse your real key-size distribution, read/write mix, expiration behavior, and recovery requirements rather than extrapolating a single throughput number to every workload.",
+            "sources": [
+              "stable-010-storage",
+              "stable-010-collections",
+              "stable-010-requests"
+            ]
+          },
+          {
+            "type": "heading",
+            "text": "Start with Lavik 0.1.0"
+          },
+          {
+            "type": "paragraph",
+            "text": "Download a Linux AMD64 or ARM64 archive in Minimal or Standard form from our Download page. The release archives include the bundled Lavik Admin UI and Node.js runtime. Start with the 0.1.0 documentation and choose the installation path that fits your environment.",
+            "sources": [
+              "stable-010-readme",
+              "stable-010-admin"
+            ]
+          },
+          {
+            "type": "paragraph",
+            "text": "If you are moving from beta.1, read the upgrade notes before changing binaries. Meta persistence and Data startup flags changed; use matching 0.1.0 Data, Meta, and ctl binaries, retain backups, and rehearse a fresh stable deployment with verified logical data transfer. Do not assume mixed-version rolling upgrades or automatic conversion of beta state.",
+            "sources": [
+              "stable-010-meta",
+              "stable-010-import",
+              "stable-010-readme"
+            ]
+          },
+          {
+            "type": "paragraph",
+            "text": "Lavik is Apache 2.0 because we want developers to use it, examine how it works, and improve it with us. Download the release, put a representative workload on NVMe SSD, and share what you find. The full release notes and getting-started guides are linked below.",
+            "sources": [
+              "stable-010-readme"
+            ]
+          }
+        ]
+      },
+      "contentHash": "3b62d42e91a64b3d5a3399c73369d0214323ca84d1400323208f3979b0e2753e",
+      "review": {
+        "method": "agent-review",
+        "reviewer": "Lavik independent reviewer; runtime sha256:9e48a7b2322eb2f82e41286afb28bd47e8921a1392f1361b9d551214c565c49c",
+        "verdict": "pass",
+        "contentHash": "3b62d42e91a64b3d5a3399c73369d0214323ca84d1400323208f3979b0e2753e",
+        "releaseCommit": "3955b98d43b312324aa8d52775df52cfb111c0d0",
+        "knowledgeHash": "13ff5e41d8d3beb36402fd2fb010043c54fe419aea5d03603e74f9e183779223",
+        "renderingHash": "82bd655ced605b4b202e48464563eac22e2f55e3e76b0ee3d5b1058becc1e7d3",
+        "rendererVersion": 2,
+        "policyHash": "8a4a307c03cd1dd14486b708f3cc2b2ec148a154548b9d5bd40d8ebb6a7c5c4b",
+        "sourceHashes": {
+          "readme": "641102ed79197f74df38d3ab79a0f19b2d71e2e2c96a79bc91d99361f71fae57",
+          "build": "fe256abda34a8d0ca4648c1ccf784c34534f30954eb4734ba0d879e3b38ae4d9",
+          "architecture": "7ab316c93c1fa3851c62668576dd3e8058c12ba7ac285e37fb4df03464bf8498",
+          "storage": "4399aed3218262576e9361bd44a7a931ba8f6d3db7d48cdd86365f66e8e07b07",
+          "benchmark": "7c5ff60ee49ee0dbb3fac22d771dc6e494bc943f813f7283a089df12b1c9974b",
+          "license": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+          "release": "6574f459d55f37548a6f3dbe736a19c9a17ecdb764d494eed055ad3697b0a851",
+          "benchmark-data": "199ef794aa6e50f3634d45230cf6395cd751bf34d0da73a1d87983065c19f19e",
+          "tiering-cost": "489490a32fa6e2351dfb48ea64ee27ec1dbc110f62b249a0b0ad866698a5f04b",
+          "benchmark-spdk": "fb1b18a0b73155b5f218d0398b0d780ee734bfb1a4002f8c9c50fd8f4a8e3992",
+          "benchmark-spdk-data": "b2b19a631628d5dcbffb382de40b2468577832a3f9e9bd8019ba7e3c48eb5a9e",
+          "design-architecture--readme": "357f72ca2465054aa4eeea3792c1f7d434b3f980a9e72e51fc7d1685243294a8",
+          "design-architecture--01-overview": "c2f95e2d7e4f5e90a6e0e143f266f359dffe62643e0512532c717de23b1855a4",
+          "design-architecture--02-request-serving": "d94670cc117634f00de6e2dab13ce3b5e9cfee772877fd84ba89d6b6b54c613f",
+          "design-architecture--03-transaction-coordination": "a8163ac6f88c1ec53da326ba4a2b265b996942103a47ef081a613b9ec2fcf19e",
+          "design-architecture--04-storage-and-recovery": "5720cd2c4b01681d841419da9f331b40965abcd79e7efc5811ed034a2f5c3547",
+          "design-architecture--05-replication": "ee4e65ca3307e57d0fc0330b6e1c5e57e0b2a593177571f65e2fc146325fdbe7",
+          "design-architecture--06-shutdown-index-checkpoints": "961f2d474757b092cab1e15279925f4cb53b39a9414503575570d31c35163971",
+          "design-architecture--07-function-catalog": "637406d995d4b1b12ea4c834f438b83abe0da4277351ec1560a04a0382bea902",
+          "design-architecture--08-meta-control-plane": "bb4ab24c2a2a092734f94ee56fce0d5d78a2fe8e4a2723fd21b9a7b12d87e542",
+          "design-architecture--09-grouped-collections": "bfde6e99b61bbb7c1fac6a89dfde153c012baabb676d1acc57150e44d2afafcf",
+          "design-design-readme": "961ee3ada127c0c2636043154fa12159059be2dda27a4ee9945afd19c33c50b6",
+          "design-design-storage-block-ownership": "23d908c91375a5ca98a04b5d9eee1b0edbe8fab05eb58c050d4eea5ccc814aea",
+          "design-design-recovery-metadata-design": "c1e162af44311ae9cf28090aa143f4e23a94a078fe67ef029d177ff72df7c8ad",
+          "design-design-logical-databases": "521a79030cea78180ee04a18a631db624e48708bac3d6e5cc8541b41121ee3a5",
+          "design-adr--0003-separate-failover-intent-from-live-observation": "21fa357e83c1a36e1a939a552dc887cbf620001cb0fd0a179720e51538bd48ec",
+          "design-adr--0005-order-controlled-and-uncontrolled-failover-differently": "d41a7d71381e91ffcfe9d47003dd3aaa8eed317ed70af30689e467d9fc47aac0",
+          "design-adr--0007-bind-promotion-to-a-committed-action": "50b9fa560f5e5e40ce57d80e0bb170e4538fadbae92ae3a85dfee5ba0581a795",
+          "design-adr--0010-report-only-provable-failover-loss": "27e1cf0382027c4a7dd8768c2d915e1ecfc9dc2de5cede5befb478a1908aec29",
+          "design-adr--0021-bound-candidate-recovery-before-promotion": "f54d5b343d89c2c9d9e77cabc85fed9db1bf942929fcf0423c5b029a818b06a8",
+          "stable-010-readme": "6e9e57054eff5c9c787b73b5f9324a810fb2286312944371fe87c670fb28b116",
+          "stable-010-collections": "beee7bebd6e1dffeab8984c5fa0ed9b8d5ba1501f47933cc8de8a4dc1f233ec9",
+          "stable-010-storage": "09edcb680ebd0ddebb0f7659924c6739145534a710c96711fe98d453e80d169e",
+          "stable-010-requests": "c6704856dc370f4a0e1e1cc2d7697a0b16b058682442591c1b378386df2611b8",
+          "stable-010-meta": "86e7db40e44990df56428aedc164eff478db55c87e5cecaa5de77671f4f14e3a",
+          "stable-010-admin": "5576fc8779692f28729131d3fc0584ef26253a34317455b0b7b22770c30c6dbe",
+          "stable-010-compatibility": "8bc6b35042ac4ae48d282b02248945d58811bf38a320d8e91ba2f1f5294907e7",
+          "stable-010-import": "a09ef29e3b0579ef1c7535f63259e93204060539304926594d81f886e33143ec",
+          "stable-010-benchmark": "fb1b18a0b73155b5f218d0398b0d780ee734bfb1a4002f8c9c50fd8f4a8e3992"
+        },
+        "checkedSourceIds": [
+          "stable-010-readme",
+          "stable-010-benchmark",
+          "stable-010-storage",
+          "stable-010-collections",
+          "stable-010-requests",
+          "stable-010-compatibility",
+          "stable-010-import",
+          "stable-010-admin",
+          "stable-010-meta"
+        ],
+        "publicationId": "9a897a9c-1c63-4ae8-ab7a-49a7cc537f8b",
+        "artifactHash": "341113204a23afeedf4c5aefae1952a2c28cc7b6d51f1a4ace825efee74ed4ae"
+      }
+    },
+    {
+      "article": {
+        "id": "lavik-0-1-0-released",
+        "locale": "zh-CN",
+        "version": "0.1.0",
+        "kind": "blog",
+        "slug": "lavik-0-1-0-released",
+        "title": "Lavik 0.1.0 正式发布：NVMe SSD 高性能、大键优化与更便捷的运维",
+        "summary": "首个稳定版本带来基于 NVMe SSD 的 Redis 兼容存储、大字符串 8 KiB 分段、集合优化、内置 Lavik Admin，以及更完善的托管部署能力。",
+        "updatedAt": "2026-10-13",
+        "publishedAt": "2026-10-13",
+        "sourceRevision": "feb61224e414c5653fd09560e20c9d214db1e3ac",
+        "topics": [
+          "news",
+          "architecture"
+        ],
+        "blocks": [
+          {
+            "type": "paragraph",
+            "text": "Lavik 0.1.0 正式发布。首个稳定版本带来了基于 NVMe SSD 的 Redis 兼容键值存储、大键优化，以及从首次部署到日常运维的更完整工具链。它延续了我们公开基准测试所展示的结果：值存放在 NVMe SSD 上的 Lavik，GET 和 SET 峰值吞吐量均高于数据集驻留 DRAM 的受测 Redis 与 Valkey 配置。",
+            "sources": [
+              "stable-010-readme",
+              "stable-010-benchmark"
+            ]
+          },
+          {
+            "type": "paragraph",
+            "text": "目标很务实：数据集增长时，继续使用熟悉的 Redis 数据结构与客户端，同时不必把每个值都放在 DRAM 中。Lavik 在内存中保留紧凑的键索引，将值存储在存储设备上。0.1.0 让这套设计更适合大字符串、持续增长的集合、Stream 工作负载及托管部署。Lavik 继续以 Apache 2.0 开源。",
+            "sources": [
+              "stable-010-readme",
+              "stable-010-storage",
+              "stable-010-collections"
+            ]
+          },
+          {
+            "type": "heading",
+            "text": "NVMe SSD 上的高性能：公开测试数据"
+          },
+          {
+            "type": "paragraph",
+            "text": "性能基础来自 9 月 18 日的 SPDK 对比，测试对象是可下载的 Lavik 0.1.0-beta.1 发布包。在 1,000 万个键、每值 1 KiB 的数据集上，Lavik 达到每秒 1,012,180 次 GET，p99 为 3.599 ms；Redis 8.8.0 为 976,801 次、p99 4.671 ms；Valkey 9.1.0 为 965,697 次、p99 4.543 ms。SET 峰值分别为每秒 930,465、910,426 和 802,519 次。",
+            "sources": [
+              "stable-010-benchmark"
+            ]
+          },
+          {
+            "type": "paragraph",
+            "text": "更大的数据集让容量优势更加具体。在 10 亿个键、每值 1 KiB 的场景下，Lavik SPDK 达到每秒 952,560 次 GET，p99 为 3.599 ms。Dragonfly 1.40.2 Tiered Storage 为 466,039 次、p99 38.911 ms；启用存储层的 Garnet 2.1.5 为 446,366 次、p99 4.223 ms。在这三种受测存储配置中，Lavik 的 GET 与 SET 实测峰值吞吐量均为最高；该报告的大数据集 GET 场景中，Lavik 在选定峰值点的 p99 也最低。",
+            "sources": [
+              "stable-010-benchmark"
+            ]
+          },
+          {
+            "type": "paragraph",
+            "text": "这些是 beta.1 程序的实测结果，不是对稳定版程序或其大键改进的新基准测试。报告使用 pipeline 1、均匀随机 GET 或覆盖式 SET、16 个 CPU 的亲和性约束，以及六块 NVMe 设备上的全新 SPDK 数据集。各产品峰值取自各自选定的连接数与线程配置；对照产品数据复用了相同主机上较早的测试。报告也披露了 Garnet 未完成测试后精确键数校验这一限制。SET 延迟排名与 GET 不同，报告不证明崩溃持久性等价。请使用完整报告复现工作负载，并比较应用所需的延迟分位数。",
+            "sources": [
+              "stable-010-benchmark"
+            ]
+          },
+          {
+            "type": "heading",
+            "text": "大键需要合适的存储设计，而不只是更多内存"
+          },
+          {
+            "type": "paragraph",
+            "text": "Redis 大键可能是数 MiB 的字符串、大量字段组成的 Hash、长 List、Sorted Set，或带消费者状态的 Stream。访问方式各不相同：读取短范围不同于读取整个对象，修改单个字段也不同于替换全部字段。Lavik 0.1.0 的分组存储围绕这些差异展开，覆盖 String、Hash、Set、List、Sorted Set 和 Stream。",
+            "sources": [
+              "stable-010-collections"
+            ]
+          },
+          {
+            "type": "paragraph",
+            "text": "大字符串现在采用固定 8 KiB 字节分段。范围操作可以定位相关分段，小字符串则保留紧凑表示。这样，小范围读取或局部更新可以走更集中的存储路径，而不必让每种操作都将整个大值视为一个单元。全值请求仍需传输所请求的字节；分段并不会让巨大的 GET 响应变得没有成本。",
+            "sources": [
+              "stable-010-collections"
+            ]
+          },
+          {
+            "type": "paragraph",
+            "text": "集合增长后会采用可独立寻址的分组，目标大小为 8 KiB。紧凑值在编码大小达到 16 KiB 时提升为分组表示；完整更新后，活跃主分组负载低于 8 KiB 时可再次压紧。这些大小是表示规则，而非通用硬上限：不可拆分条目或哈希碰撞都可能超过分组目标。长键通过 UUID 引用共享的不可变键记录，减少对象各记录间的重复存储。",
+            "sources": [
+              "stable-010-collections"
+            ]
+          },
+          {
+            "type": "paragraph",
+            "text": "同一版本还改进了 Hash/Set 单点写入的分配与查找、Sorted Set 路由及 RESTORE 构建，并重叠执行 List/Stream 范围读取。Streams 使用分组逻辑记录。这些改动共同将工作集中到操作实际需要的集合部分，同时保留并发读取、复制和恢复所需的顺序与生命周期规则。",
+            "sources": [
+              "stable-010-collections",
+              "stable-010-storage",
+              "stable-010-requests"
+            ]
+          },
+          {
+            "type": "heading",
+            "text": "Redis 兼容开发与更清晰的部署模式"
+          },
+          {
+            "type": "paragraph",
+            "text": "Lavik 支持 RESP2 与 RESP3。稳定版将托管 Single 模式扩展至全部 16 个逻辑数据库和跨槽多键操作；托管命令处理涵盖事务、Lua 与 Functions、Stream 读取、SORT_RO 及 RDB 保存。Cluster 模式仍保留 DB0 和多键同槽约束，因此应根据应用实际使用的命令和客户端行为选择模式。",
+            "sources": [
+              "stable-010-readme",
+              "stable-010-compatibility"
+            ]
+          },
+          {
+            "type": "paragraph",
+            "text": "迁移现有应用还需要可执行的数据路径。本版本提供了 RedisShake v4.6.2 从 Redis 或 Redis Cluster 导入全新托管 Lavik 目标的流程：全量复制、增量追平、最终暂停写入，以及切换前验证。源和目标分片数量无需相同。网站合并后的“从 Redis 迁移”指南已直接提供配置及操作步骤。",
+            "sources": [
+              "stable-010-import"
+            ]
+          },
+          {
+            "type": "heading",
+            "text": "运维能力也是发布的一部分"
+          },
+          {
+            "type": "paragraph",
+            "text": "Linux 发布压缩包现将 Lavik Admin 及其 Node.js 运行时与 lavik、lavik-meta、lavik-ctl 一并提供。Admin 为数据库提供部署与管理界面，涵盖 SSH 主机准备、版本选择、节点放置、部署进度、拓扑管理和监控配置。UI 与 CLI 共享工作目录及操作记录，可从两种界面管理同一部署。",
+            "sources": [
+              "stable-010-admin",
+              "stable-010-readme"
+            ]
+          },
+          {
+            "type": "paragraph",
+            "text": "Meta 迁移至异步 etcd Raft 运行时，具有明确的 RAFT 身份、WAL 和快照状态。Data 节点从 Meta 已提交清单中获取 Single 或 Cluster 客户端模式。该版本还为托管 Single 部署增加 Sentinel 兼容发现，支持独立认证、TLS 及通告主机名，并改进副本启动及全量传输处理。这些能力完善了部署和发现；应用可用性仍取决于实际配置并演练的拓扑和故障行为。",
+            "sources": [
+              "stable-010-meta",
+              "stable-010-readme",
+              "stable-010-admin"
+            ]
+          },
+          {
+            "type": "heading",
+            "text": "让 SSD 容量服务于持续增长的应用"
+          },
+          {
+            "type": "paragraph",
+            "text": "会话记录、应用缓存、特征数据及 Agent 状态的增长，可能快于应用请求速率。使用 Lavik，值的增长可以消耗 NVMe SSD 容量，而 DRAM 继续用于索引及请求服务。这让容量规划从“如何将每个值常驻内存”，转为共同规划索引、存储余量、I/O、CPU 和恢复路径。",
+            "sources": [
+              "stable-010-readme",
+              "stable-010-storage"
+            ]
+          },
+          {
+            "type": "paragraph",
+            "text": "大键优化让这种选择更适合结构化工作负载，但合理的容量规划仍不可或缺。键索引需要内存，存储需要回收和可用空间预留，大回复会消耗网络与客户端缓冲。请演练真实的键大小分布、读写比例、过期行为和恢复要求，而不是将单个吞吐数字外推到所有工作负载。",
+            "sources": [
+              "stable-010-storage",
+              "stable-010-collections",
+              "stable-010-requests"
+            ]
+          },
+          {
+            "type": "heading",
+            "text": "开始使用 Lavik 0.1.0"
+          },
+          {
+            "type": "paragraph",
+            "text": "可在下载页面获取 Linux AMD64 或 ARM64 的 Minimal 或 Standard 压缩包。发布压缩包包含 Lavik Admin UI 及 Node.js 运行时。请从 0.1.0 文档开始，选择适合环境的安装方式。",
+            "sources": [
+              "stable-010-readme",
+              "stable-010-admin"
+            ]
+          },
+          {
+            "type": "paragraph",
+            "text": "如果从 beta.1 升级，请先阅读升级说明。Meta 持久化与 Data 启动参数均已改变；应使用匹配的 0.1.0 Data、Meta、ctl 程序，保留备份，并演练通过已验证逻辑数据迁移建立全新稳定版部署。不要假定支持混合版本滚动升级或 Beta 状态的自动转换。",
+            "sources": [
+              "stable-010-meta",
+              "stable-010-import",
+              "stable-010-readme"
+            ]
+          },
+          {
+            "type": "paragraph",
+            "text": "Lavik 采用 Apache 2.0，是因为我们希望开发者使用它、研究其工作原理，并与我们一起改进。欢迎下载本次发布，在 NVMe SSD 上运行有代表性的工作负载，并分享你的发现。完整版本说明与入门指南见下方链接。",
+            "sources": [
+              "stable-010-readme"
+            ]
+          }
+        ]
+      },
+      "contentHash": "358e6fd7cc868ef66e1dfccff29187a9fe1a21a54ca1949afe111edea7309b3c",
+      "review": {
+        "method": "agent-review",
+        "reviewer": "Lavik independent reviewer; runtime sha256:9e48a7b2322eb2f82e41286afb28bd47e8921a1392f1361b9d551214c565c49c",
+        "verdict": "pass",
+        "contentHash": "358e6fd7cc868ef66e1dfccff29187a9fe1a21a54ca1949afe111edea7309b3c",
+        "releaseCommit": "3955b98d43b312324aa8d52775df52cfb111c0d0",
+        "knowledgeHash": "13ff5e41d8d3beb36402fd2fb010043c54fe419aea5d03603e74f9e183779223",
+        "renderingHash": "82bd655ced605b4b202e48464563eac22e2f55e3e76b0ee3d5b1058becc1e7d3",
+        "rendererVersion": 2,
+        "policyHash": "8a4a307c03cd1dd14486b708f3cc2b2ec148a154548b9d5bd40d8ebb6a7c5c4b",
+        "sourceHashes": {
+          "readme": "641102ed79197f74df38d3ab79a0f19b2d71e2e2c96a79bc91d99361f71fae57",
+          "build": "fe256abda34a8d0ca4648c1ccf784c34534f30954eb4734ba0d879e3b38ae4d9",
+          "architecture": "7ab316c93c1fa3851c62668576dd3e8058c12ba7ac285e37fb4df03464bf8498",
+          "storage": "4399aed3218262576e9361bd44a7a931ba8f6d3db7d48cdd86365f66e8e07b07",
+          "benchmark": "7c5ff60ee49ee0dbb3fac22d771dc6e494bc943f813f7283a089df12b1c9974b",
+          "license": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+          "release": "6574f459d55f37548a6f3dbe736a19c9a17ecdb764d494eed055ad3697b0a851",
+          "benchmark-data": "199ef794aa6e50f3634d45230cf6395cd751bf34d0da73a1d87983065c19f19e",
+          "tiering-cost": "489490a32fa6e2351dfb48ea64ee27ec1dbc110f62b249a0b0ad866698a5f04b",
+          "benchmark-spdk": "fb1b18a0b73155b5f218d0398b0d780ee734bfb1a4002f8c9c50fd8f4a8e3992",
+          "benchmark-spdk-data": "b2b19a631628d5dcbffb382de40b2468577832a3f9e9bd8019ba7e3c48eb5a9e",
+          "design-architecture--readme": "357f72ca2465054aa4eeea3792c1f7d434b3f980a9e72e51fc7d1685243294a8",
+          "design-architecture--01-overview": "c2f95e2d7e4f5e90a6e0e143f266f359dffe62643e0512532c717de23b1855a4",
+          "design-architecture--02-request-serving": "d94670cc117634f00de6e2dab13ce3b5e9cfee772877fd84ba89d6b6b54c613f",
+          "design-architecture--03-transaction-coordination": "a8163ac6f88c1ec53da326ba4a2b265b996942103a47ef081a613b9ec2fcf19e",
+          "design-architecture--04-storage-and-recovery": "5720cd2c4b01681d841419da9f331b40965abcd79e7efc5811ed034a2f5c3547",
+          "design-architecture--05-replication": "ee4e65ca3307e57d0fc0330b6e1c5e57e0b2a593177571f65e2fc146325fdbe7",
+          "design-architecture--06-shutdown-index-checkpoints": "961f2d474757b092cab1e15279925f4cb53b39a9414503575570d31c35163971",
+          "design-architecture--07-function-catalog": "637406d995d4b1b12ea4c834f438b83abe0da4277351ec1560a04a0382bea902",
+          "design-architecture--08-meta-control-plane": "bb4ab24c2a2a092734f94ee56fce0d5d78a2fe8e4a2723fd21b9a7b12d87e542",
+          "design-architecture--09-grouped-collections": "bfde6e99b61bbb7c1fac6a89dfde153c012baabb676d1acc57150e44d2afafcf",
+          "design-design-readme": "961ee3ada127c0c2636043154fa12159059be2dda27a4ee9945afd19c33c50b6",
+          "design-design-storage-block-ownership": "23d908c91375a5ca98a04b5d9eee1b0edbe8fab05eb58c050d4eea5ccc814aea",
+          "design-design-recovery-metadata-design": "c1e162af44311ae9cf28090aa143f4e23a94a078fe67ef029d177ff72df7c8ad",
+          "design-design-logical-databases": "521a79030cea78180ee04a18a631db624e48708bac3d6e5cc8541b41121ee3a5",
+          "design-adr--0003-separate-failover-intent-from-live-observation": "21fa357e83c1a36e1a939a552dc887cbf620001cb0fd0a179720e51538bd48ec",
+          "design-adr--0005-order-controlled-and-uncontrolled-failover-differently": "d41a7d71381e91ffcfe9d47003dd3aaa8eed317ed70af30689e467d9fc47aac0",
+          "design-adr--0007-bind-promotion-to-a-committed-action": "50b9fa560f5e5e40ce57d80e0bb170e4538fadbae92ae3a85dfee5ba0581a795",
+          "design-adr--0010-report-only-provable-failover-loss": "27e1cf0382027c4a7dd8768c2d915e1ecfc9dc2de5cede5befb478a1908aec29",
+          "design-adr--0021-bound-candidate-recovery-before-promotion": "f54d5b343d89c2c9d9e77cabc85fed9db1bf942929fcf0423c5b029a818b06a8",
+          "stable-010-readme": "6e9e57054eff5c9c787b73b5f9324a810fb2286312944371fe87c670fb28b116",
+          "stable-010-collections": "beee7bebd6e1dffeab8984c5fa0ed9b8d5ba1501f47933cc8de8a4dc1f233ec9",
+          "stable-010-storage": "09edcb680ebd0ddebb0f7659924c6739145534a710c96711fe98d453e80d169e",
+          "stable-010-requests": "c6704856dc370f4a0e1e1cc2d7697a0b16b058682442591c1b378386df2611b8",
+          "stable-010-meta": "86e7db40e44990df56428aedc164eff478db55c87e5cecaa5de77671f4f14e3a",
+          "stable-010-admin": "5576fc8779692f28729131d3fc0584ef26253a34317455b0b7b22770c30c6dbe",
+          "stable-010-compatibility": "8bc6b35042ac4ae48d282b02248945d58811bf38a320d8e91ba2f1f5294907e7",
+          "stable-010-import": "a09ef29e3b0579ef1c7535f63259e93204060539304926594d81f886e33143ec",
+          "stable-010-benchmark": "fb1b18a0b73155b5f218d0398b0d780ee734bfb1a4002f8c9c50fd8f4a8e3992"
+        },
+        "checkedSourceIds": [
+          "stable-010-readme",
+          "stable-010-benchmark",
+          "stable-010-storage",
+          "stable-010-collections",
+          "stable-010-requests",
+          "stable-010-compatibility",
+          "stable-010-import",
+          "stable-010-admin",
+          "stable-010-meta"
+        ],
+        "publicationId": "9a897a9c-1c63-4ae8-ab7a-49a7cc537f8b",
+        "artifactHash": "341113204a23afeedf4c5aefae1952a2c28cc7b6d51f1a4ace825efee74ed4ae"
+      }
+    }
+  ],
+  "titles": {
+    "en": "Lavik 0.1.0 Released: Faster Than Redis on DRAM, With Values on NVMe SSD",
+    "zh-CN": "Lavik 0.1.0 正式发布：值存于 NVMe SSD，性能超越 DRAM 上的 Redis"
+  },
+  "context": {
+    "knowledgeHash": "13ff5e41d8d3beb36402fd2fb010043c54fe419aea5d03603e74f9e183779223",
+    "renderingHash": "82bd655ced605b4b202e48464563eac22e2f55e3e76b0ee3d5b1058becc1e7d3",
+    "policyHash": "8a4a307c03cd1dd14486b708f3cc2b2ec148a154548b9d5bd40d8ebb6a7c5c4b"
+  }
+}
