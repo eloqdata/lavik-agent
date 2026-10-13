@@ -29,10 +29,7 @@ jobs:
           cache: npm
       - run: npm ci
       - name: Build the pinned homepage change without tests
-        run: |
-          npx next build apps/web
-          node --import tsx scripts/stage-apt.ts
-          node --import tsx scripts/build-discovery.ts
+        run: npm run build
       - name: Refuse to overwrite newer website changes
         run: |
           git fetch origin main
