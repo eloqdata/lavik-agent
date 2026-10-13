@@ -1,0 +1,52 @@
+"""Regression coverage for the public APT byte-verification boundary."""
+import hashlib
+import importlib.util
+import io
+from pathlib import Path
+import unittest
+from unittest.mock import patch
+
+spec = importlib.util.spec_from_file_location('verify_apt', Path(__file__).resolve().parents[1] / 'scripts/verify-apt.py')
+verifier = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(verifier)
+
+
+class LiveAptVerification(unittest.TestCase):
+    def setUp(self):
+        self.contents = {
+            'lavik-archive-keyring.asc': b'reviewed public key',
+            'dists/noble/InRelease': b'reviewed signed index',
+            'pool/main/l/lavik/lavik_0.1.0-1_arm64.deb': b'reviewed package',
+        }
+        self.manifest = {'files': [{'path': name, 'size': len(data), 'sha256': hashlib.sha256(data).hexdigest()} for name, data in self.contents.items()]}
+
+    def response(self, request, timeout):
+        self.assertTrue(request.full_url.startswith('https://lavik.dev/apt/'))
+        return io.BytesIO(self.contents[request.full_url.removeprefix('https://lavik.dev/apt/')])
+
+    def test_exact_published_bytes_pass(self):
+        with patch.object(verifier.urllib.request, 'urlopen', self.response):
+            self.assertEqual(verifier.verify_live_files(self.manifest), sorted(self.contents))
+
+    def test_changed_key_index_or_package_is_rejected(self):
+        for name in self.contents:
+            with self.subTest(name=name):
+                original = self.contents[name]
+                self.contents[name] = b'x' * len(original)
+                with patch.object(verifier.urllib.request, 'urlopen', self.response), self.assertRaises(AssertionError):
+                    verifier.verify_live_files(self.manifest)
+                self.contents[name] = original
+
+    def test_extra_bytes_are_rejected(self):
+        self.contents['lavik-archive-keyring.asc'] += b'extra'
+        with patch.object(verifier.urllib.request, 'urlopen', self.response), self.assertRaises(AssertionError):
+            verifier.verify_live_files(self.manifest)
+
+    def test_metadata_is_rechecked_after_installation(self):
+        del self.contents['pool/main/l/lavik/lavik_0.1.0-1_arm64.deb']
+        with patch.object(verifier.urllib.request, 'urlopen', self.response):
+            self.assertEqual(verifier.verify_live_files(self.manifest, metadata_only=True), sorted(self.contents))
+
+
+if __name__ == '__main__':
+    unittest.main()

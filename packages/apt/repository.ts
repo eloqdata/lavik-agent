@@ -24,6 +24,7 @@ export const aptReviewedFiles = () => [
   "evidence/apt/0.1.0/verification.json",
   "apps/web/public/_headers",
   "tests/apt.test.ts",
+  "tests/verify-apt-live.test.py",
   "docs/apt-publishing.md",
 ];
 export function aptEvidenceErrors(

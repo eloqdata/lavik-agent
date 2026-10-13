@@ -1,7 +1,11 @@
 import test from "node:test";
 import assert from "node:assert/strict";
+import { execFileSync } from "node:child_process";
 import { readText } from "../packages/content/repository";
 import { aptEvidenceErrors, aptManifest } from "../packages/apt/repository";
+test("live APT verification rejects altered public keys, indexes and packages", () => {
+  execFileSync("python3", ["tests/verify-apt-live.test.py"], { stdio: "pipe" });
+});
 test("APT publication requires signed package lifecycle evidence and current inputs", () => {
   assert.deepEqual(aptEvidenceErrors(), []);
   assert.equal(

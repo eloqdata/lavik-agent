@@ -7,10 +7,14 @@ apt-get update -qq
 apt-get install -y --no-install-recommends ca-certificates curl gnupg redis-tools systemd procps >/dev/null
 install -d -m 0755 /etc/apt/keyrings
 if [[ ${LAVIK_APT_URL:-} ]]; then
-  curl --fail --silent --show-error --location "$LAVIK_APT_URL/lavik-archive-keyring.asc" -o /etc/apt/keyrings/lavik.asc
+  curl --fail --silent --show-error --location "$LAVIK_APT_URL/lavik-archive-keyring.asc" -o /tmp/deployed-key.asc
+  cmp /reviewed-key.asc /tmp/deployed-key.asc
 else
-  cp /repository/lavik-archive-keyring.asc /etc/apt/keyrings/lavik.asc
+  cmp /reviewed-key.asc /repository/lavik-archive-keyring.asc
 fi
+cp /reviewed-key.asc /etc/apt/keyrings/lavik.asc
+fingerprint=$(gpg --batch --with-colons --show-keys /reviewed-key.asc | awk -F: '$1 == "fpr" { print $10; exit }')
+test "$fingerprint" = "$LAVIK_APT_KEY_FINGERPRINT"
 chmod 0644 /etc/apt/keyrings/lavik.asc
 cat > /etc/apt/sources.list.d/lavik.sources <<SOURCE
 Types: deb

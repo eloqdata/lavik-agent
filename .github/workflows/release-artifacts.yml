@@ -34,6 +34,7 @@ jobs:
           cache: npm
       - run: npm ci
       - run: sudo sysctl -w kernel.io_uring_disabled=0
+      - run: python3 tests/verify-apt-live.test.py
       - run: node --import tsx scripts/stage-apt.ts .cache/apt-staged
       - name: Verify signed APT installation and persistence
         run: python3 scripts/verify-apt.py .cache/apt-staged .cache/release-verification/apt-${{ matrix.arch }}.json

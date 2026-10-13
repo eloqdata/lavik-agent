@@ -100,6 +100,9 @@ system-manager enable/restart or SPDK hardware operation. Native AMD64 CI runs
 the same check into `.cache/ci-verification/apt.json` without overwriting the
 reviewed local receipt. After deployment run `python3 scripts/verify-apt.py live
 .cache/apt-live.json` to check the HTTPS endpoint end to end.
+The live check hashes every deployed file against the reviewed manifest, installs
+using the repository's pinned public key, and checks metadata again afterward.
+A matching version string alone is not accepted as deployment verification.
 
 The service is initially stopped, listens on loopback, and uses io_uring for
 both variants. Configuration is `/etc/default/lavik`; data and logs persist
