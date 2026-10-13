@@ -65,7 +65,7 @@ test("cost calculator preserves Garnet's write advantage and refuses unsampled d
 }) => {
   await page.goto("/en/compare/lavik-vs-garnet/");
   const calculator = page.locator(".comparison-calculator");
-  await calculator.getByLabel("Workload", { exact: true }).selectOption("SET");
+  await calculator.getByLabel(/^Workload/).selectOption("SET");
   await calculator.getByLabel("Observed p99 ceiling").selectOption("2");
   await expect(calculator.locator(".comparison-result")).toContainText(
     "584,665",
