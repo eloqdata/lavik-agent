@@ -10,6 +10,8 @@ import uuid
 import concurrent.futures
 import urllib.request
 import urllib.parse
+import urllib.error
+import time
 from datetime import datetime, timezone
 ROOT = Path(__file__).resolve().parents[1]
 ENV = {k:v for k,v in os.environ.items() if k in ('PATH','HOME','TMPDIR','DOCKER_HOST','DOCKER_CONTEXT','DOCKER_CONFIG')}
@@ -25,9 +27,17 @@ def verify_live_files(manifest, metadata_only=False):
     """Bind deployed bytes to the reviewed repository, not just its version label."""
     def verify(f):
         url = 'https://lavik.dev/apt/' + urllib.parse.quote(f['path'], safe='/~')
-        request = urllib.request.Request(url, headers={'Cache-Control': 'no-cache'})
-        with urllib.request.urlopen(request, timeout=120) as response:
-            data = response.read(f['size'] + 1)
+        request = urllib.request.Request(url, headers={'Cache-Control': 'no-cache', 'User-Agent': 'LavikAPTReleaseVerifier/0.1.0'})
+        for attempt in range(3):
+            try:
+                with urllib.request.urlopen(request, timeout=120) as response:
+                    data = response.read(f['size'] + 1)
+                break
+            except urllib.error.HTTPError as error:
+                if error.code not in (429, 500, 502, 503, 504) or attempt == 2: raise
+            except OSError:
+                if attempt == 2: raise
+            time.sleep(attempt + 1)
         assert len(data) == f['size'] and hashlib.sha256(data).hexdigest() == f['sha256'], f"Deployed APT file differs from reviewed bytes: {f['path']}"
         return f['path']
     files = [f for f in manifest['files'] if not metadata_only or not f['path'].startswith('pool/')]
@@ -47,6 +57,7 @@ def main():
     deployed_files=[]
     if source=='live':
         deployed_files=verify_live_files(manifest)
+        print(f'Verified {len(deployed_files)} deployed APT files against reviewed hashes',flush=True)
         command += ['-e','LAVIK_APT_URL=https://lavik.dev/apt']
     else:
         repository=(ROOT/source).resolve()

@@ -22,6 +22,7 @@ class LiveAptVerification(unittest.TestCase):
 
     def response(self, request, timeout):
         self.assertTrue(request.full_url.startswith('https://lavik.dev/apt/'))
+        self.assertEqual(request.get_header('User-agent'), 'LavikAPTReleaseVerifier/0.1.0')
         return io.BytesIO(self.contents[request.full_url.removeprefix('https://lavik.dev/apt/')])
 
     def test_exact_published_bytes_pass(self):
@@ -46,6 +47,19 @@ class LiveAptVerification(unittest.TestCase):
         del self.contents['pool/main/l/lavik/lavik_0.1.0-1_arm64.deb']
         with patch.object(verifier.urllib.request, 'urlopen', self.response):
             self.assertEqual(verifier.verify_live_files(self.manifest, metadata_only=True), sorted(self.contents))
+
+    def test_transient_transport_failure_retries_without_relaxing_hash_checks(self):
+        one = {'files': [self.manifest['files'][0]]}
+        with patch.object(verifier.urllib.request, 'urlopen', side_effect=[ConnectionResetError(), io.BytesIO(b'reviewed public key')]) as fetch, patch.object(verifier.time, 'sleep'):
+            self.assertEqual(verifier.verify_live_files(one), ['lavik-archive-keyring.asc'])
+            self.assertEqual(fetch.call_count, 2)
+
+    def test_authorization_failure_is_not_retried(self):
+        one = {'files': [self.manifest['files'][0]]}
+        error = verifier.urllib.error.HTTPError('https://lavik.dev/apt/test', 403, 'Forbidden', {}, None)
+        with patch.object(verifier.urllib.request, 'urlopen', side_effect=error) as fetch, self.assertRaises(verifier.urllib.error.HTTPError):
+            verifier.verify_live_files(one)
+        self.assertEqual(fetch.call_count, 1)
 
 
 if __name__ == '__main__':
