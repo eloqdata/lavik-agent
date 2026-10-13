@@ -1,0 +1,93 @@
+{
+  "review": {
+    "decision": "pass",
+    "findings": [
+      {
+        "severity": "note",
+        "message": "No material blocker identified in the supplied APT and Docker files. Source checksums and revisions are pinned; signing continuity, immutable beta packages/by-hash indexes, stable APT selection, Cloudflare size limits, package lifecycle handling, and Docker bootstrap/recovery ordering are consistent."
+      },
+      {
+        "severity": "note",
+        "message": "The previous publication-integrity blocker is resolved: live verification checks deployed file hashes and sizes, installs with the reviewed key, verifies its fingerprint, and rechecks metadata. Supplied regression tests cover altered keys, indexes, packages and extra bytes. Published status still requires successful live APT and registry-artifact verification."
+      },
+      {
+        "severity": "note",
+        "message": "Coordinator/native CI evidence reports passing AMD64 and ARM64 checks; I ran no tools or tests. Only unchanged beta manual approval is inherited. This review does not certify beta database/cluster migration, SPDK hardware support, or lifecycle behavior under a booted systemd manager."
+      }
+    ]
+  },
+  "reviewer": {
+    "role": "reviewer",
+    "model": "gpt-6-astra",
+    "provider": "openai",
+    "authentication": "chatgpt",
+    "reasoning": "high",
+    "startedAt": "2026-10-13T08:57:04.717Z",
+    "finishedAt": "2026-10-13T08:59:19.746Z",
+    "promptSha256": "4ef6f905853cadfbcad59374fa773990e6980fa95bc1d30463387337f808dc38",
+    "outputSha256": "4070ae8a24d713c90bca8b8cb2280a31a2164b912c3a702319e8f8f209c6132c"
+  },
+  "reviewedFiles": {
+    ".github/workflows/release-artifacts.yml": "3d1bf752048ff7854a5d98fb6c53b6071c36e5561d15f19284a22186633baecb",
+    ".gitignore": "ac3b6ad1580d7cd27927552974932d97072eff8f466f08df436a4c3e356f548b",
+    "apps/web/public/_headers": "237343cb062ceb7736ae444c7b80228b8447939b15a9aac3536019f473b26531",
+    "docs/apt-publishing.md": "502d7ce1b70ae73a8ee510517cd422e2baac5bc759e5e950061dbf8a316819a0",
+    "evidence/apt/0.1.0/verification.json": "23f7f11189a10147774f400169e38bb887ae3093c98b4e46835ed206a459d1ba",
+    "evidence/releases/0.1.0/apt-native-amd64.json": "323d9b6d2c65146d51ec9c770f402c37766a37b40d991c927b3f9630b7675cba",
+    "evidence/releases/0.1.0/apt-native-arm64.json": "9a8a2a73a6151d710aa993162a1c042b233d688afc2b4b7a8914eb6ec114e60c",
+    "evidence/releases/0.1.0/docker-arm64.json": "c299fc6458b453056e0100bae47f02dbe9d09ebcdc6ef8e489800451a5257496",
+    "evidence/releases/0.1.0/docker-native-amd64.txt": "954c6ea268eaf3004729ec87c53169a2a7fc25a0326c7303d09c6762a76cf1ba",
+    "evidence/releases/0.1.0/docker-native-arm64.txt": "954c6ea268eaf3004729ec87c53169a2a7fc25a0326c7303d09c6762a76cf1ba",
+    "evidence/releases/0.1.0/native-ci.json": "a942d0504607648bd2e7266c13735d9452b13161819263331d1204aea809e582",
+    "evidence/releases/0.1.0/packaging-review-1.json": "2e121cd3af1a533f5944825e5d069bff5c0d4ba5f28dcce519f4c214ea95cf38",
+    "evidence/releases/0.1.0/startup-sources.json": "869247790c89bd9ddf0ec9e2ade3038b63105c1b14c5782ad2ecda1cc26aeee1",
+    "packages/apt/lavik-archive-keyring.asc": "b0268132b013419d7354391ea4406ab8fb70baa017f024591f87c9f739db033f",
+    "packages/apt/manifest.json": "38af924cbf9e162efe2d76377e0f65b2dd99d10c7af19b07dd1359657dff2e9d",
+    "packages/apt/repository.ts": "8218e634f9f9f45f3dfc47fc5cbc20a1009d51692a99ce3a3256b526cfa20e8e",
+    "packages/local/codex.ts": "118152ba3c21e8f085b4bfb62bbecc732e90dba3ac1199d4fdf63be0dc6f6865",
+    "packaging/apt/Dockerfile": "d0d1fdc59356f6c6528bf0a899b34ac7867c6c6fb687b29e73d03f4443883e8d",
+    "packaging/apt/build.py": "569ef9e0bb0d6dd869601b4b33e287a373796220b86efdfecc691e0834c96a1b",
+    "packaging/apt/examples/install.sh": "6308a440d4240000460d1f9a64d2d6a6aa6af63084c4d7ab0151ec2d4cb4e131",
+    "packaging/apt/examples/manage.sh": "fee18915684736b9b23f84f59ad557630e650fbab9188be60aa807c2e27b4721",
+    "packaging/apt/examples/standard.sh": "613814a2282cc12959b84d29efc6d6ef5ad3807165139a252392b1ea6b626481",
+    "packaging/apt/examples/start.sh": "6dcfd4a2407c664a5c9456db90bbaa8b260bcb83ef3b2295af2ea27a43cc79a3",
+    "packaging/apt/previous.json": "7ed82009263b33a249f3cf54739f4f3de1b0e7b1bdf56f3c62098dc3d9a5606c",
+    "packaging/apt/release.json": "ea26a77e1f05c4fde10bc9b7f0ce9f8c0f5cc4c9431e436c25f3e703db7d708f",
+    "packaging/apt/templates/default": "f7564ed5b8765ba5fbee4f7d05baa1ba2d14f5e901a810f1dc46c272151b6f1f",
+    "packaging/apt/templates/lavik.service": "7cf7c74b6e22a42eb62e6a46bab621eb7139f36ac50ed3e9861edfaf0fde7fd0",
+    "packaging/apt/templates/postinst": "7229b17d5be2b0847e0a9b67370e702375b211f5b071c6071685d2a1720ac880",
+    "packaging/apt/templates/postrm": "ee41bd58af3d72e53b422c2be26b22f7ad727b78f021f4d521c604624461f771",
+    "packaging/apt/templates/prerm": "4159590d7fc96a7205a1e8b87dc7ef15c4216b054c6e16bf6b3f158e8c416434",
+    "packaging/apt/templates/start": "08c2eb58a9396990c5038c933ee75f8bbce26185065830bb6d1092786d61fda6",
+    "packaging/apt/test-install.sh": "937ee1e17cbd751cfba14aa0d12fd90f61e511fcaceab12dd2124bfff87481f2",
+    "packaging/docker/0.1.0/.dockerignore": "3d7bf1ecb6d9515a38e3366d7591fba935592d24563257d4363a67f5fe516f58",
+    "packaging/docker/0.1.0/Dockerfile": "4b930aeb82291ab796bcf999dba224def8f0c143d79c70613fd9569cf4a64eff",
+    "packaging/docker/0.1.0/README.md": "7bbb4ef1768269b4787c2576fcc0226bda5d45a88db2ce6f5e8c3530c410307e",
+    "packaging/docker/0.1.0/bootstrap-cluster.py": "f91e4f7d4e85164490c56722e3f3f5a45dd5ee2bc4948c5b266e01fb91d5e2a0",
+    "packaging/docker/0.1.0/cluster.toml": "8810dacc1849ae707d17ceb450d10c2bb8e925c3fc3a609004a94dd4c96a846d",
+    "packaging/docker/0.1.0/compose.yaml": "ef9009925918f63354a6fc11eee10f95df6bc1da7098e157429b271d75c97d27",
+    "packaging/docker/0.1.0/docker-entrypoint.sh": "4445b8c2f5f061c9457461666f839575aba48711ef3728e4303277beaf5fa7d7",
+    "packaging/docker/0.1.0/fetch-release.sh": "53a295b0760186f1342b3da88f7e7e2d414b23e21e6985febfa2542e2403bdbc",
+    "packaging/docker/0.1.0/release.sha256": "f2bc62261ad194f6a8dbee3a8b8d7cae4b0f07cb2e308b8c359278e8970e6ddf",
+    "packaging/docker/0.1.0/smoke-test.py": "dffcfe44bd2f0cdd9991238b28633c35c76796decc2f3d0683094b8cf7bbf8e2",
+    "scripts/build-apt.sh": "1452ef09764a2c8331cc15d423fec7180a2e809be7cc6bcfe51159713582c00b",
+    "scripts/review-release-packaging.ts": "18d65e9ce0f783b52c02a9738d19bd1dd1124f086c48fcc645f40931855146d1",
+    "scripts/stage-apt.ts": "e9b58a7370703574546dee2a6798d539168928e73fc2234de22d5ee89372d9bb",
+    "scripts/verify-apt.py": "a965378570535436469012eea9c79c59ef34b9f0dafb8724d76de866796bee1b",
+    "tests/apt.test.ts": "15e95620f779df65cfa63db8fea88cd422c61b68d98c8a87767d3f9ea80475bf",
+    "tests/verify-apt-live.test.py": "1aac494ced1ce0144d5832f72eac79f523055113a2240504d5876856df711246"
+  },
+  "previousApproval": "d560cd8238b6925e9a1297d8e0ca5882d4ec9e0827f4a0c0e6e99e88be70ebce",
+  "reviewedChanges": [
+    "evidence/apt/0.1.0/verification.json",
+    "packages/apt/manifest.json",
+    "packages/apt/repository.ts",
+    "packaging/apt/build.py",
+    "packaging/apt/previous.json",
+    "packaging/apt/release.json",
+    "packaging/apt/test-install.sh",
+    "scripts/build-apt.sh",
+    "scripts/stage-apt.ts",
+    "scripts/verify-apt.py"
+  ]
+}
