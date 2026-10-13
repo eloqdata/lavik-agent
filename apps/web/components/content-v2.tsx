@@ -10,6 +10,7 @@ import {
 import type { Receipt } from "../../../packages/content/schema";
 import type { Article, Locale } from "../../../packages/content/schema";
 import { CostCalculator } from "./cost-calculator";
+import { stableRelease } from "../../../packages/docs/stable";
 
 const shellArg = (value: string) =>
   /^[a-zA-Z0-9:./_-]+$/.test(value)
@@ -87,6 +88,8 @@ export function ArticleBody({
   receipts: Receipt[];
 }) {
   const showEvidence = !["docs", "faq"].includes(article.kind);
+  const stableReleasePost =
+    article.kind === "blog" && article.sourceRevision === stableRelease.commit;
   const used = new Set<string>();
   for (const block of article.blocks) {
     if (block.type === "paragraph") block.sources.forEach((id) => used.add(id));
@@ -133,6 +136,35 @@ export function ArticleBody({
           );
         })}
       </div>
+      {stableReleasePost && (
+        <div className="download-box">
+          <p>
+            <a href={`/${article.locale}/download/`}>
+              {article.locale === "en"
+                ? "Download Lavik 0.1.0"
+                : "下载 Lavik 0.1.0"}{" "}
+              →
+            </a>
+          </p>
+          <p>
+            <a href={`/${article.locale}/releases/0-1-0/`}>
+              {article.locale === "en" ? "Full Release Notes" : "完整版本说明"}{" "}
+              →
+            </a>
+            {" · "}
+            <a href={`/${article.locale}/docs/0.1.0/`}>
+              {article.locale === "en" ? "Get Started" : "开始使用"} →
+            </a>
+            {" · "}
+            <a href={`/${article.locale}/docs/0.1.0/migrate-redis/`}>
+              {article.locale === "en"
+                ? "Migrate With RedisShake"
+                : "使用 RedisShake 迁移"}{" "}
+              →
+            </a>
+          </p>
+        </div>
+      )}
       {showEvidence && (
         <aside className="source-list">
           <h2>
@@ -147,7 +179,7 @@ export function ArticleBody({
               {(article.sourceRevision ?? release.commit).slice(0, 7)}
             </a>
           </p>
-          {article.sourceRevision ? (
+          {article.sourceRevision && !stableReleasePost ? (
             <p>
               {article.locale === "en"
                 ? "Engineering notes based on this repository snapshot. Consult the versioned manual for the downloadable beta's verified behavior."

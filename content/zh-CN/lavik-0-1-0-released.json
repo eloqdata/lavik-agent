@@ -1,0 +1,183 @@
+{
+  "id": "lavik-0-1-0-released",
+  "locale": "zh-CN",
+  "version": "0.1.0",
+  "kind": "blog",
+  "slug": "lavik-0-1-0-released",
+  "title": "Lavik 0.1.0 正式发布：NVMe SSD 高性能、大键优化与更便捷的运维",
+  "summary": "首个稳定版本带来基于 NVMe SSD 的 Redis 兼容存储、大字符串 8 KiB 分段、集合优化、内置 Lavik Admin，以及更完善的托管部署能力。",
+  "updatedAt": "2026-10-13",
+  "publishedAt": "2026-10-13",
+  "sourceRevision": "feb61224e414c5653fd09560e20c9d214db1e3ac",
+  "topics": [
+    "news",
+    "architecture"
+  ],
+  "blocks": [
+    {
+      "type": "paragraph",
+      "text": "Lavik 0.1.0 正式发布。首个稳定版本带来了基于 NVMe SSD 的 Redis 兼容键值存储、大键优化，以及从首次部署到日常运维的更完整工具链。它延续了我们公开基准测试所展示的结果：值存放在 NVMe SSD 上的 Lavik，GET 和 SET 峰值吞吐量均高于数据集驻留 DRAM 的受测 Redis 与 Valkey 配置。",
+      "sources": [
+        "stable-010-readme",
+        "stable-010-benchmark"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "目标很务实：数据集增长时，继续使用熟悉的 Redis 数据结构与客户端，同时不必把每个值都放在 DRAM 中。Lavik 在内存中保留紧凑的键索引，将值存储在存储设备上。0.1.0 让这套设计更适合大字符串、持续增长的集合、Stream 工作负载及托管部署。Lavik 继续以 Apache 2.0 开源。",
+      "sources": [
+        "stable-010-readme",
+        "stable-010-storage",
+        "stable-010-collections"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "NVMe SSD 上的高性能：公开测试数据"
+    },
+    {
+      "type": "paragraph",
+      "text": "性能基础来自 9 月 18 日的 SPDK 对比，测试对象是可下载的 Lavik 0.1.0-beta.1 发布包。在 1,000 万个键、每值 1 KiB 的数据集上，Lavik 达到每秒 1,012,180 次 GET，p99 为 3.599 ms；Redis 8.8.0 为 976,801 次、p99 4.671 ms；Valkey 9.1.0 为 965,697 次、p99 4.543 ms。SET 峰值分别为每秒 930,465、910,426 和 802,519 次。",
+      "sources": [
+        "stable-010-benchmark"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "更大的数据集让容量优势更加具体。在 10 亿个键、每值 1 KiB 的场景下，Lavik SPDK 达到每秒 952,560 次 GET，p99 为 3.599 ms。Dragonfly 1.40.2 Tiered Storage 为 466,039 次、p99 38.911 ms；启用存储层的 Garnet 2.1.5 为 446,366 次、p99 4.223 ms。在这三种受测存储配置中，Lavik 的 GET 与 SET 实测峰值吞吐量均为最高；该报告的大数据集 GET 场景中，Lavik 在选定峰值点的 p99 也最低。",
+      "sources": [
+        "stable-010-benchmark"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "这些是 beta.1 程序的实测结果，不是对稳定版程序或其大键改进的新基准测试。报告使用 pipeline 1、均匀随机 GET 或覆盖式 SET、16 个 CPU 的亲和性约束，以及六块 NVMe 设备上的全新 SPDK 数据集。各产品峰值取自各自选定的连接数与线程配置；对照产品数据复用了相同主机上较早的测试。报告也披露了 Garnet 未完成测试后精确键数校验这一限制。SET 延迟排名与 GET 不同，报告不证明崩溃持久性等价。请使用完整报告复现工作负载，并比较应用所需的延迟分位数。",
+      "sources": [
+        "stable-010-benchmark"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "大键需要合适的存储设计，而不只是更多内存"
+    },
+    {
+      "type": "paragraph",
+      "text": "Redis 大键可能是数 MiB 的字符串、大量字段组成的 Hash、长 List、Sorted Set，或带消费者状态的 Stream。访问方式各不相同：读取短范围不同于读取整个对象，修改单个字段也不同于替换全部字段。Lavik 0.1.0 的分组存储围绕这些差异展开，覆盖 String、Hash、Set、List、Sorted Set 和 Stream。",
+      "sources": [
+        "stable-010-collections"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "大字符串现在采用固定 8 KiB 字节分段。范围操作可以定位相关分段，小字符串则保留紧凑表示。这样，小范围读取或局部更新可以走更集中的存储路径，而不必让每种操作都将整个大值视为一个单元。全值请求仍需传输所请求的字节；分段并不会让巨大的 GET 响应变得没有成本。",
+      "sources": [
+        "stable-010-collections"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "集合增长后会采用可独立寻址的分组，目标大小为 8 KiB。紧凑值在编码大小达到 16 KiB 时提升为分组表示；完整更新后，活跃主分组负载低于 8 KiB 时可再次压紧。这些大小是表示规则，而非通用硬上限：不可拆分条目或哈希碰撞都可能超过分组目标。长键通过 UUID 引用共享的不可变键记录，减少对象各记录间的重复存储。",
+      "sources": [
+        "stable-010-collections"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "同一版本还改进了 Hash/Set 单点写入的分配与查找、Sorted Set 路由及 RESTORE 构建，并重叠执行 List/Stream 范围读取。Streams 使用分组逻辑记录。这些改动共同将工作集中到操作实际需要的集合部分，同时保留并发读取、复制和恢复所需的顺序与生命周期规则。",
+      "sources": [
+        "stable-010-collections",
+        "stable-010-storage",
+        "stable-010-requests"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "Redis 兼容开发与更清晰的部署模式"
+    },
+    {
+      "type": "paragraph",
+      "text": "Lavik 支持 RESP2 与 RESP3。稳定版将托管 Single 模式扩展至全部 16 个逻辑数据库和跨槽多键操作；托管命令处理涵盖事务、Lua 与 Functions、Stream 读取、SORT_RO 及 RDB 保存。Cluster 模式仍保留 DB0 和多键同槽约束，因此应根据应用实际使用的命令和客户端行为选择模式。",
+      "sources": [
+        "stable-010-readme",
+        "stable-010-compatibility"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "迁移现有应用还需要可执行的数据路径。本版本提供了 RedisShake v4.6.2 从 Redis 或 Redis Cluster 导入全新托管 Lavik 目标的流程：全量复制、增量追平、最终暂停写入，以及切换前验证。源和目标分片数量无需相同。网站合并后的“从 Redis 迁移”指南已直接提供配置及操作步骤。",
+      "sources": [
+        "stable-010-import"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "运维能力也是发布的一部分"
+    },
+    {
+      "type": "paragraph",
+      "text": "Linux 发布压缩包现将 Lavik Admin 及其 Node.js 运行时与 lavik、lavik-meta、lavik-ctl 一并提供。Admin 为数据库提供部署与管理界面，涵盖 SSH 主机准备、版本选择、节点放置、部署进度、拓扑管理和监控配置。UI 与 CLI 共享工作目录及操作记录，可从两种界面管理同一部署。",
+      "sources": [
+        "stable-010-admin",
+        "stable-010-readme"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "Meta 迁移至异步 etcd Raft 运行时，具有明确的 RAFT 身份、WAL 和快照状态。Data 节点从 Meta 已提交清单中获取 Single 或 Cluster 客户端模式。该版本还为托管 Single 部署增加 Sentinel 兼容发现，支持独立认证、TLS 及通告主机名，并改进副本启动及全量传输处理。这些能力完善了部署和发现；应用可用性仍取决于实际配置并演练的拓扑和故障行为。",
+      "sources": [
+        "stable-010-meta",
+        "stable-010-readme",
+        "stable-010-admin"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "让 SSD 容量服务于持续增长的应用"
+    },
+    {
+      "type": "paragraph",
+      "text": "会话记录、应用缓存、特征数据及 Agent 状态的增长，可能快于应用请求速率。使用 Lavik，值的增长可以消耗 NVMe SSD 容量，而 DRAM 继续用于索引及请求服务。这让容量规划从“如何将每个值常驻内存”，转为共同规划索引、存储余量、I/O、CPU 和恢复路径。",
+      "sources": [
+        "stable-010-readme",
+        "stable-010-storage"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "大键优化让这种选择更适合结构化工作负载，但合理的容量规划仍不可或缺。键索引需要内存，存储需要回收和可用空间预留，大回复会消耗网络与客户端缓冲。请演练真实的键大小分布、读写比例、过期行为和恢复要求，而不是将单个吞吐数字外推到所有工作负载。",
+      "sources": [
+        "stable-010-storage",
+        "stable-010-collections",
+        "stable-010-requests"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "开始使用 Lavik 0.1.0"
+    },
+    {
+      "type": "paragraph",
+      "text": "可在下载页面获取 Linux AMD64 或 ARM64 的 Minimal 或 Standard 压缩包。发布压缩包包含 Lavik Admin UI 及 Node.js 运行时。请从 0.1.0 文档开始，选择适合环境的安装方式。",
+      "sources": [
+        "stable-010-readme",
+        "stable-010-admin"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "如果从 beta.1 升级，请先阅读升级说明。Meta 持久化与 Data 启动参数均已改变；应使用匹配的 0.1.0 Data、Meta、ctl 程序，保留备份，并演练通过已验证逻辑数据迁移建立全新稳定版部署。不要假定支持混合版本滚动升级或 Beta 状态的自动转换。",
+      "sources": [
+        "stable-010-meta",
+        "stable-010-import",
+        "stable-010-readme"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "Lavik 采用 Apache 2.0，是因为我们希望开发者使用它、研究其工作原理，并与我们一起改进。欢迎下载本次发布，在 NVMe SSD 上运行有代表性的工作负载，并分享你的发现。完整版本说明与入门指南见下方链接。",
+      "sources": [
+        "stable-010-readme"
+      ]
+    }
+  ]
+}

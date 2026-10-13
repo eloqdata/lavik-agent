@@ -8,7 +8,7 @@
   "manualFiles": {
     "apps/web/app/(entry)/manual-manifest.json/route.ts": "5d20c3bf684d225f5eb893c1d954963e1ee8d0b157c8322e93c766775fe11b59",
     "apps/web/app/(site)/[locale]/[...slug]/page.tsx": "2e48eabd959322a746fe9400f5aadc09e01eab63e04467b96fed8b7ef6ffef0c",
-    "apps/web/components/content-v2.tsx": "658c1ef9b35174a0ca1287663577a17aa9d22c3681240a570a96c623eaa320a9",
+    "apps/web/components/content-v2.tsx": "2fc238e5e46f4380d65eacc749de21f795f13ec86f6f33b9bd4e082f13f515d8",
     "apps/web/components/content.tsx": "337df390a1b49dbcbf69ac055d8d5b32dcc4921f064418c6767a381b02a52e0e",
     "apps/web/components/copy-code.tsx": "97d9360c361baa6c13dbbc2beb925eee72db4a13350ce641fae7c367a37220fb",
     "apps/web/components/docs-home.tsx": "8cbf5d7d47821f0f7fc488270829d1aafe0952e8616d4aeb5f2b2dad1f004da2",
@@ -52,7 +52,7 @@
     "evidence/operations/0.1.0/sources/docs/operations/metrics.md": "04f774aed019b4782201286a8975245fd75895dc28dda3eb46209ea20139f01e",
     "evidence/operations/0.1.0/verification.json": "3f047154c43aeef3645e381414672c5c727d2932ef276a1c051700ec14064efb",
     "evidence/quick-start/0.1.0/verification.json": "939a84cf585fc8998db93d63c403dd3f16ab03533e2d3edc37a1e3f6e8416167",
-    "evidence/sources.json": "ce0e2e8a66c22c7aed12d04ffc4cff303d7385e44add23f7d9174c1a93d2a0bc",
+    "evidence/sources.json": "07967e7296272b051fb08de3043004d7bcdd8b8ba51e2ed8837729f8b0ed1c67",
     "evidence/sources/architecture.txt": "7ab316c93c1fa3851c62668576dd3e8058c12ba7ac285e37fb4df03464bf8498",
     "evidence/sources/benchmark-spdk-data.txt": "b2b19a631628d5dcbffb382de40b2468577832a3f9e9bd8019ba7e3c48eb5a9e",
     "evidence/sources/benchmark-spdk.txt": "fb1b18a0b73155b5f218d0398b0d780ee734bfb1a4002f8c9c50fd8f4a8e3992",
@@ -334,5 +334,25 @@
     "verification/docs/0.1.0/query-0.txt": "e62c421f8f38333cfcdf3905625f1b2d5f70dd92a7366765ece6a1e56e834f1d",
     "verification/docs/0.1.0/query-1.txt": "e62c421f8f38333cfcdf3905625f1b2d5f70dd92a7366765ece6a1e56e834f1d"
   },
-  "bundleHash": "d2295292ff6130b4297fdf2c2494741efd8d9d5381479da9039332e8e1c9579a"
+  "bundleHash": "cdc239024589e0c610a2cbd5f07c565bbca39166e1d47724aec4f1ee3ba55515",
+  "independentlyReviewedContextDelta": {
+    "reviewer": {
+      "role": "reviewer",
+      "model": "gpt-6-astra",
+      "provider": "openai",
+      "authentication": "chatgpt",
+      "reasoning": "high",
+      "startedAt": "2026-10-13T13:35:08.496Z",
+      "finishedAt": "2026-10-13T13:36:27.243Z",
+      "promptSha256": "fdc7bdf77015ec35e3f3bb83e6fd44f0453e9a5a05f3b34f859b13a2a04b211a",
+      "outputSha256": "7430958df18aac6a5c4faf9d85870bf060a5a0e4d7a698f88cc1b9c7d93a949d"
+    },
+    "record": "evidence/reviews/batches/release-blog-20261013.json",
+    "changedFiles": [
+      "apps/web/components/content-v2.tsx",
+      "evidence/sources.json"
+    ],
+    "previousBundleHash": "d2295292ff6130b4297fdf2c2494741efd8d9d5381479da9039332e8e1c9579a",
+    "scope": "Only the append-only sources and stable-blog renderer branch; owner waiver scope unchanged."
+  }
 }

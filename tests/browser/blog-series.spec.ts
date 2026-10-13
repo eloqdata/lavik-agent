@@ -1,5 +1,6 @@
 import { test, expect } from "@playwright/test";
 import fs from "node:fs";
+import { stableRelease } from "../../packages/docs/stable.ts";
 const revision = "9d6b212da5da820b4bed63fc047b5c2ed6be1fa5";
 const pages = ["en", "zh-CN"].flatMap((locale) =>
   fs
@@ -56,5 +57,43 @@ test("eight bilingual engineering articles are discoverable and show their curre
         `${route} at ${width}`,
       ).toBe(true);
     }
+  }
+});
+
+test("stable release announcement links to stable downloads and docs without the legacy beta engineering label", async ({
+  page,
+  request,
+}) => {
+  for (const locale of ["en", "zh-CN"]) {
+    const article = JSON.parse(
+      fs.readFileSync(`content/${locale}/lavik-0-1-0-released.json`, "utf8"),
+    );
+    await page.goto(`/${locale}/blog/${article.slug}/`);
+    await expect(page.locator("h1")).toHaveText(article.title);
+    await expect(page.locator(".source-list")).not.toContainText(
+      "downloadable beta",
+    );
+    await expect(page.locator(".source-list")).not.toContainText("下载的 beta");
+    await expect(page.locator(".source-list a").first()).toHaveAttribute(
+      "href",
+      `https://github.com/eloqdata/lavik/tree/${stableRelease.commit}`,
+    );
+    for (const route of [
+      "download/",
+      "releases/0-1-0/",
+      "docs/0.1.0/",
+      "docs/0.1.0/migrate-redis/",
+    ]) {
+      await expect(
+        page.locator(`.download-box a[href="/${locale}/${route}"]`),
+      ).toBeVisible();
+      expect((await request.get(`/${locale}/${route}`)).status()).toBe(200);
+    }
+    await page.setViewportSize({ width: 375, height: 950 });
+    expect(
+      await page.evaluate(
+        () => document.documentElement.scrollWidth <= innerWidth,
+      ),
+    ).toBe(true);
   }
 });
