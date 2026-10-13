@@ -1,0 +1,45 @@
+name: One-time homepage badge deployment
+
+# Owner requested no tests for this exact homepage-only change. This workflow
+# cannot select another revision and expires after 2026-10-13 UTC.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    concurrency:
+      group: lavik-production-publication
+      cancel-in-progress: false
+      queue: max
+    steps:
+      - name: Enforce one-day authorization
+        run: test "$(date -u +%F)" = "2026-10-13"
+      - uses: actions/checkout@v6
+        with:
+          ref: bbcebc19f598044fddebf40ceb9c7a5a423950d7
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - name: Build the pinned homepage change without tests
+        run: |
+          npx next build apps/web
+          node --import tsx scripts/stage-apt.ts
+          node --import tsx scripts/build-discovery.ts
+      - name: Refuse to overwrite newer website changes
+        run: |
+          git fetch origin main
+          test "$(git rev-parse HEAD)" = "bbcebc19f598044fddebf40ceb9c7a5a423950d7"
+          git diff --exit-code HEAD origin/main -- . ':!.github/workflows/deploy-homepage-badge.yml'
+      - name: Deploy the pinned homepage change
+        run: npx wrangler deploy --env-file /dev/null
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN || secrets.CLOUDFLARE_LAVIK }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
