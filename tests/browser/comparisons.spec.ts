@@ -15,14 +15,14 @@ test("Compare navigation works with keyboard, touch, dismissal and both language
     await trigger.click();
     await expect(trigger).toHaveAttribute("aria-expanded", "true");
     const panel = page.locator(".compare-panel");
-    await expect(panel.getByRole("link")).toHaveCount(9);
+    await expect(panel.getByRole("link")).toHaveCount(10);
     await page.keyboard.press("Tab");
     await expect(panel.getByRole("link").first()).toBeFocused();
     await page.keyboard.press("Escape");
     await expect(trigger).toBeFocused();
     await expect(panel).toHaveCount(0);
     await trigger.click();
-    await page.locator("main h1").click();
+    await page.mouse.click(5, 200);
     await expect(trigger).toHaveAttribute("aria-expanded", "false");
   }
   await page.setViewportSize({ width: 375, height: 812 });
