@@ -1,3 +1,7 @@
+import {
+  comparisonProducts,
+  comparisonRoute,
+} from "../../../../packages/comparisons/catalog";
 import { pageInfo } from "../../../../packages/seo/site";
 import { changedAt } from "../../../../packages/seo/dates";
 import type { Locale } from "../../../../packages/content/schema";
@@ -13,6 +17,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const paths = ["en", "zh-CN"].flatMap((locale) =>
     [
       "",
+      "compare/",
+      ...comparisonProducts.map((p) => `${comparisonRoute(p.id)}/`),
       "benchmarks/",
       "cost/",
       "use-cases/",
@@ -62,19 +68,21 @@ export default function sitemap(): MetadataRoute.Sitemap {
       parts = url.pathname.split("/").filter(Boolean),
       locale = parts[0],
       route = parts.slice(1).join("/");
-    const source = route.startsWith("docs/0.1.0/commands")
-      ? "content/manual/0.1.0/catalog.json"
-      : route.startsWith("docs/0.1.0/clients")
-        ? "verification/manual/clients/catalog.json"
-        : route.startsWith("use-cases")
-          ? "packages/use-cases/content.ts"
-          : operationsRoutes().includes(route)
-            ? "content/operations/0.1.0/guides.json"
-            : route.startsWith("docs/")
-              ? "packages/docs/guides.json"
-              : route === ""
-                ? "apps/web/app/(site)/[locale]/page.tsx"
-                : "apps/web/app/(site)/[locale]/[...slug]/page.tsx";
+    const source = route.startsWith("compare")
+      ? "packages/comparisons/content.ts"
+      : route.startsWith("docs/0.1.0/commands")
+        ? "content/manual/0.1.0/catalog.json"
+        : route.startsWith("docs/0.1.0/clients")
+          ? "verification/manual/clients/catalog.json"
+          : route.startsWith("use-cases")
+            ? "packages/use-cases/content.ts"
+            : operationsRoutes().includes(route)
+              ? "content/operations/0.1.0/guides.json"
+              : route.startsWith("docs/")
+                ? "packages/docs/guides.json"
+                : route === ""
+                  ? "apps/web/app/(site)/[locale]/page.tsx"
+                  : "apps/web/app/(site)/[locale]/[...slug]/page.tsx";
     return {
       ...entry,
       ...(entry.lastModified

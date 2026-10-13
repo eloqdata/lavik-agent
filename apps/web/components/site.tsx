@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { LanguageSwitch } from "./language-switch";
 import type { Locale } from "../../../packages/content/schema";
+import { CompareMenu } from "./compare-menu";
 import { UseCasesMenu } from "./use-cases-menu";
 import { useCases } from "../../../packages/use-cases/content";
 
@@ -31,6 +32,7 @@ export function Header({ locale }: { locale: Locale }) {
           <Link href={`/${locale}/benchmarks/`}>
             {zh ? "基准测试" : "Benchmarks"}
           </Link>
+          <CompareMenu locale={locale} />
           <UseCasesMenu
             locale={locale}
             entries={useCases.map((entry) => ({
@@ -69,6 +71,9 @@ export function Footer({ locale }: { locale: Locale }) {
           <Link href={`/${locale}/download/`}>{zh ? "下载" : "Download"}</Link>
           <Link href={`/${locale}/community/`}>
             {zh ? "社区" : "Community"}
+          </Link>
+          <Link href={`/${locale}/compare/`}>
+            {zh ? "产品对比" : "Compare"}
           </Link>
           <Link href={`/${locale}/releases/`}>
             {zh ? "版本说明" : "Releases"}

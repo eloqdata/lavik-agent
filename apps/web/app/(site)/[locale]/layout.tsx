@@ -11,6 +11,7 @@ import { localeSchema } from "../../../../../packages/content/schema";
 import "../../styles.css";
 import "../../../components/resources.css";
 import "../../../components/use-cases.css";
+import "../../../components/comparisons.css";
 
 export const dynamicParams = false;
 export function generateStaticParams() {

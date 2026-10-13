@@ -1,3 +1,11 @@
+import { comparisonSource } from "../comparisons/measurements";
+import { changedAt } from "./dates";
+import {
+  comparisonProducts,
+  comparisonRoute,
+  comparisonForRoute,
+} from "../comparisons/catalog";
+import { comparisonCopy, comparisonFaq } from "../comparisons/content";
 import type { Metadata } from "next";
 import { articles, articlePath, release } from "../content/repository";
 import type { Article, Locale } from "../content/schema";
@@ -21,6 +29,12 @@ const pairs: Record<string, [string, string, string, string]> = {
     "Lavik — SPDK 测试吞吐量超过 Redis，容量随 NVMe SSD 扩展。",
     "A Redis-compatible key-value store with values on NVMe SSD. Explore measured SPDK performance, the 20:1 capacity-price model, and Apache 2.0 source code.",
     "兼容 Redis 的键值存储，将值存于 NVMe SSD。了解实测 SPDK 性能、20:1 容量单价模型及 Apache 2.0 开源代码。",
+  ],
+  compare: [
+    "Compare Lavik: Redis, Valkey and SSD-backed Alternatives",
+    "Lavik 产品对比：Redis、Valkey 与 SSD 存储方案",
+    "Compare measured Lavik NVMe SSD performance, storage architecture and cost against Redis, Valkey, DragonflyDB, Garnet, Pika, Apache Kvrocks, Tendis and KeyDB.",
+    "比较 Lavik 与 Redis、Valkey、DragonflyDB、Garnet、Pika、Apache Kvrocks、Tendis、KeyDB 的实测 NVMe SSD 性能、存储架构与成本。",
   ],
   benchmarks: [
     "Lavik vs Redis and Valkey Benchmarks",
@@ -114,8 +128,12 @@ export function pageInfo(locale: Locale, input: string) {
   const client = route.startsWith("docs/0.1.0/clients/")
     ? manualClients().find((c) => c.id === route.split("/").at(-1))
     : undefined;
+  const comparison = comparisonForRoute(route);
   const fixed = pairs[route];
   const title =
+    (comparison
+      ? `Lavik vs ${comparison.name}: ${zh ? "性能、架构与成本" : "Performance, Architecture and Cost"}`
+      : undefined) ??
     article?.title ??
     guide?.title[locale] ??
     useCase?.title[locale] ??
@@ -129,6 +147,7 @@ export function pageInfo(locale: Locale, input: string) {
     (fixed ? fixed[zh ? 1 : 0] : manualTitle(route, locale)) ??
     "Lavik";
   const description =
+    (comparison ? comparisonCopy[comparison.id].summary[locale] : undefined) ??
     article?.summary ??
     guide?.summary[locale] ??
     useCase?.summary[locale] ??
@@ -162,6 +181,7 @@ export function pageInfo(locale: Locale, input: string) {
     title,
     description,
     article,
+    comparison,
     emptyTopic,
     url: `${siteOrigin}/${locale}/${route ? `${route}/` : ""}`,
   };
@@ -186,7 +206,7 @@ export function pageMetadata(locale: Locale, route: string): Metadata {
       ? { index: false, follow: true }
       : { index: true, follow: true, "max-image-preview": "large" },
     openGraph: {
-      type: p.article?.kind === "blog" ? "article" : "website",
+      type: p.article?.kind === "blog" || p.comparison ? "article" : "website",
       siteName: "Lavik",
       title: p.title,
       description: p.description,
@@ -235,7 +255,47 @@ export function pageStructuredData(locale: Locale, route: string) {
         ? { datePublished: p.article.publishedAt }
         : {}),
     });
+  if (p.comparison)
+    Object.assign(page, {
+      "@type": "Article",
+      headline: p.title,
+      author,
+      publisher: { "@id": `${siteOrigin}/#publisher` },
+      mainEntityOfPage: p.url,
+      image: `${siteOrigin}/social/lavik.png`,
+      ...(changedAt("packages/comparisons/content.ts")
+        ? { dateModified: changedAt("packages/comparisons/content.ts") }
+        : {}),
+      citation: comparisonCopy[p.comparison.id].sources.map(
+        (id) => comparisonSource(id).url,
+      ),
+      about: [
+        { "@type": "SoftwareApplication", name: "Lavik" },
+        { "@type": "SoftwareApplication", name: p.comparison.name },
+      ],
+    });
   const graph: Record<string, unknown>[] = [page];
+  if (p.comparison)
+    graph.push({
+      "@type": "FAQPage",
+      "@id": `${p.url}#faq`,
+      inLanguage: locale,
+      mainEntity: comparisonFaq(p.comparison.id, locale).map((f) => ({
+        "@type": "Question",
+        name: f.question,
+        acceptedAnswer: { "@type": "Answer", text: f.answer },
+      })),
+    });
+  if (p.route === "compare")
+    graph.push({
+      "@type": "ItemList",
+      itemListElement: comparisonProducts.map((product, i) => ({
+        "@type": "ListItem",
+        position: i + 1,
+        name: `Lavik vs ${product.name}`,
+        url: `${siteOrigin}/${locale}/${comparisonRoute(product.id)}/`,
+      })),
+    });
   if (!p.route || p.route === "about")
     graph.push({
       "@type": "SoftwareSourceCode",
@@ -259,7 +319,22 @@ export function pageStructuredData(locale: Locale, route: string) {
           name: "Lavik",
           item: `${siteOrigin}/${locale}/`,
         },
-        { "@type": "ListItem", position: 2, name: p.title, item: p.url },
+        ...(p.comparison
+          ? [
+              {
+                "@type": "ListItem",
+                position: 2,
+                name: locale === "en" ? "Compare" : "产品对比",
+                item: `${siteOrigin}/${locale}/compare/`,
+              },
+            ]
+          : []),
+        {
+          "@type": "ListItem",
+          position: p.comparison ? 3 : 2,
+          name: p.title,
+          item: p.url,
+        },
       ],
     });
   return { "@context": "https://schema.org", "@graph": graph };
