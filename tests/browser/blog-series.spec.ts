@@ -1,6 +1,8 @@
 import { test, expect } from "@playwright/test";
 import fs from "node:fs";
-import { stableRelease } from "../../packages/docs/stable.ts";
+const stableRelease = JSON.parse(
+  fs.readFileSync("content/docs/0.1.0/release.json", "utf8"),
+);
 const revision = "9d6b212da5da820b4bed63fc047b5c2ed6be1fa5";
 const pages = ["en", "zh-CN"].flatMap((locale) =>
   fs
