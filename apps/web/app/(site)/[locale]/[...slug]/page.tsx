@@ -32,10 +32,6 @@ import {
   sources,
 } from "../../../../../../packages/content/repository";
 import { localeSchema } from "../../../../../../packages/content/schema";
-import {
-  benchmarkRows,
-  currentBenchmark,
-} from "../../../../../../packages/content/benchmarks";
 import { ArticleBody } from "../../../../components/content";
 import { ArticleBody as VerifiedArticleBody } from "../../../../components/content-v2";
 import {
@@ -43,7 +39,6 @@ import {
   articleReceipts,
   publicationErrors,
 } from "../../../../../../packages/content/gate";
-import { BenchmarkChart } from "../../../../components/benchmark";
 import { CostCalculator } from "../../../../components/cost-calculator";
 import { ManualPage } from "../../../../components/manual";
 import {
@@ -72,7 +67,6 @@ import {
 } from "../../../../components/blog";
 
 const indexRoutes = [
-  "benchmarks",
   "cost",
   "use-cases",
   "blog",
@@ -296,63 +290,6 @@ async function PageContent({
       </main>
     );
   }
-  if (route === "benchmarks")
-    return (
-      <main id="main" className="container wide-page">
-        <p className="eyebrow">
-          {zh ? "可核查的性能" : "Performance, in context"}
-        </p>
-        <h1>
-          {zh
-            ? "接近内存的性能，\n附上完整测试条件。"
-            : "Near in-memory performance.\nWith the conditions attached."}
-        </h1>
-        <p className="page-lead">
-          {zh
-            ? `以下结果来自 ${currentBenchmark.date} 的 SPDK 报告。Lavik 使用下载的 ${currentBenchmark.release} 标准发布包；Redis 和 Valkey 对照数据复用同一组主机上的较早测试。`
-            : `Results from the ${currentBenchmark.date} SPDK report. Lavik uses the downloaded ${currentBenchmark.release} standard package; Redis and Valkey controls reuse an earlier sweep on the same hosts.`}
-        </p>
-        <BenchmarkChart rows={benchmarkRows()} locale={locale} />
-        <div className="prose">
-          <p>
-            {zh
-              ? "在这个 1 KiB 实验中，Lavik SPDK 的峰值 GET 和 SET 吞吐量均高于 Redis 和 Valkey。延迟列对应各系统的吞吐量峰值，不能代替你的应用 SLO 测试。"
-              : "In this 1 KiB experiment, Lavik SPDK achieved higher peak GET and SET throughput than Redis and Valkey. The latency columns correspond to each system’s throughput peak; evaluate your application’s SLO separately."}
-          </p>
-          <p>
-            <a href="/benchmarks/spdk-2026-09-18.csv" download>
-              {zh ? "下载原始结果 CSV" : "Download the source results (CSV)"}
-            </a>{" "}
-            ·{" "}
-            <Link href={`/${locale}/cost/`}>
-              {zh ? "计算容量成本" : "Calculate capacity cost"}
-            </Link>{" "}
-            ·{" "}
-            <Link href={`/${locale}/docs/0.1.0/compatibility/`}>
-              {zh ? "检查兼容性" : "Check compatibility"}
-            </Link>
-          </p>
-          <h2 id="methodology">{zh ? "实验环境" : "The experiment"}</h2>
-          <p>{currentBenchmark.scope[locale]}</p>
-          <p>
-            {zh
-              ? "测试扫描了 80–1,280 个连接。Lavik 的 GET 峰值对应 640 个连接，SET 峰值对应 1,280 个连接；Redis 和 Valkey 的峰值均对应 1,280 个连接。Redis 使用 16 个 I/O 线程；Valkey 的 GET 使用 16 个线程，SET 使用 8 个线程；Lavik 使用 16 个工作线程。p99 对应各系统所选的吞吐量峰值。"
-              : "The sweep covers 80–1,280 connections. Lavik peaks at 640 connections for GET and 1,280 for SET; Redis and Valkey peak at 1,280. Redis uses 16 I/O threads; Valkey uses 16 for GET and 8 for SET; Lavik uses 16 workers. Each p99 corresponds to the selected throughput peak."}
-          </p>
-          <p>
-            {zh ? "Lavik 测试提交" : "Tested Lavik commit"}:{" "}
-            <code>{currentBenchmark.commit}</code>
-          </p>
-          <a
-            className="text-link"
-            href={sources.find((s) => s.id === currentBenchmark.sourceId)!.url}
-          >
-            {zh ? "阅读完整报告与限制" : "Read the full report and limitations"}{" "}
-            ↗
-          </a>
-        </div>
-      </main>
-    );
   if (route === "cost")
     return (
       <main id="main" className="container wide-page">

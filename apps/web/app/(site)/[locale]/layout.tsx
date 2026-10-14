@@ -12,6 +12,7 @@ import "../../styles.css";
 import "../../../components/resources.css";
 import "../../../components/use-cases.css";
 import "../../../components/comparisons.css";
+import "../../../components/benchmark-reports.css";
 
 export const dynamicParams = false;
 export function generateStaticParams() {

@@ -1,3 +1,9 @@
+import {
+  benchmarkReports,
+  benchmarkRoute,
+  benchmarkForRoute,
+} from "../benchmarks/catalog";
+import { reportSourceUrl } from "../benchmarks/repository";
 import { docVersionForRoute } from "../docs/versions";
 import {
   stableGuides,
@@ -43,10 +49,10 @@ const pairs: Record<string, [string, string, string, string]> = {
     "比较 Lavik 与 Redis、Valkey、DragonflyDB、Garnet、Pika、Apache Kvrocks、Tendis、KeyDB 的实测 NVMe SSD 性能、存储架构与成本。",
   ],
   benchmarks: [
-    "Lavik vs Redis and Valkey Benchmarks",
-    "Lavik、Redis 与 Valkey 基准测试",
-    "Compare GET and SET throughput and p99 latency for Lavik 0.1.0 SPDK, Redis 8.8.0, and Valkey 9.1.0, with hardware, configurations, and source results.",
-    "比较 Lavik 0.1.0 SPDK、Redis 8.8.0 与 Valkey 9.1.0 的 GET/SET 吞吐量和 p99 延迟，查看硬件、配置及原始结果。",
+    "Lavik 0.1.0 Benchmarks: NVMe SSD Capacity, Throughput and Tail Latency",
+    "Lavik 0.1.0 基准测试：NVMe SSD 容量、吞吐量与尾延迟",
+    "Four published Lavik 0.1.0 studies: 2-vCPU capacity, Redis/Valkey SPDK performance, 1 TB storage peers and Aerospike YCSB. Charts, numbers and reproduction commands.",
+    "四份 Lavik 0.1.0 实测报告：2 vCPU 容量、Redis/Valkey SPDK 性能、1 TB 存储对比及 Aerospike YCSB，包含图表、数值与复现命令。",
   ],
   cost: [
     "Redis Capacity Cost: DRAM vs NVMe SSD",
@@ -140,9 +146,11 @@ export function pageInfo(locale: Locale, input: string) {
   const client = lookupRoute.startsWith("docs/0.1.0/clients/")
     ? manualClients().find((c) => c.id === route.split("/").at(-1))
     : undefined;
+  const benchmark = benchmarkForRoute(route);
   const comparison = comparisonForRoute(route);
   const fixed = pairs[archivedDownload ? "download" : lookupRoute];
   const title =
+    benchmark?.title[locale] ??
     (comparison
       ? `Lavik vs ${comparison.name}: ${zh ? "性能、架构与成本" : "Performance, Architecture and Cost"}`
       : undefined) ??
@@ -160,6 +168,7 @@ export function pageInfo(locale: Locale, input: string) {
     (fixed ? fixed[zh ? 1 : 0] : manualTitle(route, locale)) ??
     "Lavik";
   const description =
+    benchmark?.summary[locale] ??
     (comparison ? comparisonCopy[comparison.id].summary[locale] : undefined) ??
     stableNote?.summary[locale] ??
     article?.summary ??
@@ -205,6 +214,7 @@ export function pageInfo(locale: Locale, input: string) {
           : description,
     article,
     comparison,
+    benchmark,
     emptyTopic,
     url: `${siteOrigin}/${locale}/${route ? `${route}/` : ""}`,
   };
@@ -297,7 +307,26 @@ export function pageStructuredData(locale: Locale, route: string) {
         { "@type": "SoftwareApplication", name: p.comparison.name },
       ],
     });
+  if (p.benchmark)
+    Object.assign(page, {
+      "@type": "TechArticle",
+      headline: p.title,
+      author,
+      publisher: { "@id": `${siteOrigin}/#publisher` },
+      citation: [reportSourceUrl(p.benchmark, locale)],
+      about: { "@type": "SoftwareApplication", name: "Lavik 0.1.0" },
+    });
   const graph: Record<string, unknown>[] = [page];
+  if (p.route === "benchmarks")
+    graph.push({
+      "@type": "ItemList",
+      itemListElement: benchmarkReports.map((r, i) => ({
+        "@type": "ListItem",
+        position: i + 1,
+        name: r.title[locale],
+        url: `${siteOrigin}/${locale}/${benchmarkRoute(r.id)}/`,
+      })),
+    });
   if (p.comparison)
     graph.push({
       "@type": "FAQPage",
@@ -342,19 +371,25 @@ export function pageStructuredData(locale: Locale, route: string) {
           name: "Lavik",
           item: `${siteOrigin}/${locale}/`,
         },
-        ...(p.comparison
+        ...(p.comparison || p.benchmark
           ? [
               {
                 "@type": "ListItem",
                 position: 2,
-                name: locale === "en" ? "Compare" : "产品对比",
-                item: `${siteOrigin}/${locale}/compare/`,
+                name: p.benchmark
+                  ? locale === "en"
+                    ? "Benchmarks"
+                    : "基准测试"
+                  : locale === "en"
+                    ? "Compare"
+                    : "产品对比",
+                item: `${siteOrigin}/${locale}/${p.benchmark ? "benchmarks" : "compare"}/`,
               },
             ]
           : []),
         {
           "@type": "ListItem",
-          position: p.comparison ? 3 : 2,
+          position: p.comparison || p.benchmark ? 3 : 2,
           name: p.title,
           item: p.url,
         },

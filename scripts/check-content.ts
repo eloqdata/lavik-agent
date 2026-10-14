@@ -1,3 +1,4 @@
+import { benchmarkPublicationErrors } from "../packages/benchmarks/gate.ts";
 import { stableDocumentationErrors } from "../packages/docs/gate.ts";
 import {
   articles,
@@ -10,6 +11,7 @@ import { publicationErrors } from "../packages/content/gate.ts";
 import { manualPublicationErrors } from "../packages/manual/gate.ts";
 
 const failures: string[] = [];
+failures.push(...benchmarkPublicationErrors());
 failures.push(...manualPublicationErrors(), ...stableDocumentationErrors());
 const pages = articles();
 const routes = new Set<string>();

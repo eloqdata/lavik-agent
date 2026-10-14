@@ -1,14 +1,15 @@
 import { test, expect } from "@playwright/test";
 
-test("search readers receive both benchmark operations and complete metadata without JavaScript", async ({
+test("search readers receive all current benchmark reports and metadata without JavaScript", async ({
   browser,
   baseURL,
 }) => {
   const context = await browser.newContext({ javaScriptEnabled: false });
   const page = await context.newPage();
   await page.goto(`${baseURL}/en/benchmarks/`);
-  await expect(page.locator(".benchmark-data")).toContainText("930,465");
-  await expect(page.locator(".benchmark-data")).toContainText("1,012,180");
+  await expect(page.locator(".benchmark-card")).toHaveCount(4);
+  await expect(page.locator("main")).toContainText("95.37 GiB");
+  await expect(page.locator("main")).toContainText("1,145.8k");
   await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
     "href",
     "https://lavik.dev/en/benchmarks/",

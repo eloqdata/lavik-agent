@@ -2,7 +2,7 @@ import { test, expect } from "@playwright/test";
 import fs from "node:fs/promises";
 import { articles, articlePath } from "../../packages/content/repository";
 
-test("both languages, benchmark interaction, and real verification output", async ({
+test("both languages, homepage benchmark interaction, and real verification output", async ({
   page,
 }) => {
   const errors: string[] = [];
@@ -10,7 +10,7 @@ test("both languages, benchmark interaction, and real verification output", asyn
   await page.goto("/en/");
   await expect(page.locator("html")).toHaveAttribute("lang", "en");
   for (const locale of ["en", "zh-CN"]) {
-    for (const section of ["", "benchmarks/"]) {
+    for (const section of [""]) {
       await page.goto(`/${locale}/${section}`);
       for (const [command, expected] of [
         [

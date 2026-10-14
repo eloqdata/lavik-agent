@@ -2,6 +2,7 @@ import { ReleaseBadge } from "./release-badge";
 import Link from "next/link";
 import { LanguageSwitch } from "./language-switch";
 import type { Locale } from "../../../packages/content/schema";
+import { BenchmarksMenu } from "./benchmarks-menu";
 import { CompareMenu } from "./compare-menu";
 import { UseCasesMenu } from "./use-cases-menu";
 import { useCases } from "../../../packages/use-cases/content";
@@ -31,9 +32,7 @@ export function Header({ locale }: { locale: Locale }) {
         <nav aria-label={zh ? "主导航" : "Main navigation"}>
           <Link href={`/${locale}/download/`}>{zh ? "下载" : "Download"}</Link>
           <Link href={`/${locale}/docs/0.1.0/`}>{zh ? "文档" : "Docs"}</Link>
-          <Link href={`/${locale}/benchmarks/`}>
-            {zh ? "基准测试" : "Benchmarks"}
-          </Link>
+          <BenchmarksMenu locale={locale} />
           <CompareMenu locale={locale} />
           <UseCasesMenu
             locale={locale}

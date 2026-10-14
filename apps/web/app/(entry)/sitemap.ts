@@ -1,4 +1,8 @@
 import {
+  benchmarkReports,
+  benchmarkRoute,
+} from "../../../../packages/benchmarks/catalog";
+import {
   stableGuideRoutes,
   stableManualRoutes,
 } from "../../../../packages/docs/stable";
@@ -24,6 +28,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       "compare/",
       ...comparisonProducts.map((p) => `${comparisonRoute(p.id)}/`),
       "benchmarks/",
+      ...benchmarkReports.map((r) => `${benchmarkRoute(r.id)}/`),
       "cost/",
       "use-cases/",
       "blog/",
@@ -79,31 +84,33 @@ export default function sitemap(): MetadataRoute.Sitemap {
       route = parts.slice(1).join("/");
     const stableDocs =
       route === "docs/0.1.0" || route.startsWith("docs/0.1.0/");
-    const source = stableDocs
-      ? route.includes("/commands")
-        ? "content/docs/0.1.0/catalog.json"
-        : route.includes("/clients")
-          ? "evidence/docs/0.1.0/clients.json"
-          : "content/docs/0.1.0/guides.json"
-      : route === "download"
-        ? "content/docs/0.1.0/downloads.json"
-        : route === "releases/0-1-0"
-          ? "content/docs/0.1.0/release-notes.json"
-          : route.startsWith("compare")
-            ? "packages/comparisons/content.ts"
-            : route.startsWith("docs/0.1.0/commands")
-              ? "content/manual/0.1.0/catalog.json"
-              : route.startsWith("docs/0.1.0/clients")
-                ? "verification/manual/clients/catalog.json"
-                : route.startsWith("use-cases")
-                  ? "packages/use-cases/content.ts"
-                  : operationsRoutes().includes(route)
-                    ? "content/operations/0.1.0/guides.json"
-                    : route.startsWith("docs/")
-                      ? "packages/docs/guides.json"
-                      : route === ""
-                        ? "apps/web/app/(site)/[locale]/page.tsx"
-                        : "apps/web/app/(site)/[locale]/[...slug]/page.tsx";
+    const source = route.startsWith("benchmarks")
+      ? "packages/benchmarks/catalog.ts"
+      : stableDocs
+        ? route.includes("/commands")
+          ? "content/docs/0.1.0/catalog.json"
+          : route.includes("/clients")
+            ? "evidence/docs/0.1.0/clients.json"
+            : "content/docs/0.1.0/guides.json"
+        : route === "download"
+          ? "content/docs/0.1.0/downloads.json"
+          : route === "releases/0-1-0"
+            ? "content/docs/0.1.0/release-notes.json"
+            : route.startsWith("compare")
+              ? "packages/comparisons/content.ts"
+              : route.startsWith("docs/0.1.0/commands")
+                ? "content/manual/0.1.0/catalog.json"
+                : route.startsWith("docs/0.1.0/clients")
+                  ? "verification/manual/clients/catalog.json"
+                  : route.startsWith("use-cases")
+                    ? "packages/use-cases/content.ts"
+                    : operationsRoutes().includes(route)
+                      ? "content/operations/0.1.0/guides.json"
+                      : route.startsWith("docs/")
+                        ? "packages/docs/guides.json"
+                        : route === ""
+                          ? "apps/web/app/(site)/[locale]/page.tsx"
+                          : "apps/web/app/(site)/[locale]/[...slug]/page.tsx";
     return {
       ...entry,
       ...(entry.lastModified
