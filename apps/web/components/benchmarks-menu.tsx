@@ -62,11 +62,11 @@ export function BenchmarksMenu({ locale }: { locale: Locale }) {
               <h2>
                 {i === 0
                   ? zh
-                    ? "容量与内存对照"
-                    : "CAPACITY & DRAM CONTROLS"
+                    ? "Redis 与 Valkey 对比"
+                    : "REDIS & VALKEY"
                   : zh
-                    ? "存储与混合负载"
-                    : "STORAGE & MIXED WORKLOADS"}
+                    ? "SSD 数据库对比"
+                    : "SSD DATABASE COMPARISONS"}
               </h2>
               <ul>
                 {ids.map((id) => {

@@ -19,14 +19,14 @@ export const benchmarkReports: BenchmarkReport[] = [
     id: "2vcpu-capacity",
     directory: "lavik-v0.1.0-2vcpu-latest-capacity-2026-10-13",
     date: "2026-10-13",
-    label: t("2-vCPU Capacity", "2 vCPU 容量"),
+    label: t("Redis & Valkey: Compact Instances", "Redis 与 Valkey：小型实例"),
     title: t(
-      "100M keys on 2 vCPUs and 16 GiB RAM",
-      "2 vCPU、16 GiB 内存承载 1 亿个键",
+      "Lavik vs Redis & Valkey on Compact Instances",
+      "小型实例上的 Lavik、Redis 与 Valkey 对比",
     ),
     summary: t(
-      "Grow from 1M to 100M keys on the same small VM. Compare Lavik’s NVMe SSD capacity with Redis 8.10.2 and Valkey 9.1.2 at 1M keys.",
-      "在同一台小型虚拟机上从 100 万键扩展至 1 亿键，并与 100 万键规模的 Redis 8.10.2、Valkey 9.1.2 比较。",
+      "Compare Lavik, Redis 8.10.2 and Valkey 9.1.2 at 1M keys on a 2-vCPU, 16 GiB VM, then explore Lavik’s NVMe SSD capacity at 100M keys on the same instance.",
+      "在 2 vCPU、16 GiB 内存的虚拟机上，对比 Lavik、Redis 8.10.2 与 Valkey 9.1.2 的 100 万键表现，再测试 Lavik 在同一实例上通过 NVMe SSD 承载 1 亿键的能力。",
     ),
     takeaway: t(
       "With 100× the keys, Lavik retains essentially all peak GET throughput and 95.2% of peak SET throughput. Its 95.37 GiB value payload is about six times the VM’s nominal RAM.",
@@ -77,14 +77,14 @@ export const benchmarkReports: BenchmarkReport[] = [
     id: "redis-valkey",
     directory: "lavik-v0.1.0-spdk-vs-latest-2026-10-13",
     date: "2026-10-13",
-    label: t("Redis & Valkey Performance", "Redis 与 Valkey 性能"),
+    label: t("Redis & Valkey: High Throughput", "Redis 与 Valkey：高吞吐量"),
     title: t(
-      "NVMe SSD throughput against Redis and Valkey on DRAM",
-      "NVMe SSD 吞吐量对比 DRAM 上的 Redis 与 Valkey",
+      "Lavik vs Redis & Valkey for High Throughput",
+      "高吞吐量场景下的 Lavik、Redis 与 Valkey 对比",
     ),
     summary: t(
-      "A fresh 16-vCPU comparison of Lavik 0.1.0 SPDK, Redis 8.10.2 and Valkey 9.1.2, plus a billion-key Lavik capacity sweep.",
-      "在 16 vCPU 上重新测试 Lavik 0.1.0 SPDK、Redis 8.10.2 和 Valkey 9.1.2，并增加 Lavik 十亿键容量测试。",
+      "Compare Lavik 0.1.0 SPDK on NVMe SSD with Redis 8.10.2 and Valkey 9.1.2 on DRAM at 10M keys using a 16-vCPU VM, plus a separate billion-key Lavik capacity sweep.",
+      "使用 16 vCPU 虚拟机，在 1,000 万键下对比 NVMe SSD 上的 Lavik 0.1.0 SPDK 与 DRAM 上的 Redis 8.10.2、Valkey 9.1.2，并独立测试 Lavik 的十亿键容量。",
     ),
     takeaway: t(
       "Lavik reaches 1,145.8k peak GET QPS and 972.0k peak SET QPS at 10M keys. The separate 1B-key sweep reaches 1,069,126 GET QPS with values on NVMe SSD.",
@@ -144,14 +144,14 @@ export const benchmarkReports: BenchmarkReport[] = [
     id: "1tb-storage",
     directory: "lavik-v0.1.0-storage-peers-1tb-2026-10-14",
     date: "2026-10-14",
-    label: t("1 TB Storage Performance", "1 TB 存储性能"),
+    label: t("Redis-Compatible Databases on SSD", "SSD 上的 Redis 兼容数据库"),
     title: t(
-      "One billion keys across six storage-backed systems",
-      "六种存储方案的十亿键测试",
+      "Lavik vs Redis-Compatible Databases on SSD",
+      "Lavik 与采用 SSD 的 Redis 兼容数据库对比",
     ),
     summary: t(
-      "Compare Lavik, Dragonfly, Garnet, Apache Kvrocks, Pika and Tendis on a 1.024 TB raw value payload, with matched concurrency and p99.9 curves.",
-      "比较 Lavik、Dragonfly、Garnet、Apache Kvrocks、Pika、Tendis 在 1.024 TB 原始值负载下的同连接数表现与 p99.9 曲线。",
+      "Compare Lavik with Dragonfly, Garnet, Apache Kvrocks, Pika and Tendis using their SSD-backed storage paths: one billion keys, a 1.024 TB raw value payload, matched concurrency and p99.9 curves.",
+      "对比 Lavik 与 Dragonfly、Garnet、Apache Kvrocks、Pika、Tendis 使用 SSD 存储时的表现：十亿键、1.024 TB 原始值负载、相同连接数及 p99.9 曲线。",
     ),
     takeaway: t(
       "Lavik records the highest GET peak: 1,069,126 QPS. At 80 connections it delivers 385,514 GET QPS at 0.439 ms p99.9, and 425,907 SET QPS at 2.655 ms p99.9.",
@@ -205,11 +205,8 @@ export const benchmarkReports: BenchmarkReport[] = [
     id: "aerospike-ycsb",
     directory: "lavik-v0.1.0-aerospike-ycsb-2026-10-13",
     date: "2026-10-13",
-    label: t("Aerospike YCSB", "Aerospike YCSB"),
-    title: t(
-      "Lavik and Aerospike: YCSB throughput and tail latency",
-      "Lavik 与 Aerospike：YCSB 吞吐量与尾延迟",
-    ),
+    label: t("Lavik vs Aerospike", "Lavik 与 Aerospike"),
+    title: t("Lavik vs Aerospike", "Lavik 与 Aerospike 对比"),
     summary: t(
       "100M records, ten fields per record, four YCSB workload mixes, and both a 100K target rate and unlimited throughput.",
       "1 亿条记录，每条十个字段，覆盖四种 YCSB 负载组合，以及 100K 目标速率和不限速两种场景。",
