@@ -1,10 +1,11 @@
 import { pageMetadata } from "../../../../../packages/seo/site";
 import { sources } from "../../../../../packages/content/repository";
 import { localeSchema } from "../../../../../packages/content/schema";
+import { currentBenchmark } from "../../../../../packages/content/benchmarks";
 import {
-  benchmarkRows,
-  currentBenchmark,
-} from "../../../../../packages/content/benchmarks";
+  homepageBenchmark,
+  homepageBenchmarkRows,
+} from "../../../../../packages/benchmarks/homepage";
 import { estimateCost } from "../../../../../packages/content/economics";
 import { Homepage } from "../../../components/homepage";
 import { HomepageMotion } from "../../../components/homepage-motion";
@@ -33,16 +34,20 @@ export default async function Home({
   params: Promise<{ locale: string }>;
 }) {
   const locale = localeSchema.parse((await params).locale);
-  const rows = benchmarkRows();
+  const rows = homepageBenchmarkRows;
   return (
     <HomepageMotion>
       <Homepage
         locale={locale}
         rows={rows}
         capacityRatio={capacityRatio}
-        sourceUrl={sources.find((s) => s.id === currentBenchmark.sourceId)!.url}
-        benchmarkDate={currentBenchmark.date}
-        benchmarkScope={currentBenchmark.scope[locale]}
+        sourceUrl={homepageBenchmark.sourceUrl}
+        benchmarkDate={homepageBenchmark.date}
+        benchmarkScope={homepageBenchmark.scope[locale]}
+        storySourceUrl={
+          sources.find((s) => s.id === currentBenchmark.sourceId)!.url
+        }
+        storyBenchmarkDate={currentBenchmark.date}
       />
     </HomepageMotion>
   );

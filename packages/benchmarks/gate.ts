@@ -24,6 +24,12 @@ export const benchmarkReviewSchema = z
   })
   .strict();
 export const benchmarkBoundFiles = [
+  "packages/benchmarks/homepage.ts",
+  "apps/web/app/(site)/[locale]/page.tsx",
+  "apps/web/components/homepage.tsx",
+  "apps/web/components/homepage.css",
+  "apps/web/components/benchmark.tsx",
+  "tests/homepage-benchmark.test.ts",
   "apps/web/components/site.tsx",
   "packages/seo/site.ts",
   "apps/web/app/(entry)/sitemap.ts",

@@ -4,9 +4,21 @@ export type BenchmarkRow = {
   name: string;
   get: number;
   set: number;
-  getP99: number;
-  setP99: number;
+  getP999: number;
+  setP999: number;
+  approximate: boolean;
 };
+const throughput = (row: BenchmarkRow, command: "get" | "set") =>
+  (row.approximate ? "≈ " : "") +
+  (row[command] / 1000).toLocaleString("en-US", {
+    minimumFractionDigits: row.approximate ? 0 : 1,
+    maximumFractionDigits: row.approximate ? 0 : 1,
+  }) +
+  "k";
+const latency = (row: BenchmarkRow, command: "get" | "set") =>
+  (row.approximate ? "≈ " : "") +
+  (command === "get" ? row.getP999 : row.setP999) +
+  " ms";
 export function BenchmarkChart({
   rows,
   locale,
@@ -41,7 +53,7 @@ export function BenchmarkChart({
         <div className="chart-row" key={row.name}>
           <div>
             <span>{row.name}</span>
-            <strong>{row[command].toLocaleString("en-US")}</strong>
+            <strong>{throughput(row, command)}</strong>
           </div>
           <div className="bar-track">
             <div
@@ -51,9 +63,14 @@ export function BenchmarkChart({
               style={{ width: `${(row[command] / maximum) * 100}%` }}
             />
           </div>
-          <small>p99 {command === "get" ? row.getP99 : row.setP99} ms</small>
+          <small>p99.9 {latency(row, command)}</small>
         </div>
       ))}
+      <p className="chart-caption">
+        {locale === "en"
+          ? "10M keys · 1 KiB values · 1,280 connections. Lavik: reported figures; ≈ peers: graph estimates."
+          : "1,000 万键 · 1 KiB 值 · 1,280 个连接。Lavik 为报告数值；≈ 对照为图表近似值。"}
+      </p>
       <div className="table-scroll">
         <table className="benchmark-data">
           <caption>
@@ -65,19 +82,19 @@ export function BenchmarkChart({
             <tr>
               <th scope="col">{locale === "en" ? "System" : "系统"}</th>
               <th scope="col">GET QPS</th>
-              <th scope="col">GET p99</th>
+              <th scope="col">GET p99.9</th>
               <th scope="col">SET QPS</th>
-              <th scope="col">SET p99</th>
+              <th scope="col">SET p99.9</th>
             </tr>
           </thead>
           <tbody>
             {rows.map((row) => (
               <tr key={row.name}>
                 <th scope="row">{row.name}</th>
-                <td>{row.get.toLocaleString("en-US")}</td>
-                <td>{row.getP99} ms</td>
-                <td>{row.set.toLocaleString("en-US")}</td>
-                <td>{row.setP99} ms</td>
+                <td>{throughput(row, "get")}</td>
+                <td>{latency(row, "get")}</td>
+                <td>{throughput(row, "set")}</td>
+                <td>{latency(row, "set")}</td>
               </tr>
             ))}
           </tbody>

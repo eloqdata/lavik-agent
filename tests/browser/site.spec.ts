@@ -16,17 +16,17 @@ test("both languages, homepage benchmark interaction, and real verification outp
         [
           "GET",
           [
-            ["Lavik 0.1.0 SPDK", "1,012,180", "3.599"],
-            ["Redis 8.8.0", "976,801", "4.671"],
-            ["Valkey 9.1.0", "965,697", "4.543"],
+            ["Lavik 0.1.0 SPDK", "1,145.8k", "7.135"],
+            ["Redis 8.10.2", "≈ 1,019k", "≈ 7.1"],
+            ["Valkey 9.1.2", "≈ 970k", "≈ 7.5"],
           ],
         ],
         [
           "SET",
           [
-            ["Lavik 0.1.0 SPDK", "930,465", "4.799"],
-            ["Redis 8.8.0", "910,426", "4.831"],
-            ["Valkey 9.1.0", "802,519", "4.383"],
+            ["Lavik 0.1.0 SPDK", "972.0k", "7.199"],
+            ["Redis 8.10.2", "≈ 951k", "≈ 7.2"],
+            ["Valkey 9.1.2", "≈ 808k", "≈ 7.2"],
           ],
         ],
       ] as const) {
@@ -35,10 +35,14 @@ test("both languages, homepage benchmark interaction, and real verification outp
           const row = page.locator(".chart-row").nth(index);
           await expect(row).toContainText(name);
           await expect(row).toContainText(qps);
-          await expect(row).toContainText(`p99 ${p99} ms`);
+          await expect(row).toContainText(`p99.9 ${p99} ms`);
         }
       }
       await expect(page.locator(".benchmark-chart .lavik-bar")).toHaveCount(1);
+      await expect(page.locator(".chart-caption")).toContainText(
+        locale === "en" ? "graph estimates" : "图表近似值",
+      );
+      await expect(page.locator(".site-header .version-pill")).toHaveCount(0);
       if (!section) {
         await expect(page.locator("main")).toHaveAttribute(
           "data-homepage",
@@ -70,10 +74,7 @@ test("both languages, homepage benchmark interaction, and real verification outp
         );
         await expect(
           page.locator(".dual-source-links a").first(),
-        ).toHaveAttribute(
-          "href",
-          /lavik-v0\.1\.0-beta\.1-spdk-vs-peers-2026-09-18/,
-        );
+        ).toHaveAttribute("href", /lavik-v0\.1\.0-spdk-vs-latest-2026-10-13/);
         await expect(page.locator(".dual-actions a").first()).toHaveAttribute(
           "href",
           `/${locale}/docs/0.1.0/quick-start/`,
@@ -194,9 +195,9 @@ test("selected homepage is exported without JavaScript and preview queries canno
       await expect(page.locator("main")).toHaveAttribute("data-homepage", "G");
       await expect(page.locator("h1")).toContainText("Redis");
       await expect(page.locator(".chart-row").first()).toContainText(
-        "1,012,180",
+        "1,145.8k",
       );
-      await expect(page.locator(".benchmark-data")).toContainText("930,465");
+      await expect(page.locator(".benchmark-data")).toContainText("972.0k");
       await expect(page.locator(".dual-cost-row strong")).toHaveText([
         "5%",
         "100%",
@@ -272,4 +273,24 @@ test("homepage capacity scenario responds to input and tail-latency evidence rem
       `/${locale}/docs/0.1.0/quick-start/`,
     );
   }
+});
+
+test("header has no release badge across page types and languages", async ({
+  page,
+}) => {
+  for (const locale of ["en", "zh-CN"])
+    for (const route of [
+      "",
+      "docs/0.1.0/",
+      "docs/0.1.0-beta.1/",
+      "download/",
+      "benchmarks/",
+      "compare/",
+      "blog/",
+      "community/",
+    ]) {
+      await page.goto(`/${locale}/${route}`);
+      await expect(page.locator(".site-header .wordmark")).toHaveText("Lavik");
+      await expect(page.locator(".site-header .version-pill")).toHaveCount(0);
+    }
 });

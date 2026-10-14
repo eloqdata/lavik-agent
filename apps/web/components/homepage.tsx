@@ -14,6 +14,8 @@ type Props = {
   sourceUrl: string;
   benchmarkDate: string;
   benchmarkScope: string;
+  storySourceUrl: string;
+  storyBenchmarkDate: string;
 };
 
 export function Homepage({
@@ -23,6 +25,8 @@ export function Homepage({
   sourceUrl,
   benchmarkDate,
   benchmarkScope,
+  storySourceUrl,
+  storyBenchmarkDate,
 }: Props) {
   const zh = locale === "zh-CN";
   const costPercent = 100 / Number(capacityRatio);
@@ -194,8 +198,8 @@ export function Homepage({
       </details>
       <HomepageStory
         locale={locale}
-        sourceUrl={sourceUrl}
-        benchmarkDate={benchmarkDate}
+        sourceUrl={storySourceUrl}
+        benchmarkDate={storyBenchmarkDate}
       />
     </main>
   );
