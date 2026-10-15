@@ -1,0 +1,134 @@
+path : /mnt/dev/benchmark/storage-peers-20261014/results/pika/server.conf
+-----------Pika server----------
+pika_version: 3.5.6
+pika_git_sha:62a57f85534198e0d1033c32f1215c958bef8a5e
+pika_build_compile_date: 2026-10-13 09:19:28
+redis_version: 3.5.6
+WARNING: Logging before InitGoogleLogging() is written to STDERR
+I20261013 20:06:22.663429 784352 base_conf.cc:336]  1 port 6379
+I20261013 20:06:22.663463 784352 base_conf.cc:336]  2 thread-num 16
+I20261013 20:06:22.663468 784352 base_conf.cc:336]  3 rtc-cache-read yes
+I20261013 20:06:22.663472 784352 base_conf.cc:336]  4 thread-pool-size 32
+I20261013 20:06:22.663477 784352 base_conf.cc:336]  5 slow-cmd-pool no
+I20261013 20:06:22.663481 784352 base_conf.cc:336]  6 slow-cmd-thread-pool-size 1
+I20261013 20:06:22.663486 784352 base_conf.cc:336]  7 admin-thread-pool-size 2
+I20261013 20:06:22.663489 784352 base_conf.cc:336]  8 slow-cmd-list 
+I20261013 20:06:22.663494 784352 base_conf.cc:336]  9 admin-cmd-list info, ping, monitor, auth, config
+I20261013 20:06:22.663498 784352 base_conf.cc:336] 10 sync-thread-num 6
+I20261013 20:06:22.663502 784352 base_conf.cc:336] 11 sync-binlog-thread-num 1
+I20261013 20:06:22.663506 784352 base_conf.cc:336] 12 log-path /mnt/storage-peers-20261014/data/pika/log/
+I20261013 20:06:22.663511 784352 base_conf.cc:336] 13 log-retention-time 7
+I20261013 20:06:22.663515 784352 base_conf.cc:336] 14 log-net-activities no
+I20261013 20:06:22.663519 784352 base_conf.cc:336] 15 db-path /mnt/storage-peers-20261014/data/pika/db/
+I20261013 20:06:22.663523 784352 base_conf.cc:336] 16 write-buffer-size 256M
+I20261013 20:06:22.663527 784352 base_conf.cc:336] 17 proto-max-bulk-len 512M
+I20261013 20:06:22.663532 784352 base_conf.cc:336] 18 arena-block-size 
+I20261013 20:06:22.663537 784352 base_conf.cc:336] 19 timeout 60
+I20261013 20:06:22.663540 784352 base_conf.cc:336] 20 requirepass 
+I20261013 20:06:22.663544 784352 base_conf.cc:336] 21 masterauth 
+I20261013 20:06:22.663548 784352 base_conf.cc:336] 22 instance-mode classic
+I20261013 20:06:22.663552 784352 base_conf.cc:336] 23 databases 1
+I20261013 20:06:22.663558 784352 base_conf.cc:336] 24 replication-num 0
+I20261013 20:06:22.663561 784352 base_conf.cc:336] 25 consensus-level 0
+I20261013 20:06:22.663565 784352 base_conf.cc:336] 26 dump-prefix 
+I20261013 20:06:22.663569 784352 base_conf.cc:336] 27 dump-path /mnt/storage-peers-20261014/data/pika/dump/
+I20261013 20:06:22.663573 784352 base_conf.cc:336] 28 dump-expire 0
+I20261013 20:06:22.663578 784352 base_conf.cc:336] 29 pidfile /mnt/storage-peers-20261014/data/pika/pika.pid
+I20261013 20:06:22.663581 784352 base_conf.cc:336] 30 maxclients 20000
+I20261013 20:06:22.663586 784352 base_conf.cc:336] 31 target-file-size-base 20M
+I20261013 20:06:22.663590 784352 base_conf.cc:336] 32 expire-logs-days 7
+I20261013 20:06:22.663594 784352 base_conf.cc:336] 33 expire-logs-nums 10
+I20261013 20:06:22.663599 784352 base_conf.cc:336] 34 root-connection-num 2
+I20261013 20:06:22.663602 784352 base_conf.cc:336] 35 slowlog-write-errorlog no
+I20261013 20:06:22.663606 784352 base_conf.cc:336] 36 slowlog-log-slower-than 10000
+I20261013 20:06:22.663611 784352 base_conf.cc:336] 37 slowlog-max-len 128
+I20261013 20:06:22.663615 784352 base_conf.cc:336] 38 db-sync-path /mnt/storage-peers-20261014/data/pika/dbsync/
+I20261013 20:06:22.663619 784352 base_conf.cc:336] 39 db-sync-speed -1
+I20261013 20:06:22.663623 784352 base_conf.cc:336] 40 slave-priority 100
+I20261013 20:06:22.663627 784352 base_conf.cc:336] 41 disable_auto_compactions false
+I20261013 20:06:22.663631 784352 base_conf.cc:336] 42 max-subcompactions 4
+I20261013 20:06:22.663636 784352 base_conf.cc:336] 43 sync-window-size 9000
+I20261013 20:06:22.663640 784352 base_conf.cc:336] 44 max-conn-rbuf-size 268435456
+I20261013 20:06:22.663645 784352 base_conf.cc:336] 45 write-binlog no
+I20261013 20:06:22.663648 784352 base_conf.cc:336] 46 binlog-file-size 104857600
+I20261013 20:06:22.663652 784352 base_conf.cc:336] 47 max-cache-statistic-keys 0
+I20261013 20:06:22.663656 784352 base_conf.cc:336] 48 small-compaction-threshold 5000
+I20261013 20:06:22.663661 784352 base_conf.cc:336] 49 small-compaction-duration-threshold 10000
+I20261013 20:06:22.663669 784352 base_conf.cc:336] 50 max-write-buffer-size 8G
+I20261013 20:06:22.663673 784352 base_conf.cc:336] 51 max-write-buffer-num 2
+I20261013 20:06:22.663678 784352 base_conf.cc:336] 52 max-client-response-size 1073741824
+I20261013 20:06:22.663682 784352 base_conf.cc:336] 53 compression none
+I20261013 20:06:22.663686 784352 base_conf.cc:336] 54 max-background-jobs 12
+I20261013 20:06:22.663690 784352 base_conf.cc:336] 55 max-background-flushes 4
+I20261013 20:06:22.663694 784352 base_conf.cc:336] 56 max-background-compactions 8
+I20261013 20:06:22.663698 784352 base_conf.cc:336] 57 delayed-write-rate 0
+I20261013 20:06:22.663703 784352 base_conf.cc:336] 58 max-compaction-bytes -1
+I20261013 20:06:22.663707 784352 base_conf.cc:336] 59 max-cache-files 5000
+I20261013 20:06:22.663712 784352 base_conf.cc:336] 60 max-bytes-for-level-multiplier 10
+I20261013 20:06:22.663715 784352 base_conf.cc:336] 61 slotmigrate no
+I20261013 20:06:22.663719 784352 base_conf.cc:336] 62 slotmigrate-thread-num 1
+I20261013 20:06:22.663723 784352 base_conf.cc:336] 63 thread-migrate-keys-num 64
+I20261013 20:06:22.663727 784352 base_conf.cc:336] 64 block-cache 24G
+I20261013 20:06:22.663733 784352 base_conf.cc:336] 65 num-shard-bits 6
+I20261013 20:06:22.663736 784352 base_conf.cc:336] 66 share-block-cache yes
+I20261013 20:06:22.663740 784352 base_conf.cc:336] 67 default-slot-num 1024
+I20261013 20:06:22.663744 784352 base_conf.cc:336] 68 cache-index-and-filter-blocks yes
+I20261013 20:06:22.663748 784352 base_conf.cc:336] 69 pin_l0_filter_and_index_blocks_in_cache yes
+I20261013 20:06:22.663753 784352 base_conf.cc:336] 70 optimize-filters-for-hits yes
+I20261013 20:06:22.663756 784352 base_conf.cc:336] 71 level-compaction-dynamic-level-bytes yes
+I20261013 20:06:22.663761 784352 base_conf.cc:336] 72 throttle-bytes-per-second 207200000
+I20261013 20:06:22.663765 784352 base_conf.cc:336] 73 rsync-timeout-ms 1000
+I20261013 20:06:22.663769 784352 base_conf.cc:336] 74 max-rsync-parallel-num 4
+I20261013 20:06:22.663774 784352 base_conf.cc:336] 75 cache-num 16
+I20261013 20:06:22.663777 784352 base_conf.cc:336] 76 cache-model 1
+I20261013 20:06:22.663781 784352 base_conf.cc:336] 77 cache-type string, set, zset, list, hash, bit
+I20261013 20:06:22.663785 784352 base_conf.cc:336] 78 cache-type string, set, zset, list, hash, bit
+I20261013 20:06:22.663789 784352 base_conf.cc:336] 79 cache-value-item-max-size 1024
+I20261013 20:06:22.663794 784352 base_conf.cc:336] 80 max-key-size-in-cache 1048576
+I20261013 20:06:22.663801 784352 base_conf.cc:336] 81 zset-cache-field-num-per-key 512
+I20261013 20:06:22.663806 784352 base_conf.cc:336] 82 zset-cache-start-direction 0
+I20261013 20:06:22.663810 784352 base_conf.cc:336] 83 cache-maxmemory 34359738368
+I20261013 20:06:22.663815 784352 base_conf.cc:336] 84 cache-maxmemory-policy 1
+I20261013 20:06:22.663818 784352 base_conf.cc:336] 85 cache-maxmemory-samples 5
+I20261013 20:06:22.663822 784352 base_conf.cc:336] 86 cache-lfu-decay-time 1
+I20261013 20:06:22.663826 784352 base_conf.cc:336] 87 internal-used-unfinished-full-sync 
+I20261013 20:06:22.663830 784352 base_conf.cc:336] 88 min-write-buffer-number-to-merge 1
+I20261013 20:06:22.663834 784352 base_conf.cc:336] 89 enable-partitioned-index-filters yes
+I20261013 20:06:22.663851 784352 pika.cc:209] Server at: /mnt/dev/benchmark/storage-peers-20261014/results/pika/server.conf
+I20261013 20:06:22.664021 784352 net_interfaces.cc:104] Using Networker Interface: eth0
+I20261013 20:06:22.664160 784352 net_interfaces.cc:148] got ip 10.84.0.4
+I20261013 20:06:22.664167 784352 pika_server.cc:156] host: 10.84.0.4 port: 6379
+I20261013 20:06:22.664181 784352 pika_server.cc:70] Worker queue limit is 1350
+W20261013 20:06:22.664188 784352 pika_server.cc:71] 0.0.0.0
+I20261013 20:06:22.665575 784352 pika_binlog.cc:81] Binlog: Manifest file not exist, we create a new one.
+I20261013 20:06:22.707456 784352 pika_db.cc:49] db0 DB Success
+I20261013 20:06:22.707828 784623 pika_cache_load_thread.cc:191] PikaCacheLoadThread::ThreadMain Start
+I20261013 20:06:22.710728 784352 net_util.cc:121] TimerTaskThread Starting...
+I20261013 20:06:22.710907 784352 pika_server.cc:214] Pika Server going to start
+I20261013 20:06:22.710917 784352 rsync_server.cc:48] start RsyncServer ...
+I20261013 20:06:22.711073 784352 rsync_server.cc:60] RsyncServer started ...
+I20261013 23:39:00.408947 784352 pika.cc:120] Catch Signal 15, cleanup...
+I20261013 23:39:00.617206 784352 pika_server.cc:223] Goodbye...
+I20261013 23:39:05.203429 784352 rsync_server.cc:65] stop RsyncServer ...
+I20261013 23:39:52.272305 784352 pika_server.cc:135] PikaServer 130812842995072 exit!!!
+I20261013 23:39:52.272405 784352 pika_migrate_thread.cc:544] PikaMigrateThread::~PikaMigrateThread
+I20261013 23:39:52.292877 784352 pika_auxiliary_thread.cc:19] PikaAuxiliary thread 130812013778624 exit!!!
+I20261013 23:39:52.507369 784352 rsync_server.cc:40] Rsync server destroyed
+W20261013 23:39:52.507438 784352 rsync_server.cc:229] RsyncServerThread destroyed
+I20261013 23:39:52.507627 784352 pika_rsync_service.cc:34] PikaRsyncService exit!!!
+I20261013 23:39:52.509817 784352 pika_dispatch_thread.cc:26] dispatch thread 130812030564032 exit!!!
+I20261013 23:39:52.509835 784352 net_util.cc:111] TimerTaskThread exit !!!
+I20261013 23:39:52.509949 784352 pika_client_processor.cc:15] PikaClientProcessor exit!!!
+I20261013 23:39:59.842079 784352 pika_repl_server.cc:26] PikaReplServer exit!!!
+I20261013 23:39:59.842180 784352 pika_repl_client.cc:49] PikaReplClient exit!!!
+-----------Pika config list----------
+   .............          ....     .....       .....           .....         
+   #################      ####     #####      #####           #######        
+   ####         #####     ####     #####    #####            #########       
+   ####          #####    ####     #####  #####             ####  #####      
+   ####         #####     ####     ##### #####             ####    #####     
+   ################       ####     ##### #####            ####      #####    
+   ####                   ####     #####   #####         #################   
+   ####                   ####     #####    ######      #####         #####  
+   ####                   ####     #####      ######   #####           ##### 
+-----------Pika config end----------
