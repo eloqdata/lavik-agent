@@ -1,0 +1,36 @@
+{
+  "scope": "Website-only accessibility correction and stale browser assertion, validated by GitHub CI. The semantic content review is unchanged; no new model review claimed.",
+  "baseline": "edc0681f7d7777abd7d05cb476c88d2dbc180b5d",
+  "failedCI": "https://github.com/eloqdata/lavik-agent/actions/runs/38664046668",
+  "changes": [
+    {
+      "file": "apps/web/components/comparisons.tsx",
+      "replacements": [
+        {
+          "before": "<main id=\"main\" className=\"container comparison-page\">",
+          "after": "<main className=\"container comparison-page\">",
+          "count": 2
+        }
+      ],
+      "originalSha256": "be655a6c97b517bafa9bf3ad0703788fe0df6f47364798013ac2880c141ec4d5",
+      "currentSha256": "e83dc23ee8852b94d6cfe1eb2a626f318733a5ee7f7d348996ca8773e6e3a32b"
+    },
+    {
+      "file": "tests/browser/site.spec.ts",
+      "replacements": [
+        {
+          "before": "not measured same-workload costs",
+          "after": "The model excludes index and runtime memory, replication, servers and operations.",
+          "count": 1
+        },
+        {
+          "before": "并非与 Lavik 在相同工作负载下的实测成本",
+          "after": "此模型不含索引与运行时内存、复制、服务器及运维成本",
+          "count": 1
+        }
+      ],
+      "originalSha256": "08f26b73a160bfc1bdbc18d29b9b37344107fd512d57c11c4312637c6b50737a",
+      "currentSha256": "21fb8f7548f0694d834a5f1cdbfa4272d486756911005b265ebed792eb58dc8a"
+    }
+  ]
+}

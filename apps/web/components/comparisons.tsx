@@ -84,7 +84,7 @@ export function CompareHome({ locale }: { locale: Locale }) {
   assertComparisonPublication();
   const zh = locale === "zh-CN";
   return (
-    <main id="main" className="container comparison-page">
+    <main className="container comparison-page">
       <header className="comparison-hero">
         <p className="eyebrow">{zh ? "选择 LAVIK" : "WHY LAVIK"}</p>
         <h1>
@@ -200,7 +200,7 @@ export function ComparisonPage({
     measured = !!get && !!peer;
   const route = memory ? "redis-valkey" : "1tb-storage";
   return (
-    <main id="main" className="container comparison-page">
+    <main className="container comparison-page">
       <header className="comparison-hero">
         <Link className="comparison-back" href={`/${locale}/compare/`}>
           ← {zh ? "全部产品对比" : "All comparisons"}
