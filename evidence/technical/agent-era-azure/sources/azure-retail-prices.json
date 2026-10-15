@@ -1,0 +1,82 @@
+{
+  "observedAt": "2026-10-15",
+  "provider": "Microsoft Azure Retail Prices API",
+  "region": "eastus2",
+  "currency": "USD",
+  "operatingSystem": "Linux",
+  "purchaseModel": "Pay-as-you-go consumption, excluding Spot, reservations and savings plans",
+  "queries": [
+    "https://prices.azure.com/api/retail/prices?api-version=2023-01-01-preview&currencyCode=USD&%24filter=serviceName+eq+%27Virtual+Machines%27+and+armSkuName+eq+%27Standard_E2as_v4%27+and+%28armRegionName+eq+%27japanwest%27+or+armRegionName+eq+%27eastus2%27%29+and+priceType+eq+%27Consumption%27",
+    "https://prices.azure.com/api/retail/prices?api-version=2023-01-01-preview&currencyCode=USD&%24filter=serviceName+eq+%27Virtual+Machines%27+and+armSkuName+eq+%27Standard_L16as_v4%27+and+%28armRegionName+eq+%27japanwest%27+or+armRegionName+eq+%27eastus2%27%29+and+priceType+eq+%27Consumption%27"
+  ],
+  "selectedItems": [
+    {
+      "currencyCode": "USD",
+      "tierMinimumUnits": 0.0,
+      "retailPrice": 0.126,
+      "unitPrice": 0.126,
+      "armRegionName": "eastus2",
+      "location": "US East 2",
+      "effectiveStartDate": "2019-12-01T00:00:00Z",
+      "meterId": "4395d6d1-f3bd-4a5c-ad04-9b73b4d81aa6",
+      "meterName": "E2as v4",
+      "productId": "DZH318Z0CM2D",
+      "skuId": "DZH318Z0CM2D/0015",
+      "productName": "Virtual Machines Easv4 Series",
+      "skuName": "E2as v4",
+      "serviceName": "Virtual Machines",
+      "serviceId": "DZH313Z7MMC8",
+      "serviceFamily": "Compute",
+      "unitOfMeasure": "1 Hour",
+      "type": "Consumption",
+      "isPrimaryMeterRegion": false,
+      "armSkuName": "Standard_E2as_v4",
+      "savingsPlan": [
+        {
+          "unitPrice": 0.059661,
+          "retailPrice": 0.059661,
+          "term": "3 Years"
+        },
+        {
+          "unitPrice": 0.0852264,
+          "retailPrice": 0.0852264,
+          "term": "1 Year"
+        }
+      ]
+    },
+    {
+      "currencyCode": "USD",
+      "tierMinimumUnits": 0.0,
+      "retailPrice": 1.376,
+      "unitPrice": 1.376,
+      "armRegionName": "eastus2",
+      "location": "US East 2",
+      "effectiveStartDate": "2025-04-01T00:00:00Z",
+      "meterId": "2bd02d41-b5c5-5ae0-90b9-75b1498fa123",
+      "meterName": "L16as v4",
+      "productId": "DZH318Z0M2SF",
+      "skuId": "DZH318Z0M2SF/0018",
+      "productName": "Virtual Machines Lasv4 Series",
+      "skuName": "L16as v4",
+      "serviceName": "Virtual Machines",
+      "serviceId": "DZH313Z7MMC8",
+      "serviceFamily": "Compute",
+      "unitOfMeasure": "1 Hour",
+      "type": "Consumption",
+      "isPrimaryMeterRegion": true,
+      "armSkuName": "Standard_L16as_v4",
+      "savingsPlan": [
+        {
+          "unitPrice": 0.688,
+          "retailPrice": 0.688,
+          "term": "3 Years"
+        },
+        {
+          "unitPrice": 1.00448,
+          "retailPrice": 1.00448,
+          "term": "1 Year"
+        }
+      ]
+    }
+  ]
+}

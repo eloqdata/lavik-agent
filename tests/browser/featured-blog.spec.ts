@@ -40,7 +40,10 @@ test("featured articles and technical evidence are readable without JavaScript o
         await expect(page.locator(".technical-figure table")).toHaveCount(5);
         await expect(page.locator(".technical-figure img")).toHaveCount(4);
         await expect(page.locator("#peak-results")).toContainText("1,145,772");
-        await expect(page.locator("#cost-model")).toContainText("$51,246");
+        await expect(page.locator("#cost-model")).toContainText("$27,594.00");
+        await expect(page.locator("#cost-model")).toContainText("$3,013.44");
+        await expect(page.locator("#capacity-cost")).toContainText("3.84 TB");
+        await expect(page.locator("#capacity-cost")).toContainText("$784.75");
         await expect(page.locator(".technical-toc a")).toHaveCount(
           flagship.blocks.filter((block) => block.type === "heading").length,
         );

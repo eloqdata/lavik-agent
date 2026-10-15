@@ -36,13 +36,13 @@
     },
     {
       "type": "paragraph",
-      "text": "考虑一个 300 节点 Redis 集群：每节点分配 10 GB 内存，包含 150 个主节点和 150 个副本节点。在扣除开销之前，主节点合计提供约 1.5 TB 内存。当内存先耗尽时，扩容购买的 CPU、网络和操作系统资源，很大程度上只是获取更多 RAM 的附带成本。应用可能只是需要保留更多用户特征、延长会话寿命，并不需要同比增加计算能力。Redis 成本优化的关键就在这里：按请求量配置计算资源，按数据量选择存储密度。",
-      "sources": ["model", "redis-sizing"]
+      "text": "考虑 300 台 Standard_E2as_v4 Azure 虚拟机，每台两个 vCPU、16 GiB RAM，组成 150 个主节点和 150 个副本节点。整个集群购买了 600 个 vCPU、4,800 GiB RAM，其中主节点合计提供 2,400 GiB。当内存先耗尽时，扩容购买的 CPU、网络和操作系统资源，很大程度上只是获取更多 RAM 的附带成本。应用可能只是需要保留更多资料或延长会话寿命，并不需要同比增加计算能力。Redis 成本优化的关键就在这里：按请求量配置计算资源，按数据量选择存储密度。",
+      "sources": ["model", "azure-easv4"]
     },
     {
       "type": "paragraph",
-      "text": "Redis Cloud 官方计算器展示了这一容量账单的规模：AWS us-east-1 区域、Pro 方案、1,500 GB 数据库、每秒 100 万次操作并开启高可用，纯内存配置的估算费用为每月 51,246 美元，即每年 614,952 美元。这还是数据增长到 10 TB 之前的托管服务成本。对于智能体基础设施，每保留一 TB 数据的成本，可能直接决定哪些产品功能值得提供给用户。",
-      "sources": ["redis-cloud-pricing"]
+      "text": "两种部署采用相同的 Azure 区域和购买方式：美国东部 2（East US 2）、Linux 按量付费，价格以美元计。Microsoft 公布的 Standard_E2as_v4 费率为每小时 0.126 美元，Standard_L16as_v4 为每小时 1.376 美元。按每月 730 小时计算，300 台 Redis 虚拟机为每月 27,594 美元，三台 Lavik 虚拟机为每月 3,013.44 美元。每台 Lavik 虚拟机包含 16 个 vCPU、128 GiB RAM 和 3.84 TB 本地 NVMe SSD。这让整合方案的成本比较直接建立在同一云厂商的公开虚拟机价格上。",
+      "sources": ["azure-pricing", "azure-lasv4", "model"]
     },
     {
       "type": "paragraph",
@@ -51,8 +51,8 @@
     },
     {
       "type": "paragraph",
-      "text": "对于自建基础设施，可以用一组示例预算观察变化：300 台 Redis 虚拟机，每台每月 100 美元；三台更高配置的 Lavik 主机，每台每月 2,000 美元。月度主机预算从 30,000 美元降至 6,000 美元，减少 80%，每年释放 288,000 美元，可用于产品开发、模型推理或新增容量。这组预算体现了架构取舍：购买少量具备高密度 NVMe 存储的服务器，让计算资源服务实际请求，而不是随着内存扩容反复购买。",
-      "sources": ["model"]
+      "text": "月度虚拟机费用减少 24,580.56 美元，降幅为 89.1%，年化节省 294,966.72 美元。三台 Lavik 虚拟机合计提供 48 个 vCPU、384 GiB RAM，由 NVMe SSD 承载数据容量。Redis 的 300 台虚拟机则提供 600 个 vCPU，容量受限的负载可能并不需要其中相当一部分计算资源。高存储密度的经济价值就在于：按请求处理需求购买计算能力，用 SSD 容量保留数据。下表两侧均为自建虚拟机成本，操作系统磁盘、备份和流量费用另计。",
+      "sources": ["model", "azure-pricing"]
     },
     {
       "type": "heading",
@@ -60,13 +60,20 @@
     },
     {
       "type": "paragraph",
-      "text": "三主机容量方案可为每台 Lavik 主机配置 32 个物理 CPU 核、256 GiB RAM、15.36 TB 专用 NVMe SSD 和 100 GbE 网络。每台运行一个 Data 进程和一个 Meta 投票节点，组成一个主节点、两个完整跟随副本。每台主机保存完整数据集。部署结构因此很直观：三个数据放置位置、三个控制平面投票节点，以及足以远超前述 Redis 集群容量的本地存储空间。",
-      "sources": ["model", "overview", "meta", "replication"]
+      "text": "Lavik 容量方案采用三台 Standard_L16as_v4 虚拟机。每台包含 16 个 vCPU、128 GiB RAM 和四块 960 GB 本地 NVMe，每台合计 3.84 TB。每台运行一个 Data 进程和一个 Meta 投票节点，组成一个主节点、两个完整跟随副本。每台虚拟机保存完整数据集。部署结构因此很直观：三个数据放置位置、三个控制平面投票节点，以及每个服务节点上的 NVMe 容量。",
+      "sources": ["model", "azure-lasv4", "overview", "meta", "replication"]
     },
     {
       "type": "paragraph",
-      "text": "为元数据、失效记录和空间回收预留 30% SSD 容量后，每份副本仍有 10.752 TB 的值空间预算。同一个逻辑数据集通过复制分布在三台主机上。单台主机故障后，还剩两份数据和构成多数派所需的两个 Meta 节点；健康的跟随副本完成提升后恢复服务权限。SSD 提供容量增长空间，副本与放置策略共同构成高可用的基础。",
-      "sources": ["model", "overview", "meta", "replication"]
+      "text": "每台虚拟机保存完整副本时，单份数据的容量基数为 3.84 TB。成本表使用这一分母，三台虚拟机的单位容量成本为每 TB 每月 784.75 美元。Redis 的 150 个主节点合计提供 2,400 GiB，约合十进制 2.577 TB，对应每 TB 每月 10,707.88 美元。这些指标按容量归一化虚拟机费用，尚未扣除数据库开销和运行所需的空闲空间。复制将同一个逻辑数据集放在三台 Lavik 虚拟机上；单台故障后，仍有两份数据和 Meta 多数派可用于恢复与提升。",
+      "sources": [
+        "model",
+        "azure-pricing",
+        "azure-easv4",
+        "azure-lasv4",
+        "meta",
+        "replication"
+      ]
     },
     {
       "type": "paragraph",
@@ -124,7 +131,7 @@
     },
     {
       "type": "paragraph",
-      "text": "如果持续运行，每秒一百万次操作相当于每天 864 亿次操作。把这样的服务能力与 10 TB 以上的容量方案放在一起，经济价值就很清楚：应用可以保留更多有用状态，而无需购买数百个按内存容量切分的分片。先确定实际流量范围，包括命令组合、峰值、突发和延迟目标，再据此配置计算资源，让 NVMe SSD 承载应用需要记住的数据。",
+      "text": "如果持续运行，每秒一百万次操作相当于每天 864 亿次操作。这样的实测服务能力与 NVMe 存储密度结合，为重新评估容量受限的集群提供了充分理由。先确定实际流量范围，包括命令组合、峰值、突发和延迟目标，再据此配置计算资源，让 NVMe SSD 承载应用需要记住的数据。",
       "sources": ["model", "memory-report"]
     },
     {
@@ -157,8 +164,8 @@
     },
     {
       "type": "paragraph",
-      "text": "从部署开始就规划可用性。把主机放在合适的故障域，为 Meta 预留资源，并在复制、过期和空间回收运行时测量服务延迟。在目标数据规模下演练主节点故障和跟随副本重建，把恢复流量计入网络预算。Lavik 的 Meta 通过 Raft 管理拓扑和权限，Data 复制则采用异步方式。相应设定应用的恢复点和恢复时间目标，再通过故障演练验证，才能把高存储密度转化为可长期运营的服务。",
-      "sources": ["meta", "replication", "model"]
+      "text": "从部署开始就规划可用性。将虚拟机放在合适的故障域，并将 Meta 状态保存在持久磁盘上。Azure 本地 NVMe 属于临时存储，因此应将跨虚拟机复制与外部备份结合使用。在复制、过期和空间回收运行时测量服务延迟，再按目标数据规模演练主节点故障和跟随副本重建。Lavik 的 Meta 通过 Raft 管理拓扑和权限，Data 复制采用异步方式。相应设定应用的恢复点和恢复时间目标，再通过故障演练验证。",
+      "sources": ["azure-lasv4", "meta", "replication", "model"]
     },
     {
       "type": "paragraph",
@@ -190,25 +197,24 @@
     },
     {
       "type": "paragraph",
-      "text": "容量与成本依据：三主机、10.752 TB 配置是容量模型，吞吐数据来自前述独立单服务器实验。容量采用十进制 TB 和 70% 值空间预算，压测值大小采用二进制 KiB。自建成本为示例主机预算，不含人员等其他服务成本。Redis Cloud 参考值为开启 HA、关闭 Flex 的托管 Pro 计算器估算。每百万操作成本按平均持续 100 万 QPS、每月 730 小时计算；每可用 TB 成本按各行列出的容量计算。",
-      "sources": ["model", "redis-cloud-pricing"]
+      "text": "容量与成本依据：Azure 对比使用 300 台 E2as_v4 和三台 L16as_v4，按美国东部 2 区域的 Linux 按量费率、每月 730 小时计算，年费为 12 个月费用。容量归一化仅计算一份逻辑数据：Redis 主节点 RAM 合计 2,400 GiB，Lavik NVMe SSD 为 3.84 TB，均未扣除开销。吞吐数据使用前文所列的独立 L16aos_v4 压测配置。每百万操作成本按平均持续 100 万 QPS 计算。虚拟机价格不含托管磁盘、外部备份、流量、人员和税费。",
+      "sources": [
+        "model",
+        "azure-pricing",
+        "azure-easv4",
+        "azure-lasv4",
+        "memory-report"
+      ]
     }
   ],
   "technical": {
     "sources": [
       {
         "id": "model",
-        "title": "Capacity and cost assumptions for this article",
-        "url": "https://github.com/eloqdata/lavik-agent/blob/main/evidence/technical/agent-era/sizing.json",
-        "file": "evidence/technical/agent-era/sizing.json",
-        "sha256": "c3ff3c0e1de41f01f0eb6c8da38290e6c5d894fc31833e24e995a784ded17eb3"
-      },
-      {
-        "id": "redis-cloud-pricing",
-        "title": "Redis Cloud pricing calculator: observed 1,500 GB HA estimate",
-        "url": "https://redis.io/pricing/calculator/",
-        "file": "evidence/technical/agent-era/sources/redis-cloud-pricing.json",
-        "sha256": "f6552e65d53ee86ec31cb242439298a35d318b8311b6d744e714718a0278cf13"
+        "title": "Azure VM capacity and cost model for this article",
+        "url": "https://github.com/eloqdata/lavik-agent/blob/main/evidence/technical/agent-era-azure/sizing.json",
+        "file": "evidence/technical/agent-era-azure/sizing.json",
+        "sha256": "716c271492530d0c26469a1bb05f291bb9f54af77479ea7a41bce17dac7e1061"
       },
       {
         "id": "redis-cluster",
@@ -223,13 +229,6 @@
         "url": "https://redis.io/docs/latest/operate/oss_and_stack/management/scaling/",
         "file": "evidence/technical/agent-era/sources/redis-scaling.json",
         "sha256": "8d86582dafdbb7a67efa7bfa927213845309c5b6a05a7414d0f6e6118c78c406"
-      },
-      {
-        "id": "redis-sizing",
-        "title": "Redis Cloud dataset and memory sizing",
-        "url": "https://redis.io/docs/latest/operate/rc/databases/configuration/sizing/",
-        "file": "evidence/technical/agent-era/sources/redis-sizing.json",
-        "sha256": "35978c677c3b2c4addea3baf32e99cd2f9b2d8a1601443670e02c61aec357127"
       },
       {
         "id": "spdk-nvme",
@@ -391,6 +390,27 @@
         "url": "https://redis.io/solutions/flex/",
         "file": "evidence/technical/agent-era-editorial/sources/redis-flex-latency.json",
         "sha256": "74477fc3f413c0eaad94ee5b666448bb41d51b3ed9f3c0cf2c705e86a05ee383"
+      },
+      {
+        "id": "azure-pricing",
+        "title": "Azure retail prices: Linux E2as_v4 and L16as_v4 in East US 2",
+        "url": "https://github.com/eloqdata/lavik-agent/blob/main/evidence/technical/agent-era-azure/sources/azure-retail-prices.json",
+        "file": "evidence/technical/agent-era-azure/sources/azure-retail-prices.json",
+        "sha256": "0493a205f5db3f3dc81e27d0a89e23593b2aa47a7fcfb8706d201f39861a5a78"
+      },
+      {
+        "id": "azure-easv4",
+        "title": "Microsoft Azure: E2as_v4 specifications",
+        "url": "https://learn.microsoft.com/en-us/azure/virtual-machines/sizes/memory-optimized/easv4-series",
+        "file": "evidence/technical/agent-era-azure/sources/azure-vm-specifications.json",
+        "sha256": "b5e74f26ce5ba22fd7bf86c831da15184dc4e99346826607b70626a69c2eea5b"
+      },
+      {
+        "id": "azure-lasv4",
+        "title": "Microsoft Azure: L16as_v4 specifications and local NVMe capacity",
+        "url": "https://learn.microsoft.com/en-us/azure/virtual-machines/sizes/storage-optimized/lasv4-series",
+        "file": "evidence/technical/agent-era-azure/sources/azure-vm-specifications.json",
+        "sha256": "b5e74f26ce5ba22fd7bf86c831da15184dc4e99346826607b70626a69c2eea5b"
       }
     ],
     "visuals": [
@@ -399,12 +419,12 @@
         "id": "fleet-model",
         "afterBlock": 0,
         "src": "/blog-assets/agent-era/consolidation.svg",
-        "sha256": "7e0ff476e7abb67930f7f074cf75f5c590e8f4d41c433d641c111724c1e3b3f9",
+        "sha256": "9dc511f11a1023fb0d926dc9946fe7c67112892b5b229900fe1c0cc049cbd006",
         "width": 1200,
         "height": 650,
-        "caption": "容量模型：150 组 Redis 主从，每节点 10 GB；三台 Lavik 主机，每台 15.36 TB NVMe SSD，各保存完整副本。",
+        "caption": "容量模型：300 台 E2as_v4，每台 2 vCPU、16 GiB；三台 L16as_v4，每台 16 vCPU、128 GiB、3.84 TB NVMe SSD。Redis 为 150 组主从，Lavik 为一个主节点和两个完整跟随副本。",
         "alt": "300 个 Redis 进程，分为 150 主与 150 副本；对比三台 Lavik 数据主机，各保留一份完整数据。",
-        "sources": ["model"]
+        "sources": ["model", "azure-easv4", "azure-lasv4"]
       },
       {
         "type": "table",
@@ -423,37 +443,43 @@
         "type": "table",
         "id": "cost-model",
         "afterBlock": 8,
-        "caption": "月度与年度成本：Redis Cloud 官方计算器参考与自建主机示例预算。每操作成本按平均 100 万 QPS 计算。",
+        "caption": "Azure 美国东部 2 · Linux 按量付费 · 美元 · 每月 730 小时。小时费率按单台虚拟机计，月费与年费按整个集群计。",
         "columns": [
-          "部署 / 假设",
+          "部署",
+          "美元 / 虚拟机·小时",
           "月费（美元）",
           "年费（美元）",
           "平均百万 QPS 时每百万次操作美元成本"
         ],
         "rows": [
           [
-            "Redis Cloud Pro · 1,500 GB，启用 HA",
-            "$51,246",
-            "$614,952",
-            "$0.01950"
+            "Redis · 300 × Standard_E2as_v4",
+            "$0.126",
+            "$27,594.00",
+            "$331,128.00",
+            "$0.01050"
           ],
-          ["自建 Redis · 300 × $100/月", "$30,000", "$360,000", "$0.01142"],
-          ["自建 Lavik · 3 × $2,000/月", "$6,000", "$72,000", "$0.00228"]
+          [
+            "Lavik · 3 × Standard_L16as_v4",
+            "$1.376",
+            "$3,013.44",
+            "$36,161.28",
+            "$0.00115"
+          ]
         ],
-        "sources": ["redis-cloud-pricing", "model"]
+        "sources": ["azure-pricing", "model"]
       },
       {
         "type": "table",
         "id": "capacity-cost",
         "afterBlock": 11,
-        "caption": "存储密度：月度成本除以所列逻辑容量。自建模型为非值空间预留 30%。",
-        "columns": ["情景", "逻辑值空间分母", "美元 / TB·月"],
+        "caption": "按主数据容量归一化的每月虚拟机成本，尚未扣除数据库开销和运行余量；副本容量仅计一份。",
+        "columns": ["部署", "单份数据容量分母", "美元 / TB·月"],
         "rows": [
-          ["Redis Cloud Pro 估算", "输入 1.5 TB", "$34,164"],
-          ["自建 Redis 预算", "1.05 TB", "$28,571"],
-          ["自建 Lavik 预算", "10.752 TB", "$558"]
+          ["Redis · 300 × E2as_v4", "2,400 GiB RAM (≈ 2.577 TB)", "$10,707.88"],
+          ["Lavik · 3 × L16as_v4", "3.84 TB NVMe SSD", "$784.75"]
         ],
-        "sources": ["model", "redis-cloud-pricing"]
+        "sources": ["model", "azure-easv4", "azure-lasv4", "azure-pricing"]
       },
       {
         "type": "figure",
@@ -568,12 +594,12 @@
         "id": "node-count-growth",
         "afterBlock": 28,
         "src": "/blog-assets/agent-era/capacity.svg",
-        "sha256": "8abdd719125a828a4fd36ac8520f02ce307177d240948aa9510534c1c97411e1",
+        "sha256": "441de29089ff634a456f8783a2f1f352acfa99557b04f8d2b3c3bf130a8aabd3",
         "width": 1200,
         "height": 540,
-        "caption": "容量决定的节点数量：Redis 每节点 10 GB、两份副本；Lavik 每主机 15.36 TB、三份副本。两者均将 70% 分配给值空间。",
-        "alt": "同一容量模型的两张图：线性坐标中，Redis 在 10 TB 时增至 2,858 个数据节点，而三台 Lavik 主机满足假定值预算；对数坐标使三主机曲线清晰可见。",
-        "sources": ["model"]
+        "caption": "扣除开销前、按容量计算的节点数量：Redis 每主节点 16 GiB，配一个副本；Lavik 每组在三台 3.84 TB 虚拟机上保存三份完整副本，进一步扩容增加三虚拟机组。",
+        "alt": "主数据容量模型：10 TB 时 Redis 需要 1,166 台虚拟机；Lavik 需要三组、共九台虚拟机。线性与对数图展示相同数据。",
+        "sources": ["model", "azure-easv4", "azure-lasv4"]
       }
     ]
   }

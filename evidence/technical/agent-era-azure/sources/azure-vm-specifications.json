@@ -1,0 +1,23 @@
+{
+  "observedAt": "2026-10-15",
+  "sources": [
+    {
+      "url": "https://learn.microsoft.com/en-us/azure/virtual-machines/sizes/memory-optimized/easv4-series",
+      "sku": "Standard_E2as_v4",
+      "vCPUs": 2,
+      "memoryGiB": 16
+    },
+    {
+      "url": "https://learn.microsoft.com/en-us/azure/virtual-machines/sizes/storage-optimized/lasv4-series",
+      "sku": "Standard_L16as_v4",
+      "vCPUs": 16,
+      "memoryGiB": 128,
+      "localNVMeDevices": 4,
+      "localNVMeGBPerDevice": 960,
+      "localNVMeTotalTB": 3.84,
+      "localStorageType": "Temporary local NVMe",
+      "maximumNetworkMbps": 12500
+    }
+  ],
+  "capacityBasis": "Microsoft lists VM RAM in GiB and local NVMe disk capacity in decimal GB. 150 Redis primaries x 16 GiB = 2,400 GiB = 2.5769803776 decimal TB. Three full Lavik copies on three 3.84 TB VMs provide a 3.84 TB single-copy capacity basis. Both denominators are before engine overhead and operational free-space reserve."
+}

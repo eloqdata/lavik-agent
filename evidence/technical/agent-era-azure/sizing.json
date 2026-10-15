@@ -1,0 +1,90 @@
+{
+  "status": "Capacity sizing model using public Azure Linux pay-as-you-go VM rates; throughput measurements use separate benchmark configurations.",
+  "units": "VM RAM: GiB (2^30 bytes); SSD capacity and normalized TB: decimal (10^12 bytes). Both capacity denominators are before database overhead and free-space headroom.",
+  "agents": 1000000000,
+  "bytesPerAgent": [
+    1000,
+    10000,
+    100000
+  ],
+  "region": "eastus2",
+  "hoursPerMonth": 730,
+  "monthsPerYear": 12,
+  "redis": {
+    "nodes": 300,
+    "primaries": 150,
+    "replicas": 150,
+    "copies": 2,
+    "sku": "Standard_E2as_v4",
+    "vCPUsPerVM": 2,
+    "memoryGiBPerVM": 16,
+    "totalVCPUs": 600,
+    "totalMemoryGiB": 4800,
+    "primaryMemoryGiB": 2400,
+    "capacityDenominatorTB": 2.5769803776,
+    "hourlyUSDPerVM": 0.126,
+    "monthlyUSDPerVM": 91.98,
+    "monthlyUSD": 27594.0,
+    "annualUSD": 331128.0
+  },
+  "lavik": {
+    "nodes": 3,
+    "dataProcesses": 3,
+    "metaProcesses": 3,
+    "copies": 3,
+    "topology": "one primary and two full followers; one Meta voter on each VM",
+    "sku": "Standard_L16as_v4",
+    "vCPUsPerVM": 16,
+    "memoryGiBPerVM": 128,
+    "localNVMeDevicesPerVM": 4,
+    "localNVMeGBPerDevice": 960,
+    "localNVMeTBPerVM": 3.84,
+    "totalVCPUs": 48,
+    "totalMemoryGiB": 384,
+    "capacityDenominatorTB": 3.84,
+    "hourlyUSDPerVM": 1.376,
+    "monthlyUSDPerVM": 1004.48,
+    "monthlyUSD": 3013.44,
+    "annualUSD": 36161.28
+  },
+  "savings": {
+    "monthlyUSD": 24580.56,
+    "annualUSD": 294966.72,
+    "percentLowerMonthlyVMPrice": 89.07936507936508,
+    "redisToLavikMonthlyCostRatio": 9.156976744186046
+  },
+  "qpsScenario": {
+    "assumedAverageQPS": 1000000,
+    "millionOperationsPerMonth": 2628000,
+    "redisUSDPerMillion": 0.0105,
+    "lavikUSDPerMillion": 0.0011466666666666667
+  },
+  "capacityNormalizedMonthlyUSDPerTB": {
+    "redis": 10707.881301641464,
+    "lavik": 784.75
+  },
+  "capacityChart": {
+    "formulaRedisNodes": "2 * ceil(logical_TB * 10^12 / (16 * 2^30))",
+    "formulaLavikNodes": "3 * ceil(logical_TB / 3.84)",
+    "pointsTB": [
+      0.1,
+      0.5,
+      1,
+      1.5,
+      2.5,
+      3,
+      3.84,
+      5,
+      7.68,
+      10
+    ],
+    "basis": "Installed primary capacity before overhead. For growth above 3.84 TB, each additional Lavik group has one primary and two full followers."
+  },
+  "included": "VM compute, RAM and the L16as_v4 included local NVMe capacity",
+  "excluded": "Managed OS/data disks, external backup storage, traffic charges, operations staffing, support, taxes and negotiated discounts",
+  "durability": "L16as_v4 NVMe is Azure temporary local storage. Keep Meta state on durable disks; use replication across VMs and external backups.",
+  "sourceFiles": {
+    "evidence/technical/agent-era-azure/sources/azure-retail-prices.json": "0493a205f5db3f3dc81e27d0a89e23593b2aa47a7fcfb8706d201f39861a5a78",
+    "evidence/technical/agent-era-azure/sources/azure-vm-specifications.json": "b5e74f26ce5ba22fd7bf86c831da15184dc4e99346826607b70626a69c2eea5b"
+  }
+}

@@ -18,8 +18,11 @@ meaning-bearing renderer to the independent ChatGPT-subscription review record.
 Do not edit review records to bypass content approval.
 
 The first featured article is `300-redis-nodes-to-3-lavik-nodes`. Its sizing
-assumptions, factual pricing observation and derived measurements are under
-`evidence/technical/agent-era/`. `scripts/build-agent-era-figures.py` recreates
+current Azure VM sizing and retail-price receipts are under
+`evidence/technical/agent-era-azure/`; derived benchmark measurements remain
+under `evidence/technical/agent-era/`. The capacity model uses E2as_v4 and
+L16as_v4 pricing in East US 2, with a 3.84 TB single-copy NVMe denominator.
+Both capacity denominators are before database overhead and free-space reserves. `scripts/build-agent-era-figures.py` recreates
 the benchmark and capacity charts from the archived raw results using
 `matplotlib` and `hdrhistogram`. It extracts existing measurements; it does not
 run a benchmark. The two explanatory SVG diagrams are authored illustrations.

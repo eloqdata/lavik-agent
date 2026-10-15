@@ -53,15 +53,19 @@ fig.suptitle('Lavik on NVMe SSD, Redis and Valkey in DRAM',fontweight='bold',fon
 fig.text(.075,.025,'1 KiB values · pipeline 1 · single server, no replicas. 10M: 30s, correlated seeds. 1B: 60s, distinct seeds.',fontsize=9)
 fig.tight_layout(rect=[.025,.065,1,.92]);fig.savefig(OUT/'throughput.svg',metadata={'Date':None});plt.close(fig)
 fig,axes=plt.subplots(1,2,figsize=(12,5.4))
-xs=[.1,.5,1,1.5,3,5,10]
-redis=[2*math.ceil(x*1000/(10*.7)) for x in xs]
+model=json.loads(Path('evidence/technical/agent-era-azure/sizing.json').read_text())
+xs=[.1,.5,1,1.5,2.5,3,3.84,3.840001,5,7.68,7.680001,10]
+redis=[model['redis']['copies']*math.ceil(x*10**12/(model['redis']['memoryGiBPerVM']*2**30)) for x in xs]
+lavik=[model['lavik']['copies']*math.ceil(x/model['lavik']['capacityDenominatorTB']) for x in xs]
 for ax in axes:
-    ax.plot(xs,redis,color='#345b70',marker='o',label='Redis: 10 GB/node, two copies',linewidth=2)
-    ax.plot(xs,[3]*len(xs),color='#a64626',marker='o',label='Lavik: 15.36 TB/host, three copies',linewidth=2)
-    ax.set_xlabel('Logical value payload (decimal TB)');ax.set_ylabel('Data nodes');ax.grid(axis='y',alpha=.2)
+    ax.plot(xs,redis,color='#345b70',marker='o',label='Redis: E2as_v4, primary + replica',linewidth=2)
+    ax.step(xs,lavik,where='post',color='#a64626',label='Lavik: L16as_v4, three-copy groups',linewidth=2)
+    ax.set_xlabel('Primary capacity before overhead (decimal TB)');ax.set_ylabel('VMs');ax.grid(axis='y',alpha=.2)
 axes[0].set_ylim(bottom=0);axes[0].set_title('Capacity-only node count',loc='left',fontweight='bold')
 axes[1].set_yscale('log');axes[1].set_title('Same model · logarithmic node axis',loc='left',fontweight='bold');axes[1].legend(fontsize=8,loc='upper left',frameon=False)
 fig.suptitle('Buy capacity without multiplying the serving fleet',fontweight='bold',fontsize=16,x=.075,ha='left')
-fig.text(.075,.025,'Capacity model: 70% value-space budget. Redis: two copies. Lavik: three full copies on three hosts.',fontsize=9)
+fig.text(.075,.025,'Capacity model before overhead. Redis: 16 GiB per primary. Lavik: 3.84 TB per three-VM group.',fontsize=9)
 fig.tight_layout(rect=[.025,.065,1,.92]);fig.savefig(OUT/'capacity.svg',metadata={'Date':None});plt.close(fig)
+capacity_svg=OUT/'capacity.svg'
+capacity_svg.write_text('\n'.join(line.rstrip() for line in capacity_svg.read_text().splitlines())+'\n')
 print('Derived six latency rows and forty measured throughput points; generated two standalone SVG charts.')
