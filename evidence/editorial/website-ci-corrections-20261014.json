@@ -31,6 +31,19 @@
       ],
       "originalSha256": "08f26b73a160bfc1bdbc18d29b9b37344107fd512d57c11c4312637c6b50737a",
       "currentSha256": "21fb8f7548f0694d834a5f1cdbfa4272d486756911005b265ebed792eb58dc8a"
+    },
+    {
+      "file": "tests/browser/editorial.spec.ts",
+      "replacements": [
+        {
+          "before": "      .first()\n      .textContent();\n    const faq = JSON.parse(data!)[\"@graph\"].find(\n      (x: any) => x[\"@type\"] === \"FAQPage\",\n    );",
+          "after": "      .allTextContents();\n    const faq = data\n      .flatMap((text) => JSON.parse(text)[\"@graph\"] ?? [])\n      .find((x: any) => x[\"@type\"] === \"FAQPage\");\n    expect(faq).toBeDefined();",
+          "count": 1
+        }
+      ],
+      "originalSha256": "c67b17a63cdcfdab1d84e802af529781057d6e5975589dbdd76a951466178895",
+      "currentSha256": "b930bdc241f0cb24acbaf3a0c4c6d34ae94b40f16bbe7c788960013ba927da31"
     }
-  ]
+  ],
+  "additionalFailedCI": "https://github.com/eloqdata/lavik-agent/actions/runs/38664495296"
 }

@@ -33,7 +33,11 @@ test("editorial CI typing correction preserves the independently reviewed runtim
   );
   assert.deepEqual(
     websiteCorrections.changes.map((change: any) => change.file),
-    ["apps/web/components/comparisons.tsx", "tests/browser/site.spec.ts"],
+    [
+      "apps/web/components/comparisons.tsx",
+      "tests/browser/site.spec.ts",
+      "tests/browser/editorial.spec.ts",
+    ],
   );
   for (const change of websiteCorrections.changes) {
     const text = fs.readFileSync(change.file, "utf8");

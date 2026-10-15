@@ -34,11 +34,11 @@ test("current adoption pages consistently use stable release guidance in both la
     await page.goto(`/${locale}/faq/evaluation/`);
     const data = await page
       .locator('script[type="application/ld+json"]')
-      .first()
-      .textContent();
-    const faq = JSON.parse(data!)["@graph"].find(
-      (x: any) => x["@type"] === "FAQPage",
-    );
+      .allTextContents();
+    const faq = data
+      .flatMap((text) => JSON.parse(text)["@graph"] ?? [])
+      .find((x: any) => x["@type"] === "FAQPage");
+    expect(faq).toBeDefined();
     expect(
       faq.mainEntity.map((x: any) => [x.name, x.acceptedAnswer.text]),
     ).toEqual(faqFor(locale).map((f) => [f.question, f.answer]));
