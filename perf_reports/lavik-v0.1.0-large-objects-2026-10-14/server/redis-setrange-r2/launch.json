@@ -1,0 +1,26 @@
+{
+  "args": [
+    "taskset",
+    "-c",
+    "0-15",
+    "/mnt/dev/benchmark/release010-latest/downloads/redis/src/redis-server",
+    "--bind",
+    "10.84.1.4",
+    "--protected-mode",
+    "no",
+    "--port",
+    "6379",
+    "--dir",
+    "/mnt/dev/benchmark/large-objects-20261014/redis-setrange-r2",
+    "--save",
+    "",
+    "--appendonly",
+    "no",
+    "--io-threads",
+    "16",
+    "--maxclients",
+    "10000"
+  ],
+  "binary_sha256": "34d31ea3bd53b35f4fc4c587742174a2b2f79f92f9514e15a6d83726e3b9ce18",
+  "environment": {}
+}

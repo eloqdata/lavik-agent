@@ -1,0 +1,27 @@
+{
+  "args": [
+    "taskset",
+    "-c",
+    "0-15",
+    "/mnt/dev/benchmark/release010/downloads/lavik-v0.1.0-linux-x86_64/lavik",
+    "--storage=spdk",
+    "--bind=10.84.1.4",
+    "--threads=16",
+    "--pin-workers",
+    "--metrics-port=0",
+    "--spdk-max-completions-per-poll=16",
+    "--log-dir=/mnt/dev/benchmark/large-objects-20261014/lavik-zswap-r2/logs",
+    "--shutdown-checkpoint",
+    "--data-file=spdk://2401:00:00.0/1",
+    "--data-file=spdk://221c:00:00.0/1",
+    "--data-file=spdk://7f10:00:00.0/1",
+    "--data-file=spdk://399c:00:00.0/1",
+    "--data-file=spdk://c0ef:00:00.0/1",
+    "--data-file=spdk://6319:00:00.0/1"
+  ],
+  "binary_sha256": "7bf8d204a137678cee0e1a621b02661181373fbbfe1366bc1c201942b9dcf420",
+  "environment": {
+    "BYCORF_EAL_ARGS": "-a 2401:00:00.0 -a 221c:00:00.0 -a 7f10:00:00.0 -a 399c:00:00.0 -a c0ef:00:00.0 -a 6319:00:00.0",
+    "BYCORF_DPDK_MEMORY_MB": "8192"
+  }
+}

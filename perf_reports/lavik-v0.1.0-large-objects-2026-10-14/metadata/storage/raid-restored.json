@@ -1,0 +1,42 @@
+{
+  "devices": [
+    {
+      "serial": "4d4fd73b0687ec770001",
+      "bdf": "2401:00:00.0",
+      "device": "/dev/nvme1n1",
+      "bytes": 1919850381312
+    },
+    {
+      "serial": "4d4fd73b0687ec770002",
+      "bdf": "221c:00:00.0",
+      "device": "/dev/nvme3n1",
+      "bytes": 1919850381312
+    },
+    {
+      "serial": "4d4fd73b0687ec770003",
+      "bdf": "7f10:00:00.0",
+      "device": "/dev/nvme5n1",
+      "bytes": 1919850381312
+    },
+    {
+      "serial": "4d4fd73b0687ec770004",
+      "bdf": "399c:00:00.0",
+      "device": "/dev/nvme4n1",
+      "bytes": 1919850381312
+    },
+    {
+      "serial": "4d4fd73b0687ec770005",
+      "bdf": "c0ef:00:00.0",
+      "device": "/dev/nvme6n1",
+      "bytes": 1919850381312
+    },
+    {
+      "serial": "4d4fd73b0687ec770006",
+      "bdf": "6319:00:00.0",
+      "device": "/dev/nvme2n1",
+      "bytes": 1919850381312
+    }
+  ],
+  "raid": "/dev/md127:\n           Version : 1.2\n     Creation Time : Wed Oct 14 14:56:14 2026\n        Raid Level : raid0\n        Array Size : 11248330752 (10.48 TiB 11.52 TB)\n      Raid Devices : 6\n     Total Devices : 6\n       Persistence : Superblock is persistent\n\n       Update Time : Wed Oct 14 14:56:14 2026\n             State : clean \n    Active Devices : 6\n   Working Devices : 6\n    Failed Devices : 0\n     Spare Devices : 0\n\n            Layout : original\n        Chunk Size : 512K\n\nConsistency Policy : none\n\n              Name : large-objects-20261014\n              UUID : 92d5a666:8186dc12:4caf1095:e2d90e03\n            Events : 0\n\n    Number   Major   Minor   RaidDevice State\n       0     259        6        0      active sync   /dev/nvme1n1\n       1     259        8        1      active sync   /dev/nvme3n1\n       2     259       10        2      active sync   /dev/nvme5n1\n       3     259        9        3      active sync   /dev/nvme4n1\n       4     259       11        4      active sync   /dev/nvme6n1\n       5     259        7        5      active sync   /dev/nvme2n1",
+  "mount": "TARGET                      SOURCE     FSTYPE OPTIONS\n/mnt/storage-peers-20261014 /dev/md127 xfs    rw,noatime,attr2,inode64,logbufs=8,logbsize=32k,sunit=1024,swidth=6144,noquota"
+}

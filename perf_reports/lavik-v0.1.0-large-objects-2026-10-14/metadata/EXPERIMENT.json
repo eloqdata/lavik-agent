@@ -1,0 +1,54 @@
+{
+  "date": "2026-10-14",
+  "systems": [
+    "Lavik 0.1.0 SPDK",
+    "Redis 8.10.2",
+    "Valkey 9.1.2",
+    "Apache Kvrocks 2.17.0"
+  ],
+  "keys": 8192,
+  "payload_bytes_per_key": 1048576,
+  "hash_fields": 4096,
+  "list_elements": 4096,
+  "zset_members": 32768,
+  "stream_entries": 4096,
+  "field_element_payload_bytes": 256,
+  "zset_member_bytes": 32,
+  "workloads": [
+    "SET",
+    "SETRANGE 256 B",
+    "HSET existing field",
+    "LPUSH/RPOP pair",
+    "ZINCRBY existing member",
+    "ZREM/ZADD pair",
+    "XADD MAXLEN = 4096"
+  ],
+  "connections": [
+    80,
+    160,
+    320,
+    640,
+    1280
+  ],
+  "client_threads": 16,
+  "pipeline": 1,
+  "warmup_seconds": 30,
+  "additional_warmups_if_first_last_10s_rates_differ_over_25_percent": 3,
+  "measurement_seconds": 60,
+  "rounds": 3,
+  "formal_points": 420,
+  "defrag": "enabled",
+  "server_cpus": "0-15",
+  "client_cpus": "0-15",
+  "redis_io_threads": 16,
+  "valkey_io_threads": 8,
+  "kvrocks_workers": 16,
+  "client": "custom C++17 epoll RESP2 client; identical executable for all systems; microsecond-rounded per-request samples; pair timings measured separately",
+  "dataset_bytes_note": "payload only; excludes names, scores, IDs, metadata and indexes",
+  "archive_policy": "raw files local; report with commands and SVG only on GitHub",
+  "small_payload_generation": "256 independent pseudorandom bytes per field/element/update, deterministically seeded by seed, key/client ID and sequence; no shared body",
+  "client_build": {
+    "sha256": "f596a6f1a5a1a600c5cec3240e0f56a0dd56f338283d5666e38a4c82ccb62b08",
+    "source_sha256": "ab2446bcd3147ebe62b7ca450b5520634469082081b705f6872f314d5ce36780"
+  }
+}
