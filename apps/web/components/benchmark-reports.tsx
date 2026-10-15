@@ -19,6 +19,8 @@ import {
 import { assertBenchmarkPublication } from "../../../packages/benchmarks/gate";
 import { BenchmarkCode } from "./benchmark-code";
 import { BenchmarkSnapshot } from "./benchmark-snapshot";
+import { homepageBenchmarkRows } from "../../../packages/benchmarks/homepage";
+import { rawArchiveUrl } from "../../../packages/benchmarks/raw-data";
 const text = (children: ReactNode): string =>
   Children.toArray(children)
     .map((c) =>
@@ -153,6 +155,9 @@ export function BenchmarkReportPage({
           <a href={reportSourceUrl(r, locale)}>
             {zh ? "GitHub 原始报告" : "Original report on GitHub"} ↗
           </a>
+          <a href={rawArchiveUrl(r.directory)}>
+            {zh ? "原始测量数据与校验和" : "Raw measurements & checksums"} ↗
+          </a>
           <a
             href={assetUrl(
               r,
@@ -208,6 +213,12 @@ export function BenchmarkReportPage({
           </section>
           {r.id === "1tb-storage" ? (
             <BenchmarkSnapshot locale={locale} />
+          ) : r.id === "redis-valkey" ? (
+            <BenchmarkSnapshot
+              locale={locale}
+              rows={homepageBenchmarkRows}
+              scope="memory"
+            />
           ) : null}
           <div className="benchmark-report prose">
             <Markdown

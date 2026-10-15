@@ -278,7 +278,7 @@
     "packaging/docker/0.1.0/release.sha256": "f2bc62261ad194f6a8dbee3a8b8d7cae4b0f07cb2e308b8c359278e8970e6ddf",
     "packaging/docker/0.1.0/smoke-test.py": "01c2ac6e1045c6b8b5ee7e12170add0c80c59008c9b2c66a47cdea8881f29e38",
     "scripts/authorize-stable-docs.ts": "364d11886e1395739696194f1e40351acaa9097e70dd4131e8422a5f8067b526",
-    "scripts/build-discovery.ts": "69cb5a973c40e46fef3f00d15ec604e742cee0cdd2e04729b856fbb9594cfa5a",
+    "scripts/build-discovery.ts": "b745f2a3c677f9b4217a69f26c77d54b2c3dc85b65be78033eeb7b8b9599afeb",
     "scripts/verify-stable-install.py": "519ebba7dff7f80005e1eeb41ad9d1fd9e22e7ca437d1ee06f4bdb62321fc631",
     "scripts/verify-stable-manual.py": "6061f8a178a613e4af56789548d2ddce09a370e55a54f723e816c8a78be8f5aa",
     "scripts/verify-stable-migration.py": "b81d12d2583678cb6f976fcf24db80fa4f8bb682a4a0c081243482b2ba0c0e10",
@@ -339,7 +339,7 @@
     "verification/docs/0.1.0/query-0.txt": "e62c421f8f38333cfcdf3905625f1b2d5f70dd92a7366765ece6a1e56e834f1d",
     "verification/docs/0.1.0/query-1.txt": "e62c421f8f38333cfcdf3905625f1b2d5f70dd92a7366765ece6a1e56e834f1d"
   },
-  "bundleHash": "9554617d4496086bc89adefe2345a1e711d239c24ca531ec356635f42f84ee0f",
+  "bundleHash": "8f68960a6c973b6af76495e024dd3dbdec39668399c0914cde3df2a876170c51",
   "independentlyReviewedContextDelta": {
     "reviewer": {
       "role": "reviewer",
@@ -396,5 +396,25 @@
     },
     "previousBundleHash": "b2f1b44f7281024f5ecb34dfaebc33c6929f6fbceec10cee9639fec57ba193c9",
     "scope": "Current technical and marketing changes independently reviewed; earlier owner waiver retained as historical provenance."
+  },
+  "rawNumbersContextReview": {
+    "record": "evidence/benchmarks/raw-numbers-review.json",
+    "reviewer": {
+      "role": "reviewer",
+      "model": "gpt-6-astra",
+      "provider": "openai",
+      "authentication": "chatgpt",
+      "reasoning": "high",
+      "additionalReviewReason": "Include-current-raw-measurement-wording-in-llms-discovery",
+      "startedAt": "2026-10-15T02:59:34.732Z",
+      "finishedAt": "2026-10-15T03:01:02.596Z",
+      "promptSha256": "584b2ca90e9a0b6fbf0050e8cd6d097cd73e6590f581b2494519db3dc021a9e7",
+      "outputSha256": "15159c6cdae74f37c6c9711d1877f291ccaed5c35ccac8b50cb9b8497d161b43"
+    },
+    "previousBundleHash": "9554617d4496086bc89adefe2345a1e711d239c24ca531ec356635f42f84ee0f",
+    "sharedDelta": [
+      "scripts/build-discovery.ts"
+    ],
+    "scope": "Discovery description independently reviewed; existing documentation prose and owner authorization scope unchanged."
   }
 }

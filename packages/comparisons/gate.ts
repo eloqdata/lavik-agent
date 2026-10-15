@@ -1,4 +1,5 @@
 import { benchmarkSources } from "../benchmarks/repository";
+import exactData from "../benchmarks/exact-data.json";
 import fs from "node:fs";
 import path from "node:path";
 import { createHash } from "node:crypto";
@@ -24,6 +25,15 @@ export const comparisonReviewSchema = z
 export type ComparisonReview = z.infer<typeof comparisonReviewSchema>;
 export function comparisonFileHashes() {
   const files = [
+    "packages/benchmarks/exact-data.json",
+    "packages/benchmarks/raw-data.ts",
+    "scripts/extract-benchmark-numbers.py",
+    "scripts/review-benchmark-numbers.ts",
+    "packages/benchmarks/review-lock.ts",
+    "tests/exact-benchmark-data.test.ts",
+    "tests/editorial-type-only.test.ts",
+    "evidence/editorial/ci-baseline-20261014.json",
+    ...Object.keys(exactData.sourceFiles),
     ...fs
       .readdirSync("packages/comparisons")
       .filter((f) => f.endsWith(".ts"))
@@ -115,6 +125,9 @@ export function validateComparisonPublication(
 }
 export function comparisonEvidenceErrors(): string[] {
   const errors: string[] = [];
+  for (const [file, sha] of Object.entries(exactData.sourceFiles))
+    if (digest(fs.readFileSync(file)) !== sha)
+      errors.push("Raw benchmark output changed: " + file);
   for (const s of comparisonSources.sources) {
     const bytes = fs.readFileSync(s.path);
     if (digest(bytes) !== s.sha256 || bytes.length !== s.bytes)

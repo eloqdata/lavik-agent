@@ -31,6 +31,9 @@ test("editorial CI typing correction preserves the independently reviewed runtim
   const websiteCorrections = read(
     "evidence/editorial/website-ci-corrections-20261014.json",
   );
+  // Historical corrections are checked against their immutable snapshot.
+  // Current content has its own exact-byte publication review and gate tests.
+  const historical = read("evidence/editorial/ci-baseline-20261014.json");
   assert.deepEqual(
     websiteCorrections.changes.map((change: any) => change.file),
     [
@@ -40,7 +43,7 @@ test("editorial CI typing correction preserves the independently reviewed runtim
     ],
   );
   for (const change of websiteCorrections.changes) {
-    const text = fs.readFileSync(change.file, "utf8");
+    const text = historical.files[change.file];
     assert.equal(hash(text), change.currentSha256);
     let previous = text;
     for (const replacement of change.replacements) {
@@ -55,7 +58,7 @@ test("editorial CI typing correction preserves the independently reviewed runtim
   }
   for (const name of ["comparisons", "benchmarks"]) {
     const before = correction.originalPublications[name];
-    const after = read(`evidence/${name}/publication.json`);
+    const after = historical.publications[name];
     assert.deepEqual(after.reviewer, before.reviewer);
     assert.equal(after.reviewSha256, before.reviewSha256);
     assert.equal(

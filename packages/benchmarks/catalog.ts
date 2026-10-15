@@ -87,8 +87,8 @@ export const benchmarkReports: BenchmarkReport[] = [
       "使用 16 vCPU 虚拟机，在 1,000 万键下对比 NVMe SSD 上的 Lavik 0.1.0 SPDK 与 DRAM 上的 Redis 8.10.2、Valkey 9.1.2，并独立测试 Lavik 的十亿键容量。",
     ),
     takeaway: t(
-      "Lavik reaches 1,145.8k peak GET QPS and 972.0k peak SET QPS at 10M keys. The separate 1B-key sweep reaches 1,069,126 GET QPS with values on NVMe SSD.",
-      "在 1,000 万键下，Lavik 达到 1,145.8k GET 峰值 QPS 和 972.0k SET 峰值 QPS。独立的十亿键测试在 NVMe SSD 上达到 1,069,126 GET QPS。",
+      "Lavik reaches 1,145,772 peak GET QPS and 971,950 peak SET QPS at 10M keys. The separate 1B-key sweep reaches 1,069,126 GET QPS with values on NVMe SSD.",
+      "在 1,000 万键下，Lavik 达到 1,145,772 GET 峰值 QPS 和 971,950 SET 峰值 QPS。独立的十亿键测试在 NVMe SSD 上达到 1,069,126 GET QPS。",
     ),
     scope: t(
       "Azure L16aos_v4 · 16 logical CPUs / 8 physical cores · six NVMe SSDs · 1 KiB values · pipeline 1 · 120 formal points",
@@ -100,14 +100,14 @@ export const benchmarkReports: BenchmarkReport[] = [
     ),
     stats: [
       {
-        value: "1,145.8k",
+        value: "1,145,772",
         label: t(
           "10M-key GET QPS · p99.9 7.135 ms",
           "1,000 万键 GET QPS · p99.9 7.135 ms",
         ),
       },
       {
-        value: "972.0k",
+        value: "971,950",
         label: t(
           "10M-key SET QPS · p99.9 7.199 ms",
           "1,000 万键 SET QPS · p99.9 7.199 ms",

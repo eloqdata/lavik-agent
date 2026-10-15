@@ -17,14 +17,9 @@ import {
 } from "../../../packages/comparisons/measurements";
 import { assertComparisonPublication } from "../../../packages/comparisons/gate";
 import { ComparisonCost } from "./comparison-cost";
+import { rawArchiveUrl } from "../../../packages/benchmarks/raw-data";
 const n = (v: number) => Math.round(v).toLocaleString("en-US");
-const qps = (p: Measurement) =>
-  p.system.startsWith("Lavik") && p.connections === 1280
-    ? (p.qps / 1000).toLocaleString("en-US", {
-        minimumFractionDigits: 1,
-        maximumFractionDigits: 1,
-      }) + "k"
-    : (p.approximate ? "≈ " : "") + n(p.qps);
+const qps = (p: Measurement) => n(p.qps);
 function Start({ locale }: { locale: Locale }) {
   const zh = locale === "zh-CN";
   return (
@@ -142,8 +137,8 @@ export function CompareHome({ locale }: { locale: Locale }) {
                     <p className="comparison-small">
                       {p.group === "memory"
                         ? zh
-                          ? "1,000 万键 · 1,280 连接 · 图表近似值"
-                          : "10M keys · 1,280 connections · graph estimates"
+                          ? "1,000 万键 · 1,280 连接 · 原始实测结果"
+                          : "10M keys · 1,280 connections · raw measurements"
                         : zh
                           ? "十亿键 · 同为 80 个连接"
                           : "1B keys · same 80 connections"}
@@ -318,8 +313,8 @@ export function ComparisonPage({
             <p className="comparison-small">
               {memory
                 ? zh
-                  ? "Lavik 数值保留报告精度；≈ 为原图近似值。"
-                  : "Lavik values retain the report’s precision; ≈ marks estimates from the original graph."
+                  ? "数值来自原始测量结果；QPS 四舍五入为整数，p99.9 保留三位小数。"
+                  : "Values come from raw measurements; QPS is rounded to whole operations and p99.9 retains three decimal places."
                 : zh
                   ? "同连接数比较；完整报告还展示 80–1,280 连接的吞吐量与尾延迟曲线。"
                   : "Matched-concurrency comparison. The full report also plots throughput and tail latency across 80–1,280 connections."}
@@ -329,6 +324,18 @@ export function ComparisonPage({
                 {zh ? "测试方法与完整结果" : "Test method and full results"}
               </summary>
               <p>{c.nuance[locale]}</p>
+              <p>
+                <a
+                  href={rawArchiveUrl(
+                    memory
+                      ? "lavik-v0.1.0-spdk-vs-latest-2026-10-13"
+                      : "lavik-v0.1.0-storage-peers-1tb-2026-10-14",
+                  )}
+                >
+                  {zh ? "原始测量数据与校验和" : "Raw measurements & checksums"}{" "}
+                  ↗
+                </a>
+              </p>
               <p>
                 {zh
                   ? "结果来自单机单次测试，缓存、预热与持久化设置按报告执行。节点模型假设均衡分片与可线性扩展的吞吐量；上线前应按实际负载和故障场景确定余量。"

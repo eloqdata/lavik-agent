@@ -151,3 +151,33 @@ test("matched-concurrency chart switches operation and latency, with all numbers
   expect(await reader.locator(".benchmark-code").count()).toBeGreaterThan(5);
   await context.close();
 });
+
+test("high-throughput report presents raw peaks and exact paired latency in both languages", async ({
+  page,
+}) => {
+  for (const locale of ["en", "zh-CN"]) {
+    await page.goto(`/${locale}/benchmarks/redis-valkey/`);
+    const snapshot = page.locator(".benchmark-snapshot");
+    await expect(snapshot.locator("table tbody tr")).toHaveCount(3);
+    for (const value of [
+      "1,145,772",
+      "971,950",
+      "1,018,735",
+      "951,053",
+      "970,288",
+      "808,103",
+      "7.103",
+      "7.231",
+      "7.455",
+    ])
+      await expect(snapshot.locator("table")).toContainText(value);
+    await expect(snapshot).not.toContainText("≈");
+    await expect(
+      page.locator('.benchmark-actions a[href*="lavik-agent/tree/"]'),
+    ).toHaveCount(1);
+    await snapshot.getByRole("button", { name: "SET", exact: true }).click();
+    await expect(snapshot.locator(".benchmark-bar-row").first()).toContainText(
+      "971,950",
+    );
+  }
+});

@@ -39,8 +39,8 @@ export const comparisonCopy: Record<ProductId, ComparisonCopy> = {
       "缓存规模应由保留数据对应用的价值决定。Lavik 让商品目录、API 响应缓存与特征记录拥有更大的容量空间，同时保留熟悉的读写与 TTL 操作。",
     ),
     nuance: b(
-      "October 13, 2026: 10M keys × 1 KiB, pipeline 1, 30-second windows. All displayed peaks use 1,280 connections. Redis AOF and scheduled snapshots are disabled. Peer values marked ≈ are read from the published graph; latency is p99.9 at the same point.",
-      "2026-10-13：1,000 万键 × 1 KiB，pipeline 1，每点 30 秒。展示的峰值均为 1,280 个连接。Redis 关闭 AOF 与定时快照。≈ 为公开图表近似值；p99.9 与吞吐量来自同一测量点。",
+      "October 13, 2026: 10M keys × 1 KiB, pipeline 1, 30-second windows. All displayed peaks use 1,280 connections. Redis AOF and scheduled snapshots are disabled. Values come from archived memtier JSON outputs; latency is p99.9 at the same point.",
+      "2026-10-13：1,000 万键 × 1 KiB，pipeline 1，每点 30 秒。展示的峰值均为 1,280 个连接。Redis 关闭 AOF 与定时快照。数值来自归档的 memtier JSON 输出；p99.9 与吞吐量来自同一测量点。",
     ),
     choose: b(
       "Start with the Redis dataset that costs the most to keep in memory: a large cache, a growing profile store or a feature-serving layer. The larger the value payload, the more capacity cost can move from DRAM to SSD.",

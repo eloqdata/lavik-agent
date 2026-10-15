@@ -2,6 +2,7 @@ import fs from "node:fs";
 import { isDeepStrictEqual } from "node:util";
 import { z } from "zod";
 import { benchmarkReports } from "./catalog";
+import exactData from "./exact-data.json";
 import {
   benchmarkSources,
   benchmarkRoot,
@@ -24,6 +25,17 @@ export const benchmarkReviewSchema = z
   })
   .strict();
 export const benchmarkBoundFiles = [
+  "packages/benchmarks/exact-data.json",
+  "packages/benchmarks/raw-data.ts",
+  "scripts/extract-benchmark-numbers.py",
+  "scripts/review-benchmark-numbers.ts",
+  "packages/benchmarks/review-lock.ts",
+  "packages/comparisons/review-lock.ts",
+  "packages/marketing/process-lock.ts",
+  "tests/exact-benchmark-data.test.ts",
+  "tests/editorial-type-only.test.ts",
+  "evidence/editorial/ci-baseline-20261014.json",
+  ...Object.keys(exactData.sourceFiles),
   "packages/benchmarks/homepage.ts",
   "apps/web/app/(site)/[locale]/page.tsx",
   "apps/web/components/homepage.tsx",
@@ -142,6 +154,9 @@ export function validateBenchmarkPublication(
 export function benchmarkEvidenceErrors() {
   const errors: string[] = [];
   try {
+    for (const [file, sha] of Object.entries(exactData.sourceFiles))
+      if (digest(fs.readFileSync(file)) !== sha)
+        errors.push("Raw benchmark output changed: " + file);
     if (!/^[a-f0-9]{40}$/.test(benchmarkSources.commit))
       errors.push("Missing source commit");
     if (

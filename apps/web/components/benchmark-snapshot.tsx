@@ -2,24 +2,45 @@
 import { useState } from "react";
 import type { Locale } from "../../../packages/content/schema";
 import { storage80Rows } from "../../../packages/benchmarks/storage-data";
-export function BenchmarkSnapshot({ locale }: { locale: Locale }) {
+export function BenchmarkSnapshot({
+  locale,
+  rows = storage80Rows,
+  scope = "storage",
+}: {
+  locale: Locale;
+  rows?: {
+    name: string;
+    get: number;
+    set: number;
+    getP999: number;
+    setP999: number;
+  }[];
+  scope?: "storage" | "memory";
+}) {
   const zh = locale === "zh-CN",
+    connections = scope === "memory" ? "1,280" : "80",
     [operation, setOperation] = useState<"get" | "set">("get"),
     [metric, setMetric] = useState<"qps" | "latency">("qps");
-  const value = (r: (typeof storage80Rows)[number]) =>
+  const value = (r: (typeof rows)[number]) =>
     metric === "qps"
       ? r[operation]
       : r[operation === "get" ? "getP999" : "setP999"];
-  const maximum = Math.max(...storage80Rows.map(value));
+  const maximum = Math.max(...rows.map(value));
   return (
     <section className="benchmark-snapshot" aria-labelledby="snapshot-title">
       <h2 id="snapshot-title">
-        {zh ? "相同 80 个连接下的表现" : "At the same 80 connections"}
+        {zh
+          ? `相同 ${connections} 个连接下的表现`
+          : `At the same ${connections} connections`}
       </h2>
       <p>
-        {zh
-          ? "十亿键 × 1 KiB。吞吐量与 p99.9 来自同一测量点。完整扫描及各自峰值见下方报告。"
-          : "One billion keys × 1 KiB. Throughput and p99.9 come from the same measured point. The full sweep and selected peaks follow in the report."}
+        {scope === "memory"
+          ? zh
+            ? "1,000 万键 × 1 KiB。原始 memtier 结果中的峰值吞吐量及同点 p99.9。Redis 使用 16 个 I/O 线程；Valkey GET 使用 16 个、SET 使用 8 个。QPS 四舍五入为整数。"
+            : "10 million keys × 1 KiB. Peak throughput and same-point p99.9 from the raw memtier results. Redis uses 16 I/O threads; Valkey uses 16 for GET and 8 for SET. QPS is rounded to whole operations."
+          : zh
+            ? "十亿键 × 1 KiB。吞吐量与 p99.9 来自同一测量点。完整扫描及各自峰值见下方报告。"
+            : "One billion keys × 1 KiB. Throughput and p99.9 come from the same measured point. The full sweep and selected peaks follow in the report."}
       </p>
       <div className="benchmark-controls">
         <div role="group" aria-label={zh ? "操作" : "Operation"}>
@@ -57,7 +78,7 @@ export function BenchmarkSnapshot({ locale }: { locale: Locale }) {
             : "p99.9 milliseconds · lower is better"}
       </p>
       <div className="benchmark-bars">
-        {storage80Rows.map((r) => (
+        {rows.map((r) => (
           <div className="benchmark-bar-row" key={r.name}>
             <span>{r.name}</span>
             <div className="benchmark-bar-track">
@@ -68,7 +89,7 @@ export function BenchmarkSnapshot({ locale }: { locale: Locale }) {
             </div>
             <strong>
               {metric === "qps"
-                ? value(r).toLocaleString("en-US")
+                ? Math.round(value(r)).toLocaleString("en-US")
                 : value(r).toFixed(3)}
             </strong>
           </div>
@@ -77,12 +98,18 @@ export function BenchmarkSnapshot({ locale }: { locale: Locale }) {
       <div
         className="benchmark-table-scroll"
         role="region"
-        aria-label={zh ? "80 连接结果" : "Results at 80 connections"}
+        aria-label={
+          zh
+            ? `${connections} 连接结果`
+            : `Results at ${connections} connections`
+        }
         tabIndex={0}
       >
         <table>
           <caption>
-            {zh ? "所有结果 · 80 个连接" : "All results · 80 connections"}
+            {zh
+              ? `所有结果 · ${connections} 个连接`
+              : `All results · ${connections} connections`}
           </caption>
           <thead>
             <tr>
@@ -94,12 +121,12 @@ export function BenchmarkSnapshot({ locale }: { locale: Locale }) {
             </tr>
           </thead>
           <tbody>
-            {storage80Rows.map((r) => (
+            {rows.map((r) => (
               <tr key={r.name}>
                 <th scope="row">{r.name}</th>
-                <td>{r.get.toLocaleString("en-US")}</td>
+                <td>{Math.round(r.get).toLocaleString("en-US")}</td>
                 <td>{r.getP999.toFixed(3)}</td>
-                <td>{r.set.toLocaleString("en-US")}</td>
+                <td>{Math.round(r.set).toLocaleString("en-US")}</td>
                 <td>{r.setP999.toFixed(3)}</td>
               </tr>
             ))}

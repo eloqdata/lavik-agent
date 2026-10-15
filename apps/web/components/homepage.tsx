@@ -5,6 +5,7 @@ import { pageStructuredData } from "../../../packages/seo/site";
 import { StructuredData } from "./structured-data";
 import "./homepage.css";
 import { HomepageStory } from "./homepage-story";
+import { rawMemoryResultsUrl } from "../../../packages/benchmarks/raw-data";
 
 type Props = {
   locale: Locale;
@@ -169,6 +170,12 @@ export function Homepage({
           <span>SPDK · {benchmarkDate}</span>
         </summary>
         <p>{benchmarkScope}</p>
+        <p>
+          <a href={rawMemoryResultsUrl}>
+            {zh ? "查看原始测量数据（CSV）" : "View raw measured results (CSV)"}{" "}
+            ↗
+          </a>
+        </p>
         <p>
           {zh
             ? "按相同值容量计算，DRAM/NVMe SSD 每 GiB 单价比设为 20:1，Lavik 的值存储介质成本为 DRAM 的 5%。Redis 与 Valkey 使用相同的 DRAM 单价。此模型不含索引与运行时内存、复制、服务器及运维成本；可在计算器中填入实际价格。"

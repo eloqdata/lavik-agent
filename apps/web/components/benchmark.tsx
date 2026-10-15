@@ -9,16 +9,9 @@ export type BenchmarkRow = {
   approximate: boolean;
 };
 const throughput = (row: BenchmarkRow, command: "get" | "set") =>
-  (row.approximate ? "≈ " : "") +
-  (row[command] / 1000).toLocaleString("en-US", {
-    minimumFractionDigits: row.approximate ? 0 : 1,
-    maximumFractionDigits: row.approximate ? 0 : 1,
-  }) +
-  "k";
+  Math.round(row[command]).toLocaleString("en-US");
 const latency = (row: BenchmarkRow, command: "get" | "set") =>
-  (row.approximate ? "≈ " : "") +
-  (command === "get" ? row.getP999 : row.setP999) +
-  " ms";
+  (command === "get" ? row.getP999 : row.setP999).toFixed(3) + " ms";
 export function BenchmarkChart({
   rows,
   locale,
@@ -68,8 +61,8 @@ export function BenchmarkChart({
       ))}
       <p className="chart-caption">
         {locale === "en"
-          ? "10M keys · 1 KiB values · 1,280 connections. Lavik: reported figures; ≈ peers: graph estimates."
-          : "1,000 万键 · 1 KiB 值 · 1,280 个连接。Lavik 为报告数值；≈ 对照为图表近似值。"}
+          ? "10M keys · 1 KiB values · 1,280 connections. Raw measured results; QPS rounded to whole operations."
+          : "1,000 万键 · 1 KiB 值 · 1,280 个连接。来自原始测量结果；QPS 四舍五入为整数。"}
       </p>
       <div className="table-scroll">
         <table className="benchmark-data">

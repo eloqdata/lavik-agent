@@ -1,5 +1,6 @@
 import { homepageBenchmarkRows } from "../benchmarks/homepage";
-import { storage80Rows } from "../benchmarks/storage-data";
+import exactData from "../benchmarks/exact-data.json";
+const storage80Rows = exactData.storageRows;
 import fs from "node:fs";
 import path from "node:path";
 import type { ComparisonProduct, ProductId } from "./catalog";
@@ -26,7 +27,7 @@ export function comparisonSource(id: string) {
   return source;
 }
 // The current comparison uses October 0.1.0 results only. Storage peers
-// share an exact 80-connection point; DRAM peers retain marked graph estimates.
+// share an exact 80-connection point; DRAM peers use their raw 1280-connection peaks.
 export function comparisonMeasurements(product: ComparisonProduct): {
   lavik: Measurement[];
   peer: Measurement[];
@@ -43,7 +44,7 @@ export function comparisonMeasurements(product: ComparisonProduct): {
         p999: workload === "GET" ? row.getP999 : row.setP999,
         connections: 1280,
         approximate: row.approximate,
-        threads: row.name.startsWith("Valkey") && workload === "SET" ? 8 : 16,
+        threads: workload === "GET" ? row.getThreads : row.setThreads,
       }));
     return {
       lavik: convert(homepageBenchmarkRows[0]),

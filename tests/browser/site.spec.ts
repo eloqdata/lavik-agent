@@ -16,17 +16,17 @@ test("both languages, homepage benchmark interaction, and real verification outp
         [
           "GET",
           [
-            ["Lavik 0.1.0 SPDK", "1,145.8k", "7.135"],
-            ["Redis 8.10.2", "≈ 1,019k", "≈ 7.1"],
-            ["Valkey 9.1.2", "≈ 970k", "≈ 7.5"],
+            ["Lavik 0.1.0 SPDK", "1,145,772", "7.135"],
+            ["Redis 8.10.2", "1,018,735", "7.103"],
+            ["Valkey 9.1.2", "970,288", "7.455"],
           ],
         ],
         [
           "SET",
           [
-            ["Lavik 0.1.0 SPDK", "972.0k", "7.199"],
-            ["Redis 8.10.2", "≈ 951k", "≈ 7.2"],
-            ["Valkey 9.1.2", "≈ 808k", "≈ 7.2"],
+            ["Lavik 0.1.0 SPDK", "971,950", "7.199"],
+            ["Redis 8.10.2", "951,053", "7.231"],
+            ["Valkey 9.1.2", "808,103", "7.199"],
           ],
         ],
       ] as const) {
@@ -40,7 +40,7 @@ test("both languages, homepage benchmark interaction, and real verification outp
       }
       await expect(page.locator(".benchmark-chart .lavik-bar")).toHaveCount(1);
       await expect(page.locator(".chart-caption")).toContainText(
-        locale === "en" ? "graph estimates" : "图表近似值",
+        locale === "en" ? "Raw measured results" : "原始测量结果",
       );
       await expect(page.locator(".site-header .version-pill")).toHaveCount(0);
       if (!section) {
@@ -192,9 +192,9 @@ test("selected homepage is exported without JavaScript and preview queries canno
       await expect(page.locator("main")).toHaveAttribute("data-homepage", "G");
       await expect(page.locator("h1")).toContainText("Redis");
       await expect(page.locator(".chart-row").first()).toContainText(
-        "1,145.8k",
+        "1,145,772",
       );
-      await expect(page.locator(".benchmark-data")).toContainText("972.0k");
+      await expect(page.locator(".benchmark-data")).toContainText("971,950");
       await expect(page.locator(".dual-cost-row strong")).toHaveText([
         "5%",
         "100%",

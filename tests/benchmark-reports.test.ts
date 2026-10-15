@@ -51,14 +51,14 @@ test("80-connection numbers retain product/operation pairing from the original r
   for (const op of ["get", "set"] as const) {
     const sorted = [...storage80Rows].sort((a, b) => b[op] - a[op]);
     for (const row of sorted) {
-      assert.ok(labels.includes(row[op].toLocaleString("en-US")));
+      assert.ok(labels.includes(Math.round(row[op]).toLocaleString("en-US")));
       assert.ok(
         labels.includes(row[op === "get" ? "getP999" : "setP999"].toFixed(3)),
       );
     }
     // SVG's separate QPS and latency rows use the same product ordering.
     const names = sorted.map((r) => r.name),
-      qps = sorted.map((r) => r[op].toLocaleString("en-US"));
+      qps = sorted.map((r) => Math.round(r[op]).toLocaleString("en-US"));
     const pos = labels.findIndex(
       (v, i) => v === names[0] && names.every((n, j) => labels[i + j] === n),
     );
