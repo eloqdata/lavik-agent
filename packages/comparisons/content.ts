@@ -297,51 +297,6 @@ export const comparisonCopy: Record<ProductId, ComparisonCopy> = {
     ),
     sources: ["stable-storage", "stable-storage-design", "tendis-readme"],
   },
-  keydb: {
-    angle: b(
-      "Build beyond RAM with an NVMe-first storage engine.",
-      "以面向 NVMe 的存储引擎突破内存容量。",
-    ),
-    summary: b(
-      "Considering KeyDB or KeyDB On Flash? Lavik 0.1.0 combines Redis-compatible clients, NVMe SSD value capacity and grouped storage for large strings and collections.",
-      "正在考虑 KeyDB 或 KeyDB On Flash？Lavik 0.1.0 将 Redis 兼容客户端、NVMe SSD 值容量与大字符串及集合的分组存储结合。",
-    ),
-    tested: "Architecture and capacity comparison",
-    design: b(
-      "KeyDB’s ordinary deployment is memory-oriented; its On Flash feature uses RocksDB with a hot memory tier. Lavik is designed to serve stored values through asynchronous io_uring or SPDK, while keeping key indexes in memory.",
-      "KeyDB 常规部署面向内存；On Flash 功能使用 RocksDB 与内存热点层。Lavik 通过异步 io_uring 或 SPDK 访问存储值，同时将键索引留在内存。",
-    ),
-    consequence: b(
-      "Lavik’s value is a storage engine designed for larger-than-RAM state, with release-published benchmarks and one data model across small values and large collections. You can keep the Redis interface while choosing how much data to retain on SSD.",
-      "Lavik 为超出内存的状态数据设计存储引擎，提供发布版本基准，并为小值和大集合采用统一数据模型。保留 Redis 接口的同时，可按业务需求决定 SSD 上的数据保留量。",
-    ),
-    nuance: b(
-      "KeyDB is not included in the October 0.1.0 benchmark suite. This page compares storage design and adoption steps; it does not present an older build’s QPS as a current-release result.",
-      "KeyDB 未包含在 10 月 0.1.0 基准中。本页比较存储设计与采用步骤，不将旧构建 QPS 标为当前版本结果。",
-    ),
-    choose: b(
-      "Start with the dataset that has outgrown the memory budget. Lavik 0.1.0 offers binary, APT and Docker installation, Redis-compatible clients and documented single-node and managed-cluster deployment paths.",
-      "先选择已经超出内存预算的数据集。Lavik 0.1.0 提供二进制、APT、Docker 安装，支持 Redis 兼容客户端，并提供单节点及托管集群部署文档。",
-    ),
-    retain: b(
-      "Install one Lavik node, connect the client your application uses, and replay a representative workload at the full dataset size. Use the results to choose the CPU, SSD and replica budget for migration.",
-      "安装一个 Lavik 节点，连接应用现有客户端，在完整数据规模下回放代表性负载，再据此确定迁移所需的 CPU、SSD 和副本预算。",
-    ),
-    question: b(
-      "How should I compare cost with KeyDB?",
-      "如何与 KeyDB 比较成本？",
-    ),
-    answer: b(
-      "For an in-memory deployment, compare DRAM and SSD value capacity at your actual prices. For On Flash, measure both systems at the same dataset and latency target, then compare complete server counts. SSD media cost alone cannot predict the number of serving nodes.",
-      "内存部署按实际价格比较 DRAM 与 SSD 的值容量成本；On Flash 则应在相同数据集和延迟目标下测量两种系统，再比较完整节点数量。仅凭 SSD 介质成本无法确定服务节点数。",
-    ),
-    sources: [
-      "stable-overview",
-      "stable-collections",
-      "keydb-flash",
-      "keydb-sizing",
-    ],
-  },
 };
 export function comparisonFaq(id: ProductId, locale: Locale) {
   const c = comparisonCopy[id],

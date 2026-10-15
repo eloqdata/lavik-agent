@@ -32,7 +32,6 @@ export function comparisonMeasurements(product: ComparisonProduct): {
   lavik: Measurement[];
   peer: Measurement[];
 } {
-  if (product.group === "architecture") return { lavik: [], peer: [] };
   if (product.group === "memory") {
     const convert = (
       row: (typeof homepageBenchmarkRows)[number],

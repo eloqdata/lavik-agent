@@ -6,7 +6,6 @@ export const comparisonProducts = [
   { id: "pika", name: "Pika", group: "storage" },
   { id: "kvrocks", name: "Apache Kvrocks", group: "storage" },
   { id: "tendis", name: "Tendis", group: "storage" },
-  { id: "keydb", name: "KeyDB", group: "architecture" },
 ] as const;
 export type ComparisonProduct = (typeof comparisonProducts)[number];
 export type ProductId = ComparisonProduct["id"];

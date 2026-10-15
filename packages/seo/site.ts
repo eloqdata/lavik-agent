@@ -57,8 +57,8 @@ const pairs: Record<string, [string, string, string, string]> = {
   compare: [
     "Compare Lavik: Redis, Valkey and SSD-backed Alternatives",
     "Lavik 产品对比：Redis、Valkey 与 SSD 存储方案",
-    "Compare measured Lavik NVMe SSD performance, storage architecture and cost against Redis, Valkey, DragonflyDB, Garnet, Pika, Apache Kvrocks, Tendis and KeyDB.",
-    "比较 Lavik 与 Redis、Valkey、DragonflyDB、Garnet、Pika、Apache Kvrocks、Tendis、KeyDB 的实测 NVMe SSD 性能、存储架构与成本。",
+    "Compare measured Lavik NVMe SSD performance, storage architecture and cost against Redis, Valkey, DragonflyDB, Garnet, Pika, Apache Kvrocks and Tendis.",
+    "比较 Lavik 与 Redis、Valkey、DragonflyDB、Garnet、Pika、Apache Kvrocks、Tendis 的实测 NVMe SSD 性能、存储架构与成本。",
   ],
   benchmarks: [
     "Lavik 0.1.0 Benchmarks: NVMe SSD Capacity, Throughput and Tail Latency",

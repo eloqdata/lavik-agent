@@ -15,7 +15,9 @@ test("Compare navigation works with keyboard, touch, dismissal and both language
     await trigger.click();
     await expect(trigger).toHaveAttribute("aria-expanded", "true");
     const panel = page.locator(".compare-panel");
-    await expect(panel.getByRole("link")).toHaveCount(10);
+    await expect(panel.getByRole("link")).toHaveCount(
+      comparisonProducts.length + 2,
+    );
     await page.keyboard.press("Tab");
     await expect(panel.getByRole("link").first()).toBeFocused();
     await page.keyboard.press("Escape");
@@ -44,12 +46,7 @@ test("all comparison pages are readable on mobile and expose their cost and sour
       await page.goto(`/${locale}/${comparisonRoute(p.id)}/`);
       await expect(page.locator("#main")).toHaveCount(1);
       await expect(page.locator("h1")).toHaveText(`Lavik vs ${p.name}`);
-      if (p.group === "architecture")
-        await expect(page.locator("#performance table")).toHaveCount(0);
-      else
-        await expect(page.locator("#performance table tbody tr")).toHaveCount(
-          4,
-        );
+      await expect(page.locator("#performance table tbody tr")).toHaveCount(4);
       await expect(page.locator("#cost .comparison-result")).toBeAttached();
       await expect(page.locator("#sources a").first()).toHaveAttribute(
         "href",

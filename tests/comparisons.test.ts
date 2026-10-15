@@ -51,7 +51,7 @@ test("current comparisons pair QPS with p99.9 at the same concurrency", () => {
     11.071,
   );
 });
-test("all current SSD comparisons share exact 80-connection data; KeyDB has no invented stable measurement", () => {
+test("all current SSD comparisons share exact 80-connection data", () => {
   for (const p of comparisonProducts.filter((p) => p.group === "storage")) {
     const { lavik, peer } = comparisonMeasurements(p);
     assert.equal(lavik.length, 2);
@@ -61,10 +61,6 @@ test("all current SSD comparisons share exact 80-connection data; KeyDB has no i
       [...lavik, ...peer].every((p) => p.connections === 80 && !p.approximate),
     );
   }
-  assert.deepEqual(comparisonMeasurements(product("keydb")), {
-    lavik: [],
-    peer: [],
-  });
   const tendis = comparisonMeasurements(product("tendis"));
   assert.equal(bestPoint(tendis.peer, "SET", 2)!.qps, 266801.93);
   assert.equal(bestPoint(tendis.lavik, "SET", 2), undefined);

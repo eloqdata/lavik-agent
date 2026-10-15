@@ -266,7 +266,7 @@
     "packages/docs/gate.ts": "140665046a59a6eb3efcbdca4f6fc8be9798d77efeb596591be66ec37bb2ce7d",
     "packages/docs/stable.ts": "8b57f241e947fd2f25c2601a940545d47d2233479c6b63ce0bcb64c3795217c3",
     "packages/docs/versions.ts": "3219ddc291c4a87c6a322ba444933faa2eeebfbb00eea55f8b328cbda951565c",
-    "packages/seo/site.ts": "939f9f26731ddb793264b7c7771fb4eb7d08a845d65da7085d0f3bdc878d6238",
+    "packages/seo/site.ts": "f6c28722b731eadb80c0185c5142cd19cd427274bc7ad3b669dd7c935d1a0cad",
     "packaging/docker/0.1.0/.dockerignore": "3d7bf1ecb6d9515a38e3366d7591fba935592d24563257d4363a67f5fe516f58",
     "packaging/docker/0.1.0/Dockerfile": "4b930aeb82291ab796bcf999dba224def8f0c143d79c70613fd9569cf4a64eff",
     "packaging/docker/0.1.0/README.md": "7bbb4ef1768269b4787c2576fcc0226bda5d45a88db2ce6f5e8c3530c410307e",
@@ -278,7 +278,7 @@
     "packaging/docker/0.1.0/release.sha256": "f2bc62261ad194f6a8dbee3a8b8d7cae4b0f07cb2e308b8c359278e8970e6ddf",
     "packaging/docker/0.1.0/smoke-test.py": "01c2ac6e1045c6b8b5ee7e12170add0c80c59008c9b2c66a47cdea8881f29e38",
     "scripts/authorize-stable-docs.ts": "364d11886e1395739696194f1e40351acaa9097e70dd4131e8422a5f8067b526",
-    "scripts/build-discovery.ts": "b745f2a3c677f9b4217a69f26c77d54b2c3dc85b65be78033eeb7b8b9599afeb",
+    "scripts/build-discovery.ts": "7423c6dfe4d76928731cbd235fd978d6a5ea39565b1f410ef902efc2b1c3b5ed",
     "scripts/verify-stable-install.py": "519ebba7dff7f80005e1eeb41ad9d1fd9e22e7ca437d1ee06f4bdb62321fc631",
     "scripts/verify-stable-manual.py": "6061f8a178a613e4af56789548d2ddce09a370e55a54f723e816c8a78be8f5aa",
     "scripts/verify-stable-migration.py": "b81d12d2583678cb6f976fcf24db80fa4f8bb682a4a0c081243482b2ba0c0e10",
@@ -339,7 +339,7 @@
     "verification/docs/0.1.0/query-0.txt": "e62c421f8f38333cfcdf3905625f1b2d5f70dd92a7366765ece6a1e56e834f1d",
     "verification/docs/0.1.0/query-1.txt": "e62c421f8f38333cfcdf3905625f1b2d5f70dd92a7366765ece6a1e56e834f1d"
   },
-  "bundleHash": "8f68960a6c973b6af76495e024dd3dbdec39668399c0914cde3df2a876170c51",
+  "bundleHash": "12f311369e0929aeee1aa04e4f976e322f9ed9c4988f9e2c6fad9245edbc8e75",
   "independentlyReviewedContextDelta": {
     "reviewer": {
       "role": "reviewer",
@@ -416,5 +416,25 @@
       "scripts/build-discovery.ts"
     ],
     "scope": "Discovery description independently reviewed; existing documentation prose and owner authorization scope unchanged."
+  },
+  "comparisonRemovalContextReview": {
+    "record": "evidence/comparisons/keydb-removal-review.json",
+    "reviewer": {
+      "role": "reviewer",
+      "model": "gpt-6-astra",
+      "provider": "openai",
+      "authentication": "chatgpt",
+      "reasoning": "high",
+      "startedAt": "2026-10-15T03:28:06.846Z",
+      "finishedAt": "2026-10-15T03:28:47.467Z",
+      "promptSha256": "95a32378b20884083d8c704b0a935e8966b3d588e06b208c396d3e6c0ee9b95c",
+      "outputSha256": "7871a248ecb722198787d96abcd6c1c04772780ddc00fb70799c720b9619c269"
+    },
+    "previousBundleHash": "8f68960a6c973b6af76495e024dd3dbdec39668399c0914cde3df2a876170c51",
+    "sharedDelta": [
+      "packages/seo/site.ts",
+      "scripts/build-discovery.ts"
+    ],
+    "scope": "Only KeyDB references removed from shared SEO and discovery text; documentation prose and original authorization scope unchanged."
   }
 }
