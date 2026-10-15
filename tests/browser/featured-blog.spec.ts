@@ -1,6 +1,5 @@
 import { test, expect } from "@playwright/test";
 import { articles } from "../../packages/content/repository.ts";
-import { blogSections } from "../../packages/blog/presentation.ts";
 
 test("featured articles and technical evidence are readable without JavaScript on mobile and desktop", async ({
   browser,
@@ -12,9 +11,15 @@ test("featured articles and technical evidence are readable without JavaScript o
       for (const width of [375, 1440]) {
         await page.setViewportSize({ width, height: 900 });
         await page.goto(`/${locale}/blog/`);
-        const expected = blogSections(
-          articles().filter((a) => a.locale === locale),
-        );
+        const expectedRegular = articles()
+          .filter(
+            (a) => a.locale === locale && a.kind === "blog" && !a.featured,
+          )
+          .sort(
+            (a, b) =>
+              b.updatedAt.localeCompare(a.updatedAt) ||
+              a.title.localeCompare(b.title),
+          );
         expect(
           await page
             .locator(".blog-featured .blog-card-link")
@@ -24,7 +29,7 @@ test("featured articles and technical evidence are readable without JavaScript o
           await page
             .locator(".blog-feed .blog-card-link")
             .evaluateAll((links) => links.map((a) => a.getAttribute("href"))),
-        ).toEqual(expected.regular.map((a) => `/${locale}/blog/${a.slug}/`));
+        ).toEqual(expectedRegular.map((a) => `/${locale}/blog/${a.slug}/`));
         await page.locator(".blog-featured .blog-card-link").click();
         await expect(page.locator("h1")).toHaveCount(1);
         await expect(page.locator(".technical-figure table")).toHaveCount(5);
