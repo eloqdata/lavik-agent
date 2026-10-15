@@ -479,7 +479,7 @@ for (const id of revisedIds) {
       policyHash: publicationPolicyHash(),
       baseContentHashes: Object.fromEntries(
         editions.map((a) => [a.locale, contentHash(a)]),
-      ),
+      ) as Record<"en" | "zh-CN", string>,
     },
   };
   const candidate = {
