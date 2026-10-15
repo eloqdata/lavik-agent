@@ -1026,7 +1026,9 @@ function model(): AgentRuntime {
     async write(input, verify) {
       await verify("basic-commands");
       const article = structuredClone(
-        articles().find((a) => a.locale === input.locale)!,
+        articles().find(
+          (a) => a.id === "capacity-use-case" && a.locale === input.locale,
+        )!,
       );
       article.kind = input.kind ?? "blog";
       if (article.kind === "blog") article.topics = ["architecture"];

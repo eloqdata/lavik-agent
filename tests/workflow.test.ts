@@ -24,7 +24,9 @@ const runtime = (
     if (rejectFirst && this.writes === 2)
       assert.deepEqual(feedback, ["Clarify the audience"]);
     const article = structuredClone(
-      articles().find((a) => a.locale === locale)!,
+      articles().find(
+        (a) => a.id === "capacity-use-case" && a.locale === locale,
+      )!,
     );
     article.kind = "blog";
     article.topics = ["architecture"];
@@ -192,7 +194,9 @@ test("real verifier failure blocks publication even if a reviewer would pass", a
   const campaign = id(),
     model = runtime();
   model.write = async ({ locale }) => ({
-    ...articles().find((a) => a.locale === locale)!,
+    ...articles().find(
+      (a) => a.id === "capacity-use-case" && a.locale === locale,
+    )!,
     kind: "blog",
     topics: ["architecture"],
     blocks: [{ type: "recipe", recipeId: "basic-commands" }],
