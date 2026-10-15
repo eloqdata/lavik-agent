@@ -1,0 +1,12 @@
+{
+  "url": "https://redis.io/docs/latest/operate/oss_and_stack/reference/cluster-spec/",
+  "facts": [
+    "Redis Cluster uses a full mesh: each of N nodes maintains N-1 outgoing and N-1 incoming cluster-bus TCP connections.",
+    "PING/PONG packets include configuration and gossip about other nodes. A node pings some random peers every second, and peers with no recent exchange before half NODE_TIMEOUT. Gossip selection and payload size depend on cluster size.",
+    "PFAIL is local suspicion; FAIL needs confirming reports from a majority of primaries in a bounded interval. Replica promotion uses authorization from primaries and configuration epochs.",
+    "The specification targets scaling on the order of 1000 nodes and describes 16384 hash slots. It does not establish a 300-node hard limit.",
+    "Connection counts are not packet rates. Gossip reduces routine exchanges; the documentation explicitly does not claim exponential message growth."
+  ],
+  "checkedAt": "2026-10-15",
+  "note": "Paraphrased source facts, checked against the linked official documentation."
+}

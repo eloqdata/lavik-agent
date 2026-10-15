@@ -1,3 +1,7 @@
+import {
+  technicalArticleErrors,
+  technicalPublicationErrors,
+} from "../blog/technical-publication.ts";
 import { editorialContextErrors } from "./context-review.ts";
 import fs from "node:fs";
 import path from "node:path";
@@ -93,6 +97,9 @@ export function validateArticle(
 ): string[] {
   const failures: string[] = [];
   articleSchema.parse(article);
+  failures.push(...technicalArticleErrors(article));
+  if (article.featured !== undefined && article.kind !== "blog")
+    failures.push("Featured is reserved for blog articles");
   if (article.kind === "blog") {
     try {
       const { topics } = blogPresentation(article);
@@ -109,6 +116,11 @@ export function validateArticle(
       "A source-revision override is reserved for engineering blog articles",
     );
   function checkSource(id: string) {
+    if (article.technical) {
+      if (!article.technical.sources.some((source) => source.id === id))
+        failures.push(`Unknown technical source: ${id}`);
+      return;
+    }
     try {
       sourceText(id);
       const source = sources.find((entry) => entry.id === id)!;
@@ -200,6 +212,8 @@ export function publicationErrors(article: Article): string[] {
   const failures = validateArticle(article, (id) =>
     articleReceipt(article, id),
   );
+  if (article.technical)
+    return [...failures, ...technicalPublicationErrors(article)];
   const reviewPath = path.join(
     root,
     "evidence/reviews",

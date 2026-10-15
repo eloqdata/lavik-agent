@@ -1,0 +1,10 @@
+{
+  "url": "https://spdk.io/doc/nvme.html",
+  "facts": [
+    "The NVMe driver is a passive library linked into an application. It maps PCI BARs and operates via MMIO; it creates no application threads.",
+    "Reads and writes submit asynchronously through queue pairs. The application polls outstanding queue pairs for completions and invokes completion callbacks.",
+    "DMA buffers and queue management provide direct userspace interaction with NVMe devices. Storage kernel bypass does not imply network kernel bypass."
+  ],
+  "checkedAt": "2026-10-15",
+  "note": "Paraphrased source facts, checked against the linked official documentation."
+}

@@ -14,6 +14,7 @@ export const coverMotifs = [
   "functions",
   "throughput",
   "inspection",
+  "consolidation",
 ] as const;
 export type CoverMotif = (typeof coverMotifs)[number];
 export const legacyBlogPresentation = z
@@ -58,4 +59,13 @@ export function sortedBlogPosts(pages: Article[]) {
         b.updatedAt.localeCompare(a.updatedAt) ||
         a.title.localeCompare(b.title),
     );
+}
+
+// Pinning is an editorial decision, independent of publication age.
+export function blogSections(pages: Article[]) {
+  const sorted = sortedBlogPosts(pages);
+  return {
+    featured: sorted.filter((post) => post.featured === true),
+    regular: sorted.filter((post) => post.featured !== true),
+  };
 }

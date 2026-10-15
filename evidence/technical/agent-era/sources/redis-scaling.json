@@ -1,0 +1,11 @@
+{
+  "url": "https://redis.io/docs/latest/operate/oss_and_stack/management/scaling/",
+  "facts": [
+    "Redis Cluster shards 16384 hash slots among primaries. Replicas provide availability for their corresponding primary.",
+    "Clients use the data port; the cluster bus is a separate port used for failure detection, configuration and failover authorization. Resharding moves keys via data ports.",
+    "Replication is asynchronous; acknowledged writes can be lost in failures. WAIT does not turn Redis Cluster into a strongly consistent system.",
+    "Resharding changes slot ownership while serving continues; clients must handle redirects. A majority of primaries must remain available."
+  ],
+  "checkedAt": "2026-10-15",
+  "note": "Paraphrased source facts, checked against the linked official documentation."
+}

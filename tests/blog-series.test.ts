@@ -60,7 +60,9 @@ test("engineering snapshot metadata cannot silently relabel release docs or cite
 });
 
 test("current architecture citations require explicit snapshot labels, including through claims", () => {
-  const article = structuredClone(articles()[0]);
+  const article = structuredClone(
+    articles().find((a) => a.id === "capacity-use-case" && a.locale === "en")!,
+  );
   article.topics = ["architecture"];
   delete article.sourceRevision;
   article.kind = "docs";
@@ -128,7 +130,9 @@ test("current architecture citations require explicit snapshot labels, including
 });
 
 test("source audits cannot bypass renderer freshness", () => {
-  const article = articles()[0];
+  const article = articles().find(
+    (a) => a.id === "capacity-use-case" && a.locale === "en",
+  )!;
   const file = `evidence/reviews/${article.locale}-${article.id}.json`;
   const original = fs.readFileSync(file);
   try {

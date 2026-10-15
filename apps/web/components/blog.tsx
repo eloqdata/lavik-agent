@@ -5,6 +5,7 @@ import { blogTopics, type BlogTopic } from "../../../packages/blog/topics";
 import {
   blogPresentation,
   sortedBlogPosts,
+  blogSections,
 } from "../../../packages/blog/presentation";
 import "./blog.css";
 
@@ -160,6 +161,7 @@ export function BlogIndex({
         blogPresentation(article).topics.includes(selected.id),
       )
     : sorted;
+  const { featured, regular } = blogSections(visible);
   return (
     <main id="main" className="container blog-layout">
       <BlogSidebar locale={locale} posts={sorted} topic={topic} />
@@ -194,12 +196,58 @@ export function BlogIndex({
             </Link>
           </p>
         )}
+        {featured.length > 0 && (
+          <section
+            className="blog-featured"
+            aria-label={zh ? "精选文章" : "Featured articles"}
+          >
+            {featured.map((article, index) => (
+              <article
+                className="blog-card blog-featured-card"
+                key={article.id}
+              >
+                <Link
+                  className="blog-card-link blog-featured-link"
+                  href={articlePath(article)}
+                >
+                  <div className="blog-featured-art">
+                    <BlogCover article={article} priority={index === 0} />
+                  </div>
+                  <div className="blog-featured-copy">
+                    <p className="blog-featured-label">
+                      <span aria-hidden="true">✦</span>{" "}
+                      {zh ? "精选 · 深度解读" : "FEATURED · IN DEPTH"}
+                    </p>
+                    <h2>{article.title}</h2>
+                    <p>{article.summary}</p>
+                    <span className="blog-featured-cta">
+                      {zh ? "阅读全文" : "Read the article"}{" "}
+                      <span aria-hidden="true">↗</span>
+                    </span>
+                    <time dateTime={article.publishedAt ?? article.updatedAt}>
+                      {article.publishedAt ?? article.updatedAt}
+                    </time>
+                  </div>
+                </Link>
+                <BlogTopicLinks article={article} />
+              </article>
+            ))}
+          </section>
+        )}
+        {featured.length > 0 && regular.length > 0 && (
+          <h2 className="blog-feed-heading">
+            {zh ? "更多文章" : "More from Lavik"}
+          </h2>
+        )}
         <div className="article-list blog-feed">
-          {visible.map((article, index) => (
+          {regular.map((article, index) => (
             <article className="blog-card" key={article.id}>
               <Link className="blog-card-link" href={articlePath(article)}>
                 <div className="blog-cover-frame">
-                  <BlogCover article={article} priority={index === 0} />
+                  <BlogCover
+                    article={article}
+                    priority={featured.length === 0 && index === 0}
+                  />
                 </div>
                 <time dateTime={article.updatedAt}>{article.updatedAt}</time>
                 <h2>

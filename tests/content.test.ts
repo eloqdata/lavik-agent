@@ -23,7 +23,9 @@ test("every initial edition has current review and execution evidence", () => {
     assert.deepEqual(publicationErrors(article), [], article.id);
 });
 test("changed prose invalidates the exact reviewed artifact", () => {
-  const article = structuredClone(articles()[0]);
+  const article = structuredClone(
+    articles().find((a) => a.id === "capacity-use-case" && a.locale === "en")!,
+  );
   const original = contentHash(article);
   article.title += " modified";
   assert.notEqual(contentHash(article), original);
@@ -34,7 +36,9 @@ test("changed prose invalidates the exact reviewed artifact", () => {
   );
 });
 test("unverified cost claim and invented customer adoption fail", () => {
-  const article = structuredClone(articles()[0]);
+  const article = structuredClone(
+    articles().find((a) => a.id === "capacity-use-case" && a.locale === "en")!,
+  );
   article.blocks = [{ type: "claim", claimId: "cost-hypothesis" }];
   assert.ok(
     validateArticle(article).some((e) => e.includes("Unsupported claim")),
@@ -49,7 +53,9 @@ test("unverified cost claim and invented customer adoption fail", () => {
   assert.ok(validateArticle(article).some((e) => e.includes("adoption")));
 });
 test("conditional calculated economics are permitted", () => {
-  const article = structuredClone(articles()[0]);
+  const article = structuredClone(
+    articles().find((a) => a.id === "capacity-use-case" && a.locale === "en")!,
+  );
   article.blocks = [
     {
       type: "paragraph",
@@ -61,7 +67,9 @@ test("conditional calculated economics are permitted", () => {
   assert.deepEqual(validateArticle(article), []);
 });
 test("a historical benchmark number requires its methodology", () => {
-  const article = structuredClone(articles()[0]);
+  const article = structuredClone(
+    articles().find((a) => a.id === "capacity-use-case" && a.locale === "en")!,
+  );
   article.blocks = [{ type: "claim", claimId: "benchmark-get" }];
   assert.ok(validateArticle(article).some((e) => e.includes("methodology")));
 });

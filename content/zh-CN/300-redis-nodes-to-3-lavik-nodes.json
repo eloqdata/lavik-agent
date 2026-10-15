@@ -1,0 +1,547 @@
+{
+  "id": "300-redis-nodes-to-3-lavik-nodes",
+  "locale": "zh-CN",
+  "version": "0.1.0",
+  "kind": "blog",
+  "slug": "300-redis-nodes-to-3-lavik-nodes",
+  "title": "将 300 节点 Redis 集群迁移到仅 3 个 Lavik 节点",
+  "summary": "Agent 时代需要新的容量公式：以 10 TB+ 存储规划、百万 QPS 实测和透明成本计算，重新设计受内存容量限制的 Redis 基础设施。",
+  "updatedAt": "2026-10-15",
+  "publishedAt": "2026-10-15",
+  "topics": ["architecture", "use-case", "benchmark"],
+  "featured": true,
+  "blocks": [
+    {
+      "type": "paragraph",
+      "text": "集群可以在计算负载并不复杂的情况下变得庞大。如果 Redis 节点数量主要由内存容量决定，值得重新计算：当值存放在 NVMe SSD 上时，应用到底需要多少基础设施？本文展开一个从 300 个节点到 3 台主机的容量规划示例：设计超过 10 TB 逻辑值容量的三主机方案，并结合 Lavik 已测得的单服务器百万 QPS 结果分析。它是待验证的部署蓝图，并非一次已完成的 300 节点迁移，也不是 10 TB 复制集群的实测报告。",
+      "sources": ["model", "memory-report"]
+    },
+    {
+      "type": "heading",
+      "text": "1. Agent 状态改变容量公式"
+    },
+    {
+      "type": "paragraph",
+      "text": "面向人的服务通常保存用户资料、会话、特征向量及应用缓存。Agent 应用会增加这些对象：一个人可以同时拥有研究 Agent、编程 Agent 和多个后台任务，各自保留上下文、执行状态和观察结果。真正影响容量的是独立保留的状态对象数量、对象大小和保留时间。十亿个对象并不意味着十亿个同时在线的用户或 Agent。即使只有少部分对象正在被访问，温数据仍可能占据绝大部分容量。",
+      "sources": ["model"]
+    },
+    {
+      "type": "paragraph",
+      "text": "规划采用十进制单位：1 KB = 1,000 字节，1 TB = 10¹² 字节。十亿个 Agent 各保留 1 KB，就有 1 TB 的值载荷；各保留 10 KB，则是 10 TB；各保留 100 KB，则是 100 TB。键、索引、分配器开销、副本和备份还未计入。这些是规模情景，不是采用率预测。它们揭示了一个经济问题：应用需要 Redis 兼容接口，是否就必须把所有保留数据放在 DRAM 中？当保留数据增长快于请求量时，基于 SSD 的缓存就具有吸引力。",
+      "sources": ["model"]
+    },
+    {
+      "type": "heading",
+      "text": "2. 300 个 Redis 节点实际买到了什么？"
+    },
+    {
+      "type": "paragraph",
+      "text": "假设有 300 个 Redis 服务进程，每个分配 10 GB 内存，每个主节点配一个副本，即 150 主、150 副本。理论主节点内存容量为 1.5 TB，而不是 3 TB 唯一数据。如果仅将 70% 用于值载荷，示例预算降为 1.05 TB，仍需按真实对象开销验证。按该比例容纳 1.5 TB 值载荷，需要 215 个主节点和 215 个副本，共 430 个进程。因此，300 节点这个起点不保证能容纳 1.5 TB 应用值。更大规格实例和进程合并也会改变节点数量。",
+      "sources": ["model", "redis-sizing"]
+    },
+    {
+      "type": "paragraph",
+      "text": "作为托管服务参考，我们在 Redis 官方计算器中输入 1,500 GB、1,000,000 ops/sec，并启用 HA；云平台为 AWS us-east-1，套餐为 Pro，关闭 Flex。显示的估算为每小时 70.200 美元，按 730 小时计算为每月 51,246 美元。不计承诺用量折扣，年化为 614,952 美元。此结果核查于 2026 年 10 月 15 日，是公开估算而非合同报价。输入项是数据集容量和吞吐量，并未指定 300 台虚拟机，也未披露底层分片数量。",
+      "sources": ["redis-cloud-pricing"]
+    },
+    {
+      "type": "paragraph",
+      "text": "该估算已启用 HA，不应再把价格翻倍。采购前应确认键开销和余量如何计入计费容量，以及传输费用、支持、税费和合同条款。Redis Cloud 负责托管运营；自建 Redis 或 Lavik 则由团队承担这些工作。Redis 还提供 Flex，此处关闭它以保持内存型参考配置。价格页的起步月费或小型 Essentials 数据库，都不能用作本方案的报价。",
+      "sources": ["redis-cloud-pricing", "redis-sizing"]
+    },
+    {
+      "type": "paragraph",
+      "text": "单独看一个自建预算敏感性计算：假设每个 Redis 进程独占每月 100 美元的虚拟机，则 300 × 100 = 每月 30,000 美元；假设三台更大的 Lavik 主机各为每月 2,000 美元，则总计 6,000 美元。这些是预算输入，不是厂商报价，也不证明服务等价。若假设平均持续 100 万 QPS，730 小时包含 2,628,000 个百万次操作单位；月费除以此数即可计算每百万次操作的费用。关键在于，容量受限的集群可能每增加一份内存就买入大量闲置计算资源。扩容前应先测量 CPU 和实际请求需求。",
+      "sources": ["model"]
+    },
+    {
+      "type": "heading",
+      "text": "3. 从存储路径出发设计三主机系统"
+    },
+    {
+      "type": "paragraph",
+      "text": "一个具体候选方案是三台物理主机，每台配备 32 个物理 CPU 核、256 GiB 内存、15.36 TB 专用 NVMe SSD 和 100 GbE 网络。每台运行一个 Lavik Data 进程和一个 Meta 投票成员，持久保存 Meta 状态，并为控制面预留资源。一个托管 Group 包含一个主节点和两个完整副本，每台都必须容纳全部数据。这些是拟定的容量规划输入，与基准测试硬件不同，需要结合发布版本、设备行为和故障域验证。",
+      "sources": ["model", "overview", "meta", "replication"]
+    },
+    {
+      "type": "paragraph",
+      "text": "容量计算为 3 × 15.36 TB ÷ 3 份副本 × 70% = 10.752 TB。30% 余量是为元数据、失效记录及空间回收预留的示例比例，写入和更新频繁的负载可能需要更多。三份副本不是 46 TB 唯一应用数据，而是在三个独立位置保存约 10 TB 数据。单主机故障后仍有两份数据和两个 Meta 投票成员形成多数派，但持续服务仍依赖副本健康、节点可达和成功提升。维护过程也必须保留这些条件。",
+      "sources": ["model", "overview", "meta"]
+    },
+    {
+      "type": "paragraph",
+      "text": "DRAM 依然重要。Lavik 将键索引保存在内存中，键数量可能先于 SSD 容量成为瓶颈。十亿个 10 KB 值与十亿个 1 KB 值具有相同的顶层键数量；一百亿个小值则是另一种索引规模。应预算键长度、索引 entry arena、分组对象元数据、hugepages、缓冲区、复制 backlog 及控制进程。已发布的十亿键测试证明某种具体键布局可以在 125.8 GiB 主机上运行，并不是对每键内存开销的普遍保证。容量规划必须测量应用真实的存储表示。",
+      "sources": ["storage", "memory-report"]
+    },
+    {
+      "type": "paragraph",
+      "text": "SPDK 提供用户态 NVMe 驱动：应用向 NVMe queue pair 提交请求，并显式轮询完成事件。直接访问设备队列可绕过内核块 I/O 提交路径，减少相应系统调用和唤醒开销。应用能够维持多个在途读取，而无需为每次 SSD 访问阻塞一个工作线程。轮询会消耗 CPU，因此队列深度、完成批量和核绑定都是运行参数。Lavik 已发布的 SPDK 实验在存储路径使用 SPDK，网络仍是 Linux TCP，并非 DPDK 网络基准。",
+      "sources": ["spdk-nvme", "memory-report"]
+    },
+    {
+      "type": "paragraph",
+      "text": "现代 NVMe 设备提供并行队列及内部并发能力。要利用这些能力，需要独立的在途操作、合理的数据局部性，以及足够的 CPU 来处理完成事件。如果所有请求都排在一次存储等待之后，硬件并行能力就被浪费了。Lavik 文档描述的实现采用 Bycorf 工作线程与协程、归属工作线程管理的可变状态，以及显式跨线程提交。基准将 16 个 worker 绑定到 16 个逻辑 CPU，即开启 SMT 的八个物理核，并非 16 个独立物理核。这支持其面向 worker 的架构描述，但不意味着 Lavik 使用 SPDK 可选 reactor 框架，或完全没有同步。",
+      "sources": ["spdk-concurrency", "spdk-nvme", "overview", "memory-report"]
+    },
+    {
+      "type": "paragraph",
+      "text": "若干具体实现体现了这种架构。键归属跟随 Redis hash-slot 分区，而物理块和设备分配器有各自的 owner。符合条件的磁盘 GET 可在连接 worker 上使用通过准入检查的索引快照，否则退回 owner 分派。解析器最多批量保留 128 个命令，小型流水线回复可以合并到 64 KiB。每 worker 的追加流避免为每个逻辑 slot 都分配活跃 staging buffer。这些机制减少协调和单次操作开销，同时仍使用事务、生命周期 pin 和存储锁保证正确性。给内存型请求路径接上一块 SSD，并不会自动产生这些性质。",
+      "sources": ["requests", "storage"]
+    },
+    {
+      "type": "paragraph",
+      "text": "存储布局与 I/O 分派同样重要。Lavik 0.1.0 为 String、Hash、Set、List、Sorted Set 和 Stream 提供分组存储。大字符串使用 8 KiB 段，集合采用可独立寻址的分组，使小范围操作能够聚焦相关数据，而不必每次小更新都重写整个大值。分组目标大小并非普遍硬上限，完整值回复也仍需传输全部值。NVMe 键值存储的工程设计由此与应用设计相连接：Agent Hash 中一个频繁更新的字段，不应迫使每次操作都处理全部保留上下文。",
+      "sources": ["collections"]
+    },
+    {
+      "type": "heading",
+      "text": "4. 实测结果证明了什么"
+    },
+    {
+      "type": "paragraph",
+      "text": "直接对比在日本西部 zone 2 的一台 Azure Standard_L16aos_v4 上测试 Lavik 0.1.0 SPDK、Redis 8.10.2 和 Valkey 9.1.2：AMD EPYC 9V74、16 个逻辑 CPU、125.8 GiB 内存、六块约 1.92 TB 本地 NVMe。独立的 F32als_v6 客户端运行 16 个客户端线程，通过私有网络、加速 mlx5 路径和内核 TCP 通信。实验采用一千万个 1 KiB 值、均匀随机访问、pipeline 1，以及每点 30 秒窗口。三者均为不带数据副本的单服务器配置；Redis 和 Valkey 关闭 AOF 与定时快照。Lavik 保持 defrag 开启，预留 8 GiB hugepages，每次轮询最多处理 16 个完成事件。",
+      "sources": ["memory-report"]
+    },
+    {
+      "type": "paragraph",
+      "text": "在 1,280 个连接下，Lavik 测得 GET 1,145,772 QPS、SET 971,950 QPS，分别比 Redis 所选峰值高 12.5% 和 2.2%；GET 比 Valkey 高 18.1%。选择依据是完整 I/O 线程扫描：Redis 两种操作都使用 16 个线程，Valkey GET 使用 16 个、SET 使用八个。表中每个速率都与同一次运行的延迟配对。峰值吞吐量更高并不代表所有延迟分位数都更低：Redis GET P99.9 为 7.103 ms，Lavik 为 7.135 ms。结果的价值正在于可以检查这些具体条件。",
+      "sources": ["measurements", "memory-report"]
+    },
+    {
+      "type": "paragraph",
+      "text": "平均、P50、P99 和 P99.9 来自归档的完整测量窗口 memtier 输出。P95 从各输出嵌入的 HDR histogram 解码，并核对样本数量及其他分位数；直方图中的微秒转换为毫秒。这是客户端观测延迟，不是 SSD 服务时间。每个点只有一次测量，没有置信区间。一千万键运行保留相关的客户端随机种子；独立的十亿键扫描使用不同客户端种子和 60 秒窗口。因此容量曲线展示的是两套配置下的结果，而不是只改变数据集大小的严格控制实验。",
+      "sources": ["measurements", "memory-report"]
+    },
+    {
+      "type": "paragraph",
+      "text": "十亿键对应 1.024 TB 原始值载荷，约为服务器 125.8 GiB 内存的 7.6 倍。Lavik 在 640 个连接下达到 1,069,126 GET QPS；在 80 个连接下，则是 385,514 GET QPS、0.439 ms P99.9，这是对应不同延迟预算的另一运行点。小型实例实验提供了另一组容量证据：在两个 vCPU、标称 16 GiB 内存上，将 1 KiB 值从一百万键增长到一亿键，GET 峰值从 215,521 变为 215,463 QPS，SET 保留小数据集峰值的 95.2%。这些扫描支持超出内存后的实用性能，但不构成长时间稳定性保证。",
+      "sources": ["memory-report", "compact-report"]
+    },
+    {
+      "type": "paragraph",
+      "text": "已有混合读写证据，但它不是 Redis 与 Lavik 的 SPDK 对比。已发布的 YCSB 实验对比 Lavik io_uring 与 Aerospike，使用一亿条十字段记录，每字段 128 字节、256 个客户端 worker、每点 300 秒窗口，均不带副本。Lavik 在 50/50 读取与更新下为总计 529,501 QPS，在 95/5 下为 577,373 QPS。READ 使用 HGETALL，UPDATE 使用 LAVIK.HREPLACE，因此不能把这些速率包装成 SET/GET 混合负载。该实验中 Lavik 使用 12 个 worker，另留四个 CPU 给系统及 IRQ。表格保留各操作自己的 P99.9，不编造合并后的分位数。",
+      "sources": ["mixed-report"]
+    },
+    {
+      "type": "paragraph",
+      "text": "证据缺口同样重要：这些结果没有提供条件匹配的 256 B 和 4 KiB 完整值 GET/SET 曲线，也没有 Redis/Lavik 混合读写对比，或三主机、10 TB、带复制的测试。大对象报告对 1 MiB 对象做 256 字节局部更新，回答的是不同问题。百万 QPS 是很高的规划目标，若持续运行，一天是 864 亿次操作。它是否够用，取决于流量分布、命令成本、突发及故障状态下的需求。“覆盖超过 90% 负载”的说法在此仍是假设，没有负载总体分布数据支持。",
+      "sources": ["model", "memory-report", "mixed-report", "large-objects"]
+    },
+    {
+      "type": "heading",
+      "text": "5. 容量增长也扩大控制面问题"
+    },
+    {
+      "type": "paragraph",
+      "text": "Redis Cluster 分配 16,384 个 hash slot，并维护全连接 cluster bus。规范描述：对于 N 个节点，每个节点有 N−1 条出站连接和 N−1 条入站连接。如果每条连接只在发起端计一次，全局出站连接为 N(N−1)：300 节点时 89,700 条，600 节点时 359,400 条，1,000 节点时 999,000 条。这是 cluster bus 连接数，不是应用 socket 数，也不是每秒数据包数。规范的扩展目标在千节点量级，并不存在通用的 300 节点上限。",
+      "sources": ["redis-cluster", "redis-scaling"]
+    },
+    {
+      "type": "paragraph",
+      "text": "Gossip 避免每次心跳都全量广播拓扑。节点平时联系少量随机成员，同时超时探测和 gossip 载荷会引入随规模变化的工作。因此，二次增长的连接数量不能被描述成指数增长的消息速率。本地 PFAIL 怀疑需要足够确认报告才能成为 FAIL；提升还依赖故障转移授权及配置 epoch。规模更大时，排查网络分区需要理解更多连接、成员视图和故障报告。即使稳定状态 CPU 开销可接受，节点数量仍是运维的重要变量。",
+      "sources": ["redis-cluster"]
+    },
+    {
+      "type": "paragraph",
+      "text": "Resharding 需要搬迁数据、变更归属，并由客户端处理重定向。集群增长也增加了需要平衡、重启、升级和监控的数据放置点。故障行为取决于哪些主节点和副本仍可达，而不只是健康机器的比例。Redis 可以运行在数百节点规模。容量规划真正要问的是：应用是否仅为了保留更多字节，就必须采用这么大的拓扑？Lavik 的 Meta 授权与原生复制采用另一种控制设计；减少 Data 进程并不会消除 quorum、恢复和可观测性的要求。",
+      "sources": ["redis-scaling", "overview", "meta"]
+    },
+    {
+      "type": "heading",
+      "text": "6. 把容量模型变成生产决策"
+    },
+    {
+      "type": "paragraph",
+      "text": "容量受限的负载在 CPU 和请求能力尚有余量时，就已经耗尽内存预算；吞吐量受限的负载则先耗尽执行、网络或 I/O 能力。整合对前一种情况最有吸引力：用更少服务器，使保留容量匹配真实服务需求，并为 Agent 状态增长留出空间。同一数据集的三份副本不会使主节点写入吞吐量变为三倍；使用副本读取也必须满足应用的新鲜度要求。极严的尾延迟预算、昂贵命令或极高聚合吞吐量，仍可能需要更多服务节点及内存型设计。",
+      "sources": ["model", "replication"]
+    },
+    {
+      "type": "paragraph",
+      "text": "应在完整数据规模下开启复制、过期、空间回收及备份来验证候选方案，再模拟单主机故障和副本重建。百万 QPS、1 KiB 读取仅值数据就约为 1.024 GB/s，还未计协议开销；复制和恢复另需带宽。即使持续理想速率为 1 GB/s，搬迁 10 TB 也要约 2.8 小时，尚未计算索引重建和资源竞争。小集群减少了组件数量，也集中了恢复责任。Meta 的 Raft 共识管理拓扑和授权；原生数据复制仍是异步，其进度 ACK 不是持久化数据 quorum。应测量 RPO 和 RTO，不能由副本数量直接推导。",
+      "sources": ["model", "meta", "replication"]
+    },
+    {
+      "type": "paragraph",
+      "text": "迁移应遵循版本固定的 RedisShake 流程：盘点命令与键形态，创建全新的托管 Lavik 目标，复制基线、追平增量，并核对数量、值和过期行为。切换前演练客户端重连与故障转移；最终追平时暂停源端写入，验证通过再切换客户端，并保留考虑新目标已接受写入的回退方案。源端分片数量不必与目标相同。Redis 替换应有明确的验收条件，服务器数量只是这一工程过程的一个结果。",
+      "sources": ["migration"]
+    },
+    {
+      "type": "heading",
+      "text": "7. 为 Agent 将要保留的数据建设基础设施"
+    },
+    {
+      "type": "paragraph",
+      "text": "更长的保留时间、更丰富的状态，以及每个用户更多的 Agent，都可能使今天的 1 TB 变成 10 TB 或 100 TB，而活跃请求并不一定同比增长。仅追问如何降低 Redis 费用，容易忽略这条容量增长路径。更应追问：现有架构能否以可持续成本保留产品所需的状态？Lavik 提供 Redis 兼容、Apache 2.0 开源的基础，将值容量与 DRAM 分离，并利用现代 NVMe SSD 的并行能力。从 300 个 Redis 节点到三个 Lavik 节点，是一道具体的容量规划题，也邀请团队重新设计 Agent 应用所需的存储架构。",
+      "sources": ["model", "overview"]
+    }
+  ],
+  "technical": {
+    "sources": [
+      {
+        "id": "model",
+        "title": "Capacity and cost assumptions for this article",
+        "url": "https://github.com/eloqdata/lavik-agent/blob/main/evidence/technical/agent-era/sizing.json",
+        "file": "evidence/technical/agent-era/sizing.json",
+        "sha256": "c3ff3c0e1de41f01f0eb6c8da38290e6c5d894fc31833e24e995a784ded17eb3"
+      },
+      {
+        "id": "redis-cloud-pricing",
+        "title": "Redis Cloud pricing calculator: observed 1,500 GB HA estimate",
+        "url": "https://redis.io/pricing/calculator/",
+        "file": "evidence/technical/agent-era/sources/redis-cloud-pricing.json",
+        "sha256": "f6552e65d53ee86ec31cb242439298a35d318b8311b6d744e714718a0278cf13"
+      },
+      {
+        "id": "redis-cluster",
+        "title": "Redis Cluster specification",
+        "url": "https://redis.io/docs/latest/operate/oss_and_stack/reference/cluster-spec/",
+        "file": "evidence/technical/agent-era/sources/redis-cluster.json",
+        "sha256": "d5a48727f3f65c83e246ffcda9967c070a6faf610edefe00163998d5da74a7a8"
+      },
+      {
+        "id": "redis-scaling",
+        "title": "Redis Cluster scaling and availability",
+        "url": "https://redis.io/docs/latest/operate/oss_and_stack/management/scaling/",
+        "file": "evidence/technical/agent-era/sources/redis-scaling.json",
+        "sha256": "8d86582dafdbb7a67efa7bfa927213845309c5b6a05a7414d0f6e6118c78c406"
+      },
+      {
+        "id": "redis-sizing",
+        "title": "Redis Cloud dataset and memory sizing",
+        "url": "https://redis.io/docs/latest/operate/rc/databases/configuration/sizing/",
+        "file": "evidence/technical/agent-era/sources/redis-sizing.json",
+        "sha256": "35978c677c3b2c4addea3baf32e99cd2f9b2d8a1601443670e02c61aec357127"
+      },
+      {
+        "id": "spdk-nvme",
+        "title": "SPDK NVMe driver",
+        "url": "https://spdk.io/doc/nvme.html",
+        "file": "evidence/technical/agent-era/sources/spdk-nvme.json",
+        "sha256": "3ad0d27503a83e88ea361ee35a92e2da0e95fc71baa4eaa3ba51d0e676637e48"
+      },
+      {
+        "id": "spdk-concurrency",
+        "title": "SPDK message passing and concurrency",
+        "url": "https://spdk.io/doc/concurrency.html",
+        "file": "evidence/technical/agent-era/sources/spdk-concurrency.json",
+        "sha256": "08c80d6bec88bd36e6906c84dffa89ba49354f097bdcc1658ff44e9f0fe3e763"
+      },
+      {
+        "id": "overview",
+        "title": "Lavik 0.1.0 architecture and runtime",
+        "url": "https://github.com/eloqdata/lavik/blob/471f4864357f4a5034c64e7d4972ec0e55b82d94/docs/architecture/01-overview.md",
+        "file": "evidence/technical/agent-era/sources/01-overview.md",
+        "sha256": "e512dee3ffcb8e48a2d4fcbb0046266b591d6ab0a74b37be92da2b8ea4f89720"
+      },
+      {
+        "id": "replication",
+        "title": "Lavik native replication and recovery",
+        "url": "https://github.com/eloqdata/lavik/blob/471f4864357f4a5034c64e7d4972ec0e55b82d94/docs/architecture/05-replication.md",
+        "file": "evidence/technical/agent-era/sources/05-replication.md",
+        "sha256": "2d1814e2b83c4a9b358e6d01759d3811bf6717aa3f71dee3260b4f23467005ad"
+      },
+      {
+        "id": "requests",
+        "title": "Lavik request serving",
+        "url": "https://github.com/eloqdata/lavik/blob/471f4864357f4a5034c64e7d4972ec0e55b82d94/docs/architecture/02-request-serving.md",
+        "file": "evidence/docs/0.1.0/sources/docs_architecture_02-request-serving.md",
+        "sha256": "c6704856dc370f4a0e1e1cc2d7697a0b16b058682442591c1b378386df2611b8"
+      },
+      {
+        "id": "storage",
+        "title": "Lavik storage and recovery",
+        "url": "https://github.com/eloqdata/lavik/blob/471f4864357f4a5034c64e7d4972ec0e55b82d94/docs/architecture/04-storage-and-recovery.md",
+        "file": "evidence/docs/0.1.0/sources/docs_architecture_04-storage-and-recovery.md",
+        "sha256": "09edcb680ebd0ddebb0f7659924c6739145534a710c96711fe98d453e80d169e"
+      },
+      {
+        "id": "collections",
+        "title": "Lavik grouped collections",
+        "url": "https://github.com/eloqdata/lavik/blob/471f4864357f4a5034c64e7d4972ec0e55b82d94/docs/architecture/09-grouped-collections.md",
+        "file": "evidence/docs/0.1.0/sources/docs_architecture_09-grouped-collections.md",
+        "sha256": "beee7bebd6e1dffeab8984c5fa0ed9b8d5ba1501f47933cc8de8a4dc1f233ec9"
+      },
+      {
+        "id": "meta",
+        "title": "Lavik Meta Raft",
+        "url": "https://github.com/eloqdata/lavik/blob/471f4864357f4a5034c64e7d4972ec0e55b82d94/docs/architecture/10-meta-raft.md",
+        "file": "evidence/docs/0.1.0/sources/docs_architecture_10-meta-raft.md",
+        "sha256": "86e7db40e44990df56428aedc164eff478db55c87e5cecaa5de77671f4f14e3a"
+      },
+      {
+        "id": "migration",
+        "title": "Lavik RedisShake import procedure",
+        "url": "https://github.com/eloqdata/lavik/blob/471f4864357f4a5034c64e7d4972ec0e55b82d94/docs/operations/redis-import.md",
+        "file": "evidence/docs/0.1.0/sources/docs_operations_redis-import.md",
+        "sha256": "a09ef29e3b0579ef1c7535f63259e93204060539304926594d81f886e33143ec"
+      },
+      {
+        "id": "memory-report",
+        "title": "Lavik SPDK vs Redis and Valkey: method and reproduction",
+        "url": "https://github.com/eloqdata/lavik/blob/471f4864357f4a5034c64e7d4972ec0e55b82d94/perf_reports/lavik-v0.1.0-spdk-vs-latest-2026-10-13/README.md",
+        "file": "evidence/benchmarks/0.1.0/lavik-v0.1.0-spdk-vs-latest-2026-10-13/README.md",
+        "sha256": "f41974bbea12a9daa114425d2c3e70f736ce92480fe2fda5f988cc33ec8fc678"
+      },
+      {
+        "id": "compact-report",
+        "title": "Small-instance capacity experiment",
+        "url": "https://github.com/eloqdata/lavik/blob/471f4864357f4a5034c64e7d4972ec0e55b82d94/perf_reports/lavik-v0.1.0-2vcpu-latest-capacity-2026-10-13/README.md",
+        "file": "evidence/benchmarks/0.1.0/lavik-v0.1.0-2vcpu-latest-capacity-2026-10-13/README.md",
+        "sha256": "153afbe2bd978821be955d4b1683fc760dce50a90826ce27d5f469acf911f74b"
+      },
+      {
+        "id": "mixed-report",
+        "title": "Lavik and Aerospike: mixed YCSB workloads",
+        "url": "https://github.com/eloqdata/lavik/blob/471f4864357f4a5034c64e7d4972ec0e55b82d94/perf_reports/lavik-v0.1.0-aerospike-ycsb-2026-10-13/README.md",
+        "file": "evidence/benchmarks/0.1.0/lavik-v0.1.0-aerospike-ycsb-2026-10-13/README.md",
+        "sha256": "8324841157b0b7a19f074678e5c198f39d2ce21c12da815adc39f6dea2292ce2"
+      },
+      {
+        "id": "measurements",
+        "title": "Exact article measurements and histogram derivation",
+        "url": "https://github.com/eloqdata/lavik-agent/blob/main/evidence/technical/agent-era/measurements.json",
+        "file": "evidence/technical/agent-era/measurements.json",
+        "sha256": "90f818d66a761b13cdfc900fe2f6cea0dbc2d5d25d875f71043ecf806099b0d0"
+      },
+      {
+        "id": "raw-0",
+        "title": "Raw benchmark: memory/lavik-spdk/get-c1280.json",
+        "url": "https://github.com/eloqdata/lavik-agent/blob/a7dbebbc6dee02ff51a537d9f2b5376b7cd52163/perf_reports/lavik-v0.1.0-spdk-vs-latest-2026-10-13/raw/memory/lavik-spdk/get-c1280.json",
+        "file": "perf_reports/lavik-v0.1.0-spdk-vs-latest-2026-10-13/raw/memory/lavik-spdk/get-c1280.json",
+        "sha256": "fe7916b5e4582e047747df2c6514b4c66570c2f7b0a6d064296228d6811f371f"
+      },
+      {
+        "id": "raw-1",
+        "title": "Raw benchmark: memory/lavik-spdk/set-c1280.json",
+        "url": "https://github.com/eloqdata/lavik-agent/blob/a7dbebbc6dee02ff51a537d9f2b5376b7cd52163/perf_reports/lavik-v0.1.0-spdk-vs-latest-2026-10-13/raw/memory/lavik-spdk/set-c1280.json",
+        "file": "perf_reports/lavik-v0.1.0-spdk-vs-latest-2026-10-13/raw/memory/lavik-spdk/set-c1280.json",
+        "sha256": "c3cd73b0bc20d6c35877c92209aeb57889a6e70d2e4b23a214f5d5f190e15618"
+      },
+      {
+        "id": "raw-2",
+        "title": "Raw benchmark: memory/redis/io16/get-c1280.json",
+        "url": "https://github.com/eloqdata/lavik-agent/blob/a7dbebbc6dee02ff51a537d9f2b5376b7cd52163/perf_reports/lavik-v0.1.0-spdk-vs-latest-2026-10-13/raw/memory/redis/io16/get-c1280.json",
+        "file": "perf_reports/lavik-v0.1.0-spdk-vs-latest-2026-10-13/raw/memory/redis/io16/get-c1280.json",
+        "sha256": "94a79196b3bd7dc154e0d03d0b4a5c3c4574987359ab0d755a93bfc186c8ea93"
+      },
+      {
+        "id": "raw-3",
+        "title": "Raw benchmark: memory/redis/io16/set-c1280.json",
+        "url": "https://github.com/eloqdata/lavik-agent/blob/a7dbebbc6dee02ff51a537d9f2b5376b7cd52163/perf_reports/lavik-v0.1.0-spdk-vs-latest-2026-10-13/raw/memory/redis/io16/set-c1280.json",
+        "file": "perf_reports/lavik-v0.1.0-spdk-vs-latest-2026-10-13/raw/memory/redis/io16/set-c1280.json",
+        "sha256": "2915283e826e52def506101c565b33d8798c5c5341872114a72e9ee7217f17d5"
+      },
+      {
+        "id": "raw-4",
+        "title": "Raw benchmark: memory/valkey/io16/get-c1280.json",
+        "url": "https://github.com/eloqdata/lavik-agent/blob/a7dbebbc6dee02ff51a537d9f2b5376b7cd52163/perf_reports/lavik-v0.1.0-spdk-vs-latest-2026-10-13/raw/memory/valkey/io16/get-c1280.json",
+        "file": "perf_reports/lavik-v0.1.0-spdk-vs-latest-2026-10-13/raw/memory/valkey/io16/get-c1280.json",
+        "sha256": "ee54eaa701bb85965c0c51d1c25ca7d23bf4b9f34ff4b5b2d5bff5e166a1477e"
+      },
+      {
+        "id": "raw-5",
+        "title": "Raw benchmark: memory/valkey/io8/set-c1280.json",
+        "url": "https://github.com/eloqdata/lavik-agent/blob/a7dbebbc6dee02ff51a537d9f2b5376b7cd52163/perf_reports/lavik-v0.1.0-spdk-vs-latest-2026-10-13/raw/memory/valkey/io8/set-c1280.json",
+        "file": "perf_reports/lavik-v0.1.0-spdk-vs-latest-2026-10-13/raw/memory/valkey/io8/set-c1280.json",
+        "sha256": "10aece99d13238c78db689d82d3d58ebb2f2f58ef9e2eafa57bca9dfdd9cab3d"
+      },
+      {
+        "id": "raw-6",
+        "title": "Raw benchmark: results.csv",
+        "url": "https://github.com/eloqdata/lavik-agent/blob/a7dbebbc6dee02ff51a537d9f2b5376b7cd52163/perf_reports/lavik-v0.1.0-spdk-vs-latest-2026-10-13/metadata/results.csv",
+        "file": "perf_reports/lavik-v0.1.0-spdk-vs-latest-2026-10-13/metadata/results.csv",
+        "sha256": "e3bdb4d3a94db5930e39bf495d159f1af98b1964542431c54a044e132d499a5f"
+      },
+      {
+        "id": "large-objects",
+        "title": "Scope of the 1 MiB large-object experiment",
+        "url": "https://github.com/eloqdata/lavik-agent/blob/a7dbebbc6dee02ff51a537d9f2b5376b7cd52163/perf_reports/lavik-v0.1.0-large-objects-2026-10-14/README.md",
+        "file": "perf_reports/lavik-v0.1.0-large-objects-2026-10-14/README.md",
+        "sha256": "6089e8e71f60100a42d17bd3ece652ff90d36fcef572dcf80a58b76f809b143b"
+      }
+    ],
+    "visuals": [
+      {
+        "type": "figure",
+        "id": "fleet-model",
+        "afterBlock": 0,
+        "src": "/blog-assets/agent-era/consolidation.svg",
+        "sha256": "583b8699e902490f00293c662f1e66886498102f06edbd67167f3a89b3d3e2c4",
+        "width": 1200,
+        "height": 650,
+        "caption": "300-to-3 是容量示例。两侧都保留副本，三台 Lavik 主机还运行三个 Meta 投票成员。硬件、可用容量和服务保证不同。",
+        "alt": "300 个 Redis 进程，分为 150 主与 150 副本；对比三台 Lavik 数据主机，各保留一份完整数据。",
+        "sources": ["model"]
+      },
+      {
+        "type": "table",
+        "id": "agent-capacity",
+        "afterBlock": 3,
+        "caption": "十亿个保留 Agent 的值载荷 · 十进制单位",
+        "columns": ["每个 Agent 大小", "唯一值载荷", "三份副本，仅值"],
+        "rows": [
+          ["1 KB", "1 TB", "3 TB"],
+          ["10 KB", "10 TB", "30 TB"],
+          ["100 KB", "100 TB", "300 TB"]
+        ],
+        "sources": ["model"]
+      },
+      {
+        "type": "table",
+        "id": "cost-model",
+        "afterBlock": 8,
+        "caption": "月度与年度成本：一项官方托管估算，以及两个明确的自建预算情景",
+        "columns": [
+          "部署 / 假设",
+          "月费（美元）",
+          "年费（美元）",
+          "平均百万 QPS 时每百万次操作美元成本"
+        ],
+        "rows": [
+          [
+            "Redis Cloud Pro · 1,500 GB，启用 HA",
+            "$51,246",
+            "$614,952",
+            "$0.01950"
+          ],
+          ["自建 Redis · 300 × $100/月", "$30,000", "$360,000", "$0.01142"],
+          ["自建 Lavik · 3 × $2,000/月", "$6,000", "$72,000", "$0.00228"]
+        ],
+        "sources": ["redis-cloud-pricing", "model"]
+      },
+      {
+        "type": "table",
+        "id": "capacity-cost",
+        "afterBlock": 11,
+        "caption": "按容量归一化的基础设施预算，不是实测 TCO。Redis Cloud 使用 1.5 TB 数据集输入；自建行使用示例中的 70% 值预算。不含备份、人力、网络和合同调整。",
+        "columns": ["情景", "逻辑值空间分母", "美元 / TB·月"],
+        "rows": [
+          ["Redis Cloud Pro 估算", "输入 1.5 TB", "$34,164"],
+          ["自建 Redis 预算", "1.05 TB", "$28,571"],
+          ["自建 Lavik 预算", "10.752 TB", "$558"]
+        ],
+        "sources": ["model", "redis-cloud-pricing"]
+      },
+      {
+        "type": "figure",
+        "id": "storage-path",
+        "afterBlock": 16,
+        "src": "/blog-assets/agent-era/request-path.svg",
+        "sha256": "9b83c3f229c076616e4c3f7d3bd514c372100d9c343611fd6d5b7bdc7afcc476",
+        "width": 1200,
+        "height": 650,
+        "caption": "Lavik 0.1.0 的部分已记录机制。图中省略了准入、事务和恢复状态机，并不表示应用完全无锁或完全绕过内核。",
+        "alt": "RESP 请求进入协程 worker，索引保留在内存，异步 SPDK queue pair 访问 NVMe SSD；内核 TCP 与 Meta 授权分别处理。",
+        "sources": ["overview", "requests", "storage", "spdk-nvme"]
+      },
+      {
+        "type": "table",
+        "id": "peak-results",
+        "afterBlock": 19,
+        "caption": "相同 1,280 连接运行 · QPS 四舍五入为整数；全部延迟单位为毫秒",
+        "columns": ["系统 / 操作", "QPS", "平均", "P50", "P95", "P99", "P99.9"],
+        "rows": [
+          [
+            "Lavik 0.1.0 SPDK GET",
+            "1,145,772",
+            "1.117",
+            "1.031",
+            "1.511",
+            "3.999",
+            "7.135"
+          ],
+          [
+            "Lavik 0.1.0 SPDK SET",
+            "971,950",
+            "1.317",
+            "1.119",
+            "2.783",
+            "4.479",
+            "7.199"
+          ],
+          [
+            "Redis 8.10.2 GET",
+            "1,018,735",
+            "1.256",
+            "1.087",
+            "2.479",
+            "4.415",
+            "7.103"
+          ],
+          [
+            "Redis 8.10.2 SET",
+            "951,053",
+            "1.346",
+            "1.135",
+            "2.943",
+            "4.511",
+            "7.231"
+          ],
+          [
+            "Valkey 9.1.2 GET",
+            "970,288",
+            "1.319",
+            "1.119",
+            "2.511",
+            "4.415",
+            "7.455"
+          ],
+          [
+            "Valkey 9.1.2 SET",
+            "808,103",
+            "1.583",
+            "1.455",
+            "2.559",
+            "4.047",
+            "7.199"
+          ]
+        ],
+        "sources": [
+          "measurements",
+          "raw-0",
+          "raw-1",
+          "raw-2",
+          "raw-3",
+          "raw-4",
+          "raw-5"
+        ]
+      },
+      {
+        "type": "figure",
+        "id": "throughput-sweep",
+        "afterBlock": 21,
+        "src": "/blog-assets/agent-era/throughput.svg",
+        "sha256": "236b469be066a5a804885101375c4c6020b41b8699a13da02039557e77f08586",
+        "width": 1200,
+        "height": 540,
+        "caption": "所选固定配置在 80–1,280 个连接下的完整曲线。十亿键系列改变了时长和种子策略；峰值速率不构成复制集群 SLA。",
+        "alt": "Lavik 一千万键与十亿键、Redis 与 Valkey 一千万键的 GET 和 SET 吞吐量曲线。",
+        "sources": ["memory-report", "measurements"]
+      },
+      {
+        "type": "table",
+        "id": "mixed-workloads",
+        "afterBlock": 22,
+        "caption": "独立的 io_uring YCSB 实验 · 一亿记录、10 × 128 B 字段、256 个 worker、无副本",
+        "columns": ["Lavik 负载", "总 QPS", "READ P99.9 ms", "UPDATE P99.9 ms"],
+        "rows": [
+          ["50% HGETALL / 50% HREPLACE", "529,501", "5.083", "2.831"],
+          ["95% HGETALL / 5% HREPLACE", "577,373", "1.818", "1.578"]
+        ],
+        "sources": ["mixed-report"]
+      },
+      {
+        "type": "figure",
+        "id": "node-count-growth",
+        "afterBlock": 28,
+        "src": "/blog-assets/agent-era/capacity.svg",
+        "sha256": "ed0ea8cb540cd272e2a1f5b85f837379db892d3e373ee0e64e02bf9462fa490d",
+        "width": 1200,
+        "height": 540,
+        "caption": "容量驱动扩展的示例，不是吞吐量预测。Redis 每节点 10 GB、两份副本；Lavik 每台 15.36 TB、三份完整副本。两侧都为非值空间保留 30%，仍须验证所有资源及故障状态约束。",
+        "alt": "同一容量模型的两张图：线性坐标中，Redis 在 10 TB 时增至 2,858 个数据节点，而三台 Lavik 主机满足假定值预算；对数坐标使三主机曲线清晰可见。",
+        "sources": ["model"]
+      }
+    ]
+  }
+}

@@ -33,6 +33,17 @@ const stack = (x: number, y: number, width = 150) =>
 function illustration(motif: CoverMotif, seed: number) {
   const shift = seed % 13;
   switch (motif) {
+    case "consolidation": {
+      const cube = (x: number, y: number, n: number) =>
+        `<path d="M${x} ${y}l${n} ${-n * 0.4}l${n} ${n * 0.4}l${-n} ${n * 0.4}Z" fill="var(--light)" fill-opacity=".55"/><path d="M${x} ${y}v${n}l${n} ${n * 0.4}v${-n}Z" fill="var(--light)" fill-opacity=".18"/><path d="M${x + n} ${y + n * 0.4}v${n}l${n} ${-n * 0.4}v${-n}Z" fill="var(--light)" fill-opacity=".35"/>`;
+      return `${Array.from({ length: 300 }, (_, i) => cube(95 + (i % 20) * 23, 85 + Math.floor(i / 20) * 20, 8)).join("")}<path d="M610 225H705M688 208L706 225L688 242" stroke-width="3"/>${[
+        [785, 140],
+        [960, 140],
+        [873, 280],
+      ]
+        .map(([x, y]) => cube(x, y, 58))
+        .join("")}`;
+    }
     case "flow":
       return `<path d="M170 228H410Q450 228 450 188V128H780Q825 128 825 173V228H1030"/><path d="M240 330H730Q765 330 765 295V228H920" opacity=".4"/>
         ${[205, 365, 885, 1000].map((x) => orb(x, 228, 7)).join("")}

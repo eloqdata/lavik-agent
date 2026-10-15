@@ -8,7 +8,12 @@ import { articleSchema, blockSchema } from "../content/schema.ts";
 export const blogDraftSchema = z
   .object({
     articles: articleSchema
-      .omit({ publishedAt: true, sourceRevision: true })
+      .omit({
+        publishedAt: true,
+        sourceRevision: true,
+        featured: true,
+        technical: true,
+      })
       .required({ topics: true })
       .extend({
         kind: z.literal("blog"),

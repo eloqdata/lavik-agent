@@ -1,0 +1,53 @@
+{
+  "status": "illustration, not a measured cluster migration or vendor hardware quote",
+  "units": "Decimal KB/GB/TB; binary KiB/GiB only where explicitly labeled",
+  "agents": 1000000000,
+  "bytesPerAgent": [
+    1000,
+    10000,
+    100000
+  ],
+  "redis": {
+    "nodes": 300,
+    "copies": 2,
+    "memoryBudgetGBPerNode": 10,
+    "primaries": 150,
+    "rawPrimaryTB": 1.5,
+    "valueBudgetFraction": 0.7,
+    "illustrativeValueTB": 1.05,
+    "assumedMonthlyUSDPerVM": 100,
+    "monthlyUSD": 30000,
+    "annualUSD": 360000
+  },
+  "lavik": {
+    "physicalHosts": 3,
+    "dataProcesses": 3,
+    "metaProcesses": 3,
+    "copies": 3,
+    "topology": "one primary plus two full followers; one Meta voter per physical host",
+    "assumedPhysicalCoresPerHost": 32,
+    "assumedRAMGiBPerHost": 256,
+    "assumedNVMeTBPerHost": 15.36,
+    "assumedNetworkGbpsPerHost": 100,
+    "valueBudgetFraction": 0.7,
+    "illustrativeValueTB": 10.752,
+    "assumedMonthlyUSDPerHost": 2000,
+    "monthlyUSD": 6000,
+    "annualUSD": 72000
+  },
+  "capacityModel": "Redis = 2*ceil(payload_TB*1000/(10*0.7)); Lavik = 3 hosts through 10.752 TB if index RAM, overhead, throughput, recovery and fault constraints all fit.",
+  "qpsScenario": {
+    "assumedAverageQPS": 1000000,
+    "hoursPerMonth": 730,
+    "millionOperationsPerMonth": 2628000,
+    "redisCloudUSDPerMillion": 0.0195,
+    "selfHostedRedisUSDPerMillion": 0.01141552511415525,
+    "selfHostedLavikUSDPerMillion": 0.00228310502283105
+  },
+  "capacityNormalizedMonthlyUSDPerTB": {
+    "redisCloudRequestedDataset": 34164.0,
+    "selfHostedRedis70PercentBudget": 28571.42857142857,
+    "selfHostedLavik70PercentBudget": 558.0357142857142
+  },
+  "important": "The same 1.5 TB logical payload would require 430 Redis nodes at a 70% value budget, not 300. 300-to-3 compares the stated fleet with a candidate storage topology. No 10 TB, replicated, failure-state or P99.99 SLA performance has been measured here."
+}

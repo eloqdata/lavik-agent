@@ -1,3 +1,4 @@
+import { TechnicalArticleBody } from "../../../../components/technical-article";
 import { AdoptionFaq } from "../../../../components/adoption-faq";
 import {
   docVersionForRoute,
@@ -302,7 +303,9 @@ async function PageContent({
           {article.id === "quick-start" ? (
             <QuickStartSetup locale={locale} />
           ) : null}
-          {articleReview(article).rendererVersion === 2 ? (
+          {article.technical ? (
+            <TechnicalArticleBody article={article} />
+          ) : articleReview(article).rendererVersion === 2 ? (
             <VerifiedArticleBody
               article={article}
               receipts={articleReceipts(article)}

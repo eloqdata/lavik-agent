@@ -7,7 +7,7 @@
   "previousReviewBundleHash": "12d1124d53c12d8b473e3b513e334716c7950fbea23ac1cfe43fa0c089b84a41",
   "manualFiles": {
     "apps/web/app/(entry)/manual-manifest.json/route.ts": "5d20c3bf684d225f5eb893c1d954963e1ee8d0b157c8322e93c766775fe11b59",
-    "apps/web/app/(site)/[locale]/[...slug]/page.tsx": "1e114842525b97eeb5b69387a38d107296b8ab4c32d7bfb9f7c2a65cbb75bb8f",
+    "apps/web/app/(site)/[locale]/[...slug]/page.tsx": "cf64e9280a314ba4622ac5535361d04e70f2c01a578ce3bad7f5b922439741b5",
     "apps/web/components/adoption-faq.tsx": "1aa208e3ca3b133698893bbdd5cea91afdcb0a65975ff6f9d62d4281d6bc3c7c",
     "apps/web/components/content-v2.tsx": "573578062fb2dd8e2c42de438987be5dad2069811e39dd80a6a41badd8023462",
     "apps/web/components/content.tsx": "03dcefdb016b6068e28f55b80f0e978db66799c3f6d670f3a1fb178e19c81e0d",
@@ -73,10 +73,10 @@
     "packages/content/context-review.ts": "3efa4bae57e80ef07bf877b2c7dc158849e94d1501249ac3d63b3d2a83b6bbfb",
     "packages/content/downloads.ts": "9cec8b6be183ae5b6ab6fefd69e38a7dafe2d580c13490c85a07479d21ff414d",
     "packages/content/economics.ts": "bd687ff24b93f6a2cf1f02c948e15b3ee9a816cb56aeb63e7866035487d47315",
-    "packages/content/gate.ts": "8cb2e46ecf963321c3e1b8de5d2ea3fcac62faa381881698630a996584560243",
+    "packages/content/gate.ts": "757befc0eca396a66e11b78715ed2cf8cae642a3ba217acfc35fb9276ff2dd5d",
     "packages/content/publication-context.ts": "8e418cbaa299453701dd3ab8c4736838568a9bdad50856fcbd02d1689164c91c",
     "packages/content/repository.ts": "0abe4cd87cb81bafb3dd295e47d9e81ed270cf4dc2a00a393bac13b702082f8e",
-    "packages/content/schema.ts": "a376e247addc5c2990e9a65b140fc524bbd799cb8a8ae1a73afde13c4a7e3e34",
+    "packages/content/schema.ts": "6ca68f7479ae520eab9dd436ac31fb2df810207b2d29a66278d09466d31a949c",
     "packages/docs/guides.json": "2125035cc3c73220d883e7fd5f3088a3c9b37f0acaf1c29040eca0d9cae18f15",
     "packages/docs/repository.ts": "c139a9a36d3b79b820e613d3bae2aef6c7883b6fba0c80d687512e7b086634b8",
     "packages/editorial/faq.ts": "a22c9fd6817689633611b8e557e48306e72b2db64253fc908151a06168a86cef",
@@ -339,7 +339,7 @@
     "verification/docs/0.1.0/query-0.txt": "e62c421f8f38333cfcdf3905625f1b2d5f70dd92a7366765ece6a1e56e834f1d",
     "verification/docs/0.1.0/query-1.txt": "e62c421f8f38333cfcdf3905625f1b2d5f70dd92a7366765ece6a1e56e834f1d"
   },
-  "bundleHash": "12f311369e0929aeee1aa04e4f976e322f9ed9c4988f9e2c6fad9245edbc8e75",
+  "bundleHash": "4b025960afcdacb916ad3fd850b9edad52e04797d2f123a79057c1546c8d7658",
   "independentlyReviewedContextDelta": {
     "reviewer": {
       "role": "reviewer",
@@ -436,5 +436,27 @@
       "scripts/build-discovery.ts"
     ],
     "scope": "Only KeyDB references removed from shared SEO and discovery text; documentation prose and original authorization scope unchanged."
+  },
+  "featuredBlogContextReview": {
+    "record": "evidence/technical/agent-era/review.json",
+    "recordSha256": "9692ea43713e1d3457c7e62cb30b0cbfa62b656f933acc2bb120d16fe56cf3a9",
+    "reviewer": {
+      "role": "reviewer",
+      "model": "gpt-6-astra",
+      "provider": "openai",
+      "authentication": "chatgpt",
+      "reasoning": "high",
+      "startedAt": "2026-10-15T13:21:26.550Z",
+      "finishedAt": "2026-10-15T13:24:56.815Z",
+      "promptSha256": "81bd490c9c6a29b19c912c4ed3c3009915fb072925840baa848ab6ea12cf45e4",
+      "outputSha256": "d7307e2a400ce9faae71d692a3de665c44c5a03bfe899f4c77a2580c453ede8d"
+    },
+    "sharedDelta": [
+      "apps/web/app/(site)/[locale]/[...slug]/page.tsx",
+      "packages/content/gate.ts",
+      "packages/content/schema.ts"
+    ],
+    "previousBundleHash": "12f311369e0929aeee1aa04e4f976e322f9ed9c4988f9e2c6fad9245edbc8e75",
+    "scope": "Independent review of shared schema, gate and routing; existing manual prose and owner authorization remain unchanged."
   }
 }
