@@ -8,6 +8,11 @@ test("featured articles and technical evidence are readable without JavaScript o
   const page = await context.newPage();
   try {
     for (const locale of ["en", "zh-CN"]) {
+      const flagship = articles().find(
+        (article) =>
+          article.locale === locale &&
+          article.id === "300-redis-nodes-to-3-lavik-nodes",
+      )!;
       for (const width of [375, 1440]) {
         await page.setViewportSize({ width, height: 900 });
         await page.goto(`/${locale}/blog/`);
@@ -36,8 +41,12 @@ test("featured articles and technical evidence are readable without JavaScript o
         await expect(page.locator(".technical-figure img")).toHaveCount(4);
         await expect(page.locator("#peak-results")).toContainText("1,145,772");
         await expect(page.locator("#cost-model")).toContainText("$51,246");
-        await expect(page.locator(".technical-toc a")).toHaveCount(7);
-        await expect(page.locator(".technical-sources li")).toHaveCount(26);
+        await expect(page.locator(".technical-toc a")).toHaveCount(
+          flagship.blocks.filter((block) => block.type === "heading").length,
+        );
+        await expect(page.locator(".technical-sources li")).toHaveCount(
+          flagship.technical!.sources.length,
+        );
         await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
           "href",
           `https://lavik.dev/${locale}/blog/300-redis-nodes-to-3-lavik-nodes/`,

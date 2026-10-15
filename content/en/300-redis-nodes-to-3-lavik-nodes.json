@@ -5,7 +5,7 @@
   "kind": "blog",
   "slug": "300-redis-nodes-to-3-lavik-nodes",
   "title": "Migrate Your 300-Node Redis Cluster to Just 3 Lavik Nodes",
-  "summary": "The agent era needs a new capacity equation. A technical blueprint for 10 TB+ storage, measured million-QPS performance, and the economics of replacing a memory-bound Redis fleet.",
+  "summary": "Why keep buying servers for RAM? Lavik combines NVMe SSD capacity with throughput above Redis on DRAM. Explore the architecture, benchmarks and economics of a 300-to-3 consolidation.",
   "updatedAt": "2026-10-15",
   "publishedAt": "2026-10-15",
   "topics": ["architecture", "use-case", "benchmark"],
@@ -13,166 +13,185 @@
   "blocks": [
     {
       "type": "paragraph",
-      "text": "A fleet can become enormous without its workload becoming computationally difficult. If memory capacity determines your Redis node count, the useful question is how much infrastructure your application would need if values lived on NVMe SSD. This article works through a 300-to-3 sizing illustration: a three-host candidate with more than 10 TB of logical value capacity, informed by Lavik’s measured million-QPS single-server results. It is a deployment blueprint to validate, not a report of a completed 300-node migration or a replicated 10 TB benchmark.",
-      "sources": ["model", "memory-report"]
+      "text": "Memory is full. CPU still has room. Yet the next increase in retained data means another Redis shard, another replica, and another pair of servers to operate. For a capacity-bound application, that is an expensive way to grow. Lavik changes the resource that determines capacity: application values live on NVMe SSD, served by an engine that measured 1.14 million GETs per second—faster than Redis on DRAM in the published comparison. That combination opens a much more attractive design: consolidate a memory-bound fleet onto a few storage-dense hosts, with room for the next generation of agent state.",
+      "sources": ["memory-report", "model"]
     },
     {
       "type": "heading",
-      "text": "1. Agent state changes the capacity equation"
+      "text": "1. Agents need more state—and fast access to it"
     },
     {
       "type": "paragraph",
-      "text": "Human-facing services commonly store profiles, sessions, feature vectors and cached application state. An agent application multiplies these objects: one person can have a research agent, a coding agent and several background workers, each with its own context, execution state and retained observations. The important variable is the number of independently retained state objects, multiplied by their size and retention period. A billion objects need not mean a billion simultaneous users or active agents. Retained warm state can dominate capacity even when only a small fraction receives traffic.",
+      "text": "A human-facing application might retain a profile, a session and a set of features per user. An agent application can retain all of these for a research assistant, a coding assistant and multiple background workers acting on that user’s behalf. Each agent accumulates execution state, observations and working context. An agent that runs occasionally may still need its state immediately when it resumes. Capacity grows with the number of agents, the size of their state and how long it remains useful; request volume does not have to grow at the same rate.",
       "sources": ["model"]
     },
     {
       "type": "paragraph",
-      "text": "Use decimal units for planning: 1 KB = 1,000 bytes and 1 TB = 10¹² bytes. One billion agents at 1 KB each require 1 TB of value payload; at 10 KB, 10 TB; at 100 KB, 100 TB. Keys, indexes, allocator overhead, replication and backups come afterward. Those are scenarios, not adoption forecasts. They expose the economic question: must every retained byte occupy DRAM merely because applications need a Redis-compatible interface? An SSD-based cache becomes interesting when retained data grows faster than request demand.",
-      "sources": ["model"]
+      "text": "At one billion agents, just 1 KB of features each produces approximately 1 TB of values. Increase that to 10 KB and the dataset reaches 10 TB; at 100 KB, it reaches 100 TB, before keys, indexes or replication. Applications still need low-latency reads and updates through familiar Redis clients and data structures. Keeping every retained value in expensive DRAM makes that combination harder to afford. Lavik is designed to make NVMe SSD capacity practical for those latency-sensitive workloads.",
+      "sources": ["model", "overview"]
     },
     {
       "type": "heading",
-      "text": "2. What does a 300-node Redis fleet actually buy?"
+      "text": "2. Stop adding servers just to add memory"
     },
     {
       "type": "paragraph",
-      "text": "Assume 300 Redis server processes, with 10 GB allocated to each and one replica for every primary. That is 150 primaries and 150 replicas: 1.5 TB of theoretical primary memory, not 3 TB of unique data. A 70% value-space budget reduces the illustration to 1.05 TB before testing actual object overhead. Holding 1.5 TB of value payload at that budget needs 215 primaries plus 215 replicas: 430 processes. The familiar 300-node headline therefore describes a starting fleet, not a guarantee that 1.5 TB of application values fits. Larger instances and process consolidation can also change the count.",
+      "text": "Consider 300 Redis nodes with 10 GB allocated per node, arranged as 150 primaries and 150 replicas. That buys about 1.5 TB of primary memory before overhead. When memory fills first, expanding this fleet buys additional CPU, networking and operating systems largely to obtain more RAM. The application may need more retained profiles or longer session lifetimes without needing proportionally more compute. This is the central opportunity for Redis cost optimization: choose storage density independently of the number of processors needed to serve traffic.",
       "sources": ["model", "redis-sizing"]
     },
     {
       "type": "paragraph",
-      "text": "For a managed-service reference, we entered 1,500 GB, 1,000,000 ops/sec and HA enabled into Redis’s official calculator: AWS us-east-1, Pro, Flex off. The observed estimate was $70.200/hour or $51,246/month using 730 hours. Annualized without a commitment discount, that is $614,952. Checked on October 15, 2026, this is a public estimate rather than a contractual quote. It requests dataset capacity and throughput; it does not specify 300 VMs or expose the underlying shard count.",
+      "text": "The cost becomes concrete in Redis Cloud’s official calculator. For a 1,500 GB database at 1 million operations per second, with high availability enabled, the Pro configuration on AWS us-east-1 estimates $51,246 per month—$614,952 per year. This all-memory managed-service reference shows the scale of the capacity bill before the dataset grows to 10 TB. For teams building agent infrastructure, reducing the cost of each retained terabyte can change which application features are economical to offer.",
       "sources": ["redis-cloud-pricing"]
     },
     {
       "type": "paragraph",
-      "text": "HA is already enabled in that estimate; do not double it again. Confirm how your key overhead and headroom map to the billable size, together with transfer charges, support, taxes and contract terms. Redis Cloud operates the service; self-hosted Redis or Lavik leaves that responsibility with your team. Redis also offers Flex, which is excluded here to keep the reference memory-based. Neither the introductory monthly minimum on the pricing page nor a small Essentials database is a valid price for this deployment.",
-      "sources": ["redis-cloud-pricing", "redis-sizing"]
+      "text": "Adding flash does not automatically solve the latency problem. Redis describes Flex’s flash access in milliseconds and advises against broad access patterns, large working sets and frequent movement between RAM and flash. For an application with a sub-millisecond latency budget, a millisecond flash path is too slow. Agent workloads that repeatedly revisit different profiles and contexts make this distinction consequential: the storage engine needs to serve a large dataset efficiently even when accesses spread beyond RAM.",
+      "sources": ["redis-flex", "redis-flex-latency"]
     },
     {
       "type": "paragraph",
-      "text": "A separate self-hosted sensitivity calculation makes the arithmetic explicit. Assume one Redis process per $100/month VM: 300 × $100 = $30,000/month. Assume three larger Lavik hosts at $2,000/month each: $6,000/month. These are budget inputs, not vendor quotes or proof of equivalent service. At a hypothetical sustained average of 1 million QPS, 730 hours contains 2,628,000 million-operation units; divide the monthly bill by that number. The useful observation is that a memory-bound fleet can buy substantial idle compute alongside each extra allocation of RAM. Measure CPU and request demand before paying to reproduce that shape.",
+      "text": "For self-hosted infrastructure, consider an illustrative budget of $100 per month for each of 300 Redis VMs versus $2,000 for each of three larger Lavik hosts. Monthly hosting falls from $30,000 to $6,000: an 80% reduction, or $288,000 a year available for product development, model inference or additional capacity. These host-budget assumptions make the design tradeoff explicit. The benefit comes from buying a small number of capable servers with dense NVMe storage instead of repeatedly buying compute to expand memory.",
       "sources": ["model"]
     },
     {
       "type": "heading",
-      "text": "3. Design the three-host system from the storage path up"
+      "text": "3. Build capacity around NVMe SSD"
     },
     {
       "type": "paragraph",
-      "text": "A concrete candidate is three physical hosts, each with 32 physical CPU cores, 256 GiB RAM, 15.36 TB of dedicated NVMe SSD and 100 GbE networking. Place one Lavik Data process and one Meta voter on each host, with persistent Meta state and reserved control-plane resources. Use one primary and two full followers in a managed group. Each host must hold the entire dataset. These are proposed sizing inputs, distinct from the benchmark hardware; they must be checked against the actual release, device behavior and failure domains.",
+      "text": "A three-host capacity design can give each Lavik host 32 physical CPU cores, 256 GiB RAM, 15.36 TB of dedicated NVMe SSD and 100 GbE networking. Run one Data process and one Meta voter on each host, with one primary and two full followers. Every host holds a complete copy of the dataset. This gives the deployment a straightforward physical shape: three data placements, three control-plane voters and enough local storage to expand far beyond the example Redis fleet.",
       "sources": ["model", "overview", "meta", "replication"]
     },
     {
       "type": "paragraph",
-      "text": "The capacity calculation is 3 × 15.36 TB ÷ 3 copies × 70% = 10.752 TB. The 30% reserve is an illustrative allowance for metadata, obsolete records and reclamation headroom; workloads with high write churn may need more. Three copies do not provide 46 TB of unique application data. They provide three independent placements of roughly 10 TB. A single host failure leaves two copies and a two-voter Meta majority, subject to healthy replicas, reachable peers and successful promotion. Maintenance must preserve those conditions.",
-      "sources": ["model", "overview", "meta"]
+      "text": "With 30% of SSD capacity reserved for metadata, obsolete records and reclamation headroom, each copy has a 10.752 TB value-space budget. Replication protects the same logical dataset across the three hosts. A single-host failure leaves two copies and the two Meta voters needed for a majority; healthy followers and successful promotion restore serving authority. The capacity gain comes from the SSD in each server, while replication and placement provide the basis for high availability.",
+      "sources": ["model", "overview", "meta", "replication"]
     },
     {
       "type": "paragraph",
-      "text": "DRAM still matters. Lavik keeps the key index in memory, and key count can be the limiting resource long before SSD bytes run out. One billion 10 KB values has the same top-level key count as one billion 1 KB values; ten billion small values is a different indexing problem. Budget key lengths, entry arenas, grouped-object metadata, hugepages, buffers, replication backlog and control processes. The published billion-key experiment demonstrates one specific key layout fitting a 125.8 GiB host, not a universal bytes-per-key promise. Capacity planning must measure the representation your application will store.",
+      "text": "Lavik uses DRAM where it has the most value on the request path: the key index, metadata and active buffers. Values use NVMe SSD capacity. This separates growth in value bytes from growth in index memory, which is particularly useful as agent profiles and retained context become larger. Size RAM from the application’s key count and key lengths, together with buffers, hugepages and replication backlog. In the published large-dataset experiment, a billion-key layout fits a 125.8 GiB host while its values occupy about a terabyte.",
       "sources": ["storage", "memory-report"]
     },
     {
       "type": "paragraph",
-      "text": "SPDK provides a userspace NVMe driver: the application submits requests to NVMe queue pairs and explicitly polls completions. Direct access to device queues removes the kernel block-I/O submission path and its associated syscall and wakeup work. The application can keep many reads in flight instead of parking a worker for each SSD access. Polling consumes CPU, so queue depth, completion batch size and core placement are operating choices. In Lavik’s published SPDK experiment, the storage path uses SPDK while networking remains Linux TCP. It is not a DPDK-network benchmark.",
-      "sources": ["spdk-nvme", "memory-report"]
+      "text": "SPDK makes the storage path explicit. Lavik submits NVMe operations through userspace queue pairs and polls for completions, removing the kernel block-I/O submission path and its syscall and wakeup overhead. Asynchronous requests keep storage work in flight while workers make progress on other commands. Polling trades CPU time for prompt completion handling; queue depth, completion batching and CPU placement determine how effectively that time is used. Modern NVMe devices supply the parallel queues and internal concurrency. The engine must deliver enough independent work to exploit them.",
+      "sources": ["spdk-nvme", "spdk-concurrency", "memory-report"]
     },
     {
       "type": "paragraph",
-      "text": "Modern NVMe devices expose parallel queues and substantial internal concurrency. Exploiting them requires independent outstanding work, useful locality and enough CPU to process completions. Serializing every request behind one storage wait wastes that parallelism. Lavik’s documented implementation uses Bycorf worker threads and coroutines, owner-local mutable state and explicit cross-worker submissions. The benchmark pins 16 workers to 16 logical CPUs—eight physical cores with SMT, not 16 independent physical cores. This is evidence of a worker-oriented implementation; it does not imply that Lavik runs SPDK’s optional reactor framework or has no synchronization.",
-      "sources": ["spdk-concurrency", "spdk-nvme", "overview", "memory-report"]
+      "text": "Lavik’s Bycorf workers use coroutines, owner-local mutable state and explicit dispatch between workers. While one command waits for storage, other runnable work can proceed. Ownership keeps common operations close to the state they modify and reduces coordination between cores. That matters at a million operations per second: small amounts of scheduling, synchronization or allocation overhead accumulate into substantial CPU demand. Designing execution and storage together lets Lavik use SSD parallelism without turning every I/O into a stalled request-processing thread.",
+      "sources": ["overview", "requests", "storage"]
     },
     {
       "type": "paragraph",
-      "text": "Several implementation details make that architecture tangible. Key ownership follows Redis hash-slot partitions; physical blocks and device allocation have separate owners. Eligible disk GETs can use an admitted index snapshot on the connection worker, with fallback to owner dispatch. The parser batches up to 128 commands; small pipeline replies can coalesce to 64 KiB. Per-worker append streams avoid allocating active staging buffers for every logical slot. These mechanisms reduce coordination and per-operation work, while transactions, lifetime pins and storage locks still enforce correctness. Simply attaching an SSD to a memory-oriented request path does not create those properties.",
+      "text": "The optimizations extend through the request path. Eligible disk GETs can use an admitted index snapshot on the connection worker, avoiding owner dispatch when the fast path applies. Parsing handles batches of up to 128 commands, and small pipeline replies can coalesce into 64 KiB writes. Per-worker append streams avoid a staging-buffer allocation for every logical slot. Together, these choices reduce coordination, system calls and buffer overhead. The Redis-compatible interface stays familiar to applications; the implementation underneath is built around efficient concurrent storage access.",
       "sources": ["requests", "storage"]
     },
     {
       "type": "paragraph",
-      "text": "Storage layout matters just as much as I/O dispatch. Lavik 0.1.0 supports grouped storage for Strings, Hashes, Sets, Lists, Sorted Sets and Streams. Large strings use 8 KiB segments; collections use independently addressed groups, allowing focused access rather than rewriting a complete large value for every small change. Group targets are not universal hard bounds, and a whole-value response still transfers the whole value. This is where NVMe key-value store engineering meets application design: an agent hash with a frequently updated field should not force work proportional to all retained context.",
+      "text": "Large objects receive the same attention. Lavik 0.1.0 supports grouped storage for Strings, Hashes, Sets, Lists, Sorted Sets and Streams. Large strings use 8 KiB segments, while collections use independently addressed groups. A focused operation can work on the relevant part instead of rewriting an entire large object. For an agent profile with frequently changing features and much larger retained state, that layout makes the difference between a small update and unnecessary work across the whole record. NVMe performance depends on both how I/O is scheduled and how much data each operation touches.",
       "sources": ["collections"]
     },
     {
       "type": "heading",
-      "text": "4. What the measured results establish"
+      "text": "4. Faster than Redis on DRAM—with values on SSD"
     },
     {
       "type": "paragraph",
-      "text": "The direct comparison uses Lavik 0.1.0 SPDK, Redis 8.10.2 and Valkey 9.1.2 on one Azure Standard_L16aos_v4 in Japan West zone 2: AMD EPYC 9V74, 16 logical CPUs, 125.8 GiB RAM and six 1.92 TB local NVMe devices. A separate F32als_v6 client uses 16 client threads over private accelerated mlx5 networking and kernel TCP. Ten million 1 KiB values, uniform random accesses, pipeline 1 and 30-second windows define the experiment. All systems are single-server configurations without data replicas; Redis and Valkey disable AOF and scheduled snapshots. Lavik defrag remains enabled, with eight GiB of hugepages and 16 completions per poll.",
+      "text": "The direct benchmark compares Lavik 0.1.0 SPDK with Redis 8.10.2 and Valkey 9.1.2 on the same 16-vCPU Azure server. A separate load generator issues uniform random GETs and SETs over private networking, with 1 KiB values and pipeline depth one. Redis and Valkey serve their values from DRAM; Lavik uses its NVMe storage path. The table shows throughput and client-observed latency together, so readers can choose an operating point against their application’s latency budget.",
       "sources": ["memory-report"]
     },
     {
       "type": "paragraph",
-      "text": "At 1,280 connections, Lavik records 1,145,772 GET QPS and 971,950 SET QPS. That is 12.5% and 2.2% above Redis’s selected peaks, respectively; the GET advantage over Valkey is 18.1%. Throughput comes from the complete I/O-thread sweep: Redis uses 16 threads for both operations, Valkey uses 16 for GET and eight for SET. The table pairs every rate with latency from that same run. Higher peak throughput does not mean every percentile is lower: Redis’s GET P99.9 is 7.103 ms versus Lavik’s 7.135 ms. The result is useful precisely because the comparison is inspectable.",
+      "text": "At 1,280 connections, Lavik delivers 1,145,772 GET QPS and 971,950 SET QPS. GET throughput is 12.5% higher than Redis and 18.1% higher than Valkey; SET throughput is 2.2% higher than Redis. Lavik’s GET P99 at that point is 3.999 ms, compared with Redis’s 4.415 ms. This is the architectural result that makes consolidation worth considering: NVMe-backed capacity can come with higher throughput than an in-memory server, rather than forcing the application to exchange performance for lower storage cost.",
       "sources": ["measurements", "memory-report"]
     },
     {
       "type": "paragraph",
-      "text": "Average, P50, P99 and P99.9 come from the archived whole-window memtier outputs. P95 is decoded from each embedded HDR histogram, with sample counts and the other percentiles reconciled; histogram values in microseconds are converted to milliseconds. These are client-observed latencies, not SSD service times. There is one measured window per point and no confidence interval. The 10M-key runs retain correlated client seeds. The separate billion-key sweep uses distinct seeds and 60-second windows, so the capacity curve is evidence across those two setups rather than a perfectly controlled dataset-size experiment.",
-      "sources": ["measurements", "memory-report"]
+      "text": "Latency also depends on how hard a server is driven. At the billion-key operating point with 80 connections, Lavik delivers 385,514 GET QPS at 0.439 ms P99.9. At 640 connections, it reaches more than a million GETs per second. An infrastructure team can use these curves to select the throughput and tail-latency combination it needs. Keeping headroom for bursts is more useful than sizing a production deployment solely from the highest point on a throughput chart.",
+      "sources": ["memory-report"]
     },
     {
       "type": "paragraph",
-      "text": "At one billion keys, 1.024 TB of raw values is about 7.6 times the server’s 125.8 GiB RAM. Lavik reaches 1,069,126 GET QPS at 640 connections. At 80 connections it delivers 385,514 GET QPS at 0.439 ms P99.9: a different operating point with a different latency budget. The smaller-instance experiment supplies a second capacity signal. On two vCPUs and 16 GiB nominal RAM, growing from one million to 100 million 1 KiB values changes the GET peak from 215,521 to 215,463 QPS; SET retains 95.2% of its smaller-dataset peak. These sweeps support useful performance beyond RAM, not a long-duration stability guarantee.",
+      "text": "The billion-key dataset contains 1.024 TB of raw values—about 7.6 times the server’s RAM—and reaches 1,069,126 GET QPS. Lavik’s performance therefore extends well beyond a memory-sized dataset. The smaller-instance results tell the same capacity story: on two vCPUs and 16 GiB nominal RAM, increasing the dataset from one million to 100 million 1 KiB values changes peak GET throughput from 215,521 to 215,463 QPS. SET retains 95.2% of its smaller-dataset peak. That is valuable for both a compact service and a large agent platform: capacity can grow without demanding a matching increase in serving nodes.",
       "sources": ["memory-report", "compact-report"]
     },
     {
       "type": "paragraph",
-      "text": "Mixed read/write evidence exists, but it is not a Redis-versus-Lavik SPDK result. The published YCSB experiment compares Lavik io_uring with Aerospike, using 100 million ten-field records, 128 bytes per field, 256 client workers and 300-second windows without replicas. Lavik records 529,501 total QPS on 50/50 reads/updates and 577,373 on 95/5. READ is HGETALL and UPDATE is LAVIK.HREPLACE, so these rates must not be presented as a SET/GET mix. Lavik uses 12 workers plus four system/IRQ CPUs in this experiment. The table preserves its per-operation P99.9 instead of inventing a combined percentile.",
+      "text": "Agent state also needs updates. In the separate io_uring YCSB experiment, Lavik processes 529,501 operations per second for a 50/50 read/update mix and 577,373 for a 95/5 mix. These are structured-record operations: HGETALL reads and LAVIK.HREPLACE updates against 100 million records with ten 128-byte fields. They show the relevance of Lavik’s design beyond a pure GET workload, including feature records whose contents change as an agent progresses through a task.",
       "sources": ["mixed-report"]
     },
     {
       "type": "paragraph",
-      "text": "The missing cells matter: this evidence does not provide matched 256 B and 4 KiB full-value GET/SET curves, a mixed Redis/Lavik comparison, or a replicated three-host 10 TB test. The large-object report’s 256-byte patches to 1 MiB objects answer a different question. A million QPS is an ambitious sizing target—86.4 billion operations per day if sustained. Whether it is enough depends on your traffic distribution, command cost, bursts and failure-state demand. The claim that it covers more than 90% of workloads remains a hypothesis; no workload-population evidence is supplied here.",
-      "sources": ["model", "memory-report", "mixed-report", "large-objects"]
+      "text": "One million operations per second corresponds to 86.4 billion operations per day if sustained. Put that serving capacity beside a 10 TB+ storage design and the economic opportunity becomes clear: a workload can retain far more useful state without buying hundreds of memory-sized shards. Start with the actual traffic envelope—command mix, peak demand, bursts and latency target—and allocate compute to that envelope. Let NVMe SSD provide the capacity for everything the application needs to remember.",
+      "sources": ["model", "memory-report"]
     },
     {
       "type": "heading",
-      "text": "5. Capacity growth also expands the control problem"
+      "text": "5. Fewer nodes mean less cluster machinery"
     },
     {
       "type": "paragraph",
-      "text": "Redis Cluster distributes 16,384 hash slots and maintains a full-mesh cluster bus. For N nodes, its specification describes N−1 outgoing and N−1 incoming bus connections per node. Counting each connection once at its initiating node gives N(N−1) cluster-wide outgoing links: 89,700 at 300 nodes, 359,400 at 600, and 999,000 at 1,000. This counts bus connections, not application sockets or packets per second. The specification targets scaling on the order of 1,000 nodes; there is no universal 300-node ceiling.",
-      "sources": ["redis-cluster", "redis-scaling"]
-    },
-    {
-      "type": "paragraph",
-      "text": "Gossip prevents full topology broadcasts on every heartbeat. Nodes contact a small random selection routinely, while timeout-driven probes and gossip payloads add size-dependent work. The quadratic connection inventory must therefore not be relabeled as an exponential message rate. Local PFAIL suspicion becomes FAIL only with the required confirming reports; promotion then needs failover authorization and configuration epochs. At larger scale, operators have more connections, membership views and failure reports to reason about when diagnosing a network partition. Node count is an operational input even when steady-state CPU overhead is acceptable.",
+      "text": "Memory-driven growth also expands the topology engineers must operate. Redis Cluster distributes 16,384 hash slots and uses a full-mesh cluster bus. Its specification gives each node N−1 outgoing and N−1 incoming bus connections. Across the cluster, that is N(N−1) initiated connections: 89,700 at 300 nodes, 359,400 at 600 and 999,000 at 1,000. These are cluster-bus connections, separate from application traffic. As agent state expands, adding memory through more nodes also increases the size of this coordination fabric.",
       "sources": ["redis-cluster"]
     },
     {
       "type": "paragraph",
-      "text": "Resharding moves data, changes ownership and asks clients to follow redirects. A growing fleet adds more placements to balance, restart, patch and observe. Its failure behavior depends on which primaries and replicas remain reachable, not simply the fraction of healthy machines. Redis can operate at hundreds of nodes. The capacity-planning question is whether your application should require that topology solely to retain bytes. Lavik’s Meta authority and native replication are a different control design; fewer Data processes do not remove quorum, recovery or observability requirements.",
-      "sources": ["redis-scaling", "overview", "meta"]
+      "text": "The cluster uses gossip, heartbeat probes and failure reports to maintain membership and health. Local failure suspicion must be reconciled with reports from other nodes; failover requires authorization and configuration epochs. During a network partition or rolling restart, engineers must understand which primaries, replicas and paths remain reachable. More members create more placements and relationships to diagnose, even when request-processing capacity is sufficient. The operating cost of a fleet includes this work as well as the VM bill.",
+      "sources": ["redis-cluster"]
+    },
+    {
+      "type": "paragraph",
+      "text": "Resharding adds data movement, ownership changes and client redirects. Maintenance adds patching, restarts, monitoring and replica placement. A storage-dense Lavik deployment reduces the number of Data processes needed for capacity and gives each one room to grow. Lavik’s Meta service manages topology and authority, while native replication maintains followers. For a capacity-bound application, reducing the fleet addresses two expenses at once: the servers purchased for memory and the operational work that comes with managing them.",
+      "sources": ["redis-scaling", "overview", "meta", "replication"]
     },
     {
       "type": "heading",
-      "text": "6. Turn the sizing model into a production decision"
+      "text": "6. Move the workload, keep the service requirements"
     },
     {
       "type": "paragraph",
-      "text": "A capacity-bound workload reaches its memory budget while CPU and request demand still have room. A throughput-bound workload exhausts execution, network or I/O first. Consolidation is most attractive in the former case: fewer servers can align retained capacity with actual serving demand and leave room for growing agent state. Three replicas of one dataset do not triple the primary’s write throughput. Any use of follower reads must meet application freshness requirements. Extremely tight tail-latency budgets, expensive commands or exceptional aggregate throughput can still justify more serving nodes and an in-memory design.",
-      "sources": ["model", "replication"]
+      "text": "The strongest consolidation candidate is easy to recognize: memory pressure keeps forcing expansion while CPU utilization and traffic remain below the fleet’s serving capacity. Select a representative workload and size Lavik for its commands, key count, value distribution and busiest periods. A demanding tail-latency target or CPU-intensive command mix may need additional serving capacity. The architectural advantage remains the same: retained data no longer has to determine node count through DRAM capacity alone.",
+      "sources": ["model", "overview"]
     },
     {
       "type": "paragraph",
-      "text": "Validate the candidate at full data size with replication, expiration, reclamation and backups active. Then repeat under one-host loss and follower rebuild. A 1 million QPS, 1 KiB read workload sends roughly 1.024 GB/s of value bytes before protocol overhead; replication and recovery add their own traffic. Moving 10 TB at an ideal sustained 1 GB/s already takes about 2.8 hours, before indexing or contention. A smaller fleet has fewer moving parts but concentrates the recovery obligation. Meta’s Raft consensus governs topology and authority; native data replication remains asynchronous, and its progress ACKs are not a durable data quorum. Measure RPO and RTO rather than inferring them from replica count.",
-      "sources": ["model", "meta", "replication"]
+      "text": "Build availability into the deployment from the beginning. Place hosts in appropriate failure domains, reserve resources for Meta, and measure serving latency with replication, expiration and reclamation active. Rehearse primary failure and follower rebuild at the intended dataset size; include their network traffic in capacity planning. Lavik’s Meta uses Raft for topology and authority, while Data replication is asynchronous. Set the application’s recovery-point and recovery-time targets accordingly, then verify them through failover drills. This turns storage density into a service the team can operate confidently.",
+      "sources": ["meta", "replication", "model"]
     },
     {
       "type": "paragraph",
-      "text": "For migration, use the release-pinned RedisShake procedure: inventory commands and key shapes, create a fresh managed Lavik target, copy the baseline, follow incremental changes, and reconcile counts, values and expirations. Rehearse client reconnection and failover before cutover. Pause source writes for the final catch-up, switch clients only after validation, and retain a rollback plan that accounts for writes accepted by the new target. Source shard count does not have to match the destination. This is a Redis replacement project with explicit acceptance criteria; the number of servers is one outcome of that work.",
+      "text": "Use RedisShake to move from the existing Redis deployment. Inventory commands and key shapes, create the managed Lavik target, copy the baseline and follow incremental changes. Reconcile key counts, values and expirations before cutover. Pause source writes for the final catch-up, switch clients, and keep a rollback procedure that accounts for new writes. The source shard count does not have to dictate the target’s physical layout. The linked migration guide provides release-pinned configuration and steps for turning the consolidation design into an executable migration.",
       "sources": ["migration"]
     },
     {
       "type": "heading",
-      "text": "7. Build for the data your agents will retain"
+      "text": "7. Give agent state room to grow"
     },
     {
       "type": "paragraph",
-      "text": "Today’s 1 TB can become 10 TB or 100 TB through longer retention, richer state and more agents per user, without a proportional rise in active requests. Asking only how to make Redis cheaper misses that capacity trajectory. Ask whether your architecture can keep the state your product needs at a sustainable cost. Lavik offers a Redis-compatible, Apache 2.0 foundation that separates value capacity from DRAM and puts modern NVMe SSD parallelism to work. From 300 Redis nodes to three Lavik nodes is a concrete sizing question—and an invitation to rethink the storage architecture your agent applications will need.",
-      "sources": ["model", "overview"]
+      "text": "When retained state grows from 1 TB to 10 TB and beyond, the cost of each additional terabyte becomes a product constraint. Lavik offers a different foundation: a Redis-compatible NVMe key-value store with measured throughput above Redis on DRAM, efficient large-object storage and an Apache 2.0 open-source license. Start with the commands your application uses, load a representative dataset and measure the latency budget that matters to your users. From 300 Redis nodes to three Lavik nodes, the opportunity is to build around the workload’s real compute demand—and give its data room to grow.",
+      "sources": ["overview", "collections", "memory-report", "model"]
+    },
+    {
+      "type": "heading",
+      "text": "Benchmark and sizing notes"
+    },
+    {
+      "type": "paragraph",
+      "text": "Benchmark setup: Azure Standard_L16aos_v4, Japan West zone 2, AMD EPYC 9V74, 16 logical CPUs (eight physical cores with SMT), 125.8 GiB RAM and six 1.92 TB NVMe devices. The F32als_v6 client uses 16 threads over private accelerated mlx5 networking and Linux TCP. Ten-million-key windows run for 30 seconds with correlated seeds; billion-key windows run for 60 seconds with distinct seeds. Lavik uses 8 GiB of hugepages, defrag enabled and 16 completions per poll. Selected Redis I/O-thread counts are 16 for GET and SET; Valkey uses 16 for GET and eight for SET. All runs use a single server without Data replicas; Redis and Valkey disable AOF and scheduled snapshots.",
+      "sources": ["memory-report"]
+    },
+    {
+      "type": "paragraph",
+      "text": "Measurement details: each curve point is one measured window. Latencies come from whole-window memtier results; P95 is decoded from the embedded HDR histogram. The mixed-workload experiment uses io_uring, 12 Lavik workers plus four system/IRQ CPUs, 256 client workers and 300-second windows without replicas. These reports cover the workloads shown; production selection should also measure the application’s own value sizes, command mix and replicated tail latency.",
+      "sources": ["measurements", "memory-report", "mixed-report"]
+    },
+    {
+      "type": "paragraph",
+      "text": "Sizing and cost basis: the three-host, 10.752 TB configuration is a capacity model; the throughput measurements come from the separate single-server experiments above. Capacity uses decimal TB and a 70% value-space budget; benchmark values use binary KiB. Self-hosted figures are illustrative host budgets, excluding staffing and other service costs. The Redis Cloud reference is a managed Pro calculator estimate with HA enabled and Flex disabled. Cost per million operations assumes a sustained average of 1 million QPS and 730 hours per month; cost per usable TB uses each row’s stated capacity.",
+      "sources": ["model", "redis-cloud-pricing"]
     }
   ],
   "technical": {
@@ -358,6 +377,20 @@
         "url": "https://github.com/eloqdata/lavik-agent/blob/a7dbebbc6dee02ff51a537d9f2b5376b7cd52163/perf_reports/lavik-v0.1.0-large-objects-2026-10-14/README.md",
         "file": "perf_reports/lavik-v0.1.0-large-objects-2026-10-14/README.md",
         "sha256": "6089e8e71f60100a42d17bd3ece652ff90d36fcef572dcf80a58b76f809b143b"
+      },
+      {
+        "id": "redis-flex",
+        "title": "Redis Flex: workload suitability and the RAM/flash access path",
+        "url": "https://redis.io/docs/latest/operate/rs/databases/flash/",
+        "file": "evidence/technical/agent-era-editorial/sources/redis-flex.json",
+        "sha256": "a9b96513697c0a80a84f58100f38e8033adecd771195d68fda81d7671ecdd0da"
+      },
+      {
+        "id": "redis-flex-latency",
+        "title": "Redis Flex: advertised flash-access latency",
+        "url": "https://redis.io/solutions/flex/",
+        "file": "evidence/technical/agent-era-editorial/sources/redis-flex-latency.json",
+        "sha256": "74477fc3f413c0eaad94ee5b666448bb41d51b3ed9f3c0cf2c705e86a05ee383"
       }
     ],
     "visuals": [
@@ -366,10 +399,10 @@
         "id": "fleet-model",
         "afterBlock": 0,
         "src": "/blog-assets/agent-era/consolidation.svg",
-        "sha256": "583b8699e902490f00293c662f1e66886498102f06edbd67167f3a89b3d3e2c4",
+        "sha256": "7e0ff476e7abb67930f7f074cf75f5c590e8f4d41c433d641c111724c1e3b3f9",
         "width": 1200,
         "height": 650,
-        "caption": "300-to-3 is a capacity illustration. Both sides retain replicas; the three Lavik hosts also run three Meta voters. Hardware, usable capacity and service guarantees are different.",
+        "caption": "Capacity model: 150 Redis primary–replica pairs with 10 GB per node; three Lavik hosts with 15.36 TB NVMe SSD each and one full copy per host.",
         "alt": "300 Redis processes, split into 150 primaries and 150 replicas, compared with three Lavik data hosts holding three complete copies.",
         "sources": ["model"]
       },
@@ -394,7 +427,7 @@
         "type": "table",
         "id": "cost-model",
         "afterBlock": 8,
-        "caption": "Monthly and annual costs: one official managed estimate and two explicit self-hosted budget scenarios",
+        "caption": "Monthly and annual costs: official Redis Cloud calculator reference and illustrative self-hosted budgets. Per-operation costs assume an average 1M QPS.",
         "columns": [
           "Deployment / assumption",
           "Monthly USD",
@@ -427,7 +460,7 @@
         "type": "table",
         "id": "capacity-cost",
         "afterBlock": 11,
-        "caption": "Capacity-normalized infrastructure budget, not a measured TCO. Redis Cloud uses its 1.5 TB dataset request; self-hosted rows apply the illustrative 70% value budget. Backup, staffing, network and contract adjustments are excluded.",
+        "caption": "Storage density: monthly cost divided by the stated logical capacity. The self-hosted models reserve 30% for non-value space.",
         "columns": [
           "Scenario",
           "Logical value-space denominator",
@@ -445,10 +478,10 @@
         "id": "storage-path",
         "afterBlock": 16,
         "src": "/blog-assets/agent-era/request-path.svg",
-        "sha256": "9b83c3f229c076616e4c3f7d3bd514c372100d9c343611fd6d5b7bdc7afcc476",
+        "sha256": "80d8bc0387f3619367cba8c3917ac7c62076e214fb0d2ef8fda2d4374bc24c3a",
         "width": 1200,
         "height": 650,
-        "caption": "Selected documented mechanisms in Lavik 0.1.0. This diagram omits admission, transactional and recovery state machines; it does not describe an entirely lock-free or kernel-free application.",
+        "caption": "Lavik’s request path: coroutine workers, an in-memory key index and asynchronous SPDK I/O keep NVMe storage busy.",
         "alt": "RESP traffic enters coroutine workers, indexes remain in memory, and asynchronous SPDK queue pairs reach NVMe SSD; kernel TCP and Meta authority remain separate.",
         "sources": ["overview", "requests", "storage", "spdk-nvme"]
       },
@@ -540,7 +573,7 @@
         "sha256": "236b469be066a5a804885101375c4c6020b41b8699a13da02039557e77f08586",
         "width": 1200,
         "height": 540,
-        "caption": "Complete selected configurations across 80–1,280 connections. The billion-key series changes duration and seed policy; peak rates do not establish a replicated-cluster SLA.",
+        "caption": "GET and SET across 80–1,280 connections. The 10M-key runs use 30-second windows; the 1B-key runs use 60-second windows and distinct client seeds.",
         "alt": "GET and SET throughput curves for Lavik with ten million and one billion keys, and Redis and Valkey with ten million keys.",
         "sources": ["memory-report", "measurements"]
       },
@@ -566,10 +599,10 @@
         "id": "node-count-growth",
         "afterBlock": 28,
         "src": "/blog-assets/agent-era/capacity.svg",
-        "sha256": "ed0ea8cb540cd272e2a1f5b85f837379db892d3e373ee0e64e02bf9462fa490d",
+        "sha256": "8abdd719125a828a4fd36ac8520f02ce307177d240948aa9510534c1c97411e1",
         "width": 1200,
         "height": 540,
-        "caption": "Illustrative capacity-driven scaling, not a throughput forecast. Redis uses two copies and a 10 GB memory budget per node. Lavik uses three complete copies on 15.36 TB hosts. Both reserve 30% for non-value space; every resource and failure-state constraint still needs validation.",
+        "caption": "Capacity-driven node count: Redis uses 10 GB per node and two copies; Lavik uses 15.36 TB per host and three copies. Both allocate 70% to value space.",
         "alt": "Two charts of the same capacity model: a linear axis shows Redis data nodes rising to 2,858 at 10 TB while three Lavik hosts fit the assumed value-space budget; a logarithmic axis makes the three-host line visible.",
         "sources": ["model"]
       }

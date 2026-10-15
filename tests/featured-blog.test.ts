@@ -93,6 +93,8 @@ test("altered diagram bytes or review records cannot retain approval", (t) => {
   }) as typeof fs.readFileSync);
   assert.ok(technicalArticleErrors(flagship).length);
   assert.ok(technicalPublicationErrors(flagship).length);
-  altered = "evidence/technical/agent-era/review.json";
+  altered = JSON.parse(
+    read(`evidence/reviews/${flagship.locale}-${flagship.id}.json`, "utf8"),
+  ).record;
   assert.ok(technicalPublicationErrors(flagship).length);
 });

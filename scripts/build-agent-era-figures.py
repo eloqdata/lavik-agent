@@ -62,6 +62,6 @@ for ax in axes:
 axes[0].set_ylim(bottom=0);axes[0].set_title('Capacity-only node count',loc='left',fontweight='bold')
 axes[1].set_yscale('log');axes[1].set_title('Same model · logarithmic node axis',loc='left',fontweight='bold');axes[1].legend(fontsize=8,loc='upper left',frameon=False)
 fig.suptitle('Buy capacity without multiplying the serving fleet',fontweight='bold',fontsize=16,x=.075,ha='left')
-fig.text(.075,.025,'Illustration: 70% value-space budget; CPU, key-index RAM, network and failure-state throughput still need validation.',fontsize=9)
+fig.text(.075,.025,'Capacity model: 70% value-space budget. Redis: two copies. Lavik: three full copies on three hosts.',fontsize=9)
 fig.tight_layout(rect=[.025,.065,1,.92]);fig.savefig(OUT/'capacity.svg',metadata={'Date':None});plt.close(fig)
 print('Derived six latency rows and forty measured throughput points; generated two standalone SVG charts.')
