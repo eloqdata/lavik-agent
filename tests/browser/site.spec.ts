@@ -54,9 +54,9 @@ test("both languages, homepage benchmark interaction, and real verification outp
         await expect(page.locator(".dual-cost-row strong")).toHaveText([
           "5%",
           "100%",
-          "80%",
+          "100%",
         ]);
-        for (const [index, width] of ["5%", "100%", "80%"].entries()) {
+        for (const [index, width] of ["5%", "100%", "100%"].entries()) {
           await expect(
             page.locator(".dual-cost-row .bar").nth(index),
           ).toHaveAttribute("style", `width:${width}`);
@@ -83,14 +83,11 @@ test("both languages, homepage benchmark interaction, and real verification outp
         await page.locator(".dual-method summary").click();
         await expect(page.locator(".dual-method p").first()).toBeVisible();
         await expect(page.locator(".dual-method p").last()).toContainText(
-          "400 GB",
-        );
-        await expect(page.locator(".dual-method p").last()).toContainText(
-          "500 GB",
+          "20:1",
         );
         await expect(page.locator(".dual-method a").last()).toHaveAttribute(
           "href",
-          "https://www.dragonflydb.io/",
+          `/${locale}/cost/`,
         );
       }
     }
@@ -201,7 +198,7 @@ test("selected homepage is exported without JavaScript and preview queries canno
       await expect(page.locator(".dual-cost-row strong")).toHaveText([
         "5%",
         "100%",
-        "80%",
+        "100%",
       ]);
       await expect(page.locator(".dual-description")).toContainText(
         locale === "en"
@@ -231,7 +228,9 @@ test("selected homepage is exported without JavaScript and preview queries canno
       await expect(page.locator("#home-cluster-caption")).toContainText(
         locale === "en" ? "not a measured migration" : "不是已完成的迁移案例",
       );
-      await expect(page.locator(".home-scale-stats")).toContainText("952,560");
+      await expect(page.locator(".home-scale-stats")).toContainText(
+        "1,069,126",
+      );
       await expect(page.locator(".home-agent-result")).toContainText(
         "5.96 TiB",
       );
@@ -241,7 +240,7 @@ test("selected homepage is exported without JavaScript and preview queries canno
   await context.close();
 });
 
-test("homepage capacity scenario responds to input and tail-latency evidence remains inspectable", async ({
+test("homepage capacity scenario responds to input and links to current migration guidance", async ({
   page,
 }) => {
   for (const locale of ["en", "zh-CN"]) {
@@ -255,14 +254,11 @@ test("homepage capacity scenario responds to input and tail-latency evidence rem
     await slider.press("End");
     await expect(page.locator(".home-agent-result")).toContainText("11.92 TiB");
     await expect(page.locator(".home-agent-result")).toContainText("200×");
-    await page.locator(".home-tail-details summary").click();
-    await expect(page.locator(".home-tail-details table")).toBeVisible();
-    await expect(
-      page.locator(".home-tail-details tbody tr").nth(0),
-    ).toContainText("10.239");
-    await expect(
-      page.locator(".home-tail-details tbody tr").nth(1),
-    ).toContainText("17.535");
+    await expect(page.locator(".home-tail-details a")).toHaveAttribute(
+      "href",
+      `/${locale}/docs/0.1.0/migrate-redis/`,
+    );
+    await expect(page.locator(".home-scale-stats")).toContainText("1.024");
     await expect(page.locator(".home-sizing-note")).toContainText(
       locale === "en"
         ? "not a tested 300-to-3 migration"

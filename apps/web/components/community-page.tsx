@@ -15,6 +15,21 @@ export function CommunityPage({ locale }: { locale: Locale }) {
       <div className="community-grid">
         <article className="community-card">
           <span className="community-symbol" aria-hidden="true">
+            &gt;_
+          </span>
+          <p className="eyebrow">LAVIK COMMUNITY</p>
+          <h2>Discord</h2>
+          <p>
+            {zh
+              ? "加入开放讨论，提出想法，分享学习和构建过程中的发现。"
+              : "Join the conversation, bring an idea, and share what you discover while learning and building with Lavik."}
+          </p>
+          <a className="button" href="https://lavik.dev/community/discord/">
+            {zh ? "加入 Discord" : "Join Discord"} ↗
+          </a>
+        </article>
+        <article className="community-card">
+          <span className="community-symbol" aria-hidden="true">
             #
           </span>
           <p className="eyebrow">LAVIK COMMUNITY</p>
@@ -34,21 +49,6 @@ export function CommunityPage({ locale }: { locale: Locale }) {
             {zh
               ? "已是成员？登录工作区"
               : "Already a member? Open the workspace"}
-          </a>
-        </article>
-        <article className="community-card">
-          <span className="community-symbol" aria-hidden="true">
-            &gt;_
-          </span>
-          <p className="eyebrow">LAVIK COMMUNITY</p>
-          <h2>Discord</h2>
-          <p>
-            {zh
-              ? "加入开放讨论，提出想法，分享学习和构建过程中的发现。"
-              : "Join the conversation, bring an idea, and share what you discover while learning and building with Lavik."}
-          </p>
-          <a className="button" href="https://lavik.dev/community/discord/">
-            {zh ? "加入 Discord" : "Join Discord"} ↗
           </a>
         </article>
         <article className="community-card">
@@ -87,8 +87,8 @@ export function CommunityPage({ locale }: { locale: Locale }) {
             <h3>{zh ? "运行你的工作负载" : "Bring your workload"} →</h3>
             <p>
               {zh
-                ? "下载 beta 版本，用真实应用评估兼容性与性能。"
-                : "Download the beta and evaluate compatibility and performance with your application."}
+                ? "下载 Lavik 0.1.0，用真实应用评估兼容性与性能。"
+                : "Download Lavik 0.1.0 and evaluate compatibility and performance with your application."}
             </p>
           </Link>
           <a
@@ -112,8 +112,8 @@ export function CommunityPage({ locale }: { locale: Locale }) {
             <h3>{zh ? "从文档开始" : "Start with the docs"} →</h3>
             <p>
               {zh
-                ? "查阅命令、实测客户端示例，以及当前验证范围。"
-                : "Explore commands, tested client examples, and the scope of the current verification."}
+                ? "查阅命令、实测客户端示例，以及迁移、复制和监控指南。"
+                : "Explore commands, tested client examples, migration, replication and monitoring guides."}
             </p>
           </Link>
         </div>

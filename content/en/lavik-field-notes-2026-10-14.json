@@ -4,93 +4,102 @@
   "version": "0.1.0",
   "kind": "blog",
   "slug": "lavik-field-notes-2026-10-14",
-  "title": "Evaluate the Redis connection your pool hands to the next request",
-  "summary": "A client can pass basic commands and still mishandle a reused connection. Evaluate Lavik by following connection state through checkout, errors, timeouts, and return to the pool.",
+  "title": "Using Redis Connection Pools with Lavik 0.1.0",
+  "summary": "Keep your Redis client while moving value capacity to NVMe SSD. Choose the right routing mode, initialize pooled connections consistently, and size concurrency for the application.",
   "updatedAt": "2026-10-14",
+  "sourceRevision": "471f4864357f4a5034c64e7d4972ec0e55b82d94",
   "topics": [
     "best-practise",
     "architecture"
   ],
   "blocks": [
     {
+      "type": "heading",
+      "text": "Keep the client. Expand the dataset."
+    },
+    {
       "type": "paragraph",
-      "text": "A successful first request leaves an important compatibility question unanswered: what state will the next borrower inherit from the same connection? For an application evaluating Lavik, connection reuse deserves its own acceptance criteria. Lavik moves value capacity onto storage while retaining a Redis-compatible interface, making existing clients a useful starting point. Its 0.1.0-beta.1 release is an Apache 2.0 beta, however, and compatibility depends on the commands and operational behavior your application actually uses.",
+      "text": "A growing Redis dataset should not force you to redesign every application connection. Lavik 0.1.0 speaks RESP2 and RESP3, keeps a compact index in memory and stores values on NVMe SSD. Your Redis client remains the application entry point. For a service using a connection pool, the integration work is to select the right client mode and preserve clear ownership of each connection.",
       "sources": [
-        "readme",
-        "architecture"
+        "current-010-readme",
+        "current-010-requests",
+        "current-010-storage"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "Choose the routing model before the pool size"
+    },
+    {
+      "type": "paragraph",
+      "text": "Managed Single gives the application one Group covering the keyspace, all 16 logical databases and no Cluster-style MOVED routing. Managed Cluster uses DB0 and Redis Cluster routing, including same-slot rules for multi-key requests. Match the client’s standalone or Cluster connection model to that deployment. This decision determines discovery and routing; adding more pooled sockets does not change it.",
+      "sources": [
+        "current-010-import",
+        "current-010-requests",
+        "current-010-storage"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "Initialize every new connection consistently"
+    },
+    {
+      "type": "paragraph",
+      "text": "Lavik starts a connection with RESP2 semantics and supports RESP3 negotiation. Authentication, the selected database and transaction state belong to the connection. Configure initialization in the client’s connection-creation path so replacement sockets receive the same protocol, authentication and database settings. Keep requests that require a particular connection state on a connection whose lifecycle the client owns explicitly.",
+      "sources": [
+        "current-010-requests"
       ]
     },
     {
       "type": "paragraph",
-      "text": "Make the unit of evaluation a complete pool lifecycle: checkout, initialization, application work, cleanup, and reuse by another request. For each stage, record the expected connection state, the observable reply, and whether the client returns or discards the connection after failure. This extends the earlier article “Evaluate the Redis client’s second attempt”: the question here is whether a later, unrelated request receives a usable connection.",
+      "text": "Pipelines and ordinary request pools have different reply-consumption rules. When several requests share a socket over time, each caller must consume its replies before another caller takes ownership. After a timeout with an unresolved reply, discard or drain the connection using the client library’s supported behavior. Treat retries of a mutation as an application decision: a local timeout alone does not establish whether the server applied the write.",
       "sources": [
-        "architecture"
+        "current-010-requests",
+        "current-010-storage"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "Give long-lived work its own connection lifecycle"
+    },
+    {
+      "type": "paragraph",
+      "text": "Pub/Sub subscriptions and blocking requests can occupy a connection much longer than a profile lookup. Keep those lifecycles separate from a pool intended for short request-response work. Lavik maintains subscriber state on the connection’s worker and bounds subscriber output; the application should handle reconnection and subscription restoration through its client library.",
+      "sources": [
+        "current-010-requests"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "Size concurrency for useful throughput"
+    },
+    {
+      "type": "paragraph",
+      "text": "A connection pool is a concurrency limit, not a capacity plan. Lavik’s worker scheduling and asynchronous storage path overlap independent requests with I/O. In the October 13 SPDK report, Lavik 0.1.0 reaches 1,145.8k peak GET QPS at 1,280 connections over 10 million 1 KiB values. That is a benchmark operating point, not a recommendation to create 1,280 sockets per application. Start with your service’s total in-flight requests, response-time budget and number of application instances.",
+      "sources": [
+        "current-010-requests",
+        "current-010-memory"
       ]
     },
     {
       "type": "paragraph",
-      "text": "Start with a narrow baseline. The supplied Docker receipt records the basic-commands recipe passing on Linux ARM64 with glibc 2.39, using the Minimal 0.1.0-beta.1 package. Its five command replies matched expectations, and the harness reported a successful graceful restart. Those observations establish a basic connection and data-path check; pooled reuse, timeout handling, and crash durability remain separate evaluation questions.",
+      "text": "As the retained dataset expands, keep connection demand and value capacity separate. More historical profiles or cached objects can add stored bytes without adding the same proportion of simultaneous requests. Lavik places those values on NVMe SSD while retaining the Redis-compatible access path. Increase pool size when measured concurrency requires it, and size the index, storage and replica budget for the data you want to retain.",
       "sources": [
-        "build",
-        "storage"
+        "current-010-readme",
+        "current-010-storage"
       ]
     },
     {
-      "type": "recipe",
-      "recipeId": "basic-commands"
+      "type": "heading",
+      "text": "Bring one request path to Lavik"
     },
     {
       "type": "paragraph",
-      "text": "First, verify protocol initialization on every newly opened connection. Lavik starts with RESP2 semantics and can negotiate RESP3. Authentication, the selected logical database, transaction state, and subscriptions are connection-scoped. Include both newly created and reused connections in your application checks, and verify that the client decodes the reply shapes it consumes, including RESP3 maps, sets, nulls, and push frames where applicable. A pool configured once at application startup still needs correct initialization when it replaces a socket.",
+      "text": "Start a Lavik 0.1.0 instance, choose a client configuration from the current manual, and connect one application path in a staging environment. Keep its existing pool limits for the first comparison. Check normal reads and writes, a replaced connection and recovery after a client timeout; then tune concurrency with the application’s latency metrics. For an existing Redis dataset, the RedisShake guide supplies the full-copy, catch-up and cutover procedure.",
       "sources": [
-        "architecture"
-      ]
-    },
-    {
-      "type": "paragraph",
-      "text": "Next, list exact command forms by application operation. A command name alone leaves out options, argument shapes, data types, and execution context. Lavik’s Lua and Function invocations use declared keys as their transaction boundary and restrict commands executed inside that boundary. Blocking list and sorted-set operations inside scripts make an immediate attempt without registering a waiter; stream reads permit only the nonblocking form there. Cluster mode also retains the same-slot requirement for multi-key commands. Evaluate the forms your client emits in each context, including cleanup after a rejected operation.",
-      "sources": [
-        "architecture",
-        "readme"
-      ]
-    },
-    {
-      "type": "paragraph",
-      "text": "Then make error handling part of pool acceptance. Lavik can reject retained-memory admission, reject ordinary commands while a Lua invocation exceeds its execution-time limit, or refuse serving when cluster authority is unavailable. Ask the application check to distinguish a server error reply from a broken connection and a local deadline. Record the exception exposed to the caller and the pool’s decision about the socket. Include an error within a pipeline followed by another reply: the next borrower must not receive unread output belonging to the previous request.",
-      "sources": [
-        "architecture",
-        "storage"
-      ]
-    },
-    {
-      "type": "paragraph",
-      "text": "For timeouts, inspect both the abandoned operation and the connection left behind. A client deadline alone does not establish whether a mutation reached Lavik’s publication boundary. Storage can publish an updated in-memory index before the write crosses its crash-durability boundary, and a successful ordinary write reply is not a synchronous fsync fence. Define how the client drains or discards a connection with an unresolved reply, then evaluate that behavior with the application’s actual cancellation mechanism. Treat any decision to repeat the mutation as a separate application policy.",
-      "sources": [
-        "architecture",
-        "storage"
-      ]
-    },
-    {
-      "type": "paragraph",
-      "text": "Give subscriptions and blocking work explicit ownership. Lavik keeps Pub/Sub registries on the connection’s worker and closes a slow subscriber rather than allowing unbounded output growth. Check what the client does after that closure and whether subscription traffic can enter a pool used for ordinary requests. Likewise, define when a connection used for blocking work becomes available again. Dedicated connections are one possible application design; any shared design needs evidence that cleanup and reply consumption finish before reuse.",
-      "sources": [
-        "architecture"
-      ]
-    },
-    {
-      "type": "paragraph",
-      "text": "Finally, evaluate pool replacement during restart and topology changes. Lavik publishes readiness after recovery and optional import; a listening socket alone is not the readiness boundary. Meta-managed nodes start fenced and need current authority before serving. A process restart also creates a new replication history and requires whole-group full synchronization. Your client evaluation should therefore include discovery or redirection behavior where applicable, connection replacement, and the application’s deadline while service is unavailable. A basic graceful-restart receipt does not establish these operational properties.",
-      "sources": [
-        "architecture",
-        "storage"
-      ]
-    },
-    {
-      "type": "paragraph",
-      "text": "For the next evaluation, choose one real request path that uses a pool and write its expected checkout and return states. Run the registered baseline, then gather application-specific evidence for normal completion, a server error, and a client timeout followed by reuse. Keep those proposed checks separate from the supplied receipt. The useful deliverable is a small compatibility record identifying which connections can safely return to the pool, which must be discarded, and which behaviors remain unverified.",
-      "sources": [
-        "architecture",
-        "storage"
+        "current-010-readme",
+        "current-010-requests",
+        "current-010-import"
       ]
     }
   ]

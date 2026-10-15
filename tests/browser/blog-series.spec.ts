@@ -78,7 +78,7 @@ test("stable release announcement links to stable downloads and docs without the
     await expect(page.locator(".source-list")).not.toContainText("下载的 beta");
     await expect(page.locator(".source-list a").first()).toHaveAttribute(
       "href",
-      `https://github.com/eloqdata/lavik/tree/${stableRelease.commit}`,
+      `https://github.com/eloqdata/lavik/tree/${article.sourceRevision}`,
     );
     for (const route of [
       "download/",

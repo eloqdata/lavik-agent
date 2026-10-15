@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type { Locale } from "../../../packages/content/schema";
-import { homepageEvidence } from "../../../packages/homepage/evidence";
+
 import {
   consolidationScenario as sizing,
   capacityLabel,
@@ -9,19 +9,10 @@ import { ClusterIllustration } from "./cluster-illustration";
 import { AgentCapacity } from "./agent-capacity";
 import "./homepage-story.css";
 
-export function HomepageStory({
-  locale,
-  sourceUrl,
-  benchmarkDate,
-}: {
-  locale: Locale;
-  sourceUrl: string;
-  benchmarkDate: string;
-}) {
+export function HomepageStory({ locale }: { locale: Locale }) {
   const zh = locale === "zh-CN";
   const t = (en: string, cn: string) => (zh ? cn : en);
   const docs = `/${locale}/docs/0.1.0`;
-  const evidence = homepageEvidence();
   const aggregate = capacityLabel(
     sizing.redisNodes * sizing.redisValueGiBPerNode * 2 ** 30,
   );
@@ -167,7 +158,7 @@ export function HomepageStory({
                 "已发布的存储层实验覆盖了比小数据集内存对照更大的规模：十亿个键、每个值 1 KiB，主机内存约 126 GiB。",
               )}
             </p>
-            <a href={sourceUrl}>
+            <a href={`/${locale}/benchmarks/1tb-storage/`}>
               {t("Read the full storage-tier experiment", "阅读完整存储层实验")}{" "}
               ↗
             </a>
@@ -178,24 +169,22 @@ export function HomepageStory({
               <span>{t("keys × 1 KiB values", "个键 × 1 KiB 值")}</span>
             </div>
             <div>
-              <strong>{evidence.billionGet.qps.toLocaleString("en-US")}</strong>
+              <strong>1,069,126</strong>
               <span>
                 {t("peak GET requests / second", "峰值 GET 请求 / 秒")}
               </span>
             </div>
             <div>
               <strong>
-                {evidence.billionGet.p99} <small>ms</small>
+                1.024 <small>TB</small>
               </strong>
-              <span>
-                {t("GET p99 at that same point", "同一测量点的 GET p99")}
-              </span>
+              <span>{t("raw value payload", "原始值数据量")}</span>
             </div>
           </div>
           <p className="home-scale-note">
             {t(
-              `SPDK · ${benchmarkDate} · ${evidence.billionGet.connections} connections · pipeline=1 · 60-second window. Single-server result; repeat with your workload.`,
-              `SPDK · ${benchmarkDate} · ${evidence.billionGet.connections} 个连接 · pipeline=1 · 60 秒窗口。单机结果，请使用实际工作负载复测。`,
+              "Lavik 0.1.0 SPDK · October 14, 2026 · peak GET at 640 connections · pipeline=1 · 60-second measurement. One server, six NVMe SSDs.",
+              "Lavik 0.1.0 SPDK · 2026-10-14 · GET 峰值对应 640 个连接 · pipeline=1 · 60 秒测量。单台服务器，六块 NVMe SSD。",
             )}
           </p>
         </div>
@@ -265,47 +254,24 @@ export function HomepageStory({
               ↗
             </Link>
           </div>
-          <details className="home-tail-details">
-            <summary>
-              {t(
-                "What the current P99.99 results show",
-                "当前 P99.99 测量结果",
-              )}
-            </summary>
+          <div className="home-tail-details">
+            <h3>
+              {t("A practical path to a smaller fleet", "逐步缩减集群规模")}
+            </h3>
             <p>
               {t(
-                "At each system’s selected 10M-key throughput peak, GET P99.99 is lower for Lavik; SET P99.99 is slightly higher. These single-server measurements do not establish a cluster SLA.",
-                "在各系统选定的千万键吞吐峰值点，Lavik 的 GET P99.99 更低，SET P99.99 略高。这些单机测量不能确立集群 SLA。",
+                "Start with one capacity-heavy dataset. Load a representative copy with RedisShake, replay application traffic, and compare node count at the same retention and response-time targets. Keep headroom for replicas and recovery before cutting over.",
+                "先选择一个容量压力较大的数据集。使用 RedisShake 导入代表性副本，回放应用流量，在相同保留范围和响应时间目标下比较所需节点数。切换前为副本与恢复预留余量。",
               )}
             </p>
-            <table>
-              <caption>
-                {t(
-                  "Measured P99.99 latency, milliseconds",
-                  "P99.99 实测延迟，毫秒",
-                )}
-              </caption>
-              <thead>
-                <tr>
-                  <th>{t("Command", "命令")}</th>
-                  <th>Lavik SPDK</th>
-                  <th>Redis</th>
-                </tr>
-              </thead>
-              <tbody>
-                {evidence.tail.map((row) => (
-                  <tr key={row.command}>
-                    <th scope="row">{row.command}</th>
-                    <td>{row.lavik.p9999}</td>
-                    <td>{row.redis.p9999}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-            <a href={sourceUrl}>
-              {t("Measurements and methodology", "测量数据与方法")} ↗
-            </a>
-          </details>
+            <Link href={`${docs}/migrate-redis/`}>
+              {t(
+                "Follow the RedisShake migration guide",
+                "查看 RedisShake 迁移步骤",
+              )}{" "}
+              →
+            </Link>
+          </div>
         </div>
       </section>
 
@@ -417,15 +383,15 @@ export function HomepageStory({
           </p>
           <p>
             {t(
-              "Source, benchmarks, design documents, and issue discussions are public. Lavik is at 0.1.0-beta.1: start with the versioned manual and bring us your workload, questions, and contributions.",
-              "源代码、基准测试、设计文档和问题讨论都公开可见。Lavik 当前为 0.1.0-beta.1：从版本化手册开始，欢迎带来你的工作负载、问题和贡献。",
+              "Lavik 0.1.0 is available now. The code, benchmark procedures and architecture documents are public. Build with it, inspect how it works, and help us make it better.",
+              "Lavik 0.1.0 已发布。代码、基准测试步骤与架构文档全部公开。欢迎用它构建应用，深入了解实现，并参与改进。",
             )}
           </p>
           <div className="home-link-row">
             <a href="https://github.com/eloqdata/lavik">
               {t("Explore the source", "查看源码")} ↗
             </a>
-            <a href="https://github.com/eloqdata/lavik/blob/v0.1.0-beta.1/LICENSE">
+            <a href="https://github.com/eloqdata/lavik/blob/v0.1.0/LICENSE">
               {t("Read the license", "阅读许可证")} ↗
             </a>
             <Link href={`/${locale}/community/`}>

@@ -1,3 +1,4 @@
+import { faqFor } from "../editorial/faq";
 import {
   benchmarkReports,
   benchmarkRoute,
@@ -6,6 +7,7 @@ import {
 import { reportSourceUrl } from "../benchmarks/repository";
 import { docVersionForRoute } from "../docs/versions";
 import {
+  stableRelease,
   stableGuides,
   stableCatalog,
   stableReleaseNotes,
@@ -34,13 +36,23 @@ import { blogPresentation } from "../blog/presentation";
 
 export const siteOrigin = "https://lavik.dev";
 export const canonicalRoute = (route: string) =>
-  route === "docs" ? "docs/0.1.0" : route.replace(/^\/+|\/+$/g, "");
+  route === "docs"
+    ? "docs/0.1.0"
+    : route === "use-cases/datasets-beyond-memory"
+      ? "use-cases/large-application-caches"
+      : route.replace(/^\/+|\/+$/g, "");
 const pairs: Record<string, [string, string, string, string]> = {
   "": [
     "Lavik — Faster-than-Redis SPDK throughput. NVMe SSD capacity.",
     "Lavik — SPDK 测试吞吐量超过 Redis，容量随 NVMe SSD 扩展。",
     "A Redis-compatible key-value store with values on NVMe SSD. Explore measured SPDK performance, the 20:1 capacity-price model, and Apache 2.0 source code.",
     "兼容 Redis 的键值存储，将值存于 NVMe SSD。了解实测 SPDK 性能、20:1 容量单价模型及 Apache 2.0 开源代码。",
+  ],
+  "faq/evaluation": [
+    "Lavik FAQ: Performance, Cost and Migration",
+    "Lavik 常见问题：性能、成本与迁移",
+    "Answers about Lavik 0.1.0, Redis compatibility, NVMe SSD capacity costs, installation and RedisShake migration.",
+    "了解 Lavik 0.1.0、Redis 兼容性、NVMe SSD 容量成本、安装与 RedisShake 迁移。",
   ],
   compare: [
     "Compare Lavik: Redis, Valkey and SSD-backed Alternatives",
@@ -111,8 +123,8 @@ const pairs: Record<string, [string, string, string, string]> = {
   about: [
     "About Lavik",
     "关于 Lavik",
-    "Lavik is an Apache 2.0 Redis-compatible key-value store from EloqData, using a memory index and NVMe SSD value storage. Learn how to evaluate the beta.",
-    "Lavik 是 EloqData 的 Apache 2.0 开源 Redis 兼容键值存储，使用内存索引和 NVMe SSD 值存储。了解如何评估 beta 版本。",
+    "Lavik is an Apache 2.0 Redis-compatible key-value store from EloqData, using a memory index and NVMe SSD value storage. Start with Lavik 0.1.0.",
+    "Lavik 是 EloqData 的 Apache 2.0 开源 Redis 兼容键值存储，使用内存索引和 NVMe SSD 值存储。开始使用 Lavik 0.1.0。",
   ],
   privacy: [
     "Website Analytics and Privacy",
@@ -130,9 +142,10 @@ export function pageInfo(locale: Locale, input: string) {
   const stableNote =
     route === "releases/0-1-0" ? stableReleaseNotes() : undefined;
   const archivedDownload = route === "download/0.1.0-beta.1";
-  const article = articles().find(
-    (a) => articlePath(a) === `/${locale}/${route}/`,
-  );
+  const article =
+    route === "faq/evaluation"
+      ? undefined
+      : articles().find((a) => articlePath(a) === `/${locale}/${route}/`);
   const guide = (
     stable ? stableGuides() : [...operationsGuides, ...userGuides]
   ).find((g) => lookupRoute === `docs/0.1.0/${g.id}`);
@@ -327,6 +340,15 @@ export function pageStructuredData(locale: Locale, route: string) {
         url: `${siteOrigin}/${locale}/${benchmarkRoute(r.id)}/`,
       })),
     });
+  if (p.route === "faq/evaluation")
+    graph.push({
+      "@type": "FAQPage",
+      mainEntity: faqFor(locale).map((f) => ({
+        "@type": "Question",
+        name: f.question,
+        acceptedAnswer: { "@type": "Answer", text: f.answer },
+      })),
+    });
   if (p.comparison)
     graph.push({
       "@type": "FAQPage",
@@ -357,7 +379,7 @@ export function pageStructuredData(locale: Locale, route: string) {
         "An Apache 2.0 Redis-compatible key-value store with an in-memory key index and NVMe SSD value storage.",
       codeRepository: "https://github.com/eloqdata/lavik",
       license: "https://github.com/eloqdata/lavik/blob/main/LICENSE",
-      version: release.release,
+      version: stableRelease.version,
       runtimePlatform: "Linux",
       url: `${siteOrigin}/${locale}/about/`,
     });

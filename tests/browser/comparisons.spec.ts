@@ -44,9 +44,12 @@ test("all comparison pages are readable on mobile and expose their cost and sour
       await page.goto(`/${locale}/${comparisonRoute(p.id)}/`);
       await expect(page.locator("#main")).toHaveCount(1);
       await expect(page.locator("h1")).toHaveText(`Lavik vs ${p.name}`);
-      await expect(
-        page.locator("#performance table").first().locator("tbody tr"),
-      ).toHaveCount(p.group === "historical" ? 6 : 4);
+      if (p.group === "architecture")
+        await expect(page.locator("#performance table")).toHaveCount(0);
+      else
+        await expect(page.locator("#performance table tbody tr")).toHaveCount(
+          4,
+        );
       await expect(page.locator("#cost .comparison-result")).toBeAttached();
       await expect(page.locator("#sources a").first()).toHaveAttribute(
         "href",
@@ -60,27 +63,27 @@ test("all comparison pages are readable on mobile and expose their cost and sour
     }
   }
 });
-test("cost calculator preserves Garnet's write advantage and refuses unsampled deadlines", async ({
+test("cost calculator uses matched observations and refuses unsampled deadlines", async ({
   page,
 }) => {
   await page.goto("/en/compare/lavik-vs-garnet/");
   const calculator = page.locator(".comparison-calculator");
   await calculator.getByLabel(/^Workload/).selectOption("SET");
-  await calculator.getByLabel("Observed p99 ceiling").selectOption("2");
+  await calculator.getByLabel("Observed p99.9 ceiling").selectOption("5");
   await expect(calculator.locator(".comparison-result")).toContainText(
-    "584,665",
+    "421,152",
   );
   await expect(calculator.locator(".comparison-result")).toContainText(
-    "422,450",
+    "425,907",
   );
   await calculator
     .getByLabel("Total copies (including primary)", { exact: true })
     .fill("0");
   await expect(calculator.getByRole("alert")).toBeVisible();
   await page.goto("/en/compare/lavik-vs-dragonfly/");
-  await calculator.getByLabel("Observed p99 ceiling").selectOption("1");
+  await calculator.getByLabel("Observed p99.9 ceiling").selectOption("1");
   await expect(calculator.locator(".comparison-result")).toContainText(
-    "No measured point meets this p99 ceiling",
+    "No measured point meets this p99.9 ceiling",
   );
   await page.goto("/en/compare/lavik-vs-redis/");
   await expect(calculator.locator(".comparison-result")).toContainText("20.0×");
@@ -98,7 +101,6 @@ test("wide comparison tables support horizontal keyboard scrolling", async ({
   await page.locator(".comparison-sweep summary").click();
   for (const label of [
     "Scrollable performance table",
-    "Scrollable full measurement table",
     "Scrollable cost estimate table",
   ]) {
     const table = page.getByRole("region", { name: label, exact: true });

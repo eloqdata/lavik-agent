@@ -2,21 +2,21 @@ export type Measurement = {
   system: string;
   workload: "GET" | "SET" | "MIX";
   qps: number;
-  p99: number;
   p999: number;
   connections: number;
   threads?: number;
+  approximate?: boolean;
 };
 export function bestPoint(
   rows: Measurement[],
   workload: Measurement["workload"],
-  p99Limit?: number,
+  p999Limit?: number,
 ) {
   return rows
     .filter(
       (r) =>
         r.workload === workload &&
-        (p99Limit === undefined || r.p99 <= p99Limit),
+        (p999Limit === undefined || r.p999 <= p999Limit),
     )
     .sort((a, b) => b.qps - a.qps)[0];
 }

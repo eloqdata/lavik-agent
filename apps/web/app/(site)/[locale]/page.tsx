@@ -1,7 +1,5 @@
 import { pageMetadata } from "../../../../../packages/seo/site";
-import { sources } from "../../../../../packages/content/repository";
 import { localeSchema } from "../../../../../packages/content/schema";
-import { currentBenchmark } from "../../../../../packages/content/benchmarks";
 import {
   homepageBenchmark,
   homepageBenchmarkRows,
@@ -44,10 +42,6 @@ export default async function Home({
         sourceUrl={homepageBenchmark.sourceUrl}
         benchmarkDate={homepageBenchmark.date}
         benchmarkScope={homepageBenchmark.scope[locale]}
-        storySourceUrl={
-          sources.find((s) => s.id === currentBenchmark.sourceId)!.url
-        }
-        storyBenchmarkDate={currentBenchmark.date}
       />
     </HomepageMotion>
   );

@@ -10,3 +10,20 @@ Set `topics` to one or more relevant IDs: `architecture`, `benchmark`, `use-case
 for both language editions. Classify the article's actual subject; do not add
 unrelated topics for visibility. The site automatically creates an original SVG
 cover from the article ID and primary topic. No image API or separate asset is needed.
+
+## Editorial standard
+
+Write for an engineer deciding what to build with Lavik. Explain one concrete
+problem, how Lavik addresses it, and a useful next step. Develop the mechanism
+and a worked application example; avoid generic “evaluate carefully” articles,
+repeated disclaimers, invented customer stories, and filler introductions.
+
+Use the current stable release and the supplied release-pinned sources. Never
+present beta measurements as current-release results. Keep historical context
+explicit and link current install, migration and benchmark pages in publication.
+Put methodological limits beside the affected result, not in promotional
+headlines. State genuine constraints accurately; do not recommend competitors
+without a reader request. Do not invent a win where no comparable data exists.
+Keep English and Chinese equally specific and useful. Runnable examples need
+matching execution evidence; do not append an unrelated command demonstration
+just to satisfy a template.

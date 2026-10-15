@@ -179,10 +179,21 @@ export function BlogIndex({
                 ? `探索 Lavik 的${selected.label[locale]}。`
                 : `Explore ${selected.label.en.toLowerCase()} at Lavik.`
               : zh
-                ? "探索 Lavik 的架构、性能与构建实践。"
-                : "Inside Lavik: architecture, performance, and the practice of building."}
+                ? "了解 Lavik 的工作原理、最新进展，以及如何在应用中用好 NVMe SSD 容量。"
+                : "How Lavik works, what we are building, and how to put NVMe SSD capacity to work in your applications."}
           </p>
         </header>
+        {!topic && (
+          <p className="blog-current-release">
+            <Link href={`/${locale}/blog/lavik-0-1-0-released/`}>
+              {zh ? "Lavik 0.1.0 已发布" : "Lavik 0.1.0 is here"} →
+            </Link>
+            {" · "}
+            <Link href={`/${locale}/benchmarks/`}>
+              {zh ? "最新性能报告" : "Latest performance reports"} →
+            </Link>
+          </p>
+        )}
         <div className="article-list blog-feed">
           {visible.map((article, index) => (
             <article className="blog-card" key={article.id}>

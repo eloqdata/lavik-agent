@@ -54,23 +54,20 @@ export function CompareMenu({ locale }: { locale: Locale }) {
       </button>
       {open && (
         <div className="use-cases-panel compare-panel" id={id}>
-          {(["current", "historical"] as const).map((group) => (
+          {(["first", "second"] as const).map((group) => (
             <div className="menu-column" key={group}>
               <h2>
-                {group === "current"
+                {group === "first"
                   ? zh
-                    ? "内存与 SSD 分层"
-                    : "DRAM & SSD TIERING"
+                    ? "Redis、Valkey 与 SSD 数据库"
+                    : "REDIS, VALKEY & SSD ALTERNATIVES"
                   : zh
                     ? "更多产品对比"
                     : "MORE ALTERNATIVES"}
               </h2>
               <ul>
                 {comparisonProducts
-                  .filter(
-                    (p) =>
-                      (p.group === "historical") === (group === "historical"),
-                  )
+                  .slice(group === "first" ? 0 : 4, group === "first" ? 4 : 8)
                   .map((p) => (
                     <li key={p.id}>
                       <Link
@@ -92,8 +89,8 @@ export function CompareMenu({ locale }: { locale: Locale }) {
                                 ? "十亿键吞吐量与尾延迟。"
                                 : "Billion-key throughput & tail latency."
                               : zh
-                                ? "SSD 吞吐量与节点成本估算。"
-                                : "SSD throughput & node-cost estimates."}
+                                ? "存储设计与迁移路径。"
+                                : "Storage design & migration paths."}
                         </span>
                       </Link>
                     </li>

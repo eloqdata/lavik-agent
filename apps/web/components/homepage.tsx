@@ -3,7 +3,6 @@ import { BenchmarkChart, type BenchmarkRow } from "./benchmark";
 import type { Locale } from "../../../packages/content/schema";
 import { pageStructuredData } from "../../../packages/seo/site";
 import { StructuredData } from "./structured-data";
-import costReference from "../../../content/homepage-cost-reference.json";
 import "./homepage.css";
 import { HomepageStory } from "./homepage-story";
 
@@ -14,8 +13,6 @@ type Props = {
   sourceUrl: string;
   benchmarkDate: string;
   benchmarkScope: string;
-  storySourceUrl: string;
-  storyBenchmarkDate: string;
 };
 
 export function Homepage({
@@ -25,15 +22,9 @@ export function Homepage({
   sourceUrl,
   benchmarkDate,
   benchmarkScope,
-  storySourceUrl,
-  storyBenchmarkDate,
 }: Props) {
   const zh = locale === "zh-CN";
   const costPercent = 100 / Number(capacityRatio);
-  const valkeyPercent =
-    (costReference.memoryExampleGB.valkey /
-      costReference.memoryExampleGB.redis) *
-    100;
   return (
     <main id="main" className="homepage homepage-g" data-homepage="G">
       <StructuredData data={pageStructuredData(locale, "")} />
@@ -122,16 +113,12 @@ export function Homepage({
                 </Link>
                 <br />
                 {zh
-                  ? "Redis = 100% · Valkey 为内存用量示例"
-                  : "Redis = 100% · Valkey: memory-use example"}
+                  ? "相同值容量 · DRAM 成本 = 100%"
+                  : "Equal value capacity · DRAM cost = 100%"}
               </p>
               {rows.map((row) => {
                 const lavik = row.name.startsWith("Lavik ");
-                const percent = lavik
-                  ? costPercent
-                  : row.name.startsWith("Valkey ")
-                    ? valkeyPercent
-                    : 100;
+                const percent = lavik ? costPercent : 100;
                 return (
                   <div className="dual-cost-row" key={row.name}>
                     <div>
@@ -184,23 +171,14 @@ export function Homepage({
         <p>{benchmarkScope}</p>
         <p>
           {zh
-            ? "值容量模型假设 DRAM 与 NVMe SSD 每 GiB 单价为 20:1，因此 Lavik 的值容量成本为 Redis 的 5%。索引内存、复制与共同服务器成本另计。Valkey 的 80% 来自 Dragonfly 网站的独立内存示例（400 GB 对 Redis 的 500 GB），在相同 DRAM 单价下推导；这些比例并非与 Lavik 在相同工作负载下的实测成本。"
-            : "The value-capacity model assumes DRAM costs 20× as much per GiB as NVMe SSD, yielding Lavik’s 5% bar. Index memory, replication, and shared server costs are additional. Valkey’s 80% uses the separate Dragonfly website memory example (400 GB versus Redis’s 500 GB), at equal DRAM unit prices. These ratios are not measured same-workload costs against Lavik."}{" "}
+            ? "按相同值容量计算，DRAM/NVMe SSD 每 GiB 单价比设为 20:1，Lavik 的值存储介质成本为 DRAM 的 5%。Redis 与 Valkey 使用相同的 DRAM 单价。此模型不含索引与运行时内存、复制、服务器及运维成本；可在计算器中填入实际价格。"
+            : "For equal value capacity, a 20:1 DRAM/NVMe SSD price per GiB puts Lavik’s value-storage media cost at 5% of DRAM. Redis and Valkey use the same DRAM unit price. The model excludes index and runtime memory, replication, servers and operations. Enter your actual prices in the calculator."}{" "}
           <Link href={`/${locale}/cost/`}>
             {zh ? "成本计算方法" : "Cost methodology"} ↗
           </Link>
-          {" · "}
-          <a href={costReference.sourceUrl}>
-            {zh ? "内存示例来源" : "Memory example source"} (
-            {costReference.observedOn}) ↗
-          </a>
         </p>
       </details>
-      <HomepageStory
-        locale={locale}
-        sourceUrl={storySourceUrl}
-        benchmarkDate={storyBenchmarkDate}
-      />
+      <HomepageStory locale={locale} />
     </main>
   );
 }

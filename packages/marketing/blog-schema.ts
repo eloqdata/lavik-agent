@@ -1,3 +1,4 @@
+import { currentEditorialRevision } from "../editorial/release.ts";
 import { z } from "zod";
 import { articleSchema, blockSchema } from "../content/schema.ts";
 
@@ -11,6 +12,7 @@ export const blogDraftSchema = z
       .required({ topics: true })
       .extend({
         kind: z.literal("blog"),
+        sourceRevision: z.literal(currentEditorialRevision),
         blocks: z.array(z.union(blockSchema.options)).min(1).max(40),
       })
       .array()

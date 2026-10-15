@@ -27,6 +27,10 @@ export const benchmarkBoundFiles = [
   "packages/benchmarks/homepage.ts",
   "apps/web/app/(site)/[locale]/page.tsx",
   "apps/web/components/homepage.tsx",
+  "apps/web/components/homepage-story.tsx",
+  "apps/web/components/adoption-faq.tsx",
+  "packages/editorial/faq.ts",
+  "tests/browser/editorial.spec.ts",
   "apps/web/components/homepage.css",
   "apps/web/components/benchmark.tsx",
   "tests/homepage-benchmark.test.ts",
@@ -58,6 +62,7 @@ export const benchmarkBoundFiles = [
   "package-lock.json",
   "tests/benchmark-reports.test.ts",
   "scripts/review-benchmarks.ts",
+  "scripts/review-editorial.ts",
   benchmarkRoot + "/sources.json",
 ];
 export const benchmarkFileHashes = () =>
@@ -92,6 +97,9 @@ const publicationSchema = z
         provider: z.literal("openai"),
         authentication: z.literal("chatgpt"),
         reasoning: z.literal("high"),
+        additionalReviewReason: z.string().min(1).max(120).optional(),
+        additionalBatchReviewReason: z.string().min(1).max(120).optional(),
+        authorizedCorrectiveReviewReason: z.string().min(1).max(120).optional(),
         promptSha256: z.string(),
         outputSha256: z.string(),
         startedAt: z.string(),

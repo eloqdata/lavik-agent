@@ -1,3 +1,4 @@
+import { benchmarkSources } from "../benchmarks/repository";
 import fs from "node:fs";
 import path from "node:path";
 import { createHash } from "node:crypto";
@@ -34,6 +35,13 @@ export function comparisonFileHashes() {
     "evidence/comparisons/sources.json",
     ...comparisonSources.sources.map((s) => s.path),
     "scripts/review-comparisons.ts",
+    "scripts/review-editorial.ts",
+    "packages/benchmarks/homepage.ts",
+    "packages/benchmarks/storage-data.ts",
+    "packages/benchmarks/repository.ts",
+    "packages/benchmarks/catalog.ts",
+    "evidence/benchmarks/0.1.0/sources.json",
+    ...benchmarkSources.files.map((s) => s.path),
     "packages/marketing/process-lock.ts",
     "tests/comparisons.test.ts",
   ];
@@ -64,6 +72,8 @@ const publicationSchema = z
         authentication: z.literal("chatgpt"),
         reasoning: z.literal("high"),
         additionalReviewReason: z.string().min(1).max(120).optional(),
+        additionalBatchReviewReason: z.string().min(1).max(120).optional(),
+        authorizedCorrectiveReviewReason: z.string().min(1).max(120).optional(),
         startedAt: z.string(),
         finishedAt: z.string(),
         promptSha256: z.string(),

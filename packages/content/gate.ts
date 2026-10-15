@@ -1,3 +1,4 @@
+import { editorialContextErrors } from "./context-review.ts";
 import fs from "node:fs";
 import path from "node:path";
 import {
@@ -207,6 +208,7 @@ export function publicationErrors(article: Article): string[] {
   if (!fs.existsSync(reviewPath))
     return [...failures, "No independent review record"];
   const review = JSON.parse(fs.readFileSync(reviewPath, "utf8"));
+  failures.push(...editorialContextErrors(article, review));
   if (review.rendererVersion === 2) {
     try {
       if (!/^[a-f0-9-]{36}$/.test(review.publicationId ?? ""))

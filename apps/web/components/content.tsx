@@ -114,12 +114,20 @@ export function ArticleBody({ article }: { article: Article }) {
           if (block.type === "calculation")
             return <CostCalculator key={i} locale={article.locale} />;
           return (
-            <RecipeBlock
-              key={i}
-              id={block.recipeId}
-              locale={article.locale}
-              showEvidence={showEvidence}
-            />
+            <details key={i} className="article-example">
+              <summary>
+                {article.locale === "en"
+                  ? "Historical command example · "
+                  : "历史命令示例 · "}
+                {release.tag}
+              </summary>
+              <RecipeBlock
+                key={i}
+                id={block.recipeId}
+                locale={article.locale}
+                showEvidence={false}
+              />
+            </details>
           );
         })}
       </div>

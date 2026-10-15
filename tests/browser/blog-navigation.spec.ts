@@ -99,6 +99,8 @@ test("blog covers, recent posts and topic filters work in both languages", async
       ).toBe(200);
     }
     await page.locator(".blog-all-posts").click();
+    await expect(page).toHaveURL(new RegExp(`/${locale}/blog/$`));
+    await expect(page.locator(".blog-card")).toHaveCount(posts.length);
     const firstImage = await page
       .locator(".blog-card img")
       .first()

@@ -47,32 +47,28 @@ test("use-case navigation groups all seven pages and supports keyboard and touch
   await expect(page).toHaveURL(/\/en\/use-cases\//);
 });
 
-test("interactive evidence preserves sampled deadlines, both operations and competitor results", async ({
+test("use-case overview shows current matched-concurrency evidence and stable adoption links", async ({
   page,
 }) => {
   for (const locale of ["en", "zh-CN"]) {
     await page.goto(`/${locale}/use-cases/`);
-    const explorer = page.locator(".latency-explorer");
-    const lavik = explorer.locator('[data-system="lavik-spdk"]');
-    const dragonfly = explorer.locator('[data-system="dragonfly"]');
-    await expect(lavik).toContainText("792,119");
-    await expect(lavik).toContainText("0.959 ms");
-    await expect(dragonfly.locator(".no-sample")).toBeVisible();
-    await explorer.locator("select").selectOption("peak");
-    await expect(lavik).toContainText("952,560");
-    await expect(dragonfly).toContainText("466,039");
-    await expect(dragonfly).toContainText("38.911 ms");
-    await explorer.getByRole("button", { name: "SET", exact: true }).click();
-    await explorer.locator("select").selectOption("2");
-    await expect(lavik).toContainText("422,450");
-    await expect(explorer.locator('[data-system="garnet"]')).toContainText(
-      "584,665",
+    await expect(page.locator(".solution-proof-strip")).toContainText(
+      "385,514",
     );
-    await expect(explorer.getByRole("status")).toContainText("SET");
-    await expect(page.locator("#kvrocks-comparison")).toContainText(
-      "Apache Kvrocks",
+    await expect(page.locator(".solution-proof-strip")).toContainText(
+      "0.439 ms",
     );
-    await expect(page.locator("#kvrocks-comparison tbody tr")).toHaveCount(9);
+    await expect(page.locator("#main")).not.toContainText("0.1.0-beta.1");
+    await expect(
+      page.locator(
+        `.solution-proof-caption a[href='/${locale}/benchmarks/1tb-storage/']`,
+      ),
+    ).toBeVisible();
+    await expect(
+      page.locator(
+        `.solution-closing a[href='/${locale}/docs/0.1.0/quick-start/']`,
+      ),
+    ).toBeVisible();
   }
 });
 

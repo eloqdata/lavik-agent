@@ -72,10 +72,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       })),
     ),
     ...paths.map((p) => ({ url: `https://lavik.dev${p}` })),
-    ...articles().map((a) => ({
-      url: `https://lavik.dev${articlePath(a)}`,
-      lastModified: a.updatedAt,
-    })),
+    ...articles()
+      .filter((a) => a.id !== "capacity-use-case")
+      .map((a) => ({
+        url: `https://lavik.dev${articlePath(a)}`,
+        lastModified: a.updatedAt,
+      })),
   ];
   return entries.map((entry) => {
     const url = new URL(entry.url),

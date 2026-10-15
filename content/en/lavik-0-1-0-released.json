@@ -6,9 +6,9 @@
   "slug": "lavik-0-1-0-released",
   "title": "Lavik 0.1.0 Released: Faster Than Redis on DRAM, With Values on NVMe SSD",
   "summary": "Our first stable release brings Redis-compatible storage on NVMe SSD, 8 KiB segments for large strings, improved collections, bundled Lavik Admin, and a more capable managed deployment.",
-  "updatedAt": "2026-10-13",
+  "updatedAt": "2026-10-14",
   "publishedAt": "2026-10-13",
-  "sourceRevision": "feb61224e414c5653fd09560e20c9d214db1e3ac",
+  "sourceRevision": "471f4864357f4a5034c64e7d4972ec0e55b82d94",
   "topics": [
     "news",
     "architecture"
@@ -18,42 +18,43 @@
       "type": "paragraph",
       "text": "Lavik 0.1.0 is here. Our first stable release brings Redis-compatible key-value storage on NVMe SSD, major big-key optimizations, and a more complete path from first deployment to day-to-day operations. It builds on a simple result from our published benchmark: Lavik with values on NVMe SSD achieved higher peak GET and SET throughput than the tested Redis and Valkey configurations with their datasets in DRAM.",
       "sources": [
-        "stable-010-readme",
-        "stable-010-benchmark"
+        "current-010-readme",
+        "current-010-memory"
       ]
     },
     {
       "type": "paragraph",
       "text": "The goal is practical: keep using familiar Redis data structures and clients as your dataset grows, without making DRAM the home of every value. Lavik retains a compact key index in memory and puts values on storage. Version 0.1.0 makes that foundation more useful for large strings, growing collections, stream workloads, and managed deployments. Lavik remains open source under Apache 2.0.",
       "sources": [
-        "stable-010-readme",
-        "stable-010-storage",
-        "stable-010-collections"
+        "current-010-readme",
+        "current-010-storage",
+        "current-010-collections"
       ]
     },
     {
       "type": "heading",
-      "text": "Fast on NVMe SSD: the published numbers"
+      "text": "NVMe SSD storage. Throughput beyond in-memory Redis."
     },
     {
       "type": "paragraph",
-      "text": "The performance foundation is the September 18 SPDK comparison, which tested the downloadable Lavik 0.1.0-beta.1 package. For 10 million keys with 1 KiB values, Lavik reached 1,012,180 GET requests per second at 3.599 ms p99. Redis 8.8.0 reached 976,801 at 4.671 ms p99; Valkey 9.1.0 reached 965,697 at 4.543 ms p99. For SET, the respective peaks were 930,465, 910,426, and 802,519 requests per second.",
+      "text": "The refreshed October 13 benchmark tests Lavik 0.1.0 SPDK against Redis 8.10.2 and Valkey 9.1.2 on a 16-vCPU instance. At 10 million keys with 1 KiB values, Lavik reaches 1,145.8k peak GET QPS and 972.0k peak SET QPS—higher than both tested in-memory peers. At those 1,280-connection points, Lavik’s p99.9 is 7.135 ms for GET and 7.199 ms for SET.",
       "sources": [
-        "stable-010-benchmark"
+        "current-010-memory"
       ]
     },
     {
       "type": "paragraph",
-      "text": "The larger dataset is where the capacity argument becomes concrete. At one billion keys with 1 KiB values, Lavik SPDK reached 952,560 GET requests per second at 3.599 ms p99. Dragonfly 1.40.2 Tiered Storage reached 466,039 at 38.911 ms p99, and Garnet 2.1.5 with its storage tier reached 446,366 at 4.223 ms p99. Lavik had the highest measured peak GET and SET throughput among those three tested storage-backed configurations. For this report’s large-dataset GET workload, it was also the lowest-p99 system at the selected peaks.",
+      "text": "The result holds its value as capacity grows. With one billion keys, Lavik reaches 1,069,126 peak GET QPS. At a more latency-sensitive operating point of 80 connections, it delivers 385,514 GET QPS at 0.439 ms p99.9. Dragonfly 2.0.2 delivers 205,326 GET QPS at 11.071 ms p99.9 at the same connection count; Garnet 2.2.1 delivers 217,523 at 4.703 ms. Each of these datasets has 1.024 TB of raw value payload.",
       "sources": [
-        "stable-010-benchmark"
+        "current-010-storage-benchmark"
       ]
     },
     {
       "type": "paragraph",
-      "text": "These are measured results for the beta.1 build, not a new benchmark of the stable binary or of its big-key changes. The report used pipeline 1, uniform random GET or overwriting SET, 16-CPU affinity, and fresh SPDK datasets on six NVMe devices. Peaks use each product’s selected connection count and thread configuration; peer-control measurements were reused from an earlier sweep on the same hosts. The report also discloses Garnet’s omitted post-test exact key count. SET latency rankings differ from GET, and the report does not establish equivalent crash durability. Use the complete report to reproduce the workload and compare the latency percentile your application needs.",
+      "text": "These measurements show why Lavik is useful for a growing Redis dataset: fast access can extend well beyond the server’s DRAM capacity. The complete reports include the connection sweeps and reproduction steps. The 10-million-key test measures 30-second windows; the billion-key storage comparison uses 60-second windows. Storage paths, cache budgets and persistence settings differ by product. Compare the operation and concurrency your application needs: Garnet has the highest SET peak in the full storage sweep, while Lavik leads peak GET.",
       "sources": [
-        "stable-010-benchmark"
+        "current-010-memory",
+        "current-010-storage-benchmark"
       ]
     },
     {
@@ -64,30 +65,30 @@
       "type": "paragraph",
       "text": "A large Redis key may be a multi-megabyte string, a hash with many fields, a long list, a sorted set, or a stream with consumer state. Their access patterns differ: reading a short range is different from reading the whole object, and changing one field is different from replacing every field. Lavik 0.1.0 develops its grouped storage around those distinctions across String, Hash, Set, List, Sorted Set, and Stream.",
       "sources": [
-        "stable-010-collections"
+        "current-010-collections"
       ]
     },
     {
       "type": "paragraph",
       "text": "Large strings now use fixed 8 KiB byte segments. Range operations can address the relevant segments, while small strings retain a compact representation. The design gives a small range read or partial update a more focused storage path instead of requiring every operation to treat the entire large value as one unit. Whole-value requests still have to transfer the requested bytes; segmentation does not make a huge GET response free.",
       "sources": [
-        "stable-010-collections"
+        "current-010-collections"
       ]
     },
     {
       "type": "paragraph",
       "text": "Collections grow into independently addressed groups with an 8 KiB target. Compact values promote at 16 KiB of encoded size; complete updates can compact them again when active primary group payloads fall below 8 KiB. Those sizes are representation rules, not universal hard limits: an indivisible entry or a hash collision can exceed the group target. Long keys share an immutable key record referenced by UUID, reducing repetition across the object’s records.",
       "sources": [
-        "stable-010-collections"
+        "current-010-collections"
       ]
     },
     {
       "type": "paragraph",
       "text": "The same release improves Hash/Set point-write allocation and lookup work, Sorted Set routing and RESTORE construction, and the overlap of List/Stream range reads. Streams use grouped logical records. Together, these changes focus work on the parts of a collection that an operation actually needs, while retaining the ordering and lifetime rules needed by concurrent readers, replication, and recovery.",
       "sources": [
-        "stable-010-collections",
-        "stable-010-storage",
-        "stable-010-requests"
+        "current-010-collections",
+        "current-010-storage",
+        "current-010-requests"
       ]
     },
     {
@@ -98,15 +99,16 @@
       "type": "paragraph",
       "text": "Lavik speaks RESP2 and RESP3. The stable release expands managed Single mode to all 16 logical databases and cross-slot multi-key operations. Its managed command handling includes transactions, Lua and Functions, Stream reads, SORT_RO, and RDB saves. Cluster mode retains DB0 and same-slot constraints, so choose the mode against the commands and client behavior your application actually uses.",
       "sources": [
-        "stable-010-readme",
-        "stable-010-compatibility"
+        "current-010-requests",
+        "current-010-storage",
+        "current-010-import"
       ]
     },
     {
       "type": "paragraph",
       "text": "Moving an existing application also needs a practical data path. The release documents RedisShake v4.6.2 import from Redis or Redis Cluster into a fresh managed Lavik target: baseline copy, incremental catch-up, a final write pause, and verification before cutover. Source and target shard counts need not match. The website’s combined From Redis guide now includes the configurations and steps directly on the page.",
       "sources": [
-        "stable-010-import"
+        "current-010-import"
       ]
     },
     {
@@ -117,17 +119,16 @@
       "type": "paragraph",
       "text": "The Linux release archives now bundle Lavik Admin and its Node.js runtime alongside lavik, lavik-meta, and lavik-ctl. Admin provides a deployment and management interface for the database: SSH host preparation, version selection, node placement, deployment progress, topology management, and monitoring setup. The UI and CLI share a workspace and operation records, making the same deployment accessible through either interface.",
       "sources": [
-        "stable-010-admin",
-        "stable-010-readme"
+        "current-010-admin",
+        "current-010-readme"
       ]
     },
     {
       "type": "paragraph",
-      "text": "Meta moves to an asynchronous etcd Raft runtime with an explicit RAFT identity, WAL, and snapshot state. Data nodes take their Single or Cluster client mode from the committed Meta manifest. The release also adds Sentinel-compatible discovery for managed Single deployments, with independent authentication, TLS, and advertised hostnames, and improves replica startup and full-transfer handling. These capabilities make deployment and discovery more complete; application availability still depends on the topology and failure behavior you configure and rehearse.",
+      "text": "Meta uses an asynchronous etcd Raft runtime with explicit identity, WAL and snapshot state. Its Sentinel-compatible endpoint answers topology discovery from committed Meta state, using sessions and credentials separate from the Data service. Together with the bundled Admin interface, this gives teams a clearer path to deploying and operating managed Lavik.",
       "sources": [
-        "stable-010-meta",
-        "stable-010-readme",
-        "stable-010-admin"
+        "current-010-meta",
+        "current-010-requests"
       ]
     },
     {
@@ -138,17 +139,17 @@
       "type": "paragraph",
       "text": "Session records, application caches, feature data, and agent state can grow faster than the application’s request rate. With Lavik, value growth can consume NVMe SSD capacity while DRAM remains available for the index and serving work. That changes the capacity-planning question from keeping every value resident in memory to sizing the index, storage headroom, I/O, CPU, and recovery path together.",
       "sources": [
-        "stable-010-readme",
-        "stable-010-storage"
+        "current-010-readme",
+        "current-010-storage"
       ]
     },
     {
       "type": "paragraph",
       "text": "Big-key improvements make that trade more useful for structured workloads, but good sizing still matters. The key index needs memory; storage needs reclamation and free-space reserves; large replies consume network and client buffers. Rehearse your real key-size distribution, read/write mix, expiration behavior, and recovery requirements rather than extrapolating a single throughput number to every workload.",
       "sources": [
-        "stable-010-storage",
-        "stable-010-collections",
-        "stable-010-requests"
+        "current-010-storage",
+        "current-010-collections",
+        "current-010-requests"
       ]
     },
     {
@@ -159,24 +160,23 @@
       "type": "paragraph",
       "text": "Download a Linux AMD64 or ARM64 archive in Minimal or Standard form from our Download page. The release archives include the bundled Lavik Admin UI and Node.js runtime. Start with the 0.1.0 documentation and choose the installation path that fits your environment.",
       "sources": [
-        "stable-010-readme",
-        "stable-010-admin"
+        "current-010-readme",
+        "current-010-admin"
       ]
     },
     {
       "type": "paragraph",
-      "text": "If you are moving from beta.1, read the upgrade notes before changing binaries. Meta persistence and Data startup flags changed; use matching 0.1.0 Data, Meta, and ctl binaries, retain backups, and rehearse a fresh stable deployment with verified logical data transfer. Do not assume mixed-version rolling upgrades or automatic conversion of beta state.",
+      "text": "Meta uses an asynchronous etcd Raft runtime with explicit identity, WAL and snapshot state. Its Sentinel-compatible endpoint answers topology discovery from committed Meta state, using sessions and credentials separate from the Data service. Together with the bundled Admin interface, this gives teams a clearer path to deploying and operating managed Lavik.",
       "sources": [
-        "stable-010-meta",
-        "stable-010-import",
-        "stable-010-readme"
+        "current-010-meta",
+        "current-010-requests"
       ]
     },
     {
       "type": "paragraph",
       "text": "Lavik is Apache 2.0 because we want developers to use it, examine how it works, and improve it with us. Download the release, put a representative workload on NVMe SSD, and share what you find. The full release notes and getting-started guides are linked below.",
       "sources": [
-        "stable-010-readme"
+        "current-010-readme"
       ]
     }
   ]

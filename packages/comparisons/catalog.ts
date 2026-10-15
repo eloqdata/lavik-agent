@@ -3,10 +3,10 @@ export const comparisonProducts = [
   { id: "valkey", name: "Valkey", group: "memory" },
   { id: "dragonfly", name: "DragonflyDB", group: "storage" },
   { id: "garnet", name: "Garnet", group: "storage" },
-  { id: "pika", name: "Pika", group: "historical" },
-  { id: "kvrocks", name: "Apache Kvrocks", group: "historical" },
-  { id: "tendis", name: "Tendis", group: "historical" },
-  { id: "keydb", name: "KeyDB", group: "historical" },
+  { id: "pika", name: "Pika", group: "storage" },
+  { id: "kvrocks", name: "Apache Kvrocks", group: "storage" },
+  { id: "tendis", name: "Tendis", group: "storage" },
+  { id: "keydb", name: "KeyDB", group: "architecture" },
 ] as const;
 export type ComparisonProduct = (typeof comparisonProducts)[number];
 export type ProductId = ComparisonProduct["id"];

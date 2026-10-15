@@ -53,6 +53,7 @@ export const recipes = recipeSchema
 export const knowledgeHash = () =>
   hash(JSON.stringify({ release, sources, claims }));
 export const renderingFiles = [
+  "packages/editorial/inventory.ts",
   "apps/web/components/content.tsx",
   "apps/web/components/cost-calculator.tsx",
   "packages/content/economics.ts",

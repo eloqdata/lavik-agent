@@ -55,8 +55,8 @@ export function ProjectPage({
       <div className="prose">
         <p>
           {zh
-            ? "Lavik 是 EloqData 的 Apache 2.0 开源 Redis 兼容键值存储。它将紧凑的键索引保存在 DRAM 中，将值存储在 NVMe SSD 上，为增长中的数据集提供不同于全内存存储的容量成本结构。当前发布版本为 0.1.0-beta.1。"
-            : "Lavik is an Apache 2.0 open-source, Redis-compatible key-value store from EloqData. It keeps a compact key index in DRAM and stores values on NVMe SSD, giving growing datasets a different capacity-cost structure from an all-memory store. The current release is 0.1.0-beta.1."}
+            ? "Lavik 是 EloqData 的 Apache 2.0 开源 Redis 兼容键值存储。它将紧凑的键索引保存在 DRAM 中，将值存储在 NVMe SSD 上，让应用保留更多数据，而不必为每个值支付 DRAM 的价格。当前发布版本为 0.1.0。"
+            : "Lavik is an Apache 2.0 open-source, Redis-compatible key-value store from EloqData. It keeps a compact key index in DRAM and stores values on NVMe SSD, so applications can retain more data without paying DRAM prices for every value. The current release is 0.1.0."}
         </p>
         <h2>{zh ? "性能与容量成本" : "Performance and capacity cost"}</h2>
         <p>
@@ -76,8 +76,8 @@ export function ProjectPage({
         <h2>{zh ? "从你的应用开始评估" : "Evaluate your application"}</h2>
         <p>
           {zh
-            ? "Lavik 支持 RESP2 和 RESP3。选择你的安装方式，检查实际使用的命令和客户端，然后按照迁移指南验证数据、错误处理和运行行为。beta 版本提供了具体的测试范围和已知限制，不能据此推断所有 Redis 功能完全兼容。"
-            : "Lavik supports RESP2 and RESP3. Choose an installation method, check the commands and clients your application uses, then follow the migration guides to validate data, error handling, and operational behavior. The beta has specific tested coverage and known limitations; this is not a claim of complete Redis compatibility."}
+            ? "Lavik 支持 RESP2 和 RESP3。选择你的安装方式，检查实际使用的命令和客户端，然后按照迁移指南验证数据、错误处理和运行行为。0.1.0 手册提供命令参考、客户端示例、RedisShake 迁移步骤，以及复制与监控指南。"
+            : "Lavik supports RESP2 and RESP3. Choose an installation method, check the commands and clients your application uses, then follow the migration guides to validate data, error handling, and operational behavior. The 0.1.0 manual includes command references, client examples, RedisShake migration steps, replication and monitoring guides."}
         </p>
         <ul>
           <li>
@@ -99,8 +99,8 @@ export function ProjectPage({
         <h2>{zh ? "开放协作" : "An open project"}</h2>
         <p>
           {zh
-            ? "Lavik 项目文章以源码、设计文档和记录的实验为依据。欢迎通过 GitHub 提交问题、贡献代码和分享可复现的评估结果。"
-            : "Lavik project articles draw on source code, design documents, and recorded experiments. Contributions, issue reports, and reproducible evaluation results are welcome on GitHub."}
+            ? "Lavik 以 Apache 2.0 协议公开开发。你可以将它用于商业或个人项目，查看实现并贡献改进。我们在代码仓库中讨论问题、设计决策与新功能。"
+            : "Lavik is built in the open under Apache 2.0. You can use it in commercial and personal projects, inspect the implementation, and contribute improvements. The repository is where we discuss bugs, design decisions and new capabilities."}
         </p>
         <p>
           <a href="https://github.com/eloqdata/lavik">GitHub ↗</a> ·{" "}

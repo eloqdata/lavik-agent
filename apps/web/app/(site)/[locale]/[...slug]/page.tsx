@@ -1,3 +1,4 @@
+import { AdoptionFaq } from "../../../../components/adoption-faq";
 import {
   docVersionForRoute,
   isDocVersion,
@@ -137,6 +138,14 @@ async function PageContent({
   const route = resolved.slug.join("/");
   if (route === "about" || route === "privacy")
     return <ProjectPage locale={locale} kind={route} />;
+  if (route === "faq/evaluation") return <AdoptionFaq locale={locale} />;
+  if (route === "use-cases/datasets-beyond-memory")
+    return (
+      <UseCasePage
+        locale={locale}
+        entry={useCases.find((c) => c.slug === "large-application-caches")!}
+      />
+    );
   if (route === "use-cases") return <UseCasesHome locale={locale} />;
   const useCase = useCases.find((entry) => route === `use-cases/${entry.slug}`);
   if (useCase) return <UseCasePage locale={locale} entry={useCase} />;
@@ -253,6 +262,21 @@ async function PageContent({
           </div>
           {article.kind === "blog" ? (
             <>
+              {article.id !== "lavik-0-1-0-released" &&
+              article.updatedAt < "2026-10-13" ? (
+                <p className="context-note">
+                  {zh
+                    ? `本文记录 ${article.updatedAt} 的工程实践与产品版本。`
+                    : `Engineering article from ${article.updatedAt}; examples and measurements describe that release or source snapshot.`}{" "}
+                  <Link href={`/${locale}/docs/0.1.0/`}>
+                    {zh ? "当前 0.1.0 文档" : "Current 0.1.0 documentation"}
+                  </Link>
+                  {" · "}
+                  <Link href={`/${locale}/benchmarks/`}>
+                    {zh ? "最新基准测试" : "Latest benchmarks"}
+                  </Link>
+                </p>
+              ) : null}
               <BlogTopicLinks article={article} />
               <div className="blog-cover-frame">
                 <BlogCover article={article} priority />
@@ -298,13 +322,13 @@ async function PageContent({
         </p>
         <h1>
           {zh
-            ? "容量换一种方式，\n成本也换一种结构。"
-            : "A different capacity tier.\nA different cost equation."}
+            ? "降低 Redis 数据集增长的容量成本。"
+            : "Reduce the cost of growing Redis datasets."}
         </h1>
         <p className="page-lead">
           {zh
-            ? "NVMe SSD 上接近内存的实测性能，为降低容量成本提供了依据。节约多少，可以根据明确的假设计算。"
-            : "Measured near-memory performance on NVMe SSD makes a lower-cost capacity tier worth evaluating. The saving can be calculated from explicit assumptions."}
+            ? "让增长的值数据使用 NVMe SSD 容量，减少对昂贵 DRAM 的需求。输入实际价格，计算你的数据集能节省多少容量成本。"
+            : "Put growing value payloads on NVMe SSD and reduce the need for expensive DRAM. Enter your prices to calculate what that means for your dataset."}
         </p>
         <div className="prose">
           <h2>
@@ -344,23 +368,17 @@ async function PageContent({
         <div className="prose">
           <h2>
             {zh
-              ? "报告中已有的实例价格对比"
-              : "An instance-price comparison already in the reports"}
+              ? "吞吐量也会影响所需节点数"
+              : "Throughput also determines node count"}
           </h2>
           <p>
             {zh
-              ? "2026 年 8 月 12 日提供的月费估算为：Azure Managed Redis Flex（480 GB / 16 vCPU）$2,414.28，Lavik Standard_L16s_v3 服务器 $1,152.67。计算结果为 2.09 倍的价格比，Lavik 实例月费约低 52.3%。这不是对内存 Redis 的同 SLA 总成本测试：托管服务与自管虚拟机的服务边界、数据集和测试窗口不同。"
-              : "The estimates supplied on August 12, 2026 were $2,414.28/month for Azure Managed Redis Flex (480 GB / 16 vCPU) and $1,152.67/month for the Lavik Standard_L16s_v3 server. That is a 2.09× price ratio, or approximately 52.3% lower Lavik instance cost. This is not an equal-SLA total-cost test against in-memory Redis: the managed service and self-managed VM have different service boundaries, datasets, and test windows."}
+              ? "容量成本只是预算的一部分。对于相同数据量与目标 QPS，单节点能完成更多请求，就可能减少为吞吐量增加的节点。产品对比页使用相同连接数的实测结果，将容量、吞吐余量、副本与节点单价组合成可调整的估算。"
+              : "Capacity is one part of the budget. For a fixed dataset and QPS target, higher per-node throughput can reduce the nodes added to serve traffic. The comparison calculators combine measurements at matched concurrency with capacity, throughput headroom, replicas and node prices."}
           </p>
-          <a
-            className="text-link"
-            href={sources.find((s) => s.id === "tiering-cost")!.url}
-          >
-            {zh
-              ? "查看原始成本估算与实验配置"
-              : "Inspect the original estimates and configuration"}{" "}
-            ↗
-          </a>
+          <Link href={`/${locale}/compare/`}>
+            {zh ? "按产品比较成本" : "Compare costs by product"} →
+          </Link>
         </div>
       </main>
     );
@@ -372,7 +390,7 @@ async function PageContent({
   if (!kind) notFound();
   const titles = {
     "use-case": zh ? "从你的应用出发。" : "Start with your application.",
-    release: zh ? "每个版本，都有依据。" : "Every version, accounted for.",
+    release: zh ? "Lavik 版本说明。" : "Lavik release notes.",
   };
   return (
     <main id="main" className="container wide-page">
@@ -384,8 +402,8 @@ async function PageContent({
             ? "基于产品架构的评估场景。"
             : "Evaluation scenarios grounded in the product architecture."
           : zh
-            ? "带着上下文，理解每一次变化。"
-            : "Understand the details, with their context."}
+            ? "查看功能变化、升级步骤与各版本下载。"
+            : "What changed, how to upgrade, and where to get each release."}
       </p>
       <div className="article-list">
         {kind === "release" && (

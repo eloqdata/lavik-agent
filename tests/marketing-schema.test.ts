@@ -1,3 +1,4 @@
+import { currentEditorialRevision } from "../packages/editorial/release.ts";
 import assert from "node:assert/strict";
 import test from "node:test";
 import { z } from "zod";
@@ -34,6 +35,7 @@ test("writer and reviewer schemas use the accepted structured-output subset", ()
 test("drafts preserve article validation and cannot invent publication provenance", () => {
   const articles = ["en", "zh-CN"].map((locale) => ({
     id: "schema-example",
+    sourceRevision: currentEditorialRevision,
     locale,
     version: "0.1.0",
     kind: "blog",

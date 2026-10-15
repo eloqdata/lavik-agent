@@ -168,14 +168,14 @@ export function ComparisonCost({
               </select>
             </label>
             <label htmlFor={`${id}-limit`}>
-              {zh ? "实测 p99 筛选上限" : "Observed p99 ceiling"}
+              {zh ? "实测 p99.9 筛选上限" : "Observed p99.9 ceiling"}
               <select
                 id={`${id}-limit`}
                 value={limit}
                 onChange={(e) => setLimit(e.target.value)}
               >
                 <option value="0">
-                  {zh ? "不限（峰值 QPS）" : "No ceiling (peak QPS)"}
+                  {zh ? "不限（所示测量点）" : "No ceiling (displayed point)"}
                 </option>
                 {[0.5, 1, 2, 5, 10].map((n) => (
                   <option value={n} key={n}>
@@ -230,7 +230,9 @@ export function ComparisonCost({
                 <thead>
                   <tr>
                     <th>{zh ? "系统" : "System"}</th>
-                    <th>{zh ? "选定实测 QPS / p99" : "Selected QPS / p99"}</th>
+                    <th>
+                      {zh ? "选定实测 QPS / p99.9" : "Selected QPS / p99.9"}
+                    </th>
                     <th>
                       {zh ? "主节点 / 总节点" : "Primaries / total nodes"}
                     </th>
@@ -245,7 +247,7 @@ export function ComparisonCost({
                         <>
                           <td>
                             {number(selected[i]!.qps)} /{" "}
-                            {selected[i]!.p99.toFixed(3)} ms
+                            {selected[i]!.p999.toFixed(3)} ms
                           </td>
                           <td>
                             {number(costs[i]!.primaries)} /{" "}
@@ -256,8 +258,8 @@ export function ComparisonCost({
                       ) : (
                         <td colSpan={3}>
                           {zh
-                            ? "没有满足此 p99 上限的实测点；不提供估算。"
-                            : "No measured point meets this p99 ceiling; no estimate."}
+                            ? "没有满足此 p99.9 上限的实测点；不提供估算。"
+                            : "No measured point meets this p99.9 ceiling; no estimate."}
                         </td>
                       )}
                     </tr>
@@ -279,8 +281,8 @@ export function ComparisonCost({
             ? "值容量模型不含键与索引内存、缓冲区、CPU、网络、备份、副本或运维。因此 20× 值容量成本差异并不等于整体服务便宜 20 倍。请在完整成本计算器中加入索引内存与共同成本。"
             : "This value-capacity model excludes key/index memory, buffers, CPU, network, backups, replicas and operations. A 20× value-capacity difference therefore does not mean a 20× cheaper complete service. Add index memory and shared costs in the full capacity calculator."
           : zh
-            ? "总节点数 = 主节点数 × 数据副本数，月费 = 总节点数 × 每节点月费。副本不计入额外服务 QPS。假设分片均衡、每节点性能可线性复用、可用容量已扣除空间余量及元数据，并且总内存足以容纳索引与缓冲区；改变每节点数据量可能改变吞吐量。复制开销、故障后余量、网络和备份费用尚未建模。p99 筛选仅选择已测点，不能证明集群或应用 SLA，尤其不能证明 P99.99。"
-            : "Total nodes = primaries × copies; monthly cost = total nodes × node price. Replicas contribute no extra serving QPS here. Assumes balanced sharding, linearly reusable per-node performance, usable capacity after space/metadata reserves, and sufficient RAM for indexes and buffers; changing per-node data size can change throughput. Replication overhead, post-failure headroom, networking and backups are not modeled. The p99 filter selects observed points; it does not establish a cluster or application SLA, especially P99.99."}
+            ? "总节点数 = 主节点数 × 数据副本数，月费 = 总节点数 × 每节点月费。副本不计入额外服务 QPS。假设分片均衡、每节点性能可线性复用、可用容量已扣除空间余量及元数据，并且总内存足以容纳索引与缓冲区；改变每节点数据量可能改变吞吐量。复制开销、故障后余量、网络和备份费用尚未建模。p99.9 筛选仅选择已测点，不能证明集群或应用 SLA，尤其不能证明 P99.99。"
+            : "Total nodes = primaries × copies; monthly cost = total nodes × node price. Replicas contribute no extra serving QPS here. Assumes balanced sharding, linearly reusable per-node performance, usable capacity after space/metadata reserves, and sufficient RAM for indexes and buffers; changing per-node data size can change throughput. Replication overhead, post-failure headroom, networking and backups are not modeled. The p99.9 filter selects observed points; it does not establish a cluster or application SLA, especially P99.99."}
       </p>
     </div>
   );

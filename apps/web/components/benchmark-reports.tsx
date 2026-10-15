@@ -73,7 +73,7 @@ export function BenchmarksHome({ locale }: { locale: Locale }) {
               <strong>{r.stats[0].value}</strong>
               <span>{r.stats[0].label[locale]}</span>
             </div>
-            <p className="benchmark-card-context">{r.caveat[locale]}</p>
+            <p className="benchmark-card-context">{r.takeaway[locale]}</p>
             <Link
               className="text-link"
               href={"/" + locale + "/" + benchmarkRoute(r.id) + "/"}
@@ -142,7 +142,12 @@ export function BenchmarkReportPage({
           ))}
         </div>
         <p className="benchmark-takeaway">{r.takeaway[locale]}</p>
-        <p className="benchmark-context">{r.caveat[locale]}</p>
+        <details className="benchmark-context">
+          <summary>
+            {zh ? "测试条件与结果解读" : "Test conditions and interpretation"}
+          </summary>
+          <p>{r.caveat[locale]}</p>
+        </details>
         <div className="benchmark-actions">
           <a href="#reproduce">{zh ? "复现此测试" : "Reproduce this test"} ↓</a>
           <a href={reportSourceUrl(r, locale)}>

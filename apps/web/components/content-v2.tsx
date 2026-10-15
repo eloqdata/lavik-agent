@@ -1,3 +1,4 @@
+import { currentEditorialRevision } from "../../../packages/editorial/release";
 // Renderer v2 binds the displayed command record to the reviewed article.
 // Documentation hides audit details; publication validation still checks receipts.
 import {
@@ -89,7 +90,10 @@ export function ArticleBody({
 }) {
   const showEvidence = !["docs", "faq"].includes(article.kind);
   const stableReleasePost =
-    article.kind === "blog" && article.sourceRevision === stableRelease.commit;
+    article.kind === "blog" &&
+    [stableRelease.commit, currentEditorialRevision].includes(
+      article.sourceRevision ?? "",
+    );
   const used = new Set<string>();
   for (const block of article.blocks) {
     if (block.type === "paragraph") block.sources.forEach((id) => used.add(id));
@@ -126,13 +130,21 @@ export function ArticleBody({
           if (block.type === "calculation")
             return <CostCalculator key={i} locale={article.locale} />;
           return (
-            <RecipeBlock
-              key={i}
-              id={block.recipeId}
-              locale={article.locale}
-              showEvidence={showEvidence}
-              receipt={receipts.find((r) => r.recipeId === block.recipeId)!}
-            />
+            <details key={i} className="article-example">
+              <summary>
+                {article.locale === "en"
+                  ? "Historical command example · "
+                  : "历史命令示例 · "}
+                {release.tag}
+              </summary>
+              <RecipeBlock
+                key={i}
+                id={block.recipeId}
+                locale={article.locale}
+                showEvidence={false}
+                receipt={receipts.find((r) => r.recipeId === block.recipeId)!}
+              />
+            </details>
           );
         })}
       </div>
@@ -147,6 +159,11 @@ export function ArticleBody({
             </a>
           </p>
           <p>
+            <a href={`/${article.locale}/benchmarks/`}>
+              {article.locale === "en" ? "Current Benchmarks" : "最新基准测试"}{" "}
+              →
+            </a>
+            {" · "}
             <a href={`/${article.locale}/releases/0-1-0/`}>
               {article.locale === "en" ? "Full Release Notes" : "完整版本说明"}{" "}
               →
@@ -182,8 +199,8 @@ export function ArticleBody({
           {article.sourceRevision && !stableReleasePost ? (
             <p>
               {article.locale === "en"
-                ? "Engineering notes based on this repository snapshot. Consult the versioned manual for the downloadable beta's verified behavior."
-                : "本文工程分析基于此仓库快照。下载的 beta 版本已验证行为请查阅版本化手册。"}
+                ? "This article describes the linked source snapshot. Use the current documentation for installation, compatibility and operations."
+                : "本文说明所链接源码快照的设计。安装、兼容性与运维请使用当前版本文档。"}
             </p>
           ) : null}
           <ul>

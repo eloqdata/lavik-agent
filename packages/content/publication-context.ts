@@ -5,6 +5,7 @@ export const publicationRenderingHash = () =>
     JSON.stringify({
       legacy: renderingHash(),
       renderer: readText("apps/web/components/content-v2.tsx"),
+      currentRelease: readText("packages/editorial/release.ts"),
     }),
   );
 export const publicationPolicyHash = () =>
