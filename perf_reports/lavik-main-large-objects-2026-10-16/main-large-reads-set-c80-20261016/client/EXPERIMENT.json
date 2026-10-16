@@ -1,0 +1,48 @@
+{
+  "date": "2026-10-16",
+  "systems": [
+    "Lavik main 07e0f2ac",
+    "Redis 8.10.2",
+    "Valkey 9.1.2",
+    "Apache Kvrocks 2.17.0"
+  ],
+  "keys": 8192,
+  "payload_bytes_per_key": 1048576,
+  "workloads": [
+    "HGETALL",
+    "ZRANGE 0 -1 WITHSCORES",
+    "SADD/SREM pair",
+    "SMEMBERS"
+  ],
+  "connections": [
+    80
+  ],
+  "client_threads": 16,
+  "pipeline": 1,
+  "warmup_seconds": 90,
+  "additional_warmups_if_first_last_10s_rates_differ_over_25_percent": 0,
+  "measurement_seconds": 60,
+  "rounds": 1,
+  "formal_points": 16,
+  "defrag": "enabled",
+  "server_cpus": "0-15",
+  "client_cpus": "0-15",
+  "client": "custom C++17 epoll RESP2 client; identical executable for all systems; microsecond-rounded per-request samples; pair timings measured separately",
+  "dataset_bytes_note": "payload only; excludes names, scores, IDs, metadata and indexes",
+  "archive_policy": "Preserve local raw results",
+  "comparison": "All four systems newly measured, one round per new workload",
+  "pr": null,
+  "user_steering": "Only test PR, no baseline rerun. 8192 keys,80 connections,one formal round",
+  "runtime_revision": "0f7b4c0730d515422531528ecacb65457afdd939",
+  "main_revision": "07e0f2ac656b62f0f9091f44c6a68d89b40b9934",
+  "source_tree": "da5d15372352b27cf18fc5fa215069d6e5518353",
+  "equivalent_tested_pr_head": "db5e2ca5f6bd4531c98aaac531004fbebbc15337",
+  "set_members": 32768,
+  "set_member_bytes": 32,
+  "hash_fields": 4096,
+  "hash_value_bytes": 256,
+  "zset_members": 32768,
+  "zset_member_bytes": 32,
+  "set_pair": "Each connection owns one member slot per key, toggling a/b; SADD alternate then SREM current. 80 active slots of32768.",
+  "response_validation": "Every full-read response checked for exact cardinality, unique fields/members, payload bytes or members/scores/order; array framing incremental. Client validation included in reported latency; same client for all."
+}

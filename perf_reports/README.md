@@ -1,6 +1,6 @@
 # Raw performance results
 
-Raw benchmark outputs are organized by the matching report directory in [eloqdata/lavik](https://github.com/eloqdata/lavik/tree/471f4864357f4a5034c64e7d4972ec0e55b82d94/perf_reports).
+Original benchmark outputs are organized by the matching report directory in [eloqdata/lavik](https://github.com/eloqdata/lavik/tree/471f4864357f4a5034c64e7d4972ec0e55b82d94/perf_reports).
 
 | Report | Scope |
 |---|---|
@@ -9,5 +9,6 @@ Raw benchmark outputs are organized by the matching report directory in [eloqdat
 | [1TB storage-system comparison](lavik-v0.1.0-storage-peers-1tb-2026-10-14) | Dragonfly, Garnet, Apache Kvrocks, Pika and Tendis: 1 billion keys with 1 KiB values. The Lavik measurements are shared with the 16 vCPU report. |
 | [Aerospike YCSB comparison](lavik-v0.1.0-aerospike-ycsb-2026-10-13) | Lavik and Aerospike: 100 million records with 10 × 128 B fields; workloads A/B/C/D at a 100K target and unlimited rate. |
 | [Large-object comparison](lavik-v0.1.0-large-objects-2026-10-14) | 8,192 keys × approximately 1 MiB payload; Lavik, Redis, Valkey and Kvrocks; seven workloads, five connection counts and three rounds. |
+| [Main large-object reads and writes](lavik-main-large-objects-2026-10-16) | Main `07e0f2ac`: 11 workloads at 80 connections, 8,192 keys × approximately 1 MiB; includes 12 newly measured peer points for whole reads and Set updates. |
 
-Each directory includes a source reference, raw output, metadata and SHA-256 checksums.
+Follow-up main measurements are archived separately from release measurements. Each directory includes a source reference, raw output, metadata and SHA-256 checksums.

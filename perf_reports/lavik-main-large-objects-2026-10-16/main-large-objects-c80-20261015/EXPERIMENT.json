@@ -1,0 +1,44 @@
+{
+  "date": "2026-10-15",
+  "systems": [
+    "Lavik main 07e0f2ac"
+  ],
+  "keys": 8192,
+  "payload_bytes_per_key": 1048576,
+  "workloads": [
+    "SET",
+    "SETRANGE",
+    "HSET",
+    "LPUSH/RPOP",
+    "ZINCRBY",
+    "ZREM/ZADD",
+    "XADD MAXLEN"
+  ],
+  "connections": [
+    80
+  ],
+  "client_threads": 16,
+  "pipeline": 1,
+  "warmup_seconds": 90,
+  "additional_warmups_if_first_last_10s_rates_differ_over_25_percent": 0,
+  "measurement_seconds": 60,
+  "rounds": 1,
+  "formal_points": 7,
+  "defrag": "enabled",
+  "server_cpus": "0-15",
+  "client_cpus": "0-15",
+  "client": "custom C++17 epoll RESP2 client; identical executable for all systems; microsecond-rounded per-request samples; pair timings measured separately",
+  "dataset_bytes_note": "payload only; excludes names, scores, IDs, metadata and indexes",
+  "archive_policy": "Preserve local raw results",
+  "client_build": {
+    "sha256": "f596a6f1a5a1a600c5cec3240e0f56a0dd56f338283d5666e38a4c82ccb62b08",
+    "source_sha256": "ab2446bcd3147ebe62b7ca450b5520634469082081b705f6872f314d5ce36780"
+  },
+  "comparison": "Latest main rerun of all 7 large-object workloads; historical peers only",
+  "pr": null,
+  "user_steering": "Rerun all seven large-object workloads on Lavik main, 8192 keys, 80 connections, one round; compare against archived peer measurements.",
+  "runtime_revision": "0f7b4c0730d515422531528ecacb65457afdd939",
+  "main_revision": "07e0f2ac656b62f0f9091f44c6a68d89b40b9934",
+  "source_tree": "da5d15372352b27cf18fc5fa215069d6e5518353",
+  "equivalent_tested_pr_head": "db5e2ca5f6bd4531c98aaac531004fbebbc15337"
+}

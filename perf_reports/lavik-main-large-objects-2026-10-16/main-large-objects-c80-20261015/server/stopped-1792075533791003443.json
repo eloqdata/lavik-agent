@@ -1,0 +1,26 @@
+{
+  "pid": 1287555,
+  "product": "pr",
+  "label": "pr-hash-r1",
+  "args": [
+    "taskset",
+    "-c",
+    "0-15",
+    "/mnt/dev/benchmark/pr347-set1m-20261015/sources/pr/build-gcc13/lavik",
+    "--storage=spdk",
+    "--bind=10.84.1.4",
+    "--threads=16",
+    "--pin-workers",
+    "--metrics-port=0",
+    "--spdk-max-completions-per-poll=16",
+    "--log-dir=/mnt/dev/benchmark/main-large-objects-c80-20261015/pr-hash-r1/logs",
+    "--shutdown-checkpoint",
+    "--data-file=spdk://2401:00:00.0/1",
+    "--data-file=spdk://221c:00:00.0/1",
+    "--data-file=spdk://7f10:00:00.0/1",
+    "--data-file=spdk://399c:00:00.0/1",
+    "--data-file=spdk://c0ef:00:00.0/1",
+    "--data-file=spdk://6319:00:00.0/1"
+  ],
+  "start_ticks": "37898762"
+}
