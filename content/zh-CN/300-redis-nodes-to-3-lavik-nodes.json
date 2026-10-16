@@ -36,13 +36,13 @@
     },
     {
       "type": "paragraph",
-      "text": "考虑 300 台 Standard_E2as_v4 Azure 虚拟机，每台两个 vCPU、16 GiB RAM，组成 150 个主节点和 150 个副本节点。整个集群购买了 600 个 vCPU、4,800 GiB RAM，其中主节点合计提供 2,400 GiB。当内存先耗尽时，扩容购买的 CPU、网络和操作系统资源，很大程度上只是获取更多 RAM 的附带成本。应用可能只是需要保留更多资料或延长会话寿命，并不需要同比增加计算能力。Redis 成本优化的关键就在这里：按请求量配置计算资源，按数据量选择存储密度。",
-      "sources": ["model", "azure-easv4"]
+      "text": "考虑 300 台 Standard_E2s_v4 Azure 虚拟机，每台两个 vCPU、16 GiB RAM，无本地 SSD，组成 150 个主节点和 150 个副本节点。整个集群购买了 600 个 vCPU、4,800 GiB RAM，其中主节点合计提供 2,400 GiB。当内存先耗尽时，扩容购买的 CPU、网络和操作系统资源，很大程度上只是获取更多 RAM 的附带成本。应用可能只是需要保留更多资料或延长会话寿命，并不需要同比增加计算能力。Redis 成本优化的关键就在这里：按请求量配置计算资源，按数据量选择存储密度。",
+      "sources": ["model", "azure-esv4"]
     },
     {
       "type": "paragraph",
-      "text": "两种部署采用相同的 Azure 区域和购买方式：美国东部 2（East US 2）、Linux 按量付费，价格以美元计。Microsoft 公布的 Standard_E2as_v4 费率为每小时 0.126 美元，Standard_L16as_v4 为每小时 1.376 美元。按每月 730 小时计算，300 台 Redis 虚拟机为每月 27,594 美元，三台 Lavik 虚拟机为每月 3,013.44 美元。每台 Lavik 虚拟机包含 16 个 vCPU、128 GiB RAM 和 3.84 TB 本地 NVMe SSD。这让整合方案的成本比较直接建立在同一云厂商的公开虚拟机价格上。",
-      "sources": ["azure-pricing", "azure-lasv4", "model"]
+      "text": "两种部署采用相同的 Azure 区域和购买方式：美国东部 2（East US 2）、Linux 按量付费，价格以美元计。Microsoft 公布的 Standard_E2s_v4 费率为每小时 0.126 美元，Standard_L16as_v4 为每小时 1.376 美元。按每月 730 小时计算，300 台 Redis 虚拟机为每月 27,594 美元；Lavik 使用两台 L16as_v4 数据虚拟机和一台较小的 E2s_v4 投票虚拟机，合计每月 2,100.94 美元。每台数据虚拟机包含 16 个 vCPU、128 GiB RAM 和 3.84 TB 本地 NVMe SSD；投票节点无需本地 SSD，也不保存数据集副本。",
+      "sources": ["azure-pricing", "azure-esv4", "azure-lasv4", "model"]
     },
     {
       "type": "paragraph",
@@ -51,8 +51,8 @@
     },
     {
       "type": "paragraph",
-      "text": "月度虚拟机费用减少 24,580.56 美元，降幅为 89.1%，年化节省 294,966.72 美元。三台 Lavik 虚拟机合计提供 48 个 vCPU、384 GiB RAM，由 NVMe SSD 承载数据容量。Redis 的 300 台虚拟机则提供 600 个 vCPU，容量受限的负载可能并不需要其中相当一部分计算资源。高存储密度的经济价值就在于：按请求处理需求购买计算能力，用 SSD 容量保留数据。下表两侧均为自建虚拟机成本，操作系统磁盘、备份和流量费用另计。",
-      "sources": ["model", "azure-pricing"]
+      "text": "月度虚拟机费用减少 25,493.06 美元，降幅为 92.4%，年化节省 305,916.72 美元。Lavik 的三台虚拟机合计提供 34 个 vCPU、272 GiB RAM：两台配备 NVMe 的节点处理数据，较小的虚拟机补齐故障转移所需的投票多数派。Redis 的 300 台虚拟机则提供 600 个 vCPU，容量受限的负载可能并不需要其中相当一部分计算资源。高存储密度减少服务节点数量，而单独配置投票节点，还能避免为控制平面额外购买一台数据节点规格的机器。下表两侧均为自建虚拟机成本，操作系统磁盘、备份和流量费用另计。",
+      "sources": ["model", "azure-pricing", "meta", "overview"]
     },
     {
       "type": "heading",
@@ -60,20 +60,20 @@
     },
     {
       "type": "paragraph",
-      "text": "Lavik 容量方案采用三台 Standard_L16as_v4 虚拟机。每台包含 16 个 vCPU、128 GiB RAM 和四块 960 GB 本地 NVMe，每台合计 3.84 TB。每台运行一个 Data 进程和一个 Meta 投票节点，组成一个主节点、两个完整跟随副本。每台虚拟机保存完整数据集。部署结构因此很直观：三个数据放置位置、三个控制平面投票节点，以及每个服务节点上的 NVMe 容量。",
-      "sources": ["model", "azure-lasv4", "overview", "meta", "replication"]
-    },
-    {
-      "type": "paragraph",
-      "text": "每台虚拟机保存完整副本时，单份数据的容量基数为 3.84 TB。成本表使用这一分母，三台虚拟机的单位容量成本为每 TB 每月 784.75 美元。Redis 的 150 个主节点合计提供 2,400 GiB，约合十进制 2.577 TB，对应每 TB 每月 10,707.88 美元。这些指标按容量归一化虚拟机费用，尚未扣除数据库开销和运行所需的空闲空间。复制将同一个逻辑数据集放在三台 Lavik 虚拟机上；单台故障后，仍有两份数据和 Meta 多数派可用于恢复与提升。",
+      "text": "Lavik 部署采用两台 Standard_L16as_v4 和一台 Standard_E2s_v4 虚拟机。主节点和跟随节点各有 16 个 vCPU、128 GiB RAM 和四块 960 GB 本地 NVMe，每台数据虚拟机合计 3.84 TB，各运行一个 Data 进程和一个 Meta 成员。E2s_v4 使用两个 vCPU、16 GiB RAM 运行第三个 Meta 成员，组成用于自动故障转移的三成员 Raft 投票集群。该虚拟机仅保存控制平面元数据，不保存应用数据。整个拓扑包含两份完整数据副本和三个 Meta 投票成员。",
       "sources": [
         "model",
-        "azure-pricing",
-        "azure-easv4",
+        "azure-esv4",
         "azure-lasv4",
+        "overview",
         "meta",
         "replication"
       ]
+    },
+    {
+      "type": "paragraph",
+      "text": "主节点和跟随节点各保存一份完整数据，单份数据的容量基数仍为 3.84 TB。计入投票虚拟机后，部署的单位容量成本为每 TB 每月 547.12 美元。Redis 的 150 个主节点合计提供 2,400 GiB，约合十进制 2.577 TB，对应每 TB 每月 10,707.88 美元。这些指标按容量归一化虚拟机费用，尚未扣除数据库开销和运行所需的空闲空间。主节点虚拟机故障时，跟随节点与独立投票节点保留三者之二的 Meta 多数派，协调符合条件的跟随节点提升；剩余数据副本位于跟随节点，投票节点参与控制平面协调。",
+      "sources": ["model", "azure-pricing", "meta", "replication"]
     },
     {
       "type": "paragraph",
@@ -197,11 +197,11 @@
     },
     {
       "type": "paragraph",
-      "text": "容量与成本依据：Azure 对比使用 300 台 E2as_v4 和三台 L16as_v4，按美国东部 2 区域的 Linux 按量费率、每月 730 小时计算，年费为 12 个月费用。容量归一化仅计算一份逻辑数据：Redis 主节点 RAM 合计 2,400 GiB，Lavik NVMe SSD 为 3.84 TB，均未扣除开销。吞吐数据使用前文所列的独立 L16aos_v4 压测配置。每百万操作成本按平均持续 100 万 QPS 计算。虚拟机价格不含托管磁盘、外部备份、流量、人员和税费。",
+      "text": "容量与成本依据：Azure 对比使用 300 台 E2s_v4，与两台 L16as_v4 数据虚拟机加一台仅运行 Meta 的 E2s_v4 投票虚拟机比较。两侧采用美国东部 2 区域的 Linux 按量费率、每月 730 小时，年费为 12 个月费用。容量归一化仅计算一份逻辑数据：Redis 主节点 RAM 合计 2,400 GiB，Lavik NVMe SSD 为 3.84 TB，均未扣除开销。对数图通过增加独立的三虚拟机 Lavik 部署单元表示容量增长。吞吐数据来自独立的 L16aos_v4 压测配置。每百万操作成本按平均持续 100 万 QPS 计算；虚拟机价格不含托管磁盘、外部备份、流量、人员和税费。",
       "sources": [
         "model",
         "azure-pricing",
-        "azure-easv4",
+        "azure-esv4",
         "azure-lasv4",
         "memory-report"
       ]
@@ -211,10 +211,10 @@
     "sources": [
       {
         "id": "model",
-        "title": "Azure VM capacity and cost model for this article",
-        "url": "https://github.com/eloqdata/lavik-agent/blob/main/evidence/technical/agent-era-azure/sizing.json",
-        "file": "evidence/technical/agent-era-azure/sizing.json",
-        "sha256": "716c271492530d0c26469a1bb05f291bb9f54af77479ea7a41bce17dac7e1061"
+        "title": "Azure primary, follower and Meta-only voter capacity and cost model",
+        "url": "https://github.com/eloqdata/lavik-agent/blob/main/evidence/technical/agent-era-voter/sizing.json",
+        "file": "evidence/technical/agent-era-voter/sizing.json",
+        "sha256": "c593d994a7fad4d7ff0c5adedb0fb4d80ce8f03ac04134f629db074b12ad6703"
       },
       {
         "id": "redis-cluster",
@@ -393,24 +393,24 @@
       },
       {
         "id": "azure-pricing",
-        "title": "Azure retail prices: Linux E2as_v4 and L16as_v4 in East US 2",
-        "url": "https://github.com/eloqdata/lavik-agent/blob/main/evidence/technical/agent-era-azure/sources/azure-retail-prices.json",
-        "file": "evidence/technical/agent-era-azure/sources/azure-retail-prices.json",
-        "sha256": "0493a205f5db3f3dc81e27d0a89e23593b2aa47a7fcfb8706d201f39861a5a78"
+        "title": "Azure retail prices: Linux E2s_v4 and L16as_v4 in East US 2",
+        "url": "https://github.com/eloqdata/lavik-agent/blob/main/evidence/technical/agent-era-voter/sources/azure-retail-prices.json",
+        "file": "evidence/technical/agent-era-voter/sources/azure-retail-prices.json",
+        "sha256": "3082b6238db5907208147f51cd1faa6d43f0d0425cb40cd797b0609c6537893e"
       },
       {
-        "id": "azure-easv4",
-        "title": "Microsoft Azure: E2as_v4 specifications",
-        "url": "https://learn.microsoft.com/en-us/azure/virtual-machines/sizes/memory-optimized/easv4-series",
-        "file": "evidence/technical/agent-era-azure/sources/azure-vm-specifications.json",
-        "sha256": "b5e74f26ce5ba22fd7bf86c831da15184dc4e99346826607b70626a69c2eea5b"
+        "id": "azure-esv4",
+        "title": "Microsoft Azure: E2s_v4 specifications",
+        "url": "https://learn.microsoft.com/en-us/azure/virtual-machines/sizes/memory-optimized/esv4-series",
+        "file": "evidence/technical/agent-era-voter/sources/azure-vm-specifications.json",
+        "sha256": "b229bc35c244ff9fc06737583150fcb17f7065416f5fd9c7cf1892b9768fc470"
       },
       {
         "id": "azure-lasv4",
         "title": "Microsoft Azure: L16as_v4 specifications and local NVMe capacity",
         "url": "https://learn.microsoft.com/en-us/azure/virtual-machines/sizes/storage-optimized/lasv4-series",
-        "file": "evidence/technical/agent-era-azure/sources/azure-vm-specifications.json",
-        "sha256": "b5e74f26ce5ba22fd7bf86c831da15184dc4e99346826607b70626a69c2eea5b"
+        "file": "evidence/technical/agent-era-voter/sources/azure-vm-specifications.json",
+        "sha256": "b229bc35c244ff9fc06737583150fcb17f7065416f5fd9c7cf1892b9768fc470"
       }
     ],
     "visuals": [
@@ -419,23 +419,23 @@
         "id": "fleet-model",
         "afterBlock": 0,
         "src": "/blog-assets/agent-era/consolidation.svg",
-        "sha256": "9dc511f11a1023fb0d926dc9946fe7c67112892b5b229900fe1c0cc049cbd006",
+        "sha256": "07235e63c14faa10218f92695ce83f57e90a157a8774e1dfb7d02afa2225a5db",
         "width": 1200,
         "height": 650,
-        "caption": "容量模型：300 台 E2as_v4，每台 2 vCPU、16 GiB；三台 L16as_v4，每台 16 vCPU、128 GiB、3.84 TB NVMe SSD。Redis 为 150 组主从，Lavik 为一个主节点和两个完整跟随副本。",
-        "alt": "300 个 Redis 进程，分为 150 主与 150 副本；对比三台 Lavik 数据主机，各保留一份完整数据。",
-        "sources": ["model", "azure-easv4", "azure-lasv4"]
+        "caption": "容量模型：300 台 E2s_v4 Redis 虚拟机，对比两台 L16as_v4 Lavik 数据虚拟机和一台仅运行 Meta 的 E2s_v4 投票虚拟机。每台各运行一个 Meta 成员，仅主节点和跟随节点保存数据集。",
+        "alt": "150 组主从、共 300 个 Redis 节点，对比使用 L16as_v4 的 Lavik 主节点与跟随节点，以及 E2s_v4 Meta 投票节点。数据节点同时运行 Meta 成员，共有三个 Meta 投票成员和两份数据副本。",
+        "sources": ["model", "azure-esv4", "azure-lasv4"]
       },
       {
         "type": "table",
         "id": "agent-capacity",
         "afterBlock": 3,
         "caption": "十亿个保留 Agent 的值载荷 · 十进制单位",
-        "columns": ["每个 Agent 大小", "唯一值载荷", "三份副本，仅值"],
+        "columns": ["每个 Agent 大小", "唯一值载荷", "两份副本，仅值"],
         "rows": [
-          ["1 KB", "1 TB", "3 TB"],
-          ["10 KB", "10 TB", "30 TB"],
-          ["100 KB", "100 TB", "300 TB"]
+          ["1 KB", "1 TB", "2 TB"],
+          ["10 KB", "10 TB", "20 TB"],
+          ["100 KB", "100 TB", "200 TB"]
         ],
         "sources": ["model"]
       },
@@ -443,7 +443,7 @@
         "type": "table",
         "id": "cost-model",
         "afterBlock": 8,
-        "caption": "Azure 美国东部 2 · Linux 按量付费 · 美元 · 每月 730 小时。小时费率按单台虚拟机计，月费与年费按整个集群计。",
+        "caption": "Azure 美国东部 2 · Linux 按量付费 · 美元 · 每月 730 小时。小时费率按各规格单台计，月费与年费包含完整部署。",
         "columns": [
           "部署",
           "美元 / 虚拟机·小时",
@@ -453,18 +453,18 @@
         ],
         "rows": [
           [
-            "Redis · 300 × Standard_E2as_v4",
+            "Redis · 300 × Standard_E2s_v4",
             "$0.126",
             "$27,594.00",
             "$331,128.00",
             "$0.01050"
           ],
           [
-            "Lavik · 3 × Standard_L16as_v4",
-            "$1.376",
-            "$3,013.44",
-            "$36,161.28",
-            "$0.00115"
+            "Lavik · 2 × L16as_v4 + 1 × E2s_v4",
+            "$1.376 (L16as_v4); $0.126 (E2s_v4)",
+            "$2,100.94",
+            "$25,211.28",
+            "$0.00080"
           ]
         ],
         "sources": ["azure-pricing", "model"]
@@ -476,10 +476,10 @@
         "caption": "按主数据容量归一化的每月虚拟机成本，尚未扣除数据库开销和运行余量；副本容量仅计一份。",
         "columns": ["部署", "单份数据容量分母", "美元 / TB·月"],
         "rows": [
-          ["Redis · 300 × E2as_v4", "2,400 GiB RAM (≈ 2.577 TB)", "$10,707.88"],
-          ["Lavik · 3 × L16as_v4", "3.84 TB NVMe SSD", "$784.75"]
+          ["Redis · 300 × E2s_v4", "2,400 GiB RAM (≈ 2.577 TB)", "$10,707.88"],
+          ["Lavik · 2 × L16as_v4 + 1 × E2s_v4", "3.84 TB NVMe SSD", "$547.12"]
         ],
-        "sources": ["model", "azure-easv4", "azure-lasv4", "azure-pricing"]
+        "sources": ["model", "azure-esv4", "azure-lasv4", "azure-pricing"]
       },
       {
         "type": "figure",
@@ -594,12 +594,12 @@
         "id": "node-count-growth",
         "afterBlock": 28,
         "src": "/blog-assets/agent-era/capacity.svg",
-        "sha256": "441de29089ff634a456f8783a2f1f352acfa99557b04f8d2b3c3bf130a8aabd3",
+        "sha256": "03b94acef51bbe2319362ddf218dd373892a2ee9478b295f43cc7b99b1362516",
         "width": 1200,
         "height": 540,
-        "caption": "扣除开销前、按容量计算的节点数量：Redis 每主节点 16 GiB，配一个副本；Lavik 每组在三台 3.84 TB 虚拟机上保存三份完整副本，进一步扩容增加三虚拟机组。",
-        "alt": "主数据容量模型：10 TB 时 Redis 需要 1,166 台虚拟机；Lavik 需要三组、共九台虚拟机。线性与对数图展示相同数据。",
-        "sources": ["model", "azure-easv4", "azure-lasv4"]
+        "caption": "扣除开销前的对数容量模型。每组 Redis 主从包含一个 16 GiB 主节点和一个副本。每个独立 Lavik 部署增加两台 3.84 TB 数据虚拟机和一台较小的 Meta 投票虚拟机，节点数包含三台虚拟机。",
+        "alt": "单张对数图比较按容量计算的虚拟机数量。扣除开销前，10 TB 时 Redis 需要 1,166 台；三个独立 Lavik 部署合计九台，其中六台保存数据、三台仅运行 Meta。",
+        "sources": ["model", "azure-esv4", "azure-lasv4"]
       }
     ]
   }

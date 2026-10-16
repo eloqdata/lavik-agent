@@ -36,13 +36,13 @@
     },
     {
       "type": "paragraph",
-      "text": "Consider 300 Standard_E2as_v4 Azure VMs, each with two vCPUs and 16 GiB RAM, arranged as 150 primaries and 150 replicas. The fleet buys 600 vCPUs and 4,800 GiB of RAM, with 2,400 GiB on the primary side. When memory fills first, expanding this fleet buys additional CPU, networking and operating systems largely to obtain more RAM. The application may need more retained profiles or longer session lifetimes without needing proportionally more compute. This is the central opportunity for Redis cost optimization: choose storage density independently of the processors needed to serve traffic.",
-      "sources": ["model", "azure-easv4"]
+      "text": "Consider 300 Standard_E2s_v4 Azure VMs, each with two vCPUs, 16 GiB RAM and no local SSD, arranged as 150 primaries and 150 replicas. The fleet buys 600 vCPUs and 4,800 GiB of RAM, with 2,400 GiB on the primary side. When memory fills first, expanding this fleet buys additional CPU, networking and operating systems largely to obtain more RAM. The application may need more retained profiles or longer session lifetimes without needing proportionally more compute. This is the central opportunity for Redis cost optimization: choose storage density independently of the processors needed to serve traffic.",
+      "sources": ["model", "azure-esv4"]
     },
     {
       "type": "paragraph",
-      "text": "Use the same Azure region and purchasing model for both deployments: East US 2, Linux pay-as-you-go, in US dollars. Microsoft’s retail rate is $0.126 per hour for Standard_E2as_v4 and $1.376 per hour for Standard_L16as_v4. At 730 hours per month, 300 Redis VMs cost $27,594, while three Lavik VMs cost $3,013.44. The Lavik VM includes 16 vCPUs, 128 GiB RAM and 3.84 TB of local NVMe SSD. That puts the same cloud provider’s published VM prices behind the consolidation argument.",
-      "sources": ["azure-pricing", "azure-lasv4", "model"]
+      "text": "Use the same Azure region and purchasing model for both deployments: East US 2, Linux pay-as-you-go, in US dollars. Microsoft’s retail rate is $0.126 per hour for Standard_E2s_v4 and $1.376 per hour for Standard_L16as_v4. At 730 hours per month, 300 Redis VMs cost $27,594. Lavik uses two L16as_v4 data VMs and one smaller E2s_v4 voter, totaling $2,100.94 per month. Each data VM includes 16 vCPUs, 128 GiB RAM and 3.84 TB of local NVMe SSD; the voter needs no local SSD or dataset copy.",
+      "sources": ["azure-pricing", "azure-esv4", "azure-lasv4", "model"]
     },
     {
       "type": "paragraph",
@@ -51,8 +51,8 @@
     },
     {
       "type": "paragraph",
-      "text": "The monthly VM bill falls by $24,580.56—89.1%—and the annualized saving is $294,966.72. Lavik’s three VMs provide 48 vCPUs and 384 GiB RAM across the fleet, with NVMe SSD supplying the data capacity. Redis’s 300 VMs provide 600 vCPUs, much of which a memory-bound workload may not need. This is the economic benefit of storage density: pay for the compute needed to handle requests, then use SSD capacity to retain the data. The table prices self-hosted VMs for both systems; OS disks, backups and traffic are additional deployment costs.",
-      "sources": ["model", "azure-pricing"]
+      "text": "The monthly VM bill falls by $25,493.06—92.4%—and the annualized saving is $305,916.72. Lavik’s three VMs provide 34 vCPUs and 272 GiB RAM across the deployment, with the two NVMe-equipped nodes handling data and the smaller VM completing the failover quorum. Redis’s 300 VMs provide 600 vCPUs, much of which a memory-bound workload may not need. Storage density reduces the serving fleet, while separating the voter’s role avoids paying for an extra data-sized machine. The table prices self-hosted VMs for both systems; OS disks, backups and traffic are additional deployment costs.",
+      "sources": ["model", "azure-pricing", "meta", "overview"]
     },
     {
       "type": "heading",
@@ -60,20 +60,20 @@
     },
     {
       "type": "paragraph",
-      "text": "Build the Lavik capacity design from three Standard_L16as_v4 VMs. Each has 16 vCPUs, 128 GiB RAM and four 960 GB local NVMe devices, totaling 3.84 TB per VM. Run one Data process and one Meta voter on each VM, with one primary and two full followers. Each VM holds a complete copy of the dataset. This gives the deployment a straightforward shape: three data placements, three control-plane voters and NVMe capacity in each serving node.",
-      "sources": ["model", "azure-lasv4", "overview", "meta", "replication"]
-    },
-    {
-      "type": "paragraph",
-      "text": "With a full copy on each VM, the single-copy capacity basis is 3.84 TB. The cost table uses that denominator, yielding $784.75 per TB-month for the three-VM fleet. Redis’s 150 primaries provide 2,400 GiB, or about 2.577 decimal TB, yielding $10,707.88 per TB-month. These are capacity-normalized VM costs before database overhead and operational free-space reserves. Replication places the same logical dataset across the three Lavik VMs; after one VM fails, two data copies and a Meta majority remain available for recovery and promotion.",
+      "text": "Build the Lavik deployment from two Standard_L16as_v4 VMs and one Standard_E2s_v4 VM. The primary and follower each have 16 vCPUs, 128 GiB RAM and four 960 GB local NVMe devices, totaling 3.84 TB per data VM. Each runs a Data process and a Meta member. The E2s_v4 runs the third Meta member on two vCPUs and 16 GiB RAM, completing the three-member Raft quorum for automatic failover. This voter-only VM stores control-plane metadata, not application data. The topology has two complete dataset copies and three Meta voters.",
       "sources": [
         "model",
-        "azure-pricing",
-        "azure-easv4",
+        "azure-esv4",
         "azure-lasv4",
+        "overview",
         "meta",
         "replication"
       ]
+    },
+    {
+      "type": "paragraph",
+      "text": "The primary and follower each hold a full copy, so the single-copy capacity basis remains 3.84 TB. Including the voter VM, the deployment costs $547.12 per TB-month. Redis’s 150 primaries provide 2,400 GiB, or about 2.577 decimal TB, yielding $10,707.88 per TB-month. These are capacity-normalized VM costs before database overhead and operational free-space reserves. If the primary VM fails, the follower and dedicated voter retain a two-of-three Meta majority to coordinate promotion of the eligible follower. The surviving follower holds the remaining data copy; the voter supplies control-plane participation.",
+      "sources": ["model", "azure-pricing", "meta", "replication"]
     },
     {
       "type": "paragraph",
@@ -197,11 +197,11 @@
     },
     {
       "type": "paragraph",
-      "text": "Sizing and cost basis: the Azure comparison uses 300 E2as_v4 VMs versus three L16as_v4 VMs, with Linux pay-as-you-go prices in East US 2 and 730 hours per month. Annual cost is 12 monthly periods. Capacity normalization counts one logical copy: 2,400 GiB of Redis primary RAM and 3.84 TB of Lavik NVMe SSD, both before overhead. The throughput results use the separate L16aos_v4 benchmark configuration described above. Cost per million operations assumes an average 1 million QPS. VM prices exclude managed disks, external backups, traffic, staffing and taxes.",
+      "text": "Sizing and cost basis: the Azure comparison uses 300 E2s_v4 VMs versus two L16as_v4 data VMs plus one E2s_v4 Meta-only voter. Both use Linux pay-as-you-go prices in East US 2 and 730 hours per month; annual cost is 12 monthly periods. Capacity normalization counts one logical copy: 2,400 GiB of Redis primary RAM and 3.84 TB of Lavik NVMe SSD, both before overhead. The logarithmic chart repeats independent three-VM Lavik deployment units as capacity grows. Throughput measurements use the separate L16aos_v4 benchmark setup. Cost per million operations assumes an average 1 million QPS; VM prices exclude managed disks, external backups, traffic, staffing and taxes.",
       "sources": [
         "model",
         "azure-pricing",
-        "azure-easv4",
+        "azure-esv4",
         "azure-lasv4",
         "memory-report"
       ]
@@ -211,10 +211,10 @@
     "sources": [
       {
         "id": "model",
-        "title": "Azure VM capacity and cost model for this article",
-        "url": "https://github.com/eloqdata/lavik-agent/blob/main/evidence/technical/agent-era-azure/sizing.json",
-        "file": "evidence/technical/agent-era-azure/sizing.json",
-        "sha256": "716c271492530d0c26469a1bb05f291bb9f54af77479ea7a41bce17dac7e1061"
+        "title": "Azure primary, follower and Meta-only voter capacity and cost model",
+        "url": "https://github.com/eloqdata/lavik-agent/blob/main/evidence/technical/agent-era-voter/sizing.json",
+        "file": "evidence/technical/agent-era-voter/sizing.json",
+        "sha256": "c593d994a7fad4d7ff0c5adedb0fb4d80ce8f03ac04134f629db074b12ad6703"
       },
       {
         "id": "redis-cluster",
@@ -393,24 +393,24 @@
       },
       {
         "id": "azure-pricing",
-        "title": "Azure retail prices: Linux E2as_v4 and L16as_v4 in East US 2",
-        "url": "https://github.com/eloqdata/lavik-agent/blob/main/evidence/technical/agent-era-azure/sources/azure-retail-prices.json",
-        "file": "evidence/technical/agent-era-azure/sources/azure-retail-prices.json",
-        "sha256": "0493a205f5db3f3dc81e27d0a89e23593b2aa47a7fcfb8706d201f39861a5a78"
+        "title": "Azure retail prices: Linux E2s_v4 and L16as_v4 in East US 2",
+        "url": "https://github.com/eloqdata/lavik-agent/blob/main/evidence/technical/agent-era-voter/sources/azure-retail-prices.json",
+        "file": "evidence/technical/agent-era-voter/sources/azure-retail-prices.json",
+        "sha256": "3082b6238db5907208147f51cd1faa6d43f0d0425cb40cd797b0609c6537893e"
       },
       {
-        "id": "azure-easv4",
-        "title": "Microsoft Azure: E2as_v4 specifications",
-        "url": "https://learn.microsoft.com/en-us/azure/virtual-machines/sizes/memory-optimized/easv4-series",
-        "file": "evidence/technical/agent-era-azure/sources/azure-vm-specifications.json",
-        "sha256": "b5e74f26ce5ba22fd7bf86c831da15184dc4e99346826607b70626a69c2eea5b"
+        "id": "azure-esv4",
+        "title": "Microsoft Azure: E2s_v4 specifications",
+        "url": "https://learn.microsoft.com/en-us/azure/virtual-machines/sizes/memory-optimized/esv4-series",
+        "file": "evidence/technical/agent-era-voter/sources/azure-vm-specifications.json",
+        "sha256": "b229bc35c244ff9fc06737583150fcb17f7065416f5fd9c7cf1892b9768fc470"
       },
       {
         "id": "azure-lasv4",
         "title": "Microsoft Azure: L16as_v4 specifications and local NVMe capacity",
         "url": "https://learn.microsoft.com/en-us/azure/virtual-machines/sizes/storage-optimized/lasv4-series",
-        "file": "evidence/technical/agent-era-azure/sources/azure-vm-specifications.json",
-        "sha256": "b5e74f26ce5ba22fd7bf86c831da15184dc4e99346826607b70626a69c2eea5b"
+        "file": "evidence/technical/agent-era-voter/sources/azure-vm-specifications.json",
+        "sha256": "b229bc35c244ff9fc06737583150fcb17f7065416f5fd9c7cf1892b9768fc470"
       }
     ],
     "visuals": [
@@ -419,12 +419,12 @@
         "id": "fleet-model",
         "afterBlock": 0,
         "src": "/blog-assets/agent-era/consolidation.svg",
-        "sha256": "9dc511f11a1023fb0d926dc9946fe7c67112892b5b229900fe1c0cc049cbd006",
+        "sha256": "07235e63c14faa10218f92695ce83f57e90a157a8774e1dfb7d02afa2225a5db",
         "width": 1200,
         "height": 650,
-        "caption": "Capacity model: 300 E2as_v4 VMs (2 vCPUs, 16 GiB each) versus three L16as_v4 VMs (16 vCPUs, 128 GiB, 3.84 TB NVMe SSD each). Redis has 150 primary–replica pairs; Lavik has one primary and two full followers.",
-        "alt": "300 Redis processes, split into 150 primaries and 150 replicas, compared with three Lavik data hosts holding three complete copies.",
-        "sources": ["model", "azure-easv4", "azure-lasv4"]
+        "caption": "Capacity model: 300 E2s_v4 Redis VMs versus two L16as_v4 Lavik data VMs and one E2s_v4 Meta-only voter. One Meta member runs on each VM; only the primary and follower hold the dataset.",
+        "alt": "300 Redis nodes in 150 primary–replica pairs, compared with a Lavik primary and follower on L16as_v4 plus an E2s_v4 Meta-only voter. The data nodes also run Meta members, giving three Meta votes and two dataset copies.",
+        "sources": ["model", "azure-esv4", "azure-lasv4"]
       },
       {
         "type": "table",
@@ -434,12 +434,12 @@
         "columns": [
           "Bytes per agent",
           "Unique value payload",
-          "Three copies, values only"
+          "Two copies, values only"
         ],
         "rows": [
-          ["1 KB", "1 TB", "3 TB"],
-          ["10 KB", "10 TB", "30 TB"],
-          ["100 KB", "100 TB", "300 TB"]
+          ["1 KB", "1 TB", "2 TB"],
+          ["10 KB", "10 TB", "20 TB"],
+          ["100 KB", "100 TB", "200 TB"]
         ],
         "sources": ["model"]
       },
@@ -447,7 +447,7 @@
         "type": "table",
         "id": "cost-model",
         "afterBlock": 8,
-        "caption": "Azure East US 2 · Linux pay-as-you-go · USD · 730 hours/month. Hourly rates are per VM; monthly and annual costs cover the full fleet.",
+        "caption": "Azure East US 2 · Linux pay-as-you-go · USD · 730 hours/month. VM-hour rates identify each SKU; monthly and annual costs cover the complete deployment.",
         "columns": [
           "Deployment",
           "USD / VM-hour",
@@ -457,18 +457,18 @@
         ],
         "rows": [
           [
-            "Redis · 300 × Standard_E2as_v4",
+            "Redis · 300 × Standard_E2s_v4",
             "$0.126",
             "$27,594.00",
             "$331,128.00",
             "$0.01050"
           ],
           [
-            "Lavik · 3 × Standard_L16as_v4",
-            "$1.376",
-            "$3,013.44",
-            "$36,161.28",
-            "$0.00115"
+            "Lavik · 2 × L16as_v4 + 1 × E2s_v4",
+            "$1.376 (L16as_v4); $0.126 (E2s_v4)",
+            "$2,100.94",
+            "$25,211.28",
+            "$0.00080"
           ]
         ],
         "sources": ["azure-pricing", "model"]
@@ -484,10 +484,10 @@
           "USD / TB-month"
         ],
         "rows": [
-          ["Redis · 300 × E2as_v4", "2,400 GiB RAM (≈ 2.577 TB)", "$10,707.88"],
-          ["Lavik · 3 × L16as_v4", "3.84 TB NVMe SSD", "$784.75"]
+          ["Redis · 300 × E2s_v4", "2,400 GiB RAM (≈ 2.577 TB)", "$10,707.88"],
+          ["Lavik · 2 × L16as_v4 + 1 × E2s_v4", "3.84 TB NVMe SSD", "$547.12"]
         ],
-        "sources": ["model", "azure-easv4", "azure-lasv4", "azure-pricing"]
+        "sources": ["model", "azure-esv4", "azure-lasv4", "azure-pricing"]
       },
       {
         "type": "figure",
@@ -615,12 +615,12 @@
         "id": "node-count-growth",
         "afterBlock": 28,
         "src": "/blog-assets/agent-era/capacity.svg",
-        "sha256": "441de29089ff634a456f8783a2f1f352acfa99557b04f8d2b3c3bf130a8aabd3",
+        "sha256": "03b94acef51bbe2319362ddf218dd373892a2ee9478b295f43cc7b99b1362516",
         "width": 1200,
         "height": 540,
-        "caption": "Capacity-driven node count before overhead: Redis uses 16 GiB per primary and one replica; each Lavik group uses three full copies on 3.84 TB VMs. More capacity adds another three-VM group.",
-        "alt": "Primary-capacity model: Redis reaches 1,166 VMs at 10 TB; Lavik reaches nine VMs in three replicated groups. Linear and logarithmic charts show the same values.",
-        "sources": ["model", "azure-easv4", "azure-lasv4"]
+        "caption": "Logarithmic capacity model before overhead. Redis uses a 16 GiB primary and one replica per pair. Each independent Lavik deployment adds two 3.84 TB data VMs and one smaller Meta-only voter; all three VMs are counted.",
+        "alt": "A single logarithmic chart compares capacity-driven VM counts. At 10 TB before overhead, Redis reaches 1,166 VMs; three independent Lavik deployments total nine VMs: six data VMs and three Meta-only voters.",
+        "sources": ["model", "azure-esv4", "azure-lasv4"]
       }
     ]
   }

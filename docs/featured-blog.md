@@ -17,12 +17,18 @@ source references. The server renders all content without requiring JavaScript.
 meaning-bearing renderer to the independent ChatGPT-subscription review record.
 Do not edit review records to bypass content approval.
 
-The first featured article is `300-redis-nodes-to-3-lavik-nodes`. Its sizing
-current Azure VM sizing and retail-price receipts are under
-`evidence/technical/agent-era-azure/`; derived benchmark measurements remain
-under `evidence/technical/agent-era/`. The capacity model uses E2as_v4 and
-L16as_v4 pricing in East US 2, with a 3.84 TB single-copy NVMe denominator.
-Both capacity denominators are before database overhead and free-space reserves. `scripts/build-agent-era-figures.py` recreates
-the benchmark and capacity charts from the archived raw results using
-`matplotlib` and `hdrhistogram`. It extracts existing measurements; it does not
-run a benchmark. The two explanatory SVG diagrams are authored illustrations.
+The first featured article is `300-redis-nodes-to-3-lavik-nodes`. Its current
+Azure VM sizing and retail-price receipts are under
+`evidence/technical/agent-era-voter/`; derived benchmark measurements remain
+under `evidence/technical/agent-era/`. The East US 2 model prices 300 E2s_v4
+Redis VMs against two L16as_v4 Lavik data VMs and one E2s_v4 Meta-only voter.
+One Meta member runs on each VM; only the primary and follower hold dataset
+copies. The single-copy NVMe denominator is 3.84 TB. Both systems' capacity
+denominators are before database overhead and free-space reserves.
+
+`scripts/build-agent-era-figures.py` recreates the benchmark and capacity charts
+from the archived inputs using `matplotlib` and `hdrhistogram`. The capacity
+chart uses one logarithmic VM-count axis and includes the voter VM in each
+independent Lavik deployment unit. The script extracts existing measurements;
+it does not run a benchmark. The two explanatory SVG diagrams are authored
+illustrations. Earlier source snapshots and review records remain immutable.

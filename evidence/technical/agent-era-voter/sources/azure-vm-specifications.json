@@ -1,0 +1,24 @@
+{
+  "observedAt": "2026-10-15",
+  "sources": [
+    {
+      "url": "https://learn.microsoft.com/en-us/azure/virtual-machines/sizes/memory-optimized/esv4-series",
+      "sku": "Standard_E2s_v4",
+      "vCPUs": 2,
+      "memoryGiB": 16,
+      "localStorage": "None"
+    },
+    {
+      "url": "https://learn.microsoft.com/en-us/azure/virtual-machines/sizes/storage-optimized/lasv4-series",
+      "sku": "Standard_L16as_v4",
+      "vCPUs": 16,
+      "memoryGiB": 128,
+      "localNVMeDevices": 4,
+      "localNVMeGBPerDevice": 960,
+      "localNVMeTotalTB": 3.84,
+      "localStorageType": "Temporary local NVMe",
+      "maximumNetworkMbps": 12500
+    }
+  ],
+  "capacityBasis": "RAM is GiB; NVMe capacity is decimal GB. Redis:150 primaries x16GiB=2400GiB=2.5769803776TB. Lavik:one primary and one follower, each3.84TB, plus a Meta-only voter without a dataset copy. The single-copy capacity denominator remains3.84TB, before overhead and free-space reserve."
+}
