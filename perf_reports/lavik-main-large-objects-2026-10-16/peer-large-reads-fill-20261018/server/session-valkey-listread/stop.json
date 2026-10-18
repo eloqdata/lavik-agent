@@ -1,0 +1,43 @@
+{
+  "time": 1792342072.9862587,
+  "requested_at": 1792342072.2171462,
+  "active": {
+    "root": "/mnt/dev/benchmark/peer-large-reads-fill-20261018",
+    "product": "valkey",
+    "revision": "9.1.2",
+    "version": "9.1.2",
+    "binary": "/mnt/dev/benchmark/release010-latest/downloads/valkey/src/valkey-server",
+    "binary_sha256": "f33bbe718e212dd4f1adbfb7d1783dd0262c0d34546459c1a3cfc33651d4b946",
+    "label": "session-valkey-listread",
+    "args": [
+      "taskset",
+      "-c",
+      "0-15",
+      "/mnt/dev/benchmark/release010-latest/downloads/valkey/src/valkey-server",
+      "--bind",
+      "10.84.1.4",
+      "--protected-mode",
+      "no",
+      "--port",
+      "6379",
+      "--dir",
+      "/mnt/peer-large-reads-fill-20261018/session-valkey-listread",
+      "--save",
+      "",
+      "--appendonly",
+      "no",
+      "--io-threads",
+      "8",
+      "--maxclients",
+      "10000"
+    ],
+    "data_dir": "/mnt/peer-large-reads-fill-20261018/session-valkey-listread",
+    "pid": 2027947,
+    "start_ticks": "64549079",
+    "supervisor_pid": 2027946,
+    "started_at": 1792341816.3664114
+  },
+  "signal": 15,
+  "returncode": 0,
+  "clean_stop_confirmed": true
+}

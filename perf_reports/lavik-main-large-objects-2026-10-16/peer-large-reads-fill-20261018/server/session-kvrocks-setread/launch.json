@@ -1,0 +1,24 @@
+{
+  "root": "/mnt/dev/benchmark/peer-large-reads-fill-20261018",
+  "product": "kvrocks",
+  "revision": "2.17.0",
+  "version": "2.17.0",
+  "binary": "/mnt/dev/benchmark/storage-peers-20261014/sources/kvrocks/build/kvrocks",
+  "binary_sha256": "7a3a70738951934540ca5e48d1405899641c7163d6ce282ff48f3e0c2b013d58",
+  "label": "session-kvrocks-setread",
+  "args": [
+    "taskset",
+    "-c",
+    "0-15",
+    "/mnt/dev/benchmark/storage-peers-20261014/sources/kvrocks/build/kvrocks",
+    "-c",
+    "/mnt/dev/benchmark/peer-large-reads-fill-20261018/session-kvrocks-setread/server.conf"
+  ],
+  "data_dir": "/mnt/peer-large-reads-fill-20261018/session-kvrocks-setread",
+  "time": 1792342984.6672676,
+  "manifest_sha256": "391fba5bb360149ba338c613c67bb83958be192a10a90b74a9f66a19cbfe88cc",
+  "environment": {
+    "LC_ALL": "C"
+  },
+  "config_sha256": "24f348c6754995a56c36488c4d848a90b517b729a8e1657d638d5df5083fa860"
+}

@@ -1,0 +1,31 @@
+{
+  "time": 1792343332.7422476,
+  "active": {
+    "root": "/mnt/dev/benchmark/peer-large-reads-fill-20261018",
+    "product": "kvrocks",
+    "revision": "2.17.0",
+    "version": "2.17.0",
+    "binary": "/mnt/dev/benchmark/storage-peers-20261014/sources/kvrocks/build/kvrocks",
+    "binary_sha256": "7a3a70738951934540ca5e48d1405899641c7163d6ce282ff48f3e0c2b013d58",
+    "label": "session-kvrocks-listread",
+    "args": [
+      "taskset",
+      "-c",
+      "0-15",
+      "/mnt/dev/benchmark/storage-peers-20261014/sources/kvrocks/build/kvrocks",
+      "-c",
+      "/mnt/dev/benchmark/peer-large-reads-fill-20261018/session-kvrocks-listread/server.conf"
+    ],
+    "data_dir": "/mnt/peer-large-reads-fill-20261018/session-kvrocks-listread",
+    "pid": 2033980,
+    "start_ticks": "64700704",
+    "supervisor_pid": 2033979,
+    "started_at": 1792343332.6193438
+  },
+  "config": {
+    "workers": "16",
+    "rocksdb.disable_auto_compactions": "no",
+    "daemonize": "no"
+  },
+  "info_server": "# Server\nversion:2.17.0\nkvrocks_version:2.17.0\nredis_version:7.0.0\ngit_sha1:185d422\nkvrocks_git_sha1:185d422\nredis_mode:standalone\nkvrocks_mode:standalone\nos:Linux 6.17.0-1022-azure x86_64\ngcc_version:13.3.0\nrocksdb_version:11.8.1\narch_bits:64\nprocess_id:2033980\ntcp_port:6379\nserver_time_usec:1792343332741768\nuptime_in_seconds:0\nuptime_in_days:0\nexecutable:/mnt/dev/benchmark/storage-peers-20261014/sources/kvrocks/build/kvrocks\nconfig_file:/mnt/dev/benchmark/peer-large-reads-fill-20261018/session-kvrocks-listread/server.conf"
+}

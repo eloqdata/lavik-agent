@@ -1,0 +1,28 @@
+{
+  "pid": 1519254,
+  "product": "redis",
+  "label": "redis-lrange-r1",
+  "args": [
+    "taskset",
+    "-c",
+    "0-15",
+    "/mnt/dev/benchmark/release010-latest/downloads/redis/src/redis-server",
+    "--bind",
+    "10.84.1.4",
+    "--protected-mode",
+    "no",
+    "--port",
+    "6379",
+    "--dir",
+    "/mnt/dev/benchmark/redis-lrange-c1-20261016/redis-lrange-r1",
+    "--save",
+    "",
+    "--appendonly",
+    "no",
+    "--io-threads",
+    "16",
+    "--maxclients",
+    "10000"
+  ],
+  "start_ticks": "46351408"
+}

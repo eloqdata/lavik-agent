@@ -1,654 +1,3820 @@
-[
-  {
-    "suite": "main-large-objects-c80-20261015",
-    "system": "Lavik main",
-    "op": "hash",
-    "metrics": {
-      "HSET": {
-        "count": 4926124,
-        "qps": 82099.961362,
-        "avg_ms": 0.973178,
-        "p50_ms": 0.362,
-        "p99_ms": 8.75,
-        "p999_ms": 11.593,
-        "max_ms": 29.23
+{
+  "schema_version": 2,
+  "complete": true,
+  "canonical_main_revision": "9c68079a7dd775db647cf55fe578a6cd43426a82",
+  "canonical_main_points": 20,
+  "selected_points": 59,
+  "points": [
+    {
+      "id": "lavik/hgetall/c80",
+      "canonical_main": true,
+      "role": "canonical-main-read",
+      "product": "lavik",
+      "version": "9c68079a7dd775db647cf55fe578a6cd43426a82",
+      "op": "hgetall",
+      "command": "HGETALL",
+      "connections": 80,
+      "keys": 8192,
+      "unit": "QPS",
+      "measured_at_utc": "2026-10-18T09:54:45.541242+00:00",
+      "elapsed_seconds": 60.023901,
+      "metrics": {
+        "HGETALL": {
+          "count": 157782,
+          "qps": 2628.652881,
+          "avg_ms": 30.426811,
+          "p50_ms": 29.268,
+          "p99_ms": 71.604,
+          "p999_ms": 240.626,
+          "max_ms": 461.078
+        },
+        "OPERATIONS": {
+          "count": 157782,
+          "qps": 2628.652881,
+          "avg_ms": 30.426811,
+          "p50_ms": 29.268,
+          "p99_ms": 71.604,
+          "p999_ms": 240.626,
+          "max_ms": 461.078
+        }
       },
-      "OPERATIONS": {
-        "count": 4926124,
-        "qps": 82099.961362,
-        "avg_ms": 0.973178,
-        "p50_ms": 0.362,
-        "p99_ms": 8.75,
-        "p999_ms": 11.593,
-        "max_ms": 29.23
+      "conditions": {
+        "client_threads": 16,
+        "formal_seconds": 60,
+        "warm_seconds": 60.0,
+        "warm_seed": 10180,
+        "formal_seed": 20180,
+        "prefix": "formal:packed-hash",
+        "pipeline": 1
+      },
+      "raw_path": "main-large-objects-20261018-0938/client/results/hashread-main-hgetall-c80/result.json",
+      "command_path": "main-large-objects-20261018-0938/client/results/hashread-main-hgetall-c80/command.json",
+      "warm_command_path": "main-large-objects-20261018-0938/client/results/hashread-main-hgetall-warm/command.json",
+      "source": {
+        "suite": "main-large-objects-20261018-0938",
+        "path": "outputs/main-large-objects-20261018-0938/client/results/hashread-main-hgetall-c80/result.json",
+        "sha256": "409625b7e437e006c42de7e013cf569406d62f6f647d0e2028f4f6cd894114b7"
+      },
+      "server_cpu_cores": 6.469756898434543,
+      "server_eth1_tx_gbps": 23.822341374410534,
+      "client_eth0_rx_gbps": 23.69994601595862,
+      "client_binary_sha256": "67bc9feaf0aedfc48f27aceb4ca75fc597a0904572a19d1aeccbb47c9f9d0e9b",
+      "binary_sha256": "4fe9c53a6b1ebcff1bce17ce3aac213e879f20b82f09a326ae02560a792056c3"
+    },
+    {
+      "id": "lavik/hkeys/c80",
+      "canonical_main": true,
+      "role": "canonical-main-read",
+      "product": "lavik",
+      "version": "9c68079a7dd775db647cf55fe578a6cd43426a82",
+      "op": "hkeys",
+      "command": "HKEYS",
+      "connections": 80,
+      "keys": 8192,
+      "unit": "QPS",
+      "measured_at_utc": "2026-10-18T09:56:47.839600+00:00",
+      "elapsed_seconds": 60.020291,
+      "metrics": {
+        "HKEYS": {
+          "count": 271469,
+          "qps": 4522.953736,
+          "avg_ms": 17.683752,
+          "p50_ms": 7.446,
+          "p99_ms": 86.747,
+          "p999_ms": 109.109,
+          "max_ms": 129.402
+        },
+        "OPERATIONS": {
+          "count": 271469,
+          "qps": 4522.953736,
+          "avg_ms": 17.683752,
+          "p50_ms": 7.446,
+          "p99_ms": 86.747,
+          "p999_ms": 109.109,
+          "max_ms": 129.402
+        }
+      },
+      "conditions": {
+        "client_threads": 16,
+        "formal_seconds": 60,
+        "warm_seconds": 60.0,
+        "warm_seed": 10180,
+        "formal_seed": 20180,
+        "prefix": "formal:packed-hash",
+        "pipeline": 1
+      },
+      "raw_path": "main-large-objects-20261018-0938/client/results/hashread-main-hkeys-c80/result.json",
+      "command_path": "main-large-objects-20261018-0938/client/results/hashread-main-hkeys-c80/command.json",
+      "warm_command_path": "main-large-objects-20261018-0938/client/results/hashread-main-hkeys-warm/command.json",
+      "source": {
+        "suite": "main-large-objects-20261018-0938",
+        "path": "outputs/main-large-objects-20261018-0938/client/results/hashread-main-hkeys-c80/result.json",
+        "sha256": "ca1e4d757163a02c2aca3a6c156a1d9ae9870d6f8ba9932912a4fff7e80adceb"
+      },
+      "server_cpu_cores": 12.383062860644264,
+      "server_eth1_tx_gbps": 1.5939798306753006,
+      "client_eth0_rx_gbps": 1.5931808993612082,
+      "client_binary_sha256": "67bc9feaf0aedfc48f27aceb4ca75fc597a0904572a19d1aeccbb47c9f9d0e9b",
+      "binary_sha256": "4fe9c53a6b1ebcff1bce17ce3aac213e879f20b82f09a326ae02560a792056c3"
+    },
+    {
+      "id": "lavik/hvals/c80",
+      "canonical_main": true,
+      "role": "canonical-main-read",
+      "product": "lavik",
+      "version": "9c68079a7dd775db647cf55fe578a6cd43426a82",
+      "op": "hvals",
+      "command": "HVALS",
+      "connections": 80,
+      "keys": 8192,
+      "unit": "QPS",
+      "measured_at_utc": "2026-10-18T09:58:50.162794+00:00",
+      "elapsed_seconds": 60.131187,
+      "metrics": {
+        "HVALS": {
+          "count": 164207,
+          "qps": 2730.812542,
+          "avg_ms": 29.236239,
+          "p50_ms": 28.838,
+          "p99_ms": 70.327,
+          "p999_ms": 221.018,
+          "max_ms": 301.326
+        },
+        "OPERATIONS": {
+          "count": 164207,
+          "qps": 2730.812542,
+          "avg_ms": 29.236239,
+          "p50_ms": 28.838,
+          "p99_ms": 70.327,
+          "p999_ms": 221.018,
+          "max_ms": 301.326
+        }
+      },
+      "conditions": {
+        "client_threads": 16,
+        "formal_seconds": 60,
+        "warm_seconds": 60.0,
+        "warm_seed": 10180,
+        "formal_seed": 20180,
+        "prefix": "formal:packed-hash",
+        "pipeline": 1
+      },
+      "raw_path": "main-large-objects-20261018-0938/client/results/hashread-main-hvals-c80/result.json",
+      "command_path": "main-large-objects-20261018-0938/client/results/hashread-main-hvals-c80/command.json",
+      "warm_command_path": "main-large-objects-20261018-0938/client/results/hashread-main-hvals-warm/command.json",
+      "source": {
+        "suite": "main-large-objects-20261018-0938",
+        "path": "outputs/main-large-objects-20261018-0938/client/results/hashread-main-hvals-c80/result.json",
+        "sha256": "0dcc9ffbad0e12a732b00528a446bab9bf1d5f0fdf5152e11972e02e1700242e"
+      },
+      "server_cpu_cores": 6.695315948127158,
+      "server_eth1_tx_gbps": 23.82404433013485,
+      "client_eth0_rx_gbps": 23.7025339373414,
+      "client_binary_sha256": "67bc9feaf0aedfc48f27aceb4ca75fc597a0904572a19d1aeccbb47c9f9d0e9b",
+      "binary_sha256": "4fe9c53a6b1ebcff1bce17ce3aac213e879f20b82f09a326ae02560a792056c3"
+    },
+    {
+      "id": "lavik/hgetall/c1",
+      "canonical_main": true,
+      "role": "canonical-main-read",
+      "product": "lavik",
+      "version": "9c68079a7dd775db647cf55fe578a6cd43426a82",
+      "op": "hgetall",
+      "command": "HGETALL",
+      "connections": 1,
+      "keys": 8192,
+      "unit": "QPS",
+      "measured_at_utc": "2026-10-18T10:01:05.278038+00:00",
+      "elapsed_seconds": 60.00152,
+      "metrics": {
+        "HGETALL": {
+          "count": 18551,
+          "qps": 309.175502,
+          "avg_ms": 3.232712,
+          "p50_ms": 3.214,
+          "p99_ms": 3.742,
+          "p999_ms": 3.985,
+          "max_ms": 9.435
+        },
+        "OPERATIONS": {
+          "count": 18551,
+          "qps": 309.175502,
+          "avg_ms": 3.232712,
+          "p50_ms": 3.214,
+          "p99_ms": 3.742,
+          "p999_ms": 3.985,
+          "max_ms": 9.435
+        }
+      },
+      "conditions": {
+        "client_threads": 1,
+        "formal_seconds": 60,
+        "warm_seconds": 60.0,
+        "warm_seed": 10101,
+        "formal_seed": 20101,
+        "prefix": "formal:packed-hash",
+        "pipeline": 1
+      },
+      "raw_path": "main-large-objects-20261018-0938/client/results/c1-hashread-main-hgetall-c1/result.json",
+      "command_path": "main-large-objects-20261018-0938/client/results/c1-hashread-main-hgetall-c1/command.json",
+      "warm_command_path": "main-large-objects-20261018-0938/client/results/c1-hashread-main-hgetall-warm/command.json",
+      "source": {
+        "suite": "main-large-objects-20261018-0938",
+        "path": "outputs/main-large-objects-20261018-0938/client/results/c1-hashread-main-hgetall-c1/result.json",
+        "sha256": "e8afa81e5afe81e20308e76522da17efaf7f7279ea6de65c63b1384dad53f1a3"
+      },
+      "server_cpu_cores": 0.8293299295421479,
+      "server_eth1_tx_gbps": 2.788427590749587,
+      "client_eth0_rx_gbps": 2.7872274213601016,
+      "client_binary_sha256": "67bc9feaf0aedfc48f27aceb4ca75fc597a0904572a19d1aeccbb47c9f9d0e9b",
+      "binary_sha256": "4fe9c53a6b1ebcff1bce17ce3aac213e879f20b82f09a326ae02560a792056c3"
+    },
+    {
+      "id": "lavik/hkeys/c1",
+      "canonical_main": true,
+      "role": "canonical-main-read",
+      "product": "lavik",
+      "version": "9c68079a7dd775db647cf55fe578a6cd43426a82",
+      "op": "hkeys",
+      "command": "HKEYS",
+      "connections": 1,
+      "keys": 8192,
+      "unit": "QPS",
+      "measured_at_utc": "2026-10-18T10:03:07.413041+00:00",
+      "elapsed_seconds": 60.001544,
+      "metrics": {
+        "HKEYS": {
+          "count": 24789,
+          "qps": 413.139367,
+          "avg_ms": 2.418047,
+          "p50_ms": 2.398,
+          "p99_ms": 2.929,
+          "p999_ms": 3.179,
+          "max_ms": 7.51
+        },
+        "OPERATIONS": {
+          "count": 24789,
+          "qps": 413.139367,
+          "avg_ms": 2.418047,
+          "p50_ms": 2.398,
+          "p99_ms": 2.929,
+          "p999_ms": 3.179,
+          "max_ms": 7.51
+        }
+      },
+      "conditions": {
+        "client_threads": 1,
+        "formal_seconds": 60,
+        "warm_seconds": 60.0,
+        "warm_seed": 10101,
+        "formal_seed": 20101,
+        "prefix": "formal:packed-hash",
+        "pipeline": 1
+      },
+      "raw_path": "main-large-objects-20261018-0938/client/results/c1-hashread-main-hkeys-c1/result.json",
+      "command_path": "main-large-objects-20261018-0938/client/results/c1-hashread-main-hkeys-c1/command.json",
+      "warm_command_path": "main-large-objects-20261018-0938/client/results/c1-hashread-main-hkeys-warm/command.json",
+      "source": {
+        "suite": "main-large-objects-20261018-0938",
+        "path": "outputs/main-large-objects-20261018-0938/client/results/c1-hashread-main-hkeys-c1/result.json",
+        "sha256": "356be5c23653866c3d02a67b1edf7321b3d7e2a127d0b7a9230251e5d0c80620"
+      },
+      "server_cpu_cores": 0.9919961962677407,
+      "server_eth1_tx_gbps": 0.14552430919835493,
+      "client_eth0_rx_gbps": 0.14548426604619025,
+      "client_binary_sha256": "67bc9feaf0aedfc48f27aceb4ca75fc597a0904572a19d1aeccbb47c9f9d0e9b",
+      "binary_sha256": "4fe9c53a6b1ebcff1bce17ce3aac213e879f20b82f09a326ae02560a792056c3"
+    },
+    {
+      "id": "lavik/hvals/c1",
+      "canonical_main": true,
+      "role": "canonical-main-read",
+      "product": "lavik",
+      "version": "9c68079a7dd775db647cf55fe578a6cd43426a82",
+      "op": "hvals",
+      "command": "HVALS",
+      "connections": 1,
+      "keys": 8192,
+      "unit": "QPS",
+      "measured_at_utc": "2026-10-18T10:05:09.575092+00:00",
+      "elapsed_seconds": 60.001031,
+      "metrics": {
+        "HVALS": {
+          "count": 19190,
+          "qps": 319.827838,
+          "avg_ms": 3.125028,
+          "p50_ms": 3.104,
+          "p99_ms": 3.646,
+          "p999_ms": 3.934,
+          "max_ms": 9.351
+        },
+        "OPERATIONS": {
+          "count": 19190,
+          "qps": 319.827838,
+          "avg_ms": 3.125028,
+          "p50_ms": 3.104,
+          "p99_ms": 3.646,
+          "p999_ms": 3.934,
+          "max_ms": 9.351
+        }
+      },
+      "conditions": {
+        "client_threads": 1,
+        "formal_seconds": 60,
+        "warm_seconds": 60.0,
+        "warm_seed": 10101,
+        "formal_seed": 20101,
+        "prefix": "formal:packed-hash",
+        "pipeline": 1
+      },
+      "raw_path": "main-large-objects-20261018-0938/client/results/c1-hashread-main-hvals-c1/result.json",
+      "command_path": "main-large-objects-20261018-0938/client/results/c1-hashread-main-hvals-c1/command.json",
+      "warm_command_path": "main-large-objects-20261018-0938/client/results/c1-hashread-main-hvals-warm/command.json",
+      "source": {
+        "suite": "main-large-objects-20261018-0938",
+        "path": "outputs/main-large-objects-20261018-0938/client/results/c1-hashread-main-hvals-c1/result.json",
+        "sha256": "1831514b9c93ecd98c2ed40d64102d11e631b67f5172375bce2e7f9f71e220fd"
+      },
+      "server_cpu_cores": 0.8451074722661371,
+      "server_eth1_tx_gbps": 2.771672808548369,
+      "client_eth0_rx_gbps": 2.7703074270962524,
+      "client_binary_sha256": "67bc9feaf0aedfc48f27aceb4ca75fc597a0904572a19d1aeccbb47c9f9d0e9b",
+      "binary_sha256": "4fe9c53a6b1ebcff1bce17ce3aac213e879f20b82f09a326ae02560a792056c3"
+    },
+    {
+      "id": "lavik/smembers/c80",
+      "canonical_main": true,
+      "role": "canonical-main-read",
+      "product": "lavik",
+      "version": "9c68079a7dd775db647cf55fe578a6cd43426a82",
+      "op": "smembers",
+      "command": "SMEMBERS",
+      "connections": 80,
+      "keys": 8192,
+      "unit": "QPS",
+      "measured_at_utc": "2026-10-18T10:13:56.640244+00:00",
+      "elapsed_seconds": 60.021898,
+      "metrics": {
+        "OPERATIONS": {
+          "count": 138975,
+          "qps": 2315.404969,
+          "avg_ms": 34.543612,
+          "p50_ms": 30.767,
+          "p99_ms": 81.638,
+          "p999_ms": 128.965,
+          "max_ms": 288.839
+        },
+        "SMEMBERS": {
+          "count": 138975,
+          "qps": 2315.404969,
+          "avg_ms": 34.543612,
+          "p50_ms": 30.767,
+          "p99_ms": 81.638,
+          "p999_ms": 128.965,
+          "max_ms": 288.839
+        }
+      },
+      "conditions": {
+        "client_threads": 16,
+        "formal_seconds": 60,
+        "warm_seconds": 60.0,
+        "warm_seed": 10180,
+        "formal_seed": 20180,
+        "prefix": "formal:smembers",
+        "pipeline": 1
+      },
+      "raw_path": "main-large-objects-20261018-0938/client/results/setread-main-smembers-c80/result.json",
+      "command_path": "main-large-objects-20261018-0938/client/results/setread-main-smembers-c80/command.json",
+      "warm_command_path": "main-large-objects-20261018-0938/client/results/setread-main-smembers-warm/command.json",
+      "source": {
+        "suite": "main-large-objects-20261018-0938",
+        "path": "outputs/main-large-objects-20261018-0938/client/results/setread-main-smembers-c80/result.json",
+        "sha256": "35fce41eaf2e971024ef64c3bcaae2aa5e56d686ace31fce640cdfe58b6ea44a"
+      },
+      "server_cpu_cores": 7.887758868716369,
+      "server_eth1_tx_gbps": 23.795417350350274,
+      "client_eth0_rx_gbps": 23.687377262842105,
+      "client_binary_sha256": "eab817a14c855063cc2bc338f3ab742a262e631dc40dc77a4b8987a823770d94",
+      "binary_sha256": "4fe9c53a6b1ebcff1bce17ce3aac213e879f20b82f09a326ae02560a792056c3"
+    },
+    {
+      "id": "lavik/smembers/c1",
+      "canonical_main": true,
+      "role": "canonical-main-read",
+      "product": "lavik",
+      "version": "9c68079a7dd775db647cf55fe578a6cd43426a82",
+      "op": "smembers",
+      "command": "SMEMBERS",
+      "connections": 1,
+      "keys": 8192,
+      "unit": "QPS",
+      "measured_at_utc": "2026-10-18T10:16:11.841843+00:00",
+      "elapsed_seconds": 60.001423,
+      "metrics": {
+        "OPERATIONS": {
+          "count": 12549,
+          "qps": 209.145038,
+          "avg_ms": 4.779311,
+          "p50_ms": 4.748,
+          "p99_ms": 5.41,
+          "p999_ms": 6.258,
+          "max_ms": 10.429
+        },
+        "SMEMBERS": {
+          "count": 12549,
+          "qps": 209.145038,
+          "avg_ms": 4.779311,
+          "p50_ms": 4.748,
+          "p99_ms": 5.41,
+          "p999_ms": 6.258,
+          "max_ms": 10.429
+        }
+      },
+      "conditions": {
+        "client_threads": 1,
+        "formal_seconds": 60,
+        "warm_seconds": 60.0,
+        "warm_seed": 10101,
+        "formal_seed": 20101,
+        "prefix": "formal:smembers",
+        "pipeline": 1
+      },
+      "raw_path": "main-large-objects-20261018-0938/client/results/c1-setread-main-smembers-c1/result.json",
+      "command_path": "main-large-objects-20261018-0938/client/results/c1-setread-main-smembers-c1/command.json",
+      "warm_command_path": "main-large-objects-20261018-0938/client/results/c1-setread-main-smembers-warm/command.json",
+      "source": {
+        "suite": "main-large-objects-20261018-0938",
+        "path": "outputs/main-large-objects-20261018-0938/client/results/c1-setread-main-smembers-c1/result.json",
+        "sha256": "be20721a86b26859a725f3852f574bcc9e40a99ec50168eec6dc91ff90fc97cf"
+      },
+      "server_cpu_cores": 0.7364412056414835,
+      "server_eth1_tx_gbps": 2.14159523923228,
+      "client_eth0_rx_gbps": 2.1411032586101717,
+      "client_binary_sha256": "eab817a14c855063cc2bc338f3ab742a262e631dc40dc77a4b8987a823770d94",
+      "binary_sha256": "4fe9c53a6b1ebcff1bce17ce3aac213e879f20b82f09a326ae02560a792056c3"
+    },
+    {
+      "id": "lavik/lrange/c80",
+      "canonical_main": true,
+      "role": "canonical-main-read",
+      "product": "lavik",
+      "version": "9c68079a7dd775db647cf55fe578a6cd43426a82",
+      "op": "lrange",
+      "command": "LRANGE",
+      "connections": 80,
+      "keys": 8192,
+      "unit": "QPS",
+      "measured_at_utc": "2026-10-18T10:18:49.061511+00:00",
+      "elapsed_seconds": 60.06911,
+      "metrics": {
+        "LRANGE": {
+          "count": 164220,
+          "qps": 2733.851059,
+          "avg_ms": 29.231428,
+          "p50_ms": 28.768,
+          "p99_ms": 70.966,
+          "p999_ms": 222.346,
+          "max_ms": 272.649
+        },
+        "OPERATIONS": {
+          "count": 164220,
+          "qps": 2733.851059,
+          "avg_ms": 29.231428,
+          "p50_ms": 28.768,
+          "p99_ms": 70.966,
+          "p999_ms": 222.346,
+          "max_ms": 272.649
+        }
+      },
+      "conditions": {
+        "client_threads": 16,
+        "formal_seconds": 60,
+        "warm_seconds": 60.0,
+        "warm_seed": 10180,
+        "formal_seed": 20180,
+        "prefix": "formal:packed-lrange",
+        "pipeline": 1
+      },
+      "raw_path": "main-large-objects-20261018-0938/client/results/listread-main-lrange-c80/result.json",
+      "command_path": "main-large-objects-20261018-0938/client/results/listread-main-lrange-c80/command.json",
+      "warm_command_path": "main-large-objects-20261018-0938/client/results/listread-main-lrange-warm/command.json",
+      "source": {
+        "suite": "main-large-objects-20261018-0938",
+        "path": "outputs/main-large-objects-20261018-0938/client/results/listread-main-lrange-c80/result.json",
+        "sha256": "eb7c08b076b03f94106d1b86449eb75534f75896d5d81674122753eec85bf6ed"
+      },
+      "server_cpu_cores": 5.143975567945022,
+      "server_eth1_tx_gbps": 23.822803242688263,
+      "client_eth0_rx_gbps": 23.704707156927938,
+      "client_binary_sha256": "212c6fae56f6e6490359a645219afea32dd7da0822cd19d8bd6bcbeadbdf13b8",
+      "binary_sha256": "4fe9c53a6b1ebcff1bce17ce3aac213e879f20b82f09a326ae02560a792056c3"
+    },
+    {
+      "id": "lavik/lrange/c1",
+      "canonical_main": true,
+      "role": "canonical-main-read",
+      "product": "lavik",
+      "version": "9c68079a7dd775db647cf55fe578a6cd43426a82",
+      "op": "lrange",
+      "command": "LRANGE",
+      "connections": 1,
+      "keys": 8192,
+      "unit": "QPS",
+      "measured_at_utc": "2026-10-18T10:21:04.002789+00:00",
+      "elapsed_seconds": 60.000753,
+      "metrics": {
+        "LRANGE": {
+          "count": 28183,
+          "qps": 469.710775,
+          "avg_ms": 2.127104,
+          "p50_ms": 2.114,
+          "p99_ms": 2.449,
+          "p999_ms": 2.624,
+          "max_ms": 7.168
+        },
+        "OPERATIONS": {
+          "count": 28183,
+          "qps": 469.710775,
+          "avg_ms": 2.127104,
+          "p50_ms": 2.114,
+          "p99_ms": 2.449,
+          "p999_ms": 2.624,
+          "max_ms": 7.168
+        }
+      },
+      "conditions": {
+        "client_threads": 1,
+        "formal_seconds": 60,
+        "warm_seconds": 60.0,
+        "warm_seed": 10101,
+        "formal_seed": 20101,
+        "prefix": "formal:packed-lrange",
+        "pipeline": 1
+      },
+      "raw_path": "main-large-objects-20261018-0938/client/results/c1-listread-main-lrange-c1/result.json",
+      "command_path": "main-large-objects-20261018-0938/client/results/c1-listread-main-lrange-c1/command.json",
+      "warm_command_path": "main-large-objects-20261018-0938/client/results/c1-listread-main-lrange-warm/command.json",
+      "source": {
+        "suite": "main-large-objects-20261018-0938",
+        "path": "outputs/main-large-objects-20261018-0938/client/results/c1-listread-main-lrange-c1/result.json",
+        "sha256": "d963ced841cc2ccaee503cc87211d269710ee0c9a171a1fd25d6220afc65fa7b"
+      },
+      "server_cpu_cores": 0.8079967431267278,
+      "server_eth1_tx_gbps": 4.070160127154115,
+      "client_eth0_rx_gbps": 4.068878966003137,
+      "client_binary_sha256": "212c6fae56f6e6490359a645219afea32dd7da0822cd19d8bd6bcbeadbdf13b8",
+      "binary_sha256": "4fe9c53a6b1ebcff1bce17ce3aac213e879f20b82f09a326ae02560a792056c3"
+    },
+    {
+      "id": "lavik/zrange/c80",
+      "canonical_main": true,
+      "role": "canonical-main-read",
+      "product": "lavik",
+      "version": "9c68079a7dd775db647cf55fe578a6cd43426a82",
+      "op": "zrange",
+      "command": "ZRANGE WITHSCORES",
+      "connections": 80,
+      "keys": 8192,
+      "unit": "QPS",
+      "measured_at_utc": "2026-10-18T10:43:59.212113+00:00",
+      "elapsed_seconds": 60.077742,
+      "metrics": {
+        "OPERATIONS": {
+          "count": 108355,
+          "qps": 1803.579774,
+          "avg_ms": 44.316344,
+          "p50_ms": 27.267,
+          "p99_ms": 203.33,
+          "p999_ms": 272.043,
+          "max_ms": 387.948
+        },
+        "ZRANGE_WITHSCORES": {
+          "count": 108355,
+          "qps": 1803.579774,
+          "avg_ms": 44.316344,
+          "p50_ms": 27.267,
+          "p99_ms": 203.33,
+          "p999_ms": 272.043,
+          "max_ms": 387.948
+        }
+      },
+      "conditions": {
+        "client_threads": 16,
+        "formal_seconds": 60,
+        "warm_seconds": 60.0,
+        "warm_seed": 10180,
+        "formal_seed": 20180,
+        "prefix": "formal:packed-zrange",
+        "pipeline": 1
+      },
+      "raw_path": "main-large-objects-20261018-0938/client/results/zsetread-main-zrange-c80/result.json",
+      "command_path": "main-large-objects-20261018-0938/client/results/zsetread-main-zrange-c80/command.json",
+      "warm_command_path": "main-large-objects-20261018-0938/client/results/zsetread-main-zrange-warm/command.json",
+      "source": {
+        "suite": "main-large-objects-20261018-0938",
+        "path": "outputs/main-large-objects-20261018-0938/client/results/zsetread-main-zrange-c80/result.json",
+        "sha256": "9809603eaace3858b8bdf392b69f507b5be498135c9b51927751feebeb398e47"
+      },
+      "server_cpu_cores": 13.38477265701033,
+      "server_eth1_tx_gbps": 23.523663421965026,
+      "client_eth0_rx_gbps": 23.505849642808048,
+      "client_binary_sha256": "eab817a14c855063cc2bc338f3ab742a262e631dc40dc77a4b8987a823770d94",
+      "binary_sha256": "4fe9c53a6b1ebcff1bce17ce3aac213e879f20b82f09a326ae02560a792056c3"
+    },
+    {
+      "id": "lavik/zrange/c1",
+      "canonical_main": true,
+      "role": "canonical-main-read",
+      "product": "lavik",
+      "version": "9c68079a7dd775db647cf55fe578a6cd43426a82",
+      "op": "zrange",
+      "command": "ZRANGE WITHSCORES",
+      "connections": 1,
+      "keys": 8192,
+      "unit": "QPS",
+      "measured_at_utc": "2026-10-18T10:46:15.051094+00:00",
+      "elapsed_seconds": 60.004098,
+      "metrics": {
+        "OPERATIONS": {
+          "count": 8247,
+          "qps": 137.440613,
+          "avg_ms": 7.273324,
+          "p50_ms": 7.23,
+          "p99_ms": 7.893,
+          "p999_ms": 8.272,
+          "max_ms": 11.077
+        },
+        "ZRANGE_WITHSCORES": {
+          "count": 8247,
+          "qps": 137.440613,
+          "avg_ms": 7.273324,
+          "p50_ms": 7.23,
+          "p99_ms": 7.893,
+          "p999_ms": 8.272,
+          "max_ms": 11.077
+        }
+      },
+      "conditions": {
+        "client_threads": 1,
+        "formal_seconds": 60,
+        "warm_seconds": 60.0,
+        "warm_seed": 10101,
+        "formal_seed": 20101,
+        "prefix": "formal:packed-zrange",
+        "pipeline": 1
+      },
+      "raw_path": "main-large-objects-20261018-0938/client/results/c1-zsetread-main-zrange-c1/result.json",
+      "command_path": "main-large-objects-20261018-0938/client/results/c1-zsetread-main-zrange-c1/command.json",
+      "warm_command_path": "main-large-objects-20261018-0938/client/results/c1-zsetread-main-zrange-warm/command.json",
+      "source": {
+        "suite": "main-large-objects-20261018-0938",
+        "path": "outputs/main-large-objects-20261018-0938/client/results/c1-zsetread-main-zrange-c1/result.json",
+        "sha256": "d401dd71e458cf4d8fcdb216f7c26a7d8f107ed248f80c52506ab0a64fa98963"
+      },
+      "server_cpu_cores": 0.7551081055962687,
+      "server_eth1_tx_gbps": 1.7913253433316985,
+      "client_eth0_rx_gbps": 1.7903447048263958,
+      "client_binary_sha256": "eab817a14c855063cc2bc338f3ab742a262e631dc40dc77a4b8987a823770d94",
+      "binary_sha256": "4fe9c53a6b1ebcff1bce17ce3aac213e879f20b82f09a326ae02560a792056c3"
+    },
+    {
+      "id": "lavik/set/c80",
+      "canonical_main": true,
+      "role": "canonical-main-write",
+      "product": "lavik",
+      "version": "9c68079a7dd775db647cf55fe578a6cd43426a82",
+      "op": "set",
+      "command": "SET 1 MiB",
+      "connections": 80,
+      "keys": 8192,
+      "unit": "QPS",
+      "measured_at_utc": "2026-10-18T14:26:33.435773+00:00",
+      "elapsed_seconds": 60.071701,
+      "metrics": {
+        "OPERATIONS": {
+          "count": 135588,
+          "qps": 2257.102721,
+          "avg_ms": 35.167213,
+          "p50_ms": 28.804,
+          "p99_ms": 205.08,
+          "p999_ms": 304.305,
+          "max_ms": 433.534
+        },
+        "SET": {
+          "count": 135588,
+          "qps": 2257.102721,
+          "avg_ms": 35.167213,
+          "p50_ms": 28.804,
+          "p99_ms": 205.08,
+          "p999_ms": 304.305,
+          "max_ms": 433.534
+        }
+      },
+      "conditions": {
+        "client_threads": 16,
+        "formal_seconds": 60,
+        "warm_seconds": 90.0,
+        "warm_seed": 10180,
+        "formal_seed": 20180,
+        "prefix": "formal:set",
+        "pipeline": 1
+      },
+      "raw_path": "main-large-writes-20261018-1412/client/results/set-main-set-c80/result.json",
+      "command_path": "main-large-writes-20261018-1412/client/results/set-main-set-c80/command.json",
+      "warm_command_path": "main-large-writes-20261018-1412/client/results/set-main-set-warm/command.json",
+      "source": {
+        "suite": "main-large-writes-20261018-1412",
+        "path": "outputs/main-large-writes-20261018-1412/client/results/set-main-set-c80/result.json",
+        "sha256": "c03ac8f7fd6f8e64d7765fd3e722d2baf98e35442da21f722d6b05aabd5aad8f"
+      },
+      "server_cpu_cores": 14.369934221785766,
+      "server_eth1_tx_gbps": 0.03945963732950412,
+      "server_eth1_rx_gbps": 18.95619274361612,
+      "client_eth0_rx_gbps": 0.03122893164150672,
+      "client_eth0_tx_gbps": 19.01219991731061,
+      "client_binary_sha256": "f596a6f1a5a1a600c5cec3240e0f56a0dd56f338283d5666e38a4c82ccb62b08",
+      "binary_sha256": "4fe9c53a6b1ebcff1bce17ce3aac213e879f20b82f09a326ae02560a792056c3"
+    },
+    {
+      "id": "lavik/setrange/c80",
+      "canonical_main": true,
+      "role": "canonical-main-write",
+      "product": "lavik",
+      "version": "9c68079a7dd775db647cf55fe578a6cd43426a82",
+      "op": "setrange",
+      "command": "SETRANGE 256 B",
+      "connections": 80,
+      "keys": 8192,
+      "unit": "QPS",
+      "measured_at_utc": "2026-10-18T14:29:41.352277+00:00",
+      "elapsed_seconds": 60.006066,
+      "metrics": {
+        "OPERATIONS": {
+          "count": 3568921,
+          "qps": 59476.004091,
+          "avg_ms": 1.343824,
+          "p50_ms": 0.328,
+          "p99_ms": 9.385,
+          "p999_ms": 14.838,
+          "max_ms": 40.817
+        },
+        "SETRANGE": {
+          "count": 3568921,
+          "qps": 59476.004091,
+          "avg_ms": 1.343824,
+          "p50_ms": 0.328,
+          "p99_ms": 9.385,
+          "p999_ms": 14.838,
+          "max_ms": 40.817
+        }
+      },
+      "conditions": {
+        "client_threads": 16,
+        "formal_seconds": 60,
+        "warm_seconds": 90.0,
+        "warm_seed": 10180,
+        "formal_seed": 20180,
+        "prefix": "formal:setrange",
+        "pipeline": 1
+      },
+      "raw_path": "main-large-writes-20261018-1412/client/results/setrange-main-setrange-c80/result.json",
+      "command_path": "main-large-writes-20261018-1412/client/results/setrange-main-setrange-c80/command.json",
+      "warm_command_path": "main-large-writes-20261018-1412/client/results/setrange-main-setrange-warm/command.json",
+      "source": {
+        "suite": "main-large-writes-20261018-1412",
+        "path": "outputs/main-large-writes-20261018-1412/client/results/setrange-main-setrange-c80/result.json",
+        "sha256": "ca57e55330854201c5792eb276200a1011966d98b20cfc1fdd88ff4f106260a3"
+      },
+      "server_cpu_cores": 11.269953198639245,
+      "server_eth1_tx_gbps": 0.036269589470149716,
+      "server_eth1_rx_gbps": 0.1779140266776484,
+      "client_eth0_rx_gbps": 0.02959545639450874,
+      "client_eth0_tx_gbps": 0.18458620830743916,
+      "client_binary_sha256": "f596a6f1a5a1a600c5cec3240e0f56a0dd56f338283d5666e38a4c82ccb62b08",
+      "binary_sha256": "4fe9c53a6b1ebcff1bce17ce3aac213e879f20b82f09a326ae02560a792056c3"
+    },
+    {
+      "id": "lavik/hash/c80",
+      "canonical_main": true,
+      "role": "canonical-main-write",
+      "product": "lavik",
+      "version": "9c68079a7dd775db647cf55fe578a6cd43426a82",
+      "op": "hash",
+      "command": "HSET 256 B",
+      "connections": 80,
+      "keys": 8192,
+      "unit": "QPS",
+      "measured_at_utc": "2026-10-18T14:33:27.530752+00:00",
+      "elapsed_seconds": 60.006718,
+      "metrics": {
+        "HSET": {
+          "count": 4891412,
+          "qps": 81514.406123,
+          "avg_ms": 0.980223,
+          "p50_ms": 0.36,
+          "p99_ms": 8.846,
+          "p999_ms": 11.825,
+          "max_ms": 29.001
+        },
+        "OPERATIONS": {
+          "count": 4891412,
+          "qps": 81514.406123,
+          "avg_ms": 0.980223,
+          "p50_ms": 0.36,
+          "p99_ms": 8.846,
+          "p999_ms": 11.825,
+          "max_ms": 29.001
+        }
+      },
+      "conditions": {
+        "client_threads": 16,
+        "formal_seconds": 60,
+        "warm_seconds": 90.0,
+        "warm_seed": 10180,
+        "formal_seed": 20180,
+        "prefix": "formal:hash",
+        "pipeline": 1
+      },
+      "raw_path": "main-large-writes-20261018-1412/client/results/hash-main-hash-c80/result.json",
+      "command_path": "main-large-writes-20261018-1412/client/results/hash-main-hash-c80/command.json",
+      "warm_command_path": "main-large-writes-20261018-1412/client/results/hash-main-hash-warm/command.json",
+      "source": {
+        "suite": "main-large-writes-20261018-1412",
+        "path": "outputs/main-large-writes-20261018-1412/client/results/hash-main-hash-c80/result.json",
+        "sha256": "11ca77f3c6e14120cfbfd4a0fe57aea7a1cd07b0d5a9808161c8fb887ba14e9e"
+      },
+      "server_cpu_cores": 12.433054661727466,
+      "server_eth1_tx_gbps": 0.04593857009330816,
+      "server_eth1_rx_gbps": 0.23861374862995088,
+      "client_eth0_rx_gbps": 0.03674722830406412,
+      "client_eth0_tx_gbps": 0.24775132980518147,
+      "client_binary_sha256": "f596a6f1a5a1a600c5cec3240e0f56a0dd56f338283d5666e38a4c82ccb62b08",
+      "binary_sha256": "4fe9c53a6b1ebcff1bce17ce3aac213e879f20b82f09a326ae02560a792056c3"
+    },
+    {
+      "id": "lavik/list/c80",
+      "canonical_main": true,
+      "role": "canonical-main-write",
+      "product": "lavik",
+      "version": "9c68079a7dd775db647cf55fe578a6cd43426a82",
+      "op": "list",
+      "command": "LPUSH/RPOP",
+      "connections": 80,
+      "keys": 8192,
+      "unit": "pairs/s",
+      "measured_at_utc": "2026-10-18T14:36:22.773346+00:00",
+      "elapsed_seconds": 60.002665,
+      "metrics": {
+        "LPUSH": {
+          "count": 5183656,
+          "qps": 86390.430033,
+          "avg_ms": 0.521678,
+          "p50_ms": 0.29,
+          "p99_ms": 6.439,
+          "p999_ms": 11.289,
+          "max_ms": 45.675
+        },
+        "OPERATIONS": {
+          "count": 5183656,
+          "qps": 86390.430033,
+          "avg_ms": 0.92525,
+          "p50_ms": 0.588,
+          "p99_ms": 8.481,
+          "p999_ms": 16.991,
+          "max_ms": 47.962
+        },
+        "RPOP": {
+          "count": 5183656,
+          "qps": 86390.430033,
+          "avg_ms": 0.403096,
+          "p50_ms": 0.284,
+          "p99_ms": 3.012,
+          "p999_ms": 9.907,
+          "max_ms": 44.766
+        }
+      },
+      "conditions": {
+        "client_threads": 16,
+        "formal_seconds": 60,
+        "warm_seconds": 90.0,
+        "warm_seed": 10180,
+        "formal_seed": 20180,
+        "prefix": "formal:list",
+        "pipeline": 1
+      },
+      "raw_path": "main-large-writes-20261018-1412/client/results/list-main-list-c80/result.json",
+      "command_path": "main-large-writes-20261018-1412/client/results/list-main-list-c80/command.json",
+      "warm_command_path": "main-large-writes-20261018-1412/client/results/list-main-list-warm/command.json",
+      "source": {
+        "suite": "main-large-writes-20261018-1412",
+        "path": "outputs/main-large-writes-20261018-1412/client/results/list-main-list-c80/result.json",
+        "sha256": "1fe72aaf72cc74b0ebc4617bde11f2fed4ff4870b2dd7d4cd772fc2a71a24500"
+      },
+      "server_cpu_cores": 15.155513606777838,
+      "server_eth1_tx_gbps": 0.2792260273111593,
+      "server_eth1_rx_gbps": 0.3067526609871625,
+      "client_eth0_rx_gbps": 0.2596530657756154,
+      "client_eth0_tx_gbps": 0.3259409456536408,
+      "client_binary_sha256": "f596a6f1a5a1a600c5cec3240e0f56a0dd56f338283d5666e38a4c82ccb62b08",
+      "binary_sha256": "4fe9c53a6b1ebcff1bce17ce3aac213e879f20b82f09a326ae02560a792056c3"
+    },
+    {
+      "id": "lavik/zincr/c80",
+      "canonical_main": true,
+      "role": "canonical-main-write",
+      "product": "lavik",
+      "version": "9c68079a7dd775db647cf55fe578a6cd43426a82",
+      "op": "zincr",
+      "command": "ZINCRBY",
+      "connections": 80,
+      "keys": 8192,
+      "unit": "QPS",
+      "measured_at_utc": "2026-10-18T14:59:35.114967+00:00",
+      "elapsed_seconds": 60.017968,
+      "metrics": {
+        "OPERATIONS": {
+          "count": 1454070,
+          "qps": 24227.244669,
+          "avg_ms": 3.299888,
+          "p50_ms": 1.132,
+          "p99_ms": 21.621,
+          "p999_ms": 30.917,
+          "max_ms": 54.407
+        },
+        "ZINCRBY": {
+          "count": 1454070,
+          "qps": 24227.244669,
+          "avg_ms": 3.299888,
+          "p50_ms": 1.132,
+          "p99_ms": 21.621,
+          "p999_ms": 30.917,
+          "max_ms": 54.407
+        }
+      },
+      "conditions": {
+        "client_threads": 16,
+        "formal_seconds": 60,
+        "warm_seconds": 90.0,
+        "warm_seed": 10180,
+        "formal_seed": 20180,
+        "prefix": "formal:zincr",
+        "pipeline": 1
+      },
+      "raw_path": "main-large-writes-20261018-1412/client/results/zincr-main-zincr-c80/result.json",
+      "command_path": "main-large-writes-20261018-1412/client/results/zincr-main-zincr-c80/command.json",
+      "warm_command_path": "main-large-writes-20261018-1412/client/results/zincr-main-zincr-warm/command.json",
+      "source": {
+        "suite": "main-large-writes-20261018-1412",
+        "path": "outputs/main-large-writes-20261018-1412/client/results/zincr-main-zincr-c80/result.json",
+        "sha256": "c0090d12b176e69d42732a473b4964741c23061119f559fe64f0d8337b2632c0"
+      },
+      "server_cpu_cores": 12.958602078690156,
+      "server_eth1_tx_gbps": 0.014956446165524499,
+      "server_eth1_rx_gbps": 0.02772763940051587,
+      "client_eth0_rx_gbps": 0.01223898003662972,
+      "client_eth0_tx_gbps": 0.030410345368624796,
+      "client_binary_sha256": "f596a6f1a5a1a600c5cec3240e0f56a0dd56f338283d5666e38a4c82ccb62b08",
+      "binary_sha256": "4fe9c53a6b1ebcff1bce17ce3aac213e879f20b82f09a326ae02560a792056c3"
+    },
+    {
+      "id": "lavik/zswap/c80",
+      "canonical_main": true,
+      "role": "canonical-main-write",
+      "product": "lavik",
+      "version": "9c68079a7dd775db647cf55fe578a6cd43426a82",
+      "op": "zswap",
+      "command": "ZREM/ZADD",
+      "connections": 80,
+      "keys": 8192,
+      "unit": "pairs/s",
+      "measured_at_utc": "2026-10-18T15:22:31.275587+00:00",
+      "elapsed_seconds": 60.012707,
+      "metrics": {
+        "OPERATIONS": {
+          "count": 1137675,
+          "qps": 18957.235217,
+          "avg_ms": 4.218501,
+          "p50_ms": 1.754,
+          "p99_ms": 26.756,
+          "p999_ms": 37.095,
+          "max_ms": 209.562
+        },
+        "ZADD": {
+          "count": 1137675,
+          "qps": 18957.235217,
+          "avg_ms": 1.751644,
+          "p50_ms": 0.732,
+          "p99_ms": 12.057,
+          "p999_ms": 20.719,
+          "max_ms": 42.223
+        },
+        "ZREM": {
+          "count": 1137675,
+          "qps": 18957.235217,
+          "avg_ms": 2.465952,
+          "p50_ms": 0.907,
+          "p99_ms": 17.96,
+          "p999_ms": 26.663,
+          "max_ms": 208.996
+        }
+      },
+      "conditions": {
+        "client_threads": 16,
+        "formal_seconds": 60,
+        "warm_seconds": 90.0,
+        "warm_seed": 10180,
+        "formal_seed": 20180,
+        "prefix": "formal:zswap",
+        "pipeline": 1
+      },
+      "raw_path": "main-large-writes-20261018-1412/client/results/zswap-main-zswap-c80/result.json",
+      "command_path": "main-large-writes-20261018-1412/client/results/zswap-main-zswap-c80/command.json",
+      "warm_command_path": "main-large-writes-20261018-1412/client/results/zswap-main-zswap-warm/command.json",
+      "source": {
+        "suite": "main-large-writes-20261018-1412",
+        "path": "outputs/main-large-writes-20261018-1412/client/results/zswap-main-zswap-c80/result.json",
+        "sha256": "7b5536ea83ca6cf133aff081db231aa23b2b721d89c11d7f3a32df58a76db4f5"
+      },
+      "server_cpu_cores": 13.521718386183867,
+      "server_eth1_tx_gbps": 0.021224364375988528,
+      "server_eth1_rx_gbps": 0.04060969896290136,
+      "client_eth0_rx_gbps": 0.01699224555916139,
+      "client_eth0_tx_gbps": 0.044882673899025755,
+      "client_binary_sha256": "f596a6f1a5a1a600c5cec3240e0f56a0dd56f338283d5666e38a4c82ccb62b08",
+      "binary_sha256": "4fe9c53a6b1ebcff1bce17ce3aac213e879f20b82f09a326ae02560a792056c3"
+    },
+    {
+      "id": "lavik/stream/c80",
+      "canonical_main": true,
+      "role": "canonical-main-write",
+      "product": "lavik",
+      "version": "9c68079a7dd775db647cf55fe578a6cd43426a82",
+      "op": "stream",
+      "command": "XADD MAXLEN = 4096",
+      "connections": 80,
+      "keys": 8192,
+      "unit": "QPS",
+      "measured_at_utc": "2026-10-18T15:31:18.317580+00:00",
+      "elapsed_seconds": 60.014885,
+      "metrics": {
+        "OPERATIONS": {
+          "count": 3503523,
+          "qps": 58377.567157,
+          "avg_ms": 1.368803,
+          "p50_ms": 0.807,
+          "p99_ms": 9.584,
+          "p999_ms": 18.879,
+          "max_ms": 209.419
+        },
+        "XADD_MAXLEN": {
+          "count": 3503523,
+          "qps": 58377.567157,
+          "avg_ms": 1.368803,
+          "p50_ms": 0.807,
+          "p99_ms": 9.584,
+          "p999_ms": 18.879,
+          "max_ms": 209.419
+        }
+      },
+      "conditions": {
+        "client_threads": 16,
+        "formal_seconds": 60,
+        "warm_seconds": 90.0,
+        "warm_seed": 10180,
+        "formal_seed": 20180,
+        "prefix": "formal:stream",
+        "pipeline": 1
+      },
+      "raw_path": "main-large-writes-20261018-1412/client/results/stream-main-stream-c80/result.json",
+      "command_path": "main-large-writes-20261018-1412/client/results/stream-main-stream-c80/command.json",
+      "warm_command_path": "main-large-writes-20261018-1412/client/results/stream-main-stream-warm/command.json",
+      "source": {
+        "suite": "main-large-writes-20261018-1412",
+        "path": "outputs/main-large-writes-20261018-1412/client/results/stream-main-stream-c80/result.json",
+        "sha256": "50ecff5c16756deb4fe4e8486949527c46de3a76096b59fe787302ca1305843c"
+      },
+      "server_cpu_cores": 14.279718308780234,
+      "server_eth1_tx_gbps": 0.04120960260162699,
+      "server_eth1_rx_gbps": 0.18912598037014494,
+      "client_eth0_rx_gbps": 0.03463433686426884,
+      "client_eth0_tx_gbps": 0.1955503906813406,
+      "client_binary_sha256": "f596a6f1a5a1a600c5cec3240e0f56a0dd56f338283d5666e38a4c82ccb62b08",
+      "binary_sha256": "4fe9c53a6b1ebcff1bce17ce3aac213e879f20b82f09a326ae02560a792056c3"
+    },
+    {
+      "id": "lavik/sswap/c80",
+      "canonical_main": true,
+      "role": "canonical-main-write",
+      "product": "lavik",
+      "version": "9c68079a7dd775db647cf55fe578a6cd43426a82",
+      "op": "sswap",
+      "command": "SADD/SREM",
+      "connections": 80,
+      "keys": 8192,
+      "unit": "pairs/s",
+      "measured_at_utc": "2026-10-18T15:40:36.545235+00:00",
+      "elapsed_seconds": 60.011829,
+      "metrics": {
+        "OPERATIONS": {
+          "count": 2719710,
+          "qps": 45319.565002,
+          "avg_ms": 1.764121,
+          "p50_ms": 0.745,
+          "p99_ms": 14.326,
+          "p999_ms": 19.647,
+          "max_ms": 41.787
+        },
+        "SADD": {
+          "count": 2719710,
+          "qps": 45319.565002,
+          "avg_ms": 1.057904,
+          "p50_ms": 0.367,
+          "p99_ms": 8.643,
+          "p999_ms": 12.114,
+          "max_ms": 39.737
+        },
+        "SREM": {
+          "count": 2719710,
+          "qps": 45319.565002,
+          "avg_ms": 0.705382,
+          "p50_ms": 0.35,
+          "p99_ms": 9.072,
+          "p999_ms": 10.837,
+          "max_ms": 35.896
+        }
+      },
+      "conditions": {
+        "client_threads": 16,
+        "formal_seconds": 60,
+        "warm_seconds": 90.0,
+        "warm_seed": 10180,
+        "formal_seed": 20180,
+        "prefix": "formal:sswap",
+        "pipeline": 1
+      },
+      "raw_path": "main-large-writes-20261018-1412/client/results/sswap-main-sswap-c80/result.json",
+      "command_path": "main-large-writes-20261018-1412/client/results/sswap-main-sswap-c80/command.json",
+      "warm_command_path": "main-large-writes-20261018-1412/client/results/sswap-main-sswap-warm/command.json",
+      "source": {
+        "suite": "main-large-writes-20261018-1412",
+        "path": "outputs/main-large-writes-20261018-1412/client/results/sswap-main-sswap-c80/result.json",
+        "sha256": "5f8714b049539f9faa804aa1d00db981e874442480ff17296663dad0cc714741"
+      },
+      "server_cpu_cores": 13.443051555405376,
+      "server_eth1_tx_gbps": 0.050640485695839364,
+      "server_eth1_rx_gbps": 0.09322508423660458,
+      "client_eth0_rx_gbps": 0.04050595520049805,
+      "client_eth0_tx_gbps": 0.10333346017722939,
+      "client_binary_sha256": "3f52c506cb5927b62c7ca6e295a7e6d14f89865f6685b69841ff9e67a58ca39d",
+      "binary_sha256": "4fe9c53a6b1ebcff1bce17ce3aac213e879f20b82f09a326ae02560a792056c3"
+    },
+    {
+      "id": "redis/hkeys/c80",
+      "canonical_main": false,
+      "role": "peer-read",
+      "product": "redis",
+      "version": "8.10.2",
+      "op": "hkeys",
+      "command": "HKEYS",
+      "connections": 80,
+      "keys": 8192,
+      "unit": "QPS",
+      "measured_at_utc": "2026-10-18T16:08:29.493204+00:00",
+      "elapsed_seconds": 60.013602,
+      "metrics": {
+        "HKEYS": {
+          "count": 336134,
+          "qps": 5600.963611,
+          "avg_ms": 14.280071,
+          "p50_ms": 14.255,
+          "p99_ms": 15.697,
+          "p999_ms": 27.669,
+          "max_ms": 34.673
+        },
+        "OPERATIONS": {
+          "count": 336134,
+          "qps": 5600.963611,
+          "avg_ms": 14.280071,
+          "p50_ms": 14.255,
+          "p99_ms": 15.697,
+          "p999_ms": 27.669,
+          "max_ms": 34.673
+        }
+      },
+      "conditions": {
+        "client_threads": 16,
+        "formal_seconds": 60,
+        "warm_seconds": 60.0,
+        "warm_seed": 10180,
+        "formal_seed": 20180,
+        "prefix": "formal:packed-hash",
+        "pipeline": 1
+      },
+      "raw_path": "peer-large-reads-fill-20261018/client/results/redis-hashread-hkeys-c80/result.json",
+      "command_path": "peer-large-reads-fill-20261018/client/results/redis-hashread-hkeys-c80/command.json",
+      "warm_command_path": "peer-large-reads-fill-20261018/client/results/redis-hashread-hkeys-warm-c80/command.json",
+      "source": {
+        "suite": "peer-large-reads-fill-20261018",
+        "path": "outputs/peer-large-reads-fill-20261018/client/results/redis-hashread-hkeys-c80/result.json",
+        "sha256": "0284f2e41dd29e53c84b1d36ace42f7510ec3fe1f80a7cd1010c36530942f7ac"
+      },
+      "server_cpu_cores": 1.206884357654978,
+      "client_cpu_cores": 0.6726646850413489,
+      "server_eth1_tx_gbps": 1.9689739573758211,
+      "client_eth0_rx_gbps": 1.9682543335650615,
+      "client_binary_sha256": "67bc9feaf0aedfc48f27aceb4ca75fc597a0904572a19d1aeccbb47c9f9d0e9b",
+      "client_source_sha256": "5a16774f39bd0565360f8092a42d2ddf8582b8c0befb30b822ab572cf825b14d",
+      "server_binary_sha256": "34d31ea3bd53b35f4fc4c587742174a2b2f79f92f9514e15a6d83726e3b9ce18"
+    },
+    {
+      "id": "redis/hvals/c80",
+      "canonical_main": false,
+      "role": "peer-read",
+      "product": "redis",
+      "version": "8.10.2",
+      "op": "hvals",
+      "command": "HVALS",
+      "connections": 80,
+      "keys": 8192,
+      "unit": "QPS",
+      "measured_at_utc": "2026-10-18T16:10:32.125993+00:00",
+      "elapsed_seconds": 60.037106,
+      "metrics": {
+        "HVALS": {
+          "count": 129558,
+          "qps": 2157.965433,
+          "avg_ms": 37.059088,
+          "p50_ms": 36.511,
+          "p99_ms": 71.648,
+          "p999_ms": 75.825,
+          "max_ms": 89.062
+        },
+        "OPERATIONS": {
+          "count": 129558,
+          "qps": 2157.965433,
+          "avg_ms": 37.059088,
+          "p50_ms": 36.511,
+          "p99_ms": 71.648,
+          "p999_ms": 75.825,
+          "max_ms": 89.062
+        }
+      },
+      "conditions": {
+        "client_threads": 16,
+        "formal_seconds": 60,
+        "warm_seconds": 60.0,
+        "warm_seed": 10180,
+        "formal_seed": 20180,
+        "prefix": "formal:packed-hash",
+        "pipeline": 1
+      },
+      "raw_path": "peer-large-reads-fill-20261018/client/results/redis-hashread-hvals-c80/result.json",
+      "command_path": "peer-large-reads-fill-20261018/client/results/redis-hashread-hvals-c80/command.json",
+      "warm_command_path": "peer-large-reads-fill-20261018/client/results/redis-hashread-hvals-warm-c80/command.json",
+      "source": {
+        "suite": "peer-large-reads-fill-20261018",
+        "path": "outputs/peer-large-reads-fill-20261018/client/results/redis-hashread-hvals-c80/result.json",
+        "sha256": "560180ed43e71cf380f358fff7e6b764334501c336cae524934a127b2c925d4d"
+      },
+      "server_cpu_cores": 1.867772784889075,
+      "client_cpu_cores": 1.9977687966971653,
+      "server_eth1_tx_gbps": 18.682894709389927,
+      "client_eth0_rx_gbps": 18.67137086661497,
+      "client_binary_sha256": "67bc9feaf0aedfc48f27aceb4ca75fc597a0904572a19d1aeccbb47c9f9d0e9b",
+      "client_source_sha256": "5a16774f39bd0565360f8092a42d2ddf8582b8c0befb30b822ab572cf825b14d",
+      "server_binary_sha256": "34d31ea3bd53b35f4fc4c587742174a2b2f79f92f9514e15a6d83726e3b9ce18"
+    },
+    {
+      "id": "redis/hgetall/c1",
+      "canonical_main": false,
+      "role": "peer-read",
+      "product": "redis",
+      "version": "8.10.2",
+      "op": "hgetall",
+      "command": "HGETALL",
+      "connections": 1,
+      "keys": 8192,
+      "unit": "QPS",
+      "measured_at_utc": "2026-10-18T16:12:34.751367+00:00",
+      "elapsed_seconds": 60.00014,
+      "metrics": {
+        "HGETALL": {
+          "count": 39962,
+          "qps": 666.031785,
+          "avg_ms": 1.499844,
+          "p50_ms": 1.496,
+          "p99_ms": 1.583,
+          "p999_ms": 1.669,
+          "max_ms": 4.352
+        },
+        "OPERATIONS": {
+          "count": 39962,
+          "qps": 666.031785,
+          "avg_ms": 1.499844,
+          "p50_ms": 1.496,
+          "p99_ms": 1.583,
+          "p999_ms": 1.669,
+          "max_ms": 4.352
+        }
+      },
+      "conditions": {
+        "client_threads": 1,
+        "formal_seconds": 60,
+        "warm_seconds": 60.0,
+        "warm_seed": 10101,
+        "formal_seed": 20101,
+        "prefix": "formal:packed-hash",
+        "pipeline": 1
+      },
+      "raw_path": "peer-large-reads-fill-20261018/client/results/redis-hashread-hgetall-c1/result.json",
+      "command_path": "peer-large-reads-fill-20261018/client/results/redis-hashread-hgetall-c1/command.json",
+      "warm_command_path": "peer-large-reads-fill-20261018/client/results/redis-hashread-hgetall-warm-c1/command.json",
+      "source": {
+        "suite": "peer-large-reads-fill-20261018",
+        "path": "outputs/peer-large-reads-fill-20261018/client/results/redis-hashread-hgetall-c1/result.json",
+        "sha256": "d6fa60641a7fde1d1432843a727e0fce8df5f03cb20ccbe8f4fa4d364052ddc6"
+      },
+      "server_cpu_cores": 0.5148860816384364,
+      "client_cpu_cores": 0.5362198613176689,
+      "server_eth1_tx_gbps": 6.0050511228603805,
+      "client_eth0_rx_gbps": 6.004404154164652,
+      "client_binary_sha256": "67bc9feaf0aedfc48f27aceb4ca75fc597a0904572a19d1aeccbb47c9f9d0e9b",
+      "client_source_sha256": "5a16774f39bd0565360f8092a42d2ddf8582b8c0befb30b822ab572cf825b14d",
+      "server_binary_sha256": "34d31ea3bd53b35f4fc4c587742174a2b2f79f92f9514e15a6d83726e3b9ce18"
+    },
+    {
+      "id": "redis/hkeys/c1",
+      "canonical_main": false,
+      "role": "peer-read",
+      "product": "redis",
+      "version": "8.10.2",
+      "op": "hkeys",
+      "command": "HKEYS",
+      "connections": 1,
+      "keys": 8192,
+      "unit": "QPS",
+      "measured_at_utc": "2026-10-18T16:14:37.261427+00:00",
+      "elapsed_seconds": 60.00004,
+      "metrics": {
+        "HKEYS": {
+          "count": 153092,
+          "qps": 2551.531647,
+          "avg_ms": 0.390764,
+          "p50_ms": 0.384,
+          "p99_ms": 0.472,
+          "p999_ms": 0.49,
+          "max_ms": 1.418
+        },
+        "OPERATIONS": {
+          "count": 153092,
+          "qps": 2551.531647,
+          "avg_ms": 0.390764,
+          "p50_ms": 0.384,
+          "p99_ms": 0.472,
+          "p999_ms": 0.49,
+          "max_ms": 1.418
+        }
+      },
+      "conditions": {
+        "client_threads": 1,
+        "formal_seconds": 60,
+        "warm_seconds": 60.0,
+        "warm_seed": 10101,
+        "formal_seed": 20101,
+        "prefix": "formal:packed-hash",
+        "pipeline": 1
+      },
+      "raw_path": "peer-large-reads-fill-20261018/client/results/redis-hashread-hkeys-c1/result.json",
+      "command_path": "peer-large-reads-fill-20261018/client/results/redis-hashread-hkeys-c1/command.json",
+      "warm_command_path": "peer-large-reads-fill-20261018/client/results/redis-hashread-hkeys-warm-c1/command.json",
+      "source": {
+        "suite": "peer-large-reads-fill-20261018",
+        "path": "outputs/peer-large-reads-fill-20261018/client/results/redis-hashread-hkeys-c1/result.json",
+        "sha256": "28cba64afeff75c7b22d57b2713442508acf1dd36e9f3bbbe63688c0069b4897"
+      },
+      "server_cpu_cores": 0.5288861666647771,
+      "client_cpu_cores": 0.2748875843640427,
+      "server_eth1_tx_gbps": 0.9000567513278959,
+      "client_eth0_rx_gbps": 0.8998192321578639,
+      "client_binary_sha256": "67bc9feaf0aedfc48f27aceb4ca75fc597a0904572a19d1aeccbb47c9f9d0e9b",
+      "client_source_sha256": "5a16774f39bd0565360f8092a42d2ddf8582b8c0befb30b822ab572cf825b14d",
+      "server_binary_sha256": "34d31ea3bd53b35f4fc4c587742174a2b2f79f92f9514e15a6d83726e3b9ce18"
+    },
+    {
+      "id": "redis/hvals/c1",
+      "canonical_main": false,
+      "role": "peer-read",
+      "product": "redis",
+      "version": "8.10.2",
+      "op": "hvals",
+      "command": "HVALS",
+      "connections": 1,
+      "keys": 8192,
+      "unit": "QPS",
+      "measured_at_utc": "2026-10-18T16:16:39.820262+00:00",
+      "elapsed_seconds": 60.000432,
+      "metrics": {
+        "HVALS": {
+          "count": 45326,
+          "qps": 755.42789,
+          "avg_ms": 1.322274,
+          "p50_ms": 1.32,
+          "p99_ms": 1.398,
+          "p999_ms": 1.448,
+          "max_ms": 2.981
+        },
+        "OPERATIONS": {
+          "count": 45326,
+          "qps": 755.42789,
+          "avg_ms": 1.322274,
+          "p50_ms": 1.32,
+          "p99_ms": 1.398,
+          "p999_ms": 1.448,
+          "max_ms": 2.981
+        }
+      },
+      "conditions": {
+        "client_threads": 1,
+        "formal_seconds": 60,
+        "warm_seconds": 60.0,
+        "warm_seed": 10101,
+        "formal_seed": 20101,
+        "prefix": "formal:packed-hash",
+        "pipeline": 1
+      },
+      "raw_path": "peer-large-reads-fill-20261018/client/results/redis-hashread-hvals-c1/result.json",
+      "command_path": "peer-large-reads-fill-20261018/client/results/redis-hashread-hvals-c1/command.json",
+      "warm_command_path": "peer-large-reads-fill-20261018/client/results/redis-hashread-hvals-warm-c1/command.json",
+      "source": {
+        "suite": "peer-large-reads-fill-20261018",
+        "path": "outputs/peer-large-reads-fill-20261018/client/results/redis-hashread-hvals-c1/result.json",
+        "sha256": "448dea69c61b006ce7914e82e96502cd202c54e684a6ba514a932908216c5c11"
+      },
+      "server_cpu_cores": 0.4871090887207719,
+      "client_cpu_cores": 0.5546640249498263,
+      "server_eth1_tx_gbps": 6.544228314327457,
+      "client_eth0_rx_gbps": 6.5429689858501785,
+      "client_binary_sha256": "67bc9feaf0aedfc48f27aceb4ca75fc597a0904572a19d1aeccbb47c9f9d0e9b",
+      "client_source_sha256": "5a16774f39bd0565360f8092a42d2ddf8582b8c0befb30b822ab572cf825b14d",
+      "server_binary_sha256": "34d31ea3bd53b35f4fc4c587742174a2b2f79f92f9514e15a6d83726e3b9ce18"
+    },
+    {
+      "id": "redis/smembers/c1",
+      "canonical_main": false,
+      "role": "peer-read",
+      "product": "redis",
+      "version": "8.10.2",
+      "op": "smembers",
+      "command": "SMEMBERS",
+      "connections": 1,
+      "keys": 8192,
+      "unit": "QPS",
+      "measured_at_utc": "2026-10-18T16:20:40.033615+00:00",
+      "elapsed_seconds": 60.003975,
+      "metrics": {
+        "OPERATIONS": {
+          "count": 11908,
+          "qps": 198.453518,
+          "avg_ms": 5.036776,
+          "p50_ms": 5.029,
+          "p99_ms": 5.194,
+          "p999_ms": 7.764,
+          "max_ms": 9.059
+        },
+        "SMEMBERS": {
+          "count": 11908,
+          "qps": 198.453518,
+          "avg_ms": 5.036776,
+          "p50_ms": 5.029,
+          "p99_ms": 5.194,
+          "p999_ms": 7.764,
+          "max_ms": 9.059
+        }
+      },
+      "conditions": {
+        "client_threads": 1,
+        "formal_seconds": 60,
+        "warm_seconds": 60.0,
+        "warm_seed": 10101,
+        "formal_seed": 20101,
+        "prefix": "formal:smembers",
+        "pipeline": 1
+      },
+      "raw_path": "peer-large-reads-fill-20261018/client/results/redis-setread-smembers-c1/result.json",
+      "command_path": "peer-large-reads-fill-20261018/client/results/redis-setread-smembers-c1/command.json",
+      "warm_command_path": "peer-large-reads-fill-20261018/client/results/redis-setread-smembers-warm-c1/command.json",
+      "source": {
+        "suite": "peer-large-reads-fill-20261018",
+        "path": "outputs/peer-large-reads-fill-20261018/client/results/redis-setread-smembers-c1/result.json",
+        "sha256": "70f1b77c8f1496ae40e30db98ac0de2124fade1738eb26ba120a571fb332c170"
+      },
+      "server_cpu_cores": 0.6804410472139886,
+      "client_cpu_cores": 0.3308877510394436,
+      "server_eth1_tx_gbps": 2.0325811479546867,
+      "client_eth0_rx_gbps": 2.0319005988787073,
+      "client_binary_sha256": "eab817a14c855063cc2bc338f3ab742a262e631dc40dc77a4b8987a823770d94",
+      "client_source_sha256": "682dda4d704bac714ddbf1096ad8335b8d9a3b7060486ff16e693719e63159fc",
+      "server_binary_sha256": "34d31ea3bd53b35f4fc4c587742174a2b2f79f92f9514e15a6d83726e3b9ce18"
+    },
+    {
+      "id": "redis/lrange/c80",
+      "canonical_main": false,
+      "role": "peer-read",
+      "product": "redis",
+      "version": "8.10.2",
+      "op": "lrange",
+      "command": "LRANGE",
+      "connections": 80,
+      "keys": 8192,
+      "unit": "QPS",
+      "measured_at_utc": "2026-10-18T16:22:55.466985+00:00",
+      "elapsed_seconds": 60.023725,
+      "metrics": {
+        "LRANGE": {
+          "count": 164205,
+          "qps": 2735.668259,
+          "avg_ms": 29.234151,
+          "p50_ms": 29.009,
+          "p99_ms": 68.945,
+          "p999_ms": 221.266,
+          "max_ms": 282.292
+        },
+        "OPERATIONS": {
+          "count": 164205,
+          "qps": 2735.668259,
+          "avg_ms": 29.234151,
+          "p50_ms": 29.009,
+          "p99_ms": 68.945,
+          "p999_ms": 221.266,
+          "max_ms": 282.292
+        }
+      },
+      "conditions": {
+        "client_threads": 16,
+        "formal_seconds": 60,
+        "warm_seconds": 60.0,
+        "warm_seed": 10180,
+        "formal_seed": 20180,
+        "prefix": "formal:packed-lrange",
+        "pipeline": 1
+      },
+      "raw_path": "peer-large-reads-fill-20261018/client/results/redis-listread-lrange-c80/result.json",
+      "command_path": "peer-large-reads-fill-20261018/client/results/redis-listread-lrange-c80/command.json",
+      "warm_command_path": "peer-large-reads-fill-20261018/client/results/redis-listread-lrange-warm-c80/command.json",
+      "source": {
+        "suite": "peer-large-reads-fill-20261018",
+        "path": "outputs/peer-large-reads-fill-20261018/client/results/redis-listread-lrange-c80/result.json",
+        "sha256": "71a6b56116fd5f31497c243f13549df4a2fd0c55d67a07881b0b24b9d0fbbc99"
+      },
+      "server_cpu_cores": 2.1433245363673654,
+      "client_cpu_cores": 3.5193057865538404,
+      "server_eth1_tx_gbps": 23.807253328167544,
+      "client_eth0_rx_gbps": 23.69073812167359,
+      "client_binary_sha256": "212c6fae56f6e6490359a645219afea32dd7da0822cd19d8bd6bcbeadbdf13b8",
+      "client_source_sha256": "a29bec4837d5368f9afad61ea279afe739994642a80f15a116ae428b0da53b54",
+      "server_binary_sha256": "34d31ea3bd53b35f4fc4c587742174a2b2f79f92f9514e15a6d83726e3b9ce18"
+    },
+    {
+      "id": "redis/zrange/c1",
+      "canonical_main": false,
+      "role": "peer-read",
+      "product": "redis",
+      "version": "8.10.2",
+      "op": "zrange",
+      "command": "ZRANGE WITHSCORES",
+      "connections": 1,
+      "keys": 8192,
+      "unit": "QPS",
+      "measured_at_utc": "2026-10-18T16:27:48.530232+00:00",
+      "elapsed_seconds": 60.002034,
+      "metrics": {
+        "OPERATIONS": {
+          "count": 13114,
+          "qps": 218.559257,
+          "avg_ms": 4.57312,
+          "p50_ms": 4.575,
+          "p99_ms": 4.695,
+          "p999_ms": 4.807,
+          "max_ms": 9.978
+        },
+        "ZRANGE_WITHSCORES": {
+          "count": 13114,
+          "qps": 218.559257,
+          "avg_ms": 4.57312,
+          "p50_ms": 4.575,
+          "p99_ms": 4.695,
+          "p999_ms": 4.807,
+          "max_ms": 9.978
+        }
+      },
+      "conditions": {
+        "client_threads": 1,
+        "formal_seconds": 60,
+        "warm_seconds": 60.0,
+        "warm_seed": 10101,
+        "formal_seed": 20101,
+        "prefix": "formal:packed-zrange",
+        "pipeline": 1
+      },
+      "raw_path": "peer-large-reads-fill-20261018/client/results/redis-zsetread-zrange-c1/result.json",
+      "command_path": "peer-large-reads-fill-20261018/client/results/redis-zsetread-zrange-c1/command.json",
+      "warm_command_path": "peer-large-reads-fill-20261018/client/results/redis-zsetread-zrange-warm-c1/command.json",
+      "source": {
+        "suite": "peer-large-reads-fill-20261018",
+        "path": "outputs/peer-large-reads-fill-20261018/client/results/redis-zsetread-zrange-c1/result.json",
+        "sha256": "be21fdf49695940a84dcba1671e18915f0ecdac0b382ee09939cadfcf2a5befc"
+      },
+      "server_cpu_cores": 0.5055534438812895,
+      "client_cpu_cores": 0.5199974294562627,
+      "server_eth1_tx_gbps": 2.8512338139008584,
+      "client_eth0_rx_gbps": 2.8500579295758546,
+      "client_binary_sha256": "eab817a14c855063cc2bc338f3ab742a262e631dc40dc77a4b8987a823770d94",
+      "client_source_sha256": "682dda4d704bac714ddbf1096ad8335b8d9a3b7060486ff16e693719e63159fc",
+      "server_binary_sha256": "34d31ea3bd53b35f4fc4c587742174a2b2f79f92f9514e15a6d83726e3b9ce18"
+    },
+    {
+      "id": "valkey/hkeys/c80",
+      "canonical_main": false,
+      "role": "peer-read",
+      "product": "valkey",
+      "version": "9.1.2",
+      "op": "hkeys",
+      "command": "HKEYS",
+      "connections": 80,
+      "keys": 8192,
+      "unit": "QPS",
+      "measured_at_utc": "2026-10-18T16:30:11.073983+00:00",
+      "elapsed_seconds": 60.031899,
+      "metrics": {
+        "HKEYS": {
+          "count": 147158,
+          "qps": 2451.330083,
+          "avg_ms": 32.624352,
+          "p50_ms": 32.462,
+          "p99_ms": 34.33,
+          "p999_ms": 34.805,
+          "max_ms": 35.239
+        },
+        "OPERATIONS": {
+          "count": 147158,
+          "qps": 2451.330083,
+          "avg_ms": 32.624352,
+          "p50_ms": 32.462,
+          "p99_ms": 34.33,
+          "p999_ms": 34.805,
+          "max_ms": 35.239
+        }
+      },
+      "conditions": {
+        "client_threads": 16,
+        "formal_seconds": 60,
+        "warm_seconds": 60.0,
+        "warm_seed": 10180,
+        "formal_seed": 20180,
+        "prefix": "formal:packed-hash",
+        "pipeline": 1
+      },
+      "raw_path": "peer-large-reads-fill-20261018/client/results/valkey-hashread-hkeys-c80/result.json",
+      "command_path": "peer-large-reads-fill-20261018/client/results/valkey-hashread-hkeys-c80/command.json",
+      "warm_command_path": "peer-large-reads-fill-20261018/client/results/valkey-hashread-hkeys-warm-c80/command.json",
+      "source": {
+        "suite": "peer-large-reads-fill-20261018",
+        "path": "outputs/peer-large-reads-fill-20261018/client/results/valkey-hashread-hkeys-c80/result.json",
+        "sha256": "96d4c37ad4800560fd76839dd982e5c00683e6537c930ec462dfe838e2e870e7"
+      },
+      "server_cpu_cores": 1.999548864220802,
+      "client_cpu_cores": 0.323998393867962,
+      "server_eth1_tx_gbps": 0.8668935902080255,
+      "client_eth0_rx_gbps": 0.8668269075686131,
+      "client_binary_sha256": "67bc9feaf0aedfc48f27aceb4ca75fc597a0904572a19d1aeccbb47c9f9d0e9b",
+      "client_source_sha256": "5a16774f39bd0565360f8092a42d2ddf8582b8c0befb30b822ab572cf825b14d",
+      "server_binary_sha256": "f33bbe718e212dd4f1adbfb7d1783dd0262c0d34546459c1a3cfc33651d4b946"
+    },
+    {
+      "id": "valkey/hvals/c80",
+      "canonical_main": false,
+      "role": "peer-read",
+      "product": "valkey",
+      "version": "9.1.2",
+      "op": "hvals",
+      "command": "HVALS",
+      "connections": 80,
+      "keys": 8192,
+      "unit": "QPS",
+      "measured_at_utc": "2026-10-18T16:32:13.765630+00:00",
+      "elapsed_seconds": 60.22494,
+      "metrics": {
+        "HVALS": {
+          "count": 49543,
+          "qps": 822.632612,
+          "avg_ms": 96.931746,
+          "p50_ms": 95.473,
+          "p99_ms": 123.176,
+          "p999_ms": 215.772,
+          "max_ms": 317.994
+        },
+        "OPERATIONS": {
+          "count": 49543,
+          "qps": 822.632612,
+          "avg_ms": 96.931746,
+          "p50_ms": 95.473,
+          "p99_ms": 123.176,
+          "p999_ms": 215.772,
+          "max_ms": 317.994
+        }
+      },
+      "conditions": {
+        "client_threads": 16,
+        "formal_seconds": 60,
+        "warm_seconds": 60.0,
+        "warm_seed": 10180,
+        "formal_seed": 20180,
+        "prefix": "formal:packed-hash",
+        "pipeline": 1
+      },
+      "raw_path": "peer-large-reads-fill-20261018/client/results/valkey-hashread-hvals-c80/result.json",
+      "command_path": "peer-large-reads-fill-20261018/client/results/valkey-hashread-hvals-c80/command.json",
+      "warm_command_path": "peer-large-reads-fill-20261018/client/results/valkey-hashread-hvals-warm-c80/command.json",
+      "source": {
+        "suite": "peer-large-reads-fill-20261018",
+        "path": "outputs/peer-large-reads-fill-20261018/client/results/valkey-hashread-hvals-c80/result.json",
+        "sha256": "e2cb52403a027b42c345fddda9d75a7a130df39e1216077e0d4f7b0be12dc9dd"
+      },
+      "server_cpu_cores": 7.98418928052181,
+      "client_cpu_cores": 1.2104397891199141,
+      "server_eth1_tx_gbps": 7.105495427495488,
+      "client_eth0_rx_gbps": 7.070722582869184,
+      "client_binary_sha256": "67bc9feaf0aedfc48f27aceb4ca75fc597a0904572a19d1aeccbb47c9f9d0e9b",
+      "client_source_sha256": "5a16774f39bd0565360f8092a42d2ddf8582b8c0befb30b822ab572cf825b14d",
+      "server_binary_sha256": "f33bbe718e212dd4f1adbfb7d1783dd0262c0d34546459c1a3cfc33651d4b946"
+    },
+    {
+      "id": "valkey/hgetall/c1",
+      "canonical_main": false,
+      "role": "peer-read",
+      "product": "valkey",
+      "version": "9.1.2",
+      "op": "hgetall",
+      "command": "HGETALL",
+      "connections": 1,
+      "keys": 8192,
+      "unit": "QPS",
+      "measured_at_utc": "2026-10-18T16:34:16.549811+00:00",
+      "elapsed_seconds": 60.002017,
+      "metrics": {
+        "HGETALL": {
+          "count": 28294,
+          "qps": 471.550818,
+          "avg_ms": 2.119079,
+          "p50_ms": 2.113,
+          "p99_ms": 2.274,
+          "p999_ms": 2.358,
+          "max_ms": 9.697
+        },
+        "OPERATIONS": {
+          "count": 28294,
+          "qps": 471.550818,
+          "avg_ms": 2.119079,
+          "p50_ms": 2.113,
+          "p99_ms": 2.274,
+          "p999_ms": 2.358,
+          "max_ms": 9.697
+        }
+      },
+      "conditions": {
+        "client_threads": 1,
+        "formal_seconds": 60,
+        "warm_seconds": 60.0,
+        "warm_seed": 10101,
+        "formal_seed": 20101,
+        "prefix": "formal:packed-hash",
+        "pipeline": 1
+      },
+      "raw_path": "peer-large-reads-fill-20261018/client/results/valkey-hashread-hgetall-c1/result.json",
+      "command_path": "peer-large-reads-fill-20261018/client/results/valkey-hashread-hgetall-c1/command.json",
+      "warm_command_path": "peer-large-reads-fill-20261018/client/results/valkey-hashread-hgetall-warm-c1/command.json",
+      "source": {
+        "suite": "peer-large-reads-fill-20261018",
+        "path": "outputs/peer-large-reads-fill-20261018/client/results/valkey-hashread-hgetall-c1/result.json",
+        "sha256": "96044b98fd49fa58c93f7fe106b8b7d940b042deaf7c8751ba3c1ce669b231e6"
+      },
+      "server_cpu_cores": 1.641547949899115,
+      "client_cpu_cores": 0.3782208502891246,
+      "server_eth1_tx_gbps": 4.248649854794411,
+      "client_eth0_rx_gbps": 4.24794467164425,
+      "client_binary_sha256": "67bc9feaf0aedfc48f27aceb4ca75fc597a0904572a19d1aeccbb47c9f9d0e9b",
+      "client_source_sha256": "5a16774f39bd0565360f8092a42d2ddf8582b8c0befb30b822ab572cf825b14d",
+      "server_binary_sha256": "f33bbe718e212dd4f1adbfb7d1783dd0262c0d34546459c1a3cfc33651d4b946"
+    },
+    {
+      "id": "valkey/hkeys/c1",
+      "canonical_main": false,
+      "role": "peer-read",
+      "product": "valkey",
+      "version": "9.1.2",
+      "op": "hkeys",
+      "command": "HKEYS",
+      "connections": 1,
+      "keys": 8192,
+      "unit": "QPS",
+      "measured_at_utc": "2026-10-18T16:36:19.121717+00:00",
+      "elapsed_seconds": 60.000335,
+      "metrics": {
+        "HKEYS": {
+          "count": 97539,
+          "qps": 1625.640935,
+          "avg_ms": 0.614028,
+          "p50_ms": 0.61,
+          "p99_ms": 0.659,
+          "p999_ms": 0.799,
+          "max_ms": 6.863
+        },
+        "OPERATIONS": {
+          "count": 97539,
+          "qps": 1625.640935,
+          "avg_ms": 0.614028,
+          "p50_ms": 0.61,
+          "p99_ms": 0.659,
+          "p999_ms": 0.799,
+          "max_ms": 6.863
+        }
+      },
+      "conditions": {
+        "client_threads": 1,
+        "formal_seconds": 60,
+        "warm_seconds": 60.0,
+        "warm_seed": 10101,
+        "formal_seed": 20101,
+        "prefix": "formal:packed-hash",
+        "pipeline": 1
+      },
+      "raw_path": "peer-large-reads-fill-20261018/client/results/valkey-hashread-hkeys-c1/result.json",
+      "command_path": "peer-large-reads-fill-20261018/client/results/valkey-hashread-hkeys-c1/command.json",
+      "warm_command_path": "peer-large-reads-fill-20261018/client/results/valkey-hashread-hkeys-warm-c1/command.json",
+      "source": {
+        "suite": "peer-large-reads-fill-20261018",
+        "path": "outputs/peer-large-reads-fill-20261018/client/results/valkey-hashread-hkeys-c1/result.json",
+        "sha256": "5821b79dd090c8022fbe8769c4886c489b2b975150ebf0444904a3140e478219"
+      },
+      "server_cpu_cores": 1.6888835590350917,
+      "client_cpu_cores": 0.17399908554200597,
+      "server_eth1_tx_gbps": 0.5724956124929018,
+      "client_eth0_rx_gbps": 0.5722322548365324,
+      "client_binary_sha256": "67bc9feaf0aedfc48f27aceb4ca75fc597a0904572a19d1aeccbb47c9f9d0e9b",
+      "client_source_sha256": "5a16774f39bd0565360f8092a42d2ddf8582b8c0befb30b822ab572cf825b14d",
+      "server_binary_sha256": "f33bbe718e212dd4f1adbfb7d1783dd0262c0d34546459c1a3cfc33651d4b946"
+    },
+    {
+      "id": "valkey/hvals/c1",
+      "canonical_main": false,
+      "role": "peer-read",
+      "product": "valkey",
+      "version": "9.1.2",
+      "op": "hvals",
+      "command": "HVALS",
+      "connections": 1,
+      "keys": 8192,
+      "unit": "QPS",
+      "measured_at_utc": "2026-10-18T16:38:21.651404+00:00",
+      "elapsed_seconds": 60.001021,
+      "metrics": {
+        "HVALS": {
+          "count": 33872,
+          "qps": 564.523727,
+          "avg_ms": 1.76985,
+          "p50_ms": 1.76,
+          "p99_ms": 1.934,
+          "p999_ms": 2.036,
+          "max_ms": 88.224
+        },
+        "OPERATIONS": {
+          "count": 33872,
+          "qps": 564.523727,
+          "avg_ms": 1.76985,
+          "p50_ms": 1.76,
+          "p99_ms": 1.934,
+          "p999_ms": 2.036,
+          "max_ms": 88.224
+        }
+      },
+      "conditions": {
+        "client_threads": 1,
+        "formal_seconds": 60,
+        "warm_seconds": 60.0,
+        "warm_seed": 10101,
+        "formal_seed": 20101,
+        "prefix": "formal:packed-hash",
+        "pipeline": 1
+      },
+      "raw_path": "peer-large-reads-fill-20261018/client/results/valkey-hashread-hvals-c1/result.json",
+      "command_path": "peer-large-reads-fill-20261018/client/results/valkey-hashread-hvals-c1/command.json",
+      "warm_command_path": "peer-large-reads-fill-20261018/client/results/valkey-hashread-hvals-warm-c1/command.json",
+      "source": {
+        "suite": "peer-large-reads-fill-20261018",
+        "path": "outputs/peer-large-reads-fill-20261018/client/results/valkey-hashread-hvals-c1/result.json",
+        "sha256": "8ab565f062ee0b5f5e58cd758f2cb87544d65a995ea7304b68e98203244aa903"
+      },
+      "server_cpu_cores": 1.663324124690463,
+      "client_cpu_cores": 0.37422048904913324,
+      "server_eth1_tx_gbps": 4.8866991950659875,
+      "client_eth0_rx_gbps": 4.886166034102048,
+      "client_binary_sha256": "67bc9feaf0aedfc48f27aceb4ca75fc597a0904572a19d1aeccbb47c9f9d0e9b",
+      "client_source_sha256": "5a16774f39bd0565360f8092a42d2ddf8582b8c0befb30b822ab572cf825b14d",
+      "server_binary_sha256": "f33bbe718e212dd4f1adbfb7d1783dd0262c0d34546459c1a3cfc33651d4b946"
+    },
+    {
+      "id": "valkey/smembers/c1",
+      "canonical_main": false,
+      "role": "peer-read",
+      "product": "valkey",
+      "version": "9.1.2",
+      "op": "smembers",
+      "command": "SMEMBERS",
+      "connections": 1,
+      "keys": 8192,
+      "unit": "QPS",
+      "measured_at_utc": "2026-10-18T16:42:33.132165+00:00",
+      "elapsed_seconds": 60.003884,
+      "metrics": {
+        "OPERATIONS": {
+          "count": 9983,
+          "qps": 166.372563,
+          "avg_ms": 6.008429,
+          "p50_ms": 5.979,
+          "p99_ms": 6.13,
+          "p999_ms": 6.509,
+          "max_ms": 207.532
+        },
+        "SMEMBERS": {
+          "count": 9983,
+          "qps": 166.372563,
+          "avg_ms": 6.008429,
+          "p50_ms": 5.979,
+          "p99_ms": 6.13,
+          "p999_ms": 6.509,
+          "max_ms": 207.532
+        }
+      },
+      "conditions": {
+        "client_threads": 1,
+        "formal_seconds": 60,
+        "warm_seconds": 60.0,
+        "warm_seed": 10101,
+        "formal_seed": 20101,
+        "prefix": "formal:smembers",
+        "pipeline": 1
+      },
+      "raw_path": "peer-large-reads-fill-20261018/client/results/valkey-setread-smembers-c1/result.json",
+      "command_path": "peer-large-reads-fill-20261018/client/results/valkey-setread-smembers-c1/command.json",
+      "warm_command_path": "peer-large-reads-fill-20261018/client/results/valkey-setread-smembers-warm-c1/command.json",
+      "source": {
+        "suite": "peer-large-reads-fill-20261018",
+        "path": "outputs/peer-large-reads-fill-20261018/client/results/valkey-setread-smembers-c1/result.json",
+        "sha256": "fde599cfba8d0a7e1c2efdd4812bc7358fede9ca69fdb7c5907a020958fd662e"
+      },
+      "server_cpu_cores": 1.729991176083896,
+      "client_cpu_cores": 0.274665265239032,
+      "server_eth1_tx_gbps": 1.700465574503089,
+      "client_eth0_rx_gbps": 1.7001645437204467,
+      "client_binary_sha256": "eab817a14c855063cc2bc338f3ab742a262e631dc40dc77a4b8987a823770d94",
+      "client_source_sha256": "682dda4d704bac714ddbf1096ad8335b8d9a3b7060486ff16e693719e63159fc",
+      "server_binary_sha256": "f33bbe718e212dd4f1adbfb7d1783dd0262c0d34546459c1a3cfc33651d4b946"
+    },
+    {
+      "id": "valkey/lrange/c80",
+      "canonical_main": false,
+      "role": "peer-read",
+      "product": "valkey",
+      "version": "9.1.2",
+      "op": "lrange",
+      "command": "LRANGE",
+      "connections": 80,
+      "keys": 8192,
+      "unit": "QPS",
+      "measured_at_utc": "2026-10-18T16:44:48.368985+00:00",
+      "elapsed_seconds": 60.01605,
+      "metrics": {
+        "LRANGE": {
+          "count": 103636,
+          "qps": 1726.804739,
+          "avg_ms": 46.321253,
+          "p50_ms": 45.019,
+          "p99_ms": 68.49,
+          "p999_ms": 111.248,
+          "max_ms": 286.964
+        },
+        "OPERATIONS": {
+          "count": 103636,
+          "qps": 1726.804739,
+          "avg_ms": 46.321253,
+          "p50_ms": 45.019,
+          "p99_ms": 68.49,
+          "p999_ms": 111.248,
+          "max_ms": 286.964
+        }
+      },
+      "conditions": {
+        "client_threads": 16,
+        "formal_seconds": 60,
+        "warm_seconds": 60.0,
+        "warm_seed": 10180,
+        "formal_seed": 20180,
+        "prefix": "formal:packed-lrange",
+        "pipeline": 1
+      },
+      "raw_path": "peer-large-reads-fill-20261018/client/results/valkey-listread-lrange-c80/result.json",
+      "command_path": "peer-large-reads-fill-20261018/client/results/valkey-listread-lrange-c80/command.json",
+      "warm_command_path": "peer-large-reads-fill-20261018/client/results/valkey-listread-lrange-warm-c80/command.json",
+      "source": {
+        "suite": "peer-large-reads-fill-20261018",
+        "path": "outputs/peer-large-reads-fill-20261018/client/results/valkey-listread-lrange-c80/result.json",
+        "sha256": "370cf5edd0191d7efda39dabcc47f9d2819d872bd2c604af1ddc23037b2a199a"
+      },
+      "server_cpu_cores": 7.967743379613121,
+      "client_cpu_cores": 2.3339902895630664,
+      "server_eth1_tx_gbps": 15.30824827139297,
+      "client_eth0_rx_gbps": 15.259161060352582,
+      "client_binary_sha256": "212c6fae56f6e6490359a645219afea32dd7da0822cd19d8bd6bcbeadbdf13b8",
+      "client_source_sha256": "a29bec4837d5368f9afad61ea279afe739994642a80f15a116ae428b0da53b54",
+      "server_binary_sha256": "f33bbe718e212dd4f1adbfb7d1783dd0262c0d34546459c1a3cfc33651d4b946"
+    },
+    {
+      "id": "valkey/lrange/c1",
+      "canonical_main": false,
+      "role": "peer-read",
+      "product": "valkey",
+      "version": "9.1.2",
+      "op": "lrange",
+      "command": "LRANGE",
+      "connections": 1,
+      "keys": 8192,
+      "unit": "QPS",
+      "measured_at_utc": "2026-10-18T16:46:51.017053+00:00",
+      "elapsed_seconds": 60.000849,
+      "metrics": {
+        "LRANGE": {
+          "count": 60741,
+          "qps": 1012.335673,
+          "avg_ms": 0.986126,
+          "p50_ms": 0.982,
+          "p99_ms": 1.104,
+          "p999_ms": 1.197,
+          "max_ms": 3.116
+        },
+        "OPERATIONS": {
+          "count": 60741,
+          "qps": 1012.335673,
+          "avg_ms": 0.986126,
+          "p50_ms": 0.982,
+          "p99_ms": 1.104,
+          "p999_ms": 1.197,
+          "max_ms": 3.116
+        }
+      },
+      "conditions": {
+        "client_threads": 1,
+        "formal_seconds": 60,
+        "warm_seconds": 60.0,
+        "warm_seed": 10101,
+        "formal_seed": 20101,
+        "prefix": "formal:packed-lrange",
+        "pipeline": 1
+      },
+      "raw_path": "peer-large-reads-fill-20261018/client/results/valkey-listread-lrange-c1/result.json",
+      "command_path": "peer-large-reads-fill-20261018/client/results/valkey-listread-lrange-c1/command.json",
+      "warm_command_path": "peer-large-reads-fill-20261018/client/results/valkey-listread-lrange-warm-c1/command.json",
+      "source": {
+        "suite": "peer-large-reads-fill-20261018",
+        "path": "outputs/peer-large-reads-fill-20261018/client/results/valkey-listread-lrange-c1/result.json",
+        "sha256": "fa25790c7363113bf220600ea8d84e61432b17365be67f2963573f0c71505610"
+      },
+      "server_cpu_cores": 1.530881789577678,
+      "client_cpu_cores": 0.5368860047253406,
+      "server_eth1_tx_gbps": 8.76706514503432,
+      "client_eth0_rx_gbps": 8.765571034890943,
+      "client_binary_sha256": "212c6fae56f6e6490359a645219afea32dd7da0822cd19d8bd6bcbeadbdf13b8",
+      "client_source_sha256": "a29bec4837d5368f9afad61ea279afe739994642a80f15a116ae428b0da53b54",
+      "server_binary_sha256": "f33bbe718e212dd4f1adbfb7d1783dd0262c0d34546459c1a3cfc33651d4b946"
+    },
+    {
+      "id": "valkey/zrange/c1",
+      "canonical_main": false,
+      "role": "peer-read",
+      "product": "valkey",
+      "version": "9.1.2",
+      "op": "zrange",
+      "command": "ZRANGE WITHSCORES",
+      "connections": 1,
+      "keys": 8192,
+      "unit": "QPS",
+      "measured_at_utc": "2026-10-18T16:51:23.612571+00:00",
+      "elapsed_seconds": 60.00426,
+      "metrics": {
+        "OPERATIONS": {
+          "count": 10699,
+          "qps": 178.304009,
+          "avg_ms": 5.606007,
+          "p50_ms": 5.61,
+          "p99_ms": 5.744,
+          "p999_ms": 5.993,
+          "max_ms": 7.924
+        },
+        "ZRANGE_WITHSCORES": {
+          "count": 10699,
+          "qps": 178.304009,
+          "avg_ms": 5.606007,
+          "p50_ms": 5.61,
+          "p99_ms": 5.744,
+          "p999_ms": 5.993,
+          "max_ms": 7.924
+        }
+      },
+      "conditions": {
+        "client_threads": 1,
+        "formal_seconds": 60,
+        "warm_seconds": 60.0,
+        "warm_seed": 10101,
+        "formal_seed": 20101,
+        "prefix": "formal:packed-zrange",
+        "pipeline": 1
+      },
+      "raw_path": "peer-large-reads-fill-20261018/client/results/valkey-zsetread-zrange-c1/result.json",
+      "command_path": "peer-large-reads-fill-20261018/client/results/valkey-zsetread-zrange-c1/command.json",
+      "warm_command_path": "peer-large-reads-fill-20261018/client/results/valkey-zsetread-zrange-warm-c1/command.json",
+      "source": {
+        "suite": "peer-large-reads-fill-20261018",
+        "path": "outputs/peer-large-reads-fill-20261018/client/results/valkey-zsetread-zrange-c1/result.json",
+        "sha256": "623cf640eae3a7412d417e33be6ca6bd86c67fe5912af68a9e4cacbe104887a7"
+      },
+      "server_cpu_cores": 1.593101148776985,
+      "client_cpu_cores": 0.42199741087708537,
+      "server_eth1_tx_gbps": 2.3240035960909347,
+      "client_eth0_rx_gbps": 2.322940722229493,
+      "client_binary_sha256": "eab817a14c855063cc2bc338f3ab742a262e631dc40dc77a4b8987a823770d94",
+      "client_source_sha256": "682dda4d704bac714ddbf1096ad8335b8d9a3b7060486ff16e693719e63159fc",
+      "server_binary_sha256": "f33bbe718e212dd4f1adbfb7d1783dd0262c0d34546459c1a3cfc33651d4b946"
+    },
+    {
+      "id": "kvrocks/hkeys/c80",
+      "canonical_main": false,
+      "role": "peer-read",
+      "product": "kvrocks",
+      "version": "2.17.0",
+      "op": "hkeys",
+      "command": "HKEYS",
+      "connections": 80,
+      "keys": 8192,
+      "unit": "QPS",
+      "measured_at_utc": "2026-10-18T16:53:51.738257+00:00",
+      "elapsed_seconds": 60.013716,
+      "metrics": {
+        "HKEYS": {
+          "count": 484883,
+          "qps": 8079.536319,
+          "avg_ms": 9.89886,
+          "p50_ms": 9.525,
+          "p99_ms": 21.604,
+          "p999_ms": 23.512,
+          "max_ms": 34.771
+        },
+        "OPERATIONS": {
+          "count": 484883,
+          "qps": 8079.536319,
+          "avg_ms": 9.89886,
+          "p50_ms": 9.525,
+          "p99_ms": 21.604,
+          "p999_ms": 23.512,
+          "max_ms": 34.771
+        }
+      },
+      "conditions": {
+        "client_threads": 16,
+        "formal_seconds": 60,
+        "warm_seconds": 60.0,
+        "warm_seed": 10180,
+        "formal_seed": 20180,
+        "prefix": "formal:packed-hash",
+        "pipeline": 1
+      },
+      "raw_path": "peer-large-reads-fill-20261018/client/results/kvrocks-hashread-hkeys-c80/result.json",
+      "command_path": "peer-large-reads-fill-20261018/client/results/kvrocks-hashread-hkeys-c80/command.json",
+      "warm_command_path": "peer-large-reads-fill-20261018/client/results/kvrocks-hashread-hkeys-warm-c80/command.json",
+      "source": {
+        "suite": "peer-large-reads-fill-20261018",
+        "path": "outputs/peer-large-reads-fill-20261018/client/results/kvrocks-hashread-hkeys-c80/result.json",
+        "sha256": "41537ab30bda1461df6042e5fe7c99a9a7fe2c588345c33ded5f04fa231f25cf"
+      },
+      "server_cpu_cores": 15.708383242139806,
+      "client_cpu_cores": 1.0508850834238248,
+      "server_eth1_tx_gbps": 2.8543420086395255,
+      "client_eth0_rx_gbps": 2.8514795767999344,
+      "client_binary_sha256": "67bc9feaf0aedfc48f27aceb4ca75fc597a0904572a19d1aeccbb47c9f9d0e9b",
+      "client_source_sha256": "5a16774f39bd0565360f8092a42d2ddf8582b8c0befb30b822ab572cf825b14d",
+      "server_binary_sha256": "7a3a70738951934540ca5e48d1405899641c7163d6ce282ff48f3e0c2b013d58"
+    },
+    {
+      "id": "kvrocks/hvals/c80",
+      "canonical_main": false,
+      "role": "peer-read",
+      "product": "kvrocks",
+      "version": "2.17.0",
+      "op": "hvals",
+      "command": "HVALS",
+      "connections": 80,
+      "keys": 8192,
+      "unit": "QPS",
+      "measured_at_utc": "2026-10-18T16:55:54.455500+00:00",
+      "elapsed_seconds": 60.017349,
+      "metrics": {
+        "HVALS": {
+          "count": 156185,
+          "qps": 2602.330863,
+          "avg_ms": 30.735473,
+          "p50_ms": 30.114,
+          "p99_ms": 47.577,
+          "p999_ms": 52.471,
+          "max_ms": 71.06
+        },
+        "OPERATIONS": {
+          "count": 156185,
+          "qps": 2602.330863,
+          "avg_ms": 30.735473,
+          "p50_ms": 30.114,
+          "p99_ms": 47.577,
+          "p999_ms": 52.471,
+          "max_ms": 71.06
+        }
+      },
+      "conditions": {
+        "client_threads": 16,
+        "formal_seconds": 60,
+        "warm_seconds": 60.0,
+        "warm_seed": 10180,
+        "formal_seed": 20180,
+        "prefix": "formal:packed-hash",
+        "pipeline": 1
+      },
+      "raw_path": "peer-large-reads-fill-20261018/client/results/kvrocks-hashread-hvals-c80/result.json",
+      "command_path": "peer-large-reads-fill-20261018/client/results/kvrocks-hashread-hvals-c80/command.json",
+      "warm_command_path": "peer-large-reads-fill-20261018/client/results/kvrocks-hashread-hvals-warm-c80/command.json",
+      "source": {
+        "suite": "peer-large-reads-fill-20261018",
+        "path": "outputs/peer-large-reads-fill-20261018/client/results/kvrocks-hashread-hvals-c80/result.json",
+        "sha256": "31c582f9619c170d9dfed9c41bf7376c4321f16b80992da8c2d8f887574dfad0"
+      },
+      "server_cpu_cores": 14.665578120665856,
+      "client_cpu_cores": 4.166648988871298,
+      "server_eth1_tx_gbps": 22.618136220114085,
+      "client_eth0_rx_gbps": 22.599391122792166,
+      "client_binary_sha256": "67bc9feaf0aedfc48f27aceb4ca75fc597a0904572a19d1aeccbb47c9f9d0e9b",
+      "client_source_sha256": "5a16774f39bd0565360f8092a42d2ddf8582b8c0befb30b822ab572cf825b14d",
+      "server_binary_sha256": "7a3a70738951934540ca5e48d1405899641c7163d6ce282ff48f3e0c2b013d58"
+    },
+    {
+      "id": "kvrocks/hgetall/c1",
+      "canonical_main": false,
+      "role": "peer-read",
+      "product": "kvrocks",
+      "version": "2.17.0",
+      "op": "hgetall",
+      "command": "HGETALL",
+      "connections": 1,
+      "keys": 8192,
+      "unit": "QPS",
+      "measured_at_utc": "2026-10-18T16:57:57.042510+00:00",
+      "elapsed_seconds": 60.000505,
+      "metrics": {
+        "HGETALL": {
+          "count": 23239,
+          "qps": 387.313405,
+          "avg_ms": 2.580213,
+          "p50_ms": 2.563,
+          "p99_ms": 2.791,
+          "p999_ms": 3.052,
+          "max_ms": 9.761
+        },
+        "OPERATIONS": {
+          "count": 23239,
+          "qps": 387.313405,
+          "avg_ms": 2.580213,
+          "p50_ms": 2.563,
+          "p99_ms": 2.791,
+          "p999_ms": 3.052,
+          "max_ms": 9.761
+        }
+      },
+      "conditions": {
+        "client_threads": 1,
+        "formal_seconds": 60,
+        "warm_seconds": 60.0,
+        "warm_seed": 10101,
+        "formal_seed": 20101,
+        "prefix": "formal:packed-hash",
+        "pipeline": 1
+      },
+      "raw_path": "peer-large-reads-fill-20261018/client/results/kvrocks-hashread-hgetall-c1/result.json",
+      "command_path": "peer-large-reads-fill-20261018/client/results/kvrocks-hashread-hgetall-c1/command.json",
+      "warm_command_path": "peer-large-reads-fill-20261018/client/results/kvrocks-hashread-hgetall-warm-c1/command.json",
+      "source": {
+        "suite": "peer-large-reads-fill-20261018",
+        "path": "outputs/peer-large-reads-fill-20261018/client/results/kvrocks-hashread-hgetall-c1/result.json",
+        "sha256": "7941f8045aab2a08b4628537a8932ddc8d45932edff450bbf4f36a5f337ff812"
+      },
+      "server_cpu_cores": 0.7482186792405052,
+      "client_cpu_cores": 0.2946651895624563,
+      "server_eth1_tx_gbps": 3.4946305364144923,
+      "client_eth0_rx_gbps": 3.4940169142699227,
+      "client_binary_sha256": "67bc9feaf0aedfc48f27aceb4ca75fc597a0904572a19d1aeccbb47c9f9d0e9b",
+      "client_source_sha256": "5a16774f39bd0565360f8092a42d2ddf8582b8c0befb30b822ab572cf825b14d",
+      "server_binary_sha256": "7a3a70738951934540ca5e48d1405899641c7163d6ce282ff48f3e0c2b013d58"
+    },
+    {
+      "id": "kvrocks/hkeys/c1",
+      "canonical_main": false,
+      "role": "peer-read",
+      "product": "kvrocks",
+      "version": "2.17.0",
+      "op": "hkeys",
+      "command": "HKEYS",
+      "connections": 1,
+      "keys": 8192,
+      "unit": "QPS",
+      "measured_at_utc": "2026-10-18T16:59:59.569143+00:00",
+      "elapsed_seconds": 60.001305,
+      "metrics": {
+        "HKEYS": {
+          "count": 42458,
+          "qps": 707.617942,
+          "avg_ms": 1.411944,
+          "p50_ms": 1.413,
+          "p99_ms": 1.508,
+          "p999_ms": 1.595,
+          "max_ms": 6.782
+        },
+        "OPERATIONS": {
+          "count": 42458,
+          "qps": 707.617942,
+          "avg_ms": 1.411944,
+          "p50_ms": 1.413,
+          "p99_ms": 1.508,
+          "p999_ms": 1.595,
+          "max_ms": 6.782
+        }
+      },
+      "conditions": {
+        "client_threads": 1,
+        "formal_seconds": 60,
+        "warm_seconds": 60.0,
+        "warm_seed": 10101,
+        "formal_seed": 20101,
+        "prefix": "formal:packed-hash",
+        "pipeline": 1
+      },
+      "raw_path": "peer-large-reads-fill-20261018/client/results/kvrocks-hashread-hkeys-c1/result.json",
+      "command_path": "peer-large-reads-fill-20261018/client/results/kvrocks-hashread-hkeys-c1/command.json",
+      "warm_command_path": "peer-large-reads-fill-20261018/client/results/kvrocks-hashread-hkeys-warm-c1/command.json",
+      "source": {
+        "suite": "peer-large-reads-fill-20261018",
+        "path": "outputs/peer-large-reads-fill-20261018/client/results/kvrocks-hashread-hkeys-c1/result.json",
+        "sha256": "310f3121f10d1fb1e896a61276d56435c04254b05ca161009546f0cf5d66b4fa"
+      },
+      "server_cpu_cores": 0.8544401520788963,
+      "client_cpu_cores": 0.08733298461272578,
+      "server_eth1_tx_gbps": 0.2502269882930349,
+      "client_eth0_rx_gbps": 0.24999662931901467,
+      "client_binary_sha256": "67bc9feaf0aedfc48f27aceb4ca75fc597a0904572a19d1aeccbb47c9f9d0e9b",
+      "client_source_sha256": "5a16774f39bd0565360f8092a42d2ddf8582b8c0befb30b822ab572cf825b14d",
+      "server_binary_sha256": "7a3a70738951934540ca5e48d1405899641c7163d6ce282ff48f3e0c2b013d58"
+    },
+    {
+      "id": "kvrocks/hvals/c1",
+      "canonical_main": false,
+      "role": "peer-read",
+      "product": "kvrocks",
+      "version": "2.17.0",
+      "op": "hvals",
+      "command": "HVALS",
+      "connections": 1,
+      "keys": 8192,
+      "unit": "QPS",
+      "measured_at_utc": "2026-10-18T17:02:02.165392+00:00",
+      "elapsed_seconds": 60.001762,
+      "metrics": {
+        "HVALS": {
+          "count": 25238,
+          "qps": 420.620978,
+          "avg_ms": 2.375831,
+          "p50_ms": 2.37,
+          "p99_ms": 2.673,
+          "p999_ms": 2.893,
+          "max_ms": 5.747
+        },
+        "OPERATIONS": {
+          "count": 25238,
+          "qps": 420.620978,
+          "avg_ms": 2.375831,
+          "p50_ms": 2.37,
+          "p99_ms": 2.673,
+          "p999_ms": 2.893,
+          "max_ms": 5.747
+        }
+      },
+      "conditions": {
+        "client_threads": 1,
+        "formal_seconds": 60,
+        "warm_seconds": 60.0,
+        "warm_seed": 10101,
+        "formal_seed": 20101,
+        "prefix": "formal:packed-hash",
+        "pipeline": 1
+      },
+      "raw_path": "peer-large-reads-fill-20261018/client/results/kvrocks-hashread-hvals-c1/result.json",
+      "command_path": "peer-large-reads-fill-20261018/client/results/kvrocks-hashread-hvals-c1/command.json",
+      "warm_command_path": "peer-large-reads-fill-20261018/client/results/kvrocks-hashread-hvals-warm-c1/command.json",
+      "source": {
+        "suite": "peer-large-reads-fill-20261018",
+        "path": "outputs/peer-large-reads-fill-20261018/client/results/kvrocks-hashread-hvals-c1/result.json",
+        "sha256": "9d3f691c4efaca81d3889e5c182f71c3c12868d718699e519bb108d3234ec73a"
+      },
+      "server_cpu_cores": 0.7357743113160896,
+      "client_cpu_cores": 0.32310955793064633,
+      "server_eth1_tx_gbps": 3.641751355287487,
+      "client_eth0_rx_gbps": 3.64107473050135,
+      "client_binary_sha256": "67bc9feaf0aedfc48f27aceb4ca75fc597a0904572a19d1aeccbb47c9f9d0e9b",
+      "client_source_sha256": "5a16774f39bd0565360f8092a42d2ddf8582b8c0befb30b822ab572cf825b14d",
+      "server_binary_sha256": "7a3a70738951934540ca5e48d1405899641c7163d6ce282ff48f3e0c2b013d58"
+    },
+    {
+      "id": "kvrocks/smembers/c1",
+      "canonical_main": false,
+      "role": "peer-read",
+      "product": "kvrocks",
+      "version": "2.17.0",
+      "op": "smembers",
+      "command": "SMEMBERS",
+      "connections": 1,
+      "keys": 8192,
+      "unit": "QPS",
+      "measured_at_utc": "2026-10-18T17:07:47.900315+00:00",
+      "elapsed_seconds": 60.003228,
+      "metrics": {
+        "OPERATIONS": {
+          "count": 7719,
+          "qps": 128.643078,
+          "avg_ms": 7.770181,
+          "p50_ms": 7.728,
+          "p99_ms": 8.155,
+          "p999_ms": 9.222,
+          "max_ms": 9.955
+        },
+        "SMEMBERS": {
+          "count": 7719,
+          "qps": 128.643078,
+          "avg_ms": 7.770181,
+          "p50_ms": 7.728,
+          "p99_ms": 8.155,
+          "p999_ms": 9.222,
+          "max_ms": 9.955
+        }
+      },
+      "conditions": {
+        "client_threads": 1,
+        "formal_seconds": 60,
+        "warm_seconds": 60.0,
+        "warm_seed": 10101,
+        "formal_seed": 20101,
+        "prefix": "formal:smembers",
+        "pipeline": 1
+      },
+      "raw_path": "peer-large-reads-fill-20261018/client/results/kvrocks-setread-smembers-c1/result.json",
+      "command_path": "peer-large-reads-fill-20261018/client/results/kvrocks-setread-smembers-c1/command.json",
+      "warm_command_path": "peer-large-reads-fill-20261018/client/results/kvrocks-setread-smembers-warm-c1/command.json",
+      "source": {
+        "suite": "peer-large-reads-fill-20261018",
+        "path": "outputs/peer-large-reads-fill-20261018/client/results/kvrocks-setread-smembers-c1/result.json",
+        "sha256": "5775b9e0849e44d9d659dd8f7c54101e1d21dfc8f3cf9e4308e27a7d07f74b9b"
+      },
+      "server_cpu_cores": 0.8106625460869596,
+      "client_cpu_cores": 0.21622112558230766,
+      "server_eth1_tx_gbps": 1.317770237980942,
+      "client_eth0_rx_gbps": 1.3175597363864153,
+      "client_binary_sha256": "eab817a14c855063cc2bc338f3ab742a262e631dc40dc77a4b8987a823770d94",
+      "client_source_sha256": "682dda4d704bac714ddbf1096ad8335b8d9a3b7060486ff16e693719e63159fc",
+      "server_binary_sha256": "7a3a70738951934540ca5e48d1405899641c7163d6ce282ff48f3e0c2b013d58"
+    },
+    {
+      "id": "kvrocks/lrange/c80",
+      "canonical_main": false,
+      "role": "peer-read",
+      "product": "kvrocks",
+      "version": "2.17.0",
+      "op": "lrange",
+      "command": "LRANGE",
+      "connections": 80,
+      "keys": 8192,
+      "unit": "QPS",
+      "measured_at_utc": "2026-10-18T17:10:06.522201+00:00",
+      "elapsed_seconds": 60.022771,
+      "metrics": {
+        "LRANGE": {
+          "count": 164114,
+          "qps": 2734.195682,
+          "avg_ms": 29.252675,
+          "p50_ms": 28.955,
+          "p99_ms": 68.79,
+          "p999_ms": 231.499,
+          "max_ms": 289.575
+        },
+        "OPERATIONS": {
+          "count": 164114,
+          "qps": 2734.195682,
+          "avg_ms": 29.252675,
+          "p50_ms": 28.955,
+          "p99_ms": 68.79,
+          "p999_ms": 231.499,
+          "max_ms": 289.575
+        }
+      },
+      "conditions": {
+        "client_threads": 16,
+        "formal_seconds": 60,
+        "warm_seconds": 60.0,
+        "warm_seed": 10180,
+        "formal_seed": 20180,
+        "prefix": "formal:packed-lrange",
+        "pipeline": 1
+      },
+      "raw_path": "peer-large-reads-fill-20261018/client/results/kvrocks-listread-lrange-c80/result.json",
+      "command_path": "peer-large-reads-fill-20261018/client/results/kvrocks-listread-lrange-c80/command.json",
+      "warm_command_path": "peer-large-reads-fill-20261018/client/results/kvrocks-listread-lrange-warm-c80/command.json",
+      "source": {
+        "suite": "peer-large-reads-fill-20261018",
+        "path": "outputs/peer-large-reads-fill-20261018/client/results/kvrocks-listread-lrange-c80/result.json",
+        "sha256": "3dbdc3dcb44ac500f2ba66bf75dc5fc06c5f7a268cc5ac993666801c74294a90"
+      },
+      "server_cpu_cores": 8.55132295886832,
+      "client_cpu_cores": 3.684433984581992,
+      "server_eth1_tx_gbps": 23.82180090170226,
+      "client_eth0_rx_gbps": 23.69269302584624,
+      "client_binary_sha256": "212c6fae56f6e6490359a645219afea32dd7da0822cd19d8bd6bcbeadbdf13b8",
+      "client_source_sha256": "a29bec4837d5368f9afad61ea279afe739994642a80f15a116ae428b0da53b54",
+      "server_binary_sha256": "7a3a70738951934540ca5e48d1405899641c7163d6ce282ff48f3e0c2b013d58"
+    },
+    {
+      "id": "kvrocks/lrange/c1",
+      "canonical_main": false,
+      "role": "peer-read",
+      "product": "kvrocks",
+      "version": "2.17.0",
+      "op": "lrange",
+      "command": "LRANGE",
+      "connections": 1,
+      "keys": 8192,
+      "unit": "QPS",
+      "measured_at_utc": "2026-10-18T17:12:09.170263+00:00",
+      "elapsed_seconds": 60.000097,
+      "metrics": {
+        "LRANGE": {
+          "count": 29642,
+          "qps": 494.032538,
+          "avg_ms": 2.022311,
+          "p50_ms": 2.025,
+          "p99_ms": 2.312,
+          "p999_ms": 2.564,
+          "max_ms": 7.563
+        },
+        "OPERATIONS": {
+          "count": 29642,
+          "qps": 494.032538,
+          "avg_ms": 2.022311,
+          "p50_ms": 2.025,
+          "p99_ms": 2.312,
+          "p999_ms": 2.564,
+          "max_ms": 7.563
+        }
+      },
+      "conditions": {
+        "client_threads": 1,
+        "formal_seconds": 60,
+        "warm_seconds": 60.0,
+        "warm_seed": 10101,
+        "formal_seed": 20101,
+        "prefix": "formal:packed-lrange",
+        "pipeline": 1
+      },
+      "raw_path": "peer-large-reads-fill-20261018/client/results/kvrocks-listread-lrange-c1/result.json",
+      "command_path": "peer-large-reads-fill-20261018/client/results/kvrocks-listread-lrange-c1/command.json",
+      "warm_command_path": "peer-large-reads-fill-20261018/client/results/kvrocks-listread-lrange-warm-c1/command.json",
+      "source": {
+        "suite": "peer-large-reads-fill-20261018",
+        "path": "outputs/peer-large-reads-fill-20261018/client/results/kvrocks-listread-lrange-c1/result.json",
+        "sha256": "9d0e07d80e1fe40d02d048a0e81b93f62c09b483b07a78d58a3741036273defa"
+      },
+      "server_cpu_cores": 0.7559961057800596,
+      "client_cpu_cores": 0.3106650017853075,
+      "server_eth1_tx_gbps": 4.285321763875891,
+      "client_eth0_rx_gbps": 4.284205437717796,
+      "client_binary_sha256": "212c6fae56f6e6490359a645219afea32dd7da0822cd19d8bd6bcbeadbdf13b8",
+      "client_source_sha256": "a29bec4837d5368f9afad61ea279afe739994642a80f15a116ae428b0da53b54",
+      "server_binary_sha256": "7a3a70738951934540ca5e48d1405899641c7163d6ce282ff48f3e0c2b013d58"
+    },
+    {
+      "id": "kvrocks/zrange/c1",
+      "canonical_main": false,
+      "role": "peer-read",
+      "product": "kvrocks",
+      "version": "2.17.0",
+      "op": "zrange",
+      "command": "ZRANGE WITHSCORES",
+      "connections": 1,
+      "keys": 8192,
+      "unit": "QPS",
+      "measured_at_utc": "2026-10-18T17:20:20.389832+00:00",
+      "elapsed_seconds": 60.00491,
+      "metrics": {
+        "OPERATIONS": {
+          "count": 4684,
+          "qps": 78.060279,
+          "avg_ms": 12.806403,
+          "p50_ms": 12.797,
+          "p99_ms": 13.168,
+          "p999_ms": 14.876,
+          "max_ms": 23.256
+        },
+        "ZRANGE_WITHSCORES": {
+          "count": 4684,
+          "qps": 78.060279,
+          "avg_ms": 12.806403,
+          "p50_ms": 12.797,
+          "p99_ms": 13.168,
+          "p999_ms": 14.876,
+          "max_ms": 23.256
+        }
+      },
+      "conditions": {
+        "client_threads": 1,
+        "formal_seconds": 60,
+        "warm_seconds": 60.0,
+        "warm_seed": 10101,
+        "formal_seed": 20101,
+        "prefix": "formal:packed-zrange",
+        "pipeline": 1
+      },
+      "raw_path": "peer-large-reads-fill-20261018/client/results/kvrocks-zsetread-zrange-c1/result.json",
+      "command_path": "peer-large-reads-fill-20261018/client/results/kvrocks-zsetread-zrange-c1/command.json",
+      "warm_command_path": "peer-large-reads-fill-20261018/client/results/kvrocks-zsetread-zrange-warm-c1/command.json",
+      "source": {
+        "suite": "peer-large-reads-fill-20261018",
+        "path": "outputs/peer-large-reads-fill-20261018/client/results/kvrocks-zsetread-zrange-c1/result.json",
+        "sha256": "e9c4626a3968bcd4f72850e237a74039603f6e03a2cb6c03d9b30a2115d2777c"
+      },
+      "server_cpu_cores": 0.830218030027055,
+      "client_cpu_cores": 0.19244322397379454,
+      "server_eth1_tx_gbps": 1.0181320806196352,
+      "client_eth0_rx_gbps": 1.017939127008233,
+      "client_binary_sha256": "eab817a14c855063cc2bc338f3ab742a262e631dc40dc77a4b8987a823770d94",
+      "client_source_sha256": "682dda4d704bac714ddbf1096ad8335b8d9a3b7060486ff16e693719e63159fc",
+      "server_binary_sha256": "7a3a70738951934540ca5e48d1405899641c7163d6ce282ff48f3e0c2b013d58"
+    },
+    {
+      "id": "redis/hgetall/c80",
+      "canonical_main": false,
+      "role": "peer-read",
+      "product": "redis",
+      "version": "8.10.2",
+      "op": "hgetall",
+      "command": "HGETALL",
+      "connections": 80,
+      "keys": 8192,
+      "unit": "QPS",
+      "measured_at_utc": "2026-10-16T03:20:21.374539+00:00",
+      "elapsed_seconds": 60.040896,
+      "metrics": {
+        "HGETALL": {
+          "count": 103269,
+          "qps": 1719.977659,
+          "avg_ms": 46.4949,
+          "p50_ms": 45.712,
+          "p99_ms": 89.838,
+          "p999_ms": 96.314,
+          "max_ms": 122.115
+        },
+        "OPERATIONS": {
+          "count": 103269,
+          "qps": 1719.977659,
+          "avg_ms": 46.4949,
+          "p50_ms": 45.712,
+          "p99_ms": 89.838,
+          "p999_ms": 96.314,
+          "max_ms": 122.115
+        }
+      },
+      "conditions": {
+        "client_threads": 16,
+        "formal_seconds": 60,
+        "warm_seconds": 90.0,
+        "warm_seed": 10180,
+        "formal_seed": 20180,
+        "prefix": "formal:hgetall",
+        "pipeline": 1
+      },
+      "raw_path": "main-large-reads-set-c80-20261016/client/results/redis/hgetall/r1/c80.json",
+      "command_path": "main-large-reads-set-c80-20261016/client/results/redis/hgetall/r1/c80.command.json",
+      "warm_command_path": "main-large-reads-set-c80-20261016/client/results/redis/hgetall/r1/warm-c80.command.json",
+      "source": {
+        "suite": "main-large-reads-set-c80-20261016",
+        "path": "outputs/main-large-reads-set-c80-20261016/client/results/redis/hgetall/r1/c80.json",
+        "sha256": "6746530f36c6f8386f4f31f9eb13b08800411723906e5c4ea625e12b7f16d052"
       }
     },
-    "source": "main-large-objects-c80-20261015/client/results/pr/hash/r1/c80.json"
-  },
-  {
-    "suite": "main-large-objects-c80-20261015",
-    "system": "Lavik main",
-    "op": "list",
-    "metrics": {
-      "LPUSH": {
-        "count": 5070663,
-        "qps": 84509.744662,
-        "avg_ms": 0.536867,
-        "p50_ms": 0.289,
-        "p99_ms": 6.677,
-        "p999_ms": 11.785,
-        "max_ms": 33.521
+    {
+      "id": "redis/zrange/c80",
+      "canonical_main": false,
+      "role": "peer-read",
+      "product": "redis",
+      "version": "8.10.2",
+      "op": "zrange",
+      "command": "ZRANGE WITHSCORES",
+      "connections": 80,
+      "keys": 8192,
+      "unit": "QPS",
+      "measured_at_utc": "2026-10-16T03:25:39.784000+00:00",
+      "elapsed_seconds": 60.161227,
+      "metrics": {
+        "OPERATIONS": {
+          "count": 29087,
+          "qps": 483.484157,
+          "avg_ms": 165.247364,
+          "p50_ms": 162.556,
+          "p99_ms": 317.407,
+          "p999_ms": 332.377,
+          "max_ms": 471.627
+        },
+        "ZRANGE_WITHSCORES": {
+          "count": 29087,
+          "qps": 483.484157,
+          "avg_ms": 165.247364,
+          "p50_ms": 162.556,
+          "p99_ms": 317.407,
+          "p999_ms": 332.377,
+          "max_ms": 471.627
+        }
       },
-      "OPERATIONS": {
-        "count": 5070663,
-        "qps": 84509.744662,
-        "avg_ms": 0.945799,
-        "p50_ms": 0.587,
-        "p99_ms": 8.782,
-        "p999_ms": 17.003,
-        "max_ms": 202.02
+      "conditions": {
+        "client_threads": 16,
+        "formal_seconds": 60,
+        "warm_seconds": 90.0,
+        "warm_seed": 10180,
+        "formal_seed": 20180,
+        "prefix": "formal:zrange",
+        "pipeline": 1
       },
-      "RPOP": {
-        "count": 5070663,
-        "qps": 84509.744662,
-        "avg_ms": 0.408369,
-        "p50_ms": 0.284,
-        "p99_ms": 3.205,
-        "p999_ms": 9.958,
-        "max_ms": 201.595
+      "raw_path": "main-large-reads-set-c80-20261016/client/results/redis/zrange/r1/c80.json",
+      "command_path": "main-large-reads-set-c80-20261016/client/results/redis/zrange/r1/c80.command.json",
+      "warm_command_path": "main-large-reads-set-c80-20261016/client/results/redis/zrange/r1/warm-c80.command.json",
+      "source": {
+        "suite": "main-large-reads-set-c80-20261016",
+        "path": "outputs/main-large-reads-set-c80-20261016/client/results/redis/zrange/r1/c80.json",
+        "sha256": "8de0337e48f34d393b5e8aadac02703aab84241b19c0c7ec1efed95548ad8a02"
       }
     },
-    "source": "main-large-objects-c80-20261015/client/results/pr/list/r1/c80.json"
-  },
-  {
-    "suite": "main-large-objects-c80-20261015",
-    "system": "Lavik main",
-    "op": "set",
-    "metrics": {
-      "OPERATIONS": {
-        "count": 135157,
-        "qps": 2249.75331,
-        "avg_ms": 35.284801,
-        "p50_ms": 28.845,
-        "p99_ms": 224.07,
-        "p999_ms": 342.045,
-        "max_ms": 638.781
+    {
+      "id": "redis/smembers/c80",
+      "canonical_main": false,
+      "role": "peer-read",
+      "product": "redis",
+      "version": "8.10.2",
+      "op": "smembers",
+      "command": "SMEMBERS",
+      "connections": 80,
+      "keys": 8192,
+      "unit": "QPS",
+      "measured_at_utc": "2026-10-16T03:34:30.817824+00:00",
+      "elapsed_seconds": 60.235856,
+      "metrics": {
+        "OPERATIONS": {
+          "count": 18568,
+          "qps": 308.254939,
+          "avg_ms": 259.066316,
+          "p50_ms": 259.1,
+          "p99_ms": 496.968,
+          "p999_ms": 728.929,
+          "max_ms": 748.83
+        },
+        "SMEMBERS": {
+          "count": 18568,
+          "qps": 308.254939,
+          "avg_ms": 259.066316,
+          "p50_ms": 259.1,
+          "p99_ms": 496.968,
+          "p999_ms": 728.929,
+          "max_ms": 748.83
+        }
       },
-      "SET": {
-        "count": 135157,
-        "qps": 2249.75331,
-        "avg_ms": 35.284801,
-        "p50_ms": 28.845,
-        "p99_ms": 224.07,
-        "p999_ms": 342.045,
-        "max_ms": 638.781
+      "conditions": {
+        "client_threads": 16,
+        "formal_seconds": 60,
+        "warm_seconds": 90.0,
+        "warm_seed": 10180,
+        "formal_seed": 20180,
+        "prefix": "formal:smembers",
+        "pipeline": 1
+      },
+      "raw_path": "main-large-reads-set-c80-20261016/client/results/redis/smembers/r1/c80.json",
+      "command_path": "main-large-reads-set-c80-20261016/client/results/redis/smembers/r1/c80.command.json",
+      "warm_command_path": "main-large-reads-set-c80-20261016/client/results/redis/smembers/r1/warm-c80.command.json",
+      "source": {
+        "suite": "main-large-reads-set-c80-20261016",
+        "path": "outputs/main-large-reads-set-c80-20261016/client/results/redis/smembers/r1/c80.json",
+        "sha256": "63eca4d90f0c98f0ded940c61111ccf63e982850b2cdd98db37f745e28df7980"
       }
     },
-    "source": "main-large-objects-c80-20261015/client/results/pr/set/r1/c80.json"
-  },
-  {
-    "suite": "main-large-objects-c80-20261015",
-    "system": "Lavik main",
-    "op": "setrange",
-    "metrics": {
-      "OPERATIONS": {
-        "count": 3566579,
-        "qps": 59441.398277,
-        "avg_ms": 1.3447,
-        "p50_ms": 0.332,
-        "p99_ms": 9.346,
-        "p999_ms": 14.832,
-        "max_ms": 40.593
+    {
+      "id": "redis/sswap/c80",
+      "canonical_main": false,
+      "role": "peer-write-reference",
+      "product": "redis",
+      "version": "8.10.2",
+      "op": "sswap",
+      "command": "SADD/SREM",
+      "connections": 80,
+      "keys": 8192,
+      "unit": "pairs/s",
+      "measured_at_utc": "2026-10-16T03:30:04.434591+00:00",
+      "elapsed_seconds": 60.000849,
+      "metrics": {
+        "OPERATIONS": {
+          "count": 9088934,
+          "qps": 151480.090097,
+          "avg_ms": 0.52721,
+          "p50_ms": 0.513,
+          "p99_ms": 0.975,
+          "p999_ms": 1.089,
+          "max_ms": 205.981
+        },
+        "SADD": {
+          "count": 9088934,
+          "qps": 151480.090097,
+          "avg_ms": 0.263141,
+          "p50_ms": 0.254,
+          "p99_ms": 0.524,
+          "p999_ms": 0.584,
+          "max_ms": 3.18
+        },
+        "SREM": {
+          "count": 9088934,
+          "qps": 151480.090097,
+          "avg_ms": 0.26324,
+          "p50_ms": 0.254,
+          "p99_ms": 0.523,
+          "p999_ms": 0.584,
+          "max_ms": 205.832
+        }
       },
-      "SETRANGE": {
-        "count": 3566579,
-        "qps": 59441.398277,
-        "avg_ms": 1.3447,
-        "p50_ms": 0.332,
-        "p99_ms": 9.346,
-        "p999_ms": 14.832,
-        "max_ms": 40.593
+      "conditions": {
+        "client_threads": 16,
+        "formal_seconds": 60,
+        "warm_seconds": 90.0,
+        "warm_seed": 10180,
+        "formal_seed": 20180,
+        "prefix": "formal:sswap",
+        "pipeline": 1
+      },
+      "raw_path": "main-large-reads-set-c80-20261016/client/results/redis/sswap/r1/c80.json",
+      "command_path": "main-large-reads-set-c80-20261016/client/results/redis/sswap/r1/c80.command.json",
+      "warm_command_path": "main-large-reads-set-c80-20261016/client/results/redis/sswap/r1/warm-c80.command.json",
+      "source": {
+        "suite": "main-large-reads-set-c80-20261016",
+        "path": "outputs/main-large-reads-set-c80-20261016/client/results/redis/sswap/r1/c80.json",
+        "sha256": "5b03602e0ccce25bd286bfd20538c0c0351bb1e42641b366713129e6ebe65c76"
       }
     },
-    "source": "main-large-objects-c80-20261015/client/results/pr/setrange/r1/c80.json"
-  },
-  {
-    "suite": "main-large-objects-c80-20261015",
-    "system": "Lavik main",
-    "op": "stream",
-    "metrics": {
-      "OPERATIONS": {
-        "count": 3516012,
-        "qps": 58597.705806,
-        "avg_ms": 1.363833,
-        "p50_ms": 0.794,
-        "p99_ms": 9.631,
-        "p999_ms": 18.876,
-        "max_ms": 43.753
+    {
+      "id": "valkey/hgetall/c80",
+      "canonical_main": false,
+      "role": "peer-read",
+      "product": "valkey",
+      "version": "9.1.2",
+      "op": "hgetall",
+      "command": "HGETALL",
+      "connections": 80,
+      "keys": 8192,
+      "unit": "QPS",
+      "measured_at_utc": "2026-10-16T03:37:32.091321+00:00",
+      "elapsed_seconds": 60.068938,
+      "metrics": {
+        "HGETALL": {
+          "count": 41415,
+          "qps": 689.457833,
+          "avg_ms": 116.0024,
+          "p50_ms": 115.12,
+          "p99_ms": 164.302,
+          "p999_ms": 302.107,
+          "max_ms": 367.231
+        },
+        "OPERATIONS": {
+          "count": 41415,
+          "qps": 689.457833,
+          "avg_ms": 116.0024,
+          "p50_ms": 115.12,
+          "p99_ms": 164.302,
+          "p999_ms": 302.107,
+          "max_ms": 367.231
+        }
       },
-      "XADD_MAXLEN": {
-        "count": 3516012,
-        "qps": 58597.705806,
-        "avg_ms": 1.363833,
-        "p50_ms": 0.794,
-        "p99_ms": 9.631,
-        "p999_ms": 18.876,
-        "max_ms": 43.753
+      "conditions": {
+        "client_threads": 16,
+        "formal_seconds": 60,
+        "warm_seconds": 90.0,
+        "warm_seed": 10180,
+        "formal_seed": 20180,
+        "prefix": "formal:hgetall",
+        "pipeline": 1
+      },
+      "raw_path": "main-large-reads-set-c80-20261016/client/results/valkey/hgetall/r1/c80.json",
+      "command_path": "main-large-reads-set-c80-20261016/client/results/valkey/hgetall/r1/c80.command.json",
+      "warm_command_path": "main-large-reads-set-c80-20261016/client/results/valkey/hgetall/r1/warm-c80.command.json",
+      "source": {
+        "suite": "main-large-reads-set-c80-20261016",
+        "path": "outputs/main-large-reads-set-c80-20261016/client/results/valkey/hgetall/r1/c80.json",
+        "sha256": "9f40408f140e03a7b3c1d6bc99b6542fabd253f5f0bcbe0cfafce6f1bde5b32e"
       }
     },
-    "source": "main-large-objects-c80-20261015/client/results/pr/stream/r1/c80.json"
-  },
-  {
-    "suite": "main-large-objects-c80-20261015",
-    "system": "Lavik main",
-    "op": "zincr",
-    "metrics": {
-      "OPERATIONS": {
-        "count": 1454194,
-        "qps": 24230.400735,
-        "avg_ms": 3.299737,
-        "p50_ms": 1.125,
-        "p99_ms": 21.786,
-        "p999_ms": 31.801,
-        "max_ms": 48.436
+    {
+      "id": "valkey/zrange/c80",
+      "canonical_main": false,
+      "role": "peer-read",
+      "product": "valkey",
+      "version": "9.1.2",
+      "op": "zrange",
+      "command": "ZRANGE WITHSCORES",
+      "connections": 80,
+      "keys": 8192,
+      "unit": "QPS",
+      "measured_at_utc": "2026-10-16T03:42:33.021836+00:00",
+      "elapsed_seconds": 60.041768,
+      "metrics": {
+        "OPERATIONS": {
+          "count": 16920,
+          "qps": 281.803827,
+          "avg_ms": 283.844024,
+          "p50_ms": 284.917,
+          "p99_ms": 450.743,
+          "p999_ms": 529.133,
+          "max_ms": 565.342
+        },
+        "ZRANGE_WITHSCORES": {
+          "count": 16920,
+          "qps": 281.803827,
+          "avg_ms": 283.844024,
+          "p50_ms": 284.917,
+          "p99_ms": 450.743,
+          "p999_ms": 529.133,
+          "max_ms": 565.342
+        }
       },
-      "ZINCRBY": {
-        "count": 1454194,
-        "qps": 24230.400735,
-        "avg_ms": 3.299737,
-        "p50_ms": 1.125,
-        "p99_ms": 21.786,
-        "p999_ms": 31.801,
-        "max_ms": 48.436
+      "conditions": {
+        "client_threads": 16,
+        "formal_seconds": 60,
+        "warm_seconds": 90.0,
+        "warm_seed": 10180,
+        "formal_seed": 20180,
+        "prefix": "formal:zrange",
+        "pipeline": 1
+      },
+      "raw_path": "main-large-reads-set-c80-20261016/client/results/valkey/zrange/r1/c80.json",
+      "command_path": "main-large-reads-set-c80-20261016/client/results/valkey/zrange/r1/c80.command.json",
+      "warm_command_path": "main-large-reads-set-c80-20261016/client/results/valkey/zrange/r1/warm-c80.command.json",
+      "source": {
+        "suite": "main-large-reads-set-c80-20261016",
+        "path": "outputs/main-large-reads-set-c80-20261016/client/results/valkey/zrange/r1/c80.json",
+        "sha256": "9fc5d26fca8b20e60718363b6bc9414ac811aa6431a02be55a7020b36bde821d"
       }
     },
-    "source": "main-large-objects-c80-20261015/client/results/pr/zincr/r1/c80.json"
-  },
-  {
-    "suite": "main-large-objects-c80-20261015",
-    "system": "Lavik main",
-    "op": "zswap",
-    "metrics": {
-      "OPERATIONS": {
-        "count": 1138256,
-        "qps": 18963.513181,
-        "avg_ms": 4.21673,
-        "p50_ms": 1.726,
-        "p99_ms": 27.041,
-        "p999_ms": 38.253,
-        "max_ms": 63.274
+    {
+      "id": "valkey/smembers/c80",
+      "canonical_main": false,
+      "role": "peer-read",
+      "product": "valkey",
+      "version": "9.1.2",
+      "op": "smembers",
+      "command": "SMEMBERS",
+      "connections": 80,
+      "keys": 8192,
+      "unit": "QPS",
+      "measured_at_utc": "2026-10-16T03:51:59.802294+00:00",
+      "elapsed_seconds": 60.117281,
+      "metrics": {
+        "OPERATIONS": {
+          "count": 12925,
+          "qps": 214.996417,
+          "avg_ms": 372.064228,
+          "p50_ms": 373.775,
+          "p99_ms": 567.996,
+          "p999_ms": 714.128,
+          "max_ms": 894.254
+        },
+        "SMEMBERS": {
+          "count": 12925,
+          "qps": 214.996417,
+          "avg_ms": 372.064228,
+          "p50_ms": 373.775,
+          "p99_ms": 567.996,
+          "p999_ms": 714.128,
+          "max_ms": 894.254
+        }
       },
-      "ZADD": {
-        "count": 1138256,
-        "qps": 18963.513181,
-        "avg_ms": 1.753818,
-        "p50_ms": 0.722,
-        "p99_ms": 12.334,
-        "p999_ms": 20.893,
-        "max_ms": 40.161
+      "conditions": {
+        "client_threads": 16,
+        "formal_seconds": 60,
+        "warm_seconds": 90.0,
+        "warm_seed": 10180,
+        "formal_seed": 20180,
+        "prefix": "formal:smembers",
+        "pipeline": 1
       },
-      "ZREM": {
-        "count": 1138256,
-        "qps": 18963.513181,
-        "avg_ms": 2.462001,
-        "p50_ms": 0.894,
-        "p99_ms": 18.023,
-        "p999_ms": 26.894,
-        "max_ms": 43.47
+      "raw_path": "main-large-reads-set-c80-20261016/client/results/valkey/smembers/r1/c80.json",
+      "command_path": "main-large-reads-set-c80-20261016/client/results/valkey/smembers/r1/c80.command.json",
+      "warm_command_path": "main-large-reads-set-c80-20261016/client/results/valkey/smembers/r1/warm-c80.command.json",
+      "source": {
+        "suite": "main-large-reads-set-c80-20261016",
+        "path": "outputs/main-large-reads-set-c80-20261016/client/results/valkey/smembers/r1/c80.json",
+        "sha256": "c2c7a04acbc75099cd9a584a08722e58212d4577437894c01210ad610286e21b"
       }
     },
-    "source": "main-large-objects-c80-20261015/client/results/pr/zswap/r1/c80.json"
-  },
-  {
-    "suite": "main-large-reads-set-c80-20261016",
-    "system": "kvrocks",
-    "op": "hgetall",
-    "metrics": {
-      "HGETALL": {
-        "count": 146404,
-        "qps": 2438.985764,
-        "avg_ms": 32.792223,
-        "p50_ms": 33.397,
-        "p99_ms": 52.431,
-        "p999_ms": 57.092,
-        "max_ms": 77.082
+    {
+      "id": "valkey/sswap/c80",
+      "canonical_main": false,
+      "role": "peer-write-reference",
+      "product": "valkey",
+      "version": "9.1.2",
+      "op": "sswap",
+      "command": "SADD/SREM",
+      "connections": 80,
+      "keys": 8192,
+      "unit": "pairs/s",
+      "measured_at_utc": "2026-10-16T03:47:18.380719+00:00",
+      "elapsed_seconds": 60.000761,
+      "metrics": {
+        "OPERATIONS": {
+          "count": 16432492,
+          "qps": 273871.39447,
+          "avg_ms": 0.291284,
+          "p50_ms": 0.274,
+          "p99_ms": 0.534,
+          "p999_ms": 0.64,
+          "max_ms": 3.332
+        },
+        "SADD": {
+          "count": 16432492,
+          "qps": 273871.39447,
+          "avg_ms": 0.145253,
+          "p50_ms": 0.135,
+          "p99_ms": 0.285,
+          "p999_ms": 0.355,
+          "max_ms": 3.156
+        },
+        "SREM": {
+          "count": 16432492,
+          "qps": 273871.39447,
+          "avg_ms": 0.145268,
+          "p50_ms": 0.135,
+          "p99_ms": 0.285,
+          "p999_ms": 0.355,
+          "max_ms": 3.069
+        }
       },
-      "OPERATIONS": {
-        "count": 146404,
-        "qps": 2438.985764,
-        "avg_ms": 32.792223,
-        "p50_ms": 33.397,
-        "p99_ms": 52.431,
-        "p999_ms": 57.092,
-        "max_ms": 77.082
+      "conditions": {
+        "client_threads": 16,
+        "formal_seconds": 60,
+        "warm_seconds": 90.0,
+        "warm_seed": 10180,
+        "formal_seed": 20180,
+        "prefix": "formal:sswap",
+        "pipeline": 1
+      },
+      "raw_path": "main-large-reads-set-c80-20261016/client/results/valkey/sswap/r1/c80.json",
+      "command_path": "main-large-reads-set-c80-20261016/client/results/valkey/sswap/r1/c80.command.json",
+      "warm_command_path": "main-large-reads-set-c80-20261016/client/results/valkey/sswap/r1/warm-c80.command.json",
+      "source": {
+        "suite": "main-large-reads-set-c80-20261016",
+        "path": "outputs/main-large-reads-set-c80-20261016/client/results/valkey/sswap/r1/c80.json",
+        "sha256": "6be80d403e9c87f5b7096f7186569cf15485a58c9870591c91180735d9e0d378"
       }
     },
-    "source": "main-large-reads-set-c80-20261016/client/results/kvrocks/hgetall/r1/c80.json"
-  },
-  {
-    "suite": "main-large-reads-set-c80-20261016",
-    "system": "kvrocks",
-    "op": "smembers",
-    "metrics": {
-      "OPERATIONS": {
-        "count": 79168,
-        "qps": 1318.157483,
-        "avg_ms": 60.658171,
-        "p50_ms": 60.27,
-        "p99_ms": 158.201,
-        "p999_ms": 163.87,
-        "max_ms": 263.818
+    {
+      "id": "kvrocks/hgetall/c80",
+      "canonical_main": false,
+      "role": "peer-read",
+      "product": "kvrocks",
+      "version": "2.17.0",
+      "op": "hgetall",
+      "command": "HGETALL",
+      "connections": 80,
+      "keys": 8192,
+      "unit": "QPS",
+      "measured_at_utc": "2026-10-16T03:55:09.121447+00:00",
+      "elapsed_seconds": 60.026591,
+      "metrics": {
+        "HGETALL": {
+          "count": 146404,
+          "qps": 2438.985764,
+          "avg_ms": 32.792223,
+          "p50_ms": 33.397,
+          "p99_ms": 52.431,
+          "p999_ms": 57.092,
+          "max_ms": 77.082
+        },
+        "OPERATIONS": {
+          "count": 146404,
+          "qps": 2438.985764,
+          "avg_ms": 32.792223,
+          "p50_ms": 33.397,
+          "p99_ms": 52.431,
+          "p999_ms": 57.092,
+          "max_ms": 77.082
+        }
       },
-      "SMEMBERS": {
-        "count": 79168,
-        "qps": 1318.157483,
-        "avg_ms": 60.658171,
-        "p50_ms": 60.27,
-        "p99_ms": 158.201,
-        "p999_ms": 163.87,
-        "max_ms": 263.818
+      "conditions": {
+        "client_threads": 16,
+        "formal_seconds": 60,
+        "warm_seconds": 90.0,
+        "warm_seed": 10180,
+        "formal_seed": 20180,
+        "prefix": "formal:hgetall",
+        "pipeline": 1
+      },
+      "raw_path": "main-large-reads-set-c80-20261016/client/results/kvrocks/hgetall/r1/c80.json",
+      "command_path": "main-large-reads-set-c80-20261016/client/results/kvrocks/hgetall/r1/c80.command.json",
+      "warm_command_path": "main-large-reads-set-c80-20261016/client/results/kvrocks/hgetall/r1/warm-c80.command.json",
+      "source": {
+        "suite": "main-large-reads-set-c80-20261016",
+        "path": "outputs/main-large-reads-set-c80-20261016/client/results/kvrocks/hgetall/r1/c80.json",
+        "sha256": "9800d247e20e4a126d0ae8bf2dc44f757bd0f4eb2edd878cc208bc8c55cb8061"
       }
     },
-    "source": "main-large-reads-set-c80-20261016/client/results/kvrocks/smembers/r1/c80.json"
-  },
-  {
-    "suite": "main-large-reads-set-c80-20261016",
-    "system": "kvrocks",
-    "op": "sswap",
-    "metrics": {
-      "OPERATIONS": {
-        "count": 4975453,
-        "qps": 82922.41371,
-        "avg_ms": 0.963846,
-        "p50_ms": 0.719,
-        "p99_ms": 2.55,
-        "p999_ms": 2.924,
-        "max_ms": 21.244
+    {
+      "id": "kvrocks/zrange/c80",
+      "canonical_main": false,
+      "role": "peer-read",
+      "product": "kvrocks",
+      "version": "2.17.0",
+      "op": "zrange",
+      "command": "ZRANGE WITHSCORES",
+      "connections": 80,
+      "keys": 8192,
+      "unit": "QPS",
+      "measured_at_utc": "2026-10-16T04:02:02.351638+00:00",
+      "elapsed_seconds": 60.094925,
+      "metrics": {
+        "OPERATIONS": {
+          "count": 47877,
+          "qps": 796.689567,
+          "avg_ms": 100.33355,
+          "p50_ms": 99.932,
+          "p99_ms": 180.668,
+          "p999_ms": 184.425,
+          "max_ms": 333.678
+        },
+        "ZRANGE_WITHSCORES": {
+          "count": 47877,
+          "qps": 796.689567,
+          "avg_ms": 100.33355,
+          "p50_ms": 99.932,
+          "p99_ms": 180.668,
+          "p999_ms": 184.425,
+          "max_ms": 333.678
+        }
       },
-      "SADD": {
-        "count": 4975453,
-        "qps": 82922.41371,
-        "avg_ms": 0.484766,
-        "p50_ms": 0.361,
-        "p99_ms": 1.348,
-        "p999_ms": 1.63,
-        "max_ms": 20.611
+      "conditions": {
+        "client_threads": 16,
+        "formal_seconds": 60,
+        "warm_seconds": 90.0,
+        "warm_seed": 10180,
+        "formal_seed": 20180,
+        "prefix": "formal:zrange",
+        "pipeline": 1
       },
-      "SREM": {
-        "count": 4975453,
-        "qps": 82922.41371,
-        "avg_ms": 0.478271,
-        "p50_ms": 0.353,
-        "p99_ms": 1.345,
-        "p999_ms": 1.619,
-        "max_ms": 20.612
+      "raw_path": "main-large-reads-set-c80-20261016/client/results/kvrocks/zrange/r1/c80.json",
+      "command_path": "main-large-reads-set-c80-20261016/client/results/kvrocks/zrange/r1/c80.command.json",
+      "warm_command_path": "main-large-reads-set-c80-20261016/client/results/kvrocks/zrange/r1/warm-c80.command.json",
+      "source": {
+        "suite": "main-large-reads-set-c80-20261016",
+        "path": "outputs/main-large-reads-set-c80-20261016/client/results/kvrocks/zrange/r1/c80.json",
+        "sha256": "ec51b7009896e6bc28a0e6e0b23286c03c98c8738646e77d948e55247a034da0"
       }
     },
-    "source": "main-large-reads-set-c80-20261016/client/results/kvrocks/sswap/r1/c80.json"
-  },
-  {
-    "suite": "main-large-reads-set-c80-20261016",
-    "system": "kvrocks",
-    "op": "zrange",
-    "metrics": {
-      "OPERATIONS": {
-        "count": 47877,
-        "qps": 796.689567,
-        "avg_ms": 100.33355,
-        "p50_ms": 99.932,
-        "p99_ms": 180.668,
-        "p999_ms": 184.425,
-        "max_ms": 333.678
+    {
+      "id": "kvrocks/smembers/c80",
+      "canonical_main": false,
+      "role": "peer-read",
+      "product": "kvrocks",
+      "version": "2.17.0",
+      "op": "smembers",
+      "command": "SMEMBERS",
+      "connections": 80,
+      "keys": 8192,
+      "unit": "QPS",
+      "measured_at_utc": "2026-10-16T04:13:45.214159+00:00",
+      "elapsed_seconds": 60.059592,
+      "metrics": {
+        "OPERATIONS": {
+          "count": 79168,
+          "qps": 1318.157483,
+          "avg_ms": 60.658171,
+          "p50_ms": 60.27,
+          "p99_ms": 158.201,
+          "p999_ms": 163.87,
+          "max_ms": 263.818
+        },
+        "SMEMBERS": {
+          "count": 79168,
+          "qps": 1318.157483,
+          "avg_ms": 60.658171,
+          "p50_ms": 60.27,
+          "p99_ms": 158.201,
+          "p999_ms": 163.87,
+          "max_ms": 263.818
+        }
       },
-      "ZRANGE_WITHSCORES": {
-        "count": 47877,
-        "qps": 796.689567,
-        "avg_ms": 100.33355,
-        "p50_ms": 99.932,
-        "p99_ms": 180.668,
-        "p999_ms": 184.425,
-        "max_ms": 333.678
+      "conditions": {
+        "client_threads": 16,
+        "formal_seconds": 60,
+        "warm_seconds": 90.0,
+        "warm_seed": 10180,
+        "formal_seed": 20180,
+        "prefix": "formal:smembers",
+        "pipeline": 1
+      },
+      "raw_path": "main-large-reads-set-c80-20261016/client/results/kvrocks/smembers/r1/c80.json",
+      "command_path": "main-large-reads-set-c80-20261016/client/results/kvrocks/smembers/r1/c80.command.json",
+      "warm_command_path": "main-large-reads-set-c80-20261016/client/results/kvrocks/smembers/r1/warm-c80.command.json",
+      "source": {
+        "suite": "main-large-reads-set-c80-20261016",
+        "path": "outputs/main-large-reads-set-c80-20261016/client/results/kvrocks/smembers/r1/c80.json",
+        "sha256": "b3f67a923671c47d0444088f5bde492e576bc0d937103fc1574778a9904b6c2d"
       }
     },
-    "source": "main-large-reads-set-c80-20261016/client/results/kvrocks/zrange/r1/c80.json"
-  },
-  {
-    "suite": "main-large-reads-set-c80-20261016",
-    "system": "Lavik main",
-    "op": "hgetall",
-    "metrics": {
-      "HGETALL": {
-        "count": 157966,
-        "qps": 2631.403609,
-        "avg_ms": 30.391475,
-        "p50_ms": 30.207,
-        "p99_ms": 43.196,
-        "p999_ms": 55.007,
-        "max_ms": 258.434
+    {
+      "id": "kvrocks/sswap/c80",
+      "canonical_main": false,
+      "role": "peer-write-reference",
+      "product": "kvrocks",
+      "version": "2.17.0",
+      "op": "sswap",
+      "command": "SADD/SREM",
+      "connections": 80,
+      "keys": 8192,
+      "unit": "pairs/s",
+      "measured_at_utc": "2026-10-16T04:08:06.411355+00:00",
+      "elapsed_seconds": 60.001305,
+      "metrics": {
+        "OPERATIONS": {
+          "count": 4975453,
+          "qps": 82922.41371,
+          "avg_ms": 0.963846,
+          "p50_ms": 0.719,
+          "p99_ms": 2.55,
+          "p999_ms": 2.924,
+          "max_ms": 21.244
+        },
+        "SADD": {
+          "count": 4975453,
+          "qps": 82922.41371,
+          "avg_ms": 0.484766,
+          "p50_ms": 0.361,
+          "p99_ms": 1.348,
+          "p999_ms": 1.63,
+          "max_ms": 20.611
+        },
+        "SREM": {
+          "count": 4975453,
+          "qps": 82922.41371,
+          "avg_ms": 0.478271,
+          "p50_ms": 0.353,
+          "p99_ms": 1.345,
+          "p999_ms": 1.619,
+          "max_ms": 20.612
+        }
       },
-      "OPERATIONS": {
-        "count": 157966,
-        "qps": 2631.403609,
-        "avg_ms": 30.391475,
-        "p50_ms": 30.207,
-        "p99_ms": 43.196,
-        "p999_ms": 55.007,
-        "max_ms": 258.434
+      "conditions": {
+        "client_threads": 16,
+        "formal_seconds": 60,
+        "warm_seconds": 90.0,
+        "warm_seed": 10180,
+        "formal_seed": 20180,
+        "prefix": "formal:sswap",
+        "pipeline": 1
+      },
+      "raw_path": "main-large-reads-set-c80-20261016/client/results/kvrocks/sswap/r1/c80.json",
+      "command_path": "main-large-reads-set-c80-20261016/client/results/kvrocks/sswap/r1/c80.command.json",
+      "warm_command_path": "main-large-reads-set-c80-20261016/client/results/kvrocks/sswap/r1/warm-c80.command.json",
+      "source": {
+        "suite": "main-large-reads-set-c80-20261016",
+        "path": "outputs/main-large-reads-set-c80-20261016/client/results/kvrocks/sswap/r1/c80.json",
+        "sha256": "25ede2e16917bf28ef84dd5a9cfc12dfd12cd6f2845e4f0faff6c0d05dc3a967"
       }
     },
-    "source": "main-large-reads-set-c80-20261016/client/results/pr/hgetall/r1/c80.json"
-  },
-  {
-    "suite": "main-large-reads-set-c80-20261016",
-    "system": "Lavik main",
-    "op": "smembers",
-    "metrics": {
-      "OPERATIONS": {
-        "count": 58567,
-        "qps": 972.71022,
-        "avg_ms": 82.050692,
-        "p50_ms": 41.133,
-        "p99_ms": 743.359,
-        "p999_ms": 816.342,
-        "max_ms": 851.928
+    {
+      "id": "redis/lrange/c1",
+      "canonical_main": false,
+      "role": "peer-read",
+      "product": "redis",
+      "version": "8.10.2",
+      "op": "lrange",
+      "command": "LRANGE",
+      "connections": 1,
+      "keys": 8192,
+      "unit": "QPS",
+      "measured_at_utc": "2026-10-16T14:12:19.163517+00:00",
+      "elapsed_seconds": 60.000104,
+      "metrics": {
+        "LRANGE": {
+          "count": 58617,
+          "qps": 976.948315,
+          "avg_ms": 1.021887,
+          "p50_ms": 1.019,
+          "p99_ms": 1.089,
+          "p999_ms": 1.128,
+          "max_ms": 7.382
+        },
+        "OPERATIONS": {
+          "count": 58617,
+          "qps": 976.948315,
+          "avg_ms": 1.021887,
+          "p50_ms": 1.019,
+          "p99_ms": 1.089,
+          "p999_ms": 1.128,
+          "max_ms": 7.382
+        }
       },
-      "SMEMBERS": {
-        "count": 58567,
-        "qps": 972.71022,
-        "avg_ms": 82.050692,
-        "p50_ms": 41.133,
-        "p99_ms": 743.359,
-        "p999_ms": 816.342,
-        "max_ms": 851.928
+      "conditions": {
+        "client_threads": 1,
+        "formal_seconds": 60,
+        "warm_seconds": 90.0,
+        "warm_seed": 10180,
+        "formal_seed": 20180,
+        "prefix": "formal:lrange",
+        "pipeline": 1
+      },
+      "raw_path": "redis-lrange-c1-20261016/client/results/redis/lrange/r1/c1.json",
+      "command_path": "redis-lrange-c1-20261016/client/results/redis/lrange/r1/c1.command.json",
+      "warm_command_path": "redis-lrange-c1-20261016/client/results/redis/lrange/r1/warm-c1.command.json",
+      "source": {
+        "suite": "redis-lrange-c1-20261016",
+        "path": "outputs/redis-lrange-c1-20261016/client/results/redis/lrange/r1/c1.json",
+        "sha256": "8be1e938163e46c077017d812c4d4eb1d3823e3019249a714211603ae26f6d44"
       }
-    },
-    "source": "main-large-reads-set-c80-20261016/client/results/pr/smembers/r1/c80.json"
-  },
-  {
-    "suite": "main-large-reads-set-c80-20261016",
-    "system": "Lavik main",
-    "op": "sswap",
-    "metrics": {
-      "OPERATIONS": {
-        "count": 2704360,
-        "qps": 45070.67842,
-        "avg_ms": 1.774012,
-        "p50_ms": 0.74,
-        "p99_ms": 14.213,
-        "p999_ms": 19.633,
-        "max_ms": 50.344
+    }
+  ],
+  "external_peer_write_reference": {
+    "scope": "Seven prior peer write workloads at c80; three rounds per product/workload.",
+    "formal_raw_points": 63,
+    "copied_into_this_directory": false,
+    "summary_path": "../lavik-v0.1.0-large-objects-2026-10-14/metadata/summary.json",
+    "summary_sha256": "54fa70ffaf78138b8c8fef076211c97ab18aabf63888e57da6a03e87b5e970ac",
+    "points": [
+      {
+        "product": "redis",
+        "op": "set",
+        "round": 1,
+        "path": "../lavik-v0.1.0-large-objects-2026-10-14/raw/redis/set/r1/c80.json",
+        "sha256": "b93367d794a1fbb03e5c666bf2ea44c9250668d7f26a7928974c0b16587b0486"
       },
-      "SADD": {
-        "count": 2704360,
-        "qps": 45070.67842,
-        "avg_ms": 1.061656,
-        "p50_ms": 0.365,
-        "p99_ms": 8.666,
-        "p999_ms": 12.097,
-        "max_ms": 44.271
+      {
+        "product": "redis",
+        "op": "set",
+        "round": 2,
+        "path": "../lavik-v0.1.0-large-objects-2026-10-14/raw/redis/set/r2/c80.json",
+        "sha256": "15f096d7d391a6aa8988c5ba2a6346a0d1d11f839cda741bc368323cd11afa5d"
       },
-      "SREM": {
-        "count": 2704360,
-        "qps": 45070.67842,
-        "avg_ms": 0.711511,
-        "p50_ms": 0.347,
-        "p99_ms": 9.105,
-        "p999_ms": 10.826,
-        "max_ms": 45.098
+      {
+        "product": "redis",
+        "op": "set",
+        "round": 3,
+        "path": "../lavik-v0.1.0-large-objects-2026-10-14/raw/redis/set/r3/c80.json",
+        "sha256": "edfb91c56b76ea172a0c3a0e68e0ac8997e2a0dc74a4bfe2c70b9a45d2e583f6"
+      },
+      {
+        "product": "redis",
+        "op": "setrange",
+        "round": 1,
+        "path": "../lavik-v0.1.0-large-objects-2026-10-14/raw/redis/setrange/r1/c80.json",
+        "sha256": "2561145e3437daa67f648777082f102d8d672886d9a9ce77631a20e71b21e1ee"
+      },
+      {
+        "product": "redis",
+        "op": "setrange",
+        "round": 2,
+        "path": "../lavik-v0.1.0-large-objects-2026-10-14/raw/redis/setrange/r2/c80.json",
+        "sha256": "1dbf69dcf66f44514aafc3977cf519d94cbb01883d034cd90ae354ca4aeb7a29"
+      },
+      {
+        "product": "redis",
+        "op": "setrange",
+        "round": 3,
+        "path": "../lavik-v0.1.0-large-objects-2026-10-14/raw/redis/setrange/r3/c80.json",
+        "sha256": "1264157fd00834aac0c6f7b3efafaa1e858dbcea74a0963b10825f2f9acc0939"
+      },
+      {
+        "product": "redis",
+        "op": "hash",
+        "round": 1,
+        "path": "../lavik-v0.1.0-large-objects-2026-10-14/raw/redis/hash/r1/c80.json",
+        "sha256": "0a30940be05dec657ea821e5be484a3084eafa6bea611f40b66674b5374bf119"
+      },
+      {
+        "product": "redis",
+        "op": "hash",
+        "round": 2,
+        "path": "../lavik-v0.1.0-large-objects-2026-10-14/raw/redis/hash/r2/c80.json",
+        "sha256": "ecae15c3243f55b2e0f2142a9ebb560caf5fee21aef499d85178781f82bc419a"
+      },
+      {
+        "product": "redis",
+        "op": "hash",
+        "round": 3,
+        "path": "../lavik-v0.1.0-large-objects-2026-10-14/raw/redis/hash/r3/c80.json",
+        "sha256": "5cf256585e0641d27e58ea28709ae3ff199b756ded55fdad87d48b27174da75c"
+      },
+      {
+        "product": "redis",
+        "op": "list",
+        "round": 1,
+        "path": "../lavik-v0.1.0-large-objects-2026-10-14/raw/redis/list/r1/c80.json",
+        "sha256": "628a8fec84a00c5a7c129a224eaae601d67c89fe56a793e50d3b9a5ea87af3e1"
+      },
+      {
+        "product": "redis",
+        "op": "list",
+        "round": 2,
+        "path": "../lavik-v0.1.0-large-objects-2026-10-14/raw/redis/list/r2/c80.json",
+        "sha256": "b404dfd85d46cfc126b1eb7b914b1977d4e0a4c477fb5c4f7d36018a657ba344"
+      },
+      {
+        "product": "redis",
+        "op": "list",
+        "round": 3,
+        "path": "../lavik-v0.1.0-large-objects-2026-10-14/raw/redis/list/r3/c80.json",
+        "sha256": "77df7799bb804d2b5ae176566114f1dcd8fd49f58d008a786f6aa8f0c4480c44"
+      },
+      {
+        "product": "redis",
+        "op": "zincr",
+        "round": 1,
+        "path": "../lavik-v0.1.0-large-objects-2026-10-14/raw/redis/zincr/r1/c80.json",
+        "sha256": "9dc9907fee9233cd50db25bbefb17d46549d5389d29f3b6de5773a3ff1a38627"
+      },
+      {
+        "product": "redis",
+        "op": "zincr",
+        "round": 2,
+        "path": "../lavik-v0.1.0-large-objects-2026-10-14/raw/redis/zincr/r2/c80.json",
+        "sha256": "3d6d44d9bb1d8e2a43012ccaa62d9d8e954c3a7218783bc58030d046443a22c3"
+      },
+      {
+        "product": "redis",
+        "op": "zincr",
+        "round": 3,
+        "path": "../lavik-v0.1.0-large-objects-2026-10-14/raw/redis/zincr/r3/c80.json",
+        "sha256": "5738816155c2158a7d3c9028fea4593dde3589fa0fa85cb95e63f4310c207f75"
+      },
+      {
+        "product": "redis",
+        "op": "zswap",
+        "round": 1,
+        "path": "../lavik-v0.1.0-large-objects-2026-10-14/raw/redis/zswap/r1/c80.json",
+        "sha256": "f8cd6cc7af90abb3f3c842b9005132fe032a81c66e33d1f20d5f30adbd0289e9"
+      },
+      {
+        "product": "redis",
+        "op": "zswap",
+        "round": 2,
+        "path": "../lavik-v0.1.0-large-objects-2026-10-14/raw/redis/zswap/r2/c80.json",
+        "sha256": "42ee254b866b2b650beeb5c625070df7006e229a7d2508167aebfbd62e21c7ab"
+      },
+      {
+        "product": "redis",
+        "op": "zswap",
+        "round": 3,
+        "path": "../lavik-v0.1.0-large-objects-2026-10-14/raw/redis/zswap/r3/c80.json",
+        "sha256": "121c1c94c504bfbc7a6913041f0b2c2883ee6de640255080c6b77520bf749aad"
+      },
+      {
+        "product": "redis",
+        "op": "stream",
+        "round": 1,
+        "path": "../lavik-v0.1.0-large-objects-2026-10-14/raw/redis/stream/r1/c80.json",
+        "sha256": "86df200d460d7adf1570212ae3ffb22c85b102722d6192cd7c80cf8ed2d02ba6"
+      },
+      {
+        "product": "redis",
+        "op": "stream",
+        "round": 2,
+        "path": "../lavik-v0.1.0-large-objects-2026-10-14/raw/redis/stream/r2/c80.json",
+        "sha256": "fb50791c3b00709da7260a48e15c76263cd103b498eecf675124804699fe2d60"
+      },
+      {
+        "product": "redis",
+        "op": "stream",
+        "round": 3,
+        "path": "../lavik-v0.1.0-large-objects-2026-10-14/raw/redis/stream/r3/c80.json",
+        "sha256": "6f253fb9fe0e9d82f38d46dd8761e24bfe52a407459ace785ace6b305f3c81fe"
+      },
+      {
+        "product": "valkey",
+        "op": "set",
+        "round": 1,
+        "path": "../lavik-v0.1.0-large-objects-2026-10-14/raw/valkey/set/r1/c80.json",
+        "sha256": "0c1ffaa78438c4ebf67f5cc4946f838cbfb3820b32e2930440fa4763a0e4a709"
+      },
+      {
+        "product": "valkey",
+        "op": "set",
+        "round": 2,
+        "path": "../lavik-v0.1.0-large-objects-2026-10-14/raw/valkey/set/r2/c80.json",
+        "sha256": "2668a7fa7b8963d31a8c52c0c7cc028839dee79d4728b6877b97bb082d921310"
+      },
+      {
+        "product": "valkey",
+        "op": "set",
+        "round": 3,
+        "path": "../lavik-v0.1.0-large-objects-2026-10-14/raw/valkey/set/r3/c80.json",
+        "sha256": "8b4a4200f7a77f1fffea5f04b89e9d79a83ad8d7da32db59020b8b58a353d54f"
+      },
+      {
+        "product": "valkey",
+        "op": "setrange",
+        "round": 1,
+        "path": "../lavik-v0.1.0-large-objects-2026-10-14/raw/valkey/setrange/r1/c80.json",
+        "sha256": "6035236d974ba8a2c91d6ba279e5fd93379c713b5858be8fc53848d664e5d170"
+      },
+      {
+        "product": "valkey",
+        "op": "setrange",
+        "round": 2,
+        "path": "../lavik-v0.1.0-large-objects-2026-10-14/raw/valkey/setrange/r2/c80.json",
+        "sha256": "7df6aeed416802b072747068e99291455e923c0f5d8bb5e7678841a28e6d46c9"
+      },
+      {
+        "product": "valkey",
+        "op": "setrange",
+        "round": 3,
+        "path": "../lavik-v0.1.0-large-objects-2026-10-14/raw/valkey/setrange/r3/c80.json",
+        "sha256": "4719a614d3e398911bb5c880552e75ab852446d72f8bdad371bcff60e7fcebc1"
+      },
+      {
+        "product": "valkey",
+        "op": "hash",
+        "round": 1,
+        "path": "../lavik-v0.1.0-large-objects-2026-10-14/raw/valkey/hash/r1/c80.json",
+        "sha256": "8ea91e71b19c00eb74149e70f148217f241210a29ce07ef6f895d76a58e59f9f"
+      },
+      {
+        "product": "valkey",
+        "op": "hash",
+        "round": 2,
+        "path": "../lavik-v0.1.0-large-objects-2026-10-14/raw/valkey/hash/r2/c80.json",
+        "sha256": "ab63fc3a8f0a45b4be86f09758649c4af7a14504860b4c0fb5a91075c6db8326"
+      },
+      {
+        "product": "valkey",
+        "op": "hash",
+        "round": 3,
+        "path": "../lavik-v0.1.0-large-objects-2026-10-14/raw/valkey/hash/r3/c80.json",
+        "sha256": "59c203059359b11651ca2df12f84ce6e902700213ec606da65a1b6c96b95937b"
+      },
+      {
+        "product": "valkey",
+        "op": "list",
+        "round": 1,
+        "path": "../lavik-v0.1.0-large-objects-2026-10-14/raw/valkey/list/r1/c80.json",
+        "sha256": "c4c750c0b0b03af011c3213e8044301a4ee217c7dbc1233e24d7eeeac69dd965"
+      },
+      {
+        "product": "valkey",
+        "op": "list",
+        "round": 2,
+        "path": "../lavik-v0.1.0-large-objects-2026-10-14/raw/valkey/list/r2/c80.json",
+        "sha256": "c0d6d6fd6ded500ab057e61c176ba49aca3e1d5601da47c44d889c9199ee74a8"
+      },
+      {
+        "product": "valkey",
+        "op": "list",
+        "round": 3,
+        "path": "../lavik-v0.1.0-large-objects-2026-10-14/raw/valkey/list/r3/c80.json",
+        "sha256": "10eadf6649e7634ea1ce304480e954b10828da14c410a6a0b5f17ee9fcc75249"
+      },
+      {
+        "product": "valkey",
+        "op": "zincr",
+        "round": 1,
+        "path": "../lavik-v0.1.0-large-objects-2026-10-14/raw/valkey/zincr/r1/c80.json",
+        "sha256": "8bd4890df6bd8a01289c96a1b89665ad42181ec21f3ca7bb6a5a96230b6a0276"
+      },
+      {
+        "product": "valkey",
+        "op": "zincr",
+        "round": 2,
+        "path": "../lavik-v0.1.0-large-objects-2026-10-14/raw/valkey/zincr/r2/c80.json",
+        "sha256": "a4ae251087c3bd391e5962ab9a543d00c8d29199c5ced34b1a3582927758e79c"
+      },
+      {
+        "product": "valkey",
+        "op": "zincr",
+        "round": 3,
+        "path": "../lavik-v0.1.0-large-objects-2026-10-14/raw/valkey/zincr/r3/c80.json",
+        "sha256": "31ec0f5b5015a8262558f38253cec56b101ebce22526d42e7fa0d1fadb9f2394"
+      },
+      {
+        "product": "valkey",
+        "op": "zswap",
+        "round": 1,
+        "path": "../lavik-v0.1.0-large-objects-2026-10-14/raw/valkey/zswap/r1/c80.json",
+        "sha256": "376214f50a0a1d6e396813a1943471c17315af4bd4922e51f69319118ef6da80"
+      },
+      {
+        "product": "valkey",
+        "op": "zswap",
+        "round": 2,
+        "path": "../lavik-v0.1.0-large-objects-2026-10-14/raw/valkey/zswap/r2/c80.json",
+        "sha256": "66745cde6b1d2c37622ab50eaa153f17a786b3e9fa94d5a39086f492963f132c"
+      },
+      {
+        "product": "valkey",
+        "op": "zswap",
+        "round": 3,
+        "path": "../lavik-v0.1.0-large-objects-2026-10-14/raw/valkey/zswap/r3/c80.json",
+        "sha256": "d59e0dbe7b22d346d391edfdc90cccf57f847a007fa6903c28870ddc6cb7bc37"
+      },
+      {
+        "product": "valkey",
+        "op": "stream",
+        "round": 1,
+        "path": "../lavik-v0.1.0-large-objects-2026-10-14/raw/valkey/stream/r1/c80.json",
+        "sha256": "ce27d6588932ac955abdc2697abe5de2cc351be685c62134fe5368348ccff79a"
+      },
+      {
+        "product": "valkey",
+        "op": "stream",
+        "round": 2,
+        "path": "../lavik-v0.1.0-large-objects-2026-10-14/raw/valkey/stream/r2/c80.json",
+        "sha256": "942c8a7d8423e5cc81c8f413aad33d6c08b03101df11675ef21951035aec4f67"
+      },
+      {
+        "product": "valkey",
+        "op": "stream",
+        "round": 3,
+        "path": "../lavik-v0.1.0-large-objects-2026-10-14/raw/valkey/stream/r3/c80.json",
+        "sha256": "3c462d6adbacb265f854f859816b96aeb5538e6f6cf4e664387806b0208c7e1a"
+      },
+      {
+        "product": "kvrocks",
+        "op": "set",
+        "round": 1,
+        "path": "../lavik-v0.1.0-large-objects-2026-10-14/raw/kvrocks/set/r1/c80.json",
+        "sha256": "b3ca3e92282374388acd4a07d1a75d4afe605de3ca8e932fb62acb672d60a635"
+      },
+      {
+        "product": "kvrocks",
+        "op": "set",
+        "round": 2,
+        "path": "../lavik-v0.1.0-large-objects-2026-10-14/raw/kvrocks/set/r2/c80.json",
+        "sha256": "515ab3e8c52f536b802b6980c5ab0b2c414bca9ac0d6d3f635ec09784e746daf"
+      },
+      {
+        "product": "kvrocks",
+        "op": "set",
+        "round": 3,
+        "path": "../lavik-v0.1.0-large-objects-2026-10-14/raw/kvrocks/set/r3/c80.json",
+        "sha256": "25d1ae85e923f1517fba9d1c616771fda880ddab741613b41da6bdf56f26162a"
+      },
+      {
+        "product": "kvrocks",
+        "op": "setrange",
+        "round": 1,
+        "path": "../lavik-v0.1.0-large-objects-2026-10-14/raw/kvrocks/setrange/r1/c80.json",
+        "sha256": "80cb85270e447ac06aa77c36fb5bc5e5206abccb3d37e31b0c3f12c7605f7e71"
+      },
+      {
+        "product": "kvrocks",
+        "op": "setrange",
+        "round": 2,
+        "path": "../lavik-v0.1.0-large-objects-2026-10-14/raw/kvrocks/setrange/r2/c80.json",
+        "sha256": "d2f8e1b14eab94c06b2474c0bb323912a5f72db47688e5387d05dff9c997ebb9"
+      },
+      {
+        "product": "kvrocks",
+        "op": "setrange",
+        "round": 3,
+        "path": "../lavik-v0.1.0-large-objects-2026-10-14/raw/kvrocks/setrange/r3/c80.json",
+        "sha256": "ea069659aa27f9a80c304557d5d2357a044a245fe2b8585f0dcf00535ee7cc66"
+      },
+      {
+        "product": "kvrocks",
+        "op": "hash",
+        "round": 1,
+        "path": "../lavik-v0.1.0-large-objects-2026-10-14/raw/kvrocks/hash/r1/c80.json",
+        "sha256": "70d70c81b7714c990f7e2139eb003d755188f596009d2192f8a06cc9ae81254e"
+      },
+      {
+        "product": "kvrocks",
+        "op": "hash",
+        "round": 2,
+        "path": "../lavik-v0.1.0-large-objects-2026-10-14/raw/kvrocks/hash/r2/c80.json",
+        "sha256": "99b0b1df0a58fc7cddf46462fd123263ce9de4d8baacfa70ac3ca2dd3d4a4f8f"
+      },
+      {
+        "product": "kvrocks",
+        "op": "hash",
+        "round": 3,
+        "path": "../lavik-v0.1.0-large-objects-2026-10-14/raw/kvrocks/hash/r3/c80.json",
+        "sha256": "42cfc5ce716068924d01e2d2aaa576f46b362527e09a4bf311ae273152f98af8"
+      },
+      {
+        "product": "kvrocks",
+        "op": "list",
+        "round": 1,
+        "path": "../lavik-v0.1.0-large-objects-2026-10-14/raw/kvrocks/list/r1/c80.json",
+        "sha256": "9dd479a8d95e189168e931680fe803fa4c424dde2c323da84d794dccdea988da"
+      },
+      {
+        "product": "kvrocks",
+        "op": "list",
+        "round": 2,
+        "path": "../lavik-v0.1.0-large-objects-2026-10-14/raw/kvrocks/list/r2/c80.json",
+        "sha256": "71cd7e9c118e33ec170c9098fa62687f84485e2d37f3585c9a051e2fd3965ed6"
+      },
+      {
+        "product": "kvrocks",
+        "op": "list",
+        "round": 3,
+        "path": "../lavik-v0.1.0-large-objects-2026-10-14/raw/kvrocks/list/r3/c80.json",
+        "sha256": "48d859ee64a19d042c85dc646b6c3e95b942a81ce5cbed4639483731df054cab"
+      },
+      {
+        "product": "kvrocks",
+        "op": "zincr",
+        "round": 1,
+        "path": "../lavik-v0.1.0-large-objects-2026-10-14/raw/kvrocks/zincr/r1/c80.json",
+        "sha256": "a1c8ea632f848a9b9ce6ec41092b5ea7ef4c91c58bd3e23f05cfcee3781228d5"
+      },
+      {
+        "product": "kvrocks",
+        "op": "zincr",
+        "round": 2,
+        "path": "../lavik-v0.1.0-large-objects-2026-10-14/raw/kvrocks/zincr/r2/c80.json",
+        "sha256": "2c426a30fe83742f39ea07e3db4e26686f2dd07f3bbd0903dc0855321d992d73"
+      },
+      {
+        "product": "kvrocks",
+        "op": "zincr",
+        "round": 3,
+        "path": "../lavik-v0.1.0-large-objects-2026-10-14/raw/kvrocks/zincr/r3/c80.json",
+        "sha256": "01710cc8860665e3f043a17cb235c101940047934f795327af1e764591e2b66a"
+      },
+      {
+        "product": "kvrocks",
+        "op": "zswap",
+        "round": 1,
+        "path": "../lavik-v0.1.0-large-objects-2026-10-14/raw/kvrocks/zswap/r1/c80.json",
+        "sha256": "ef0243f227c008b7fabed6dd56cc7795fac39683f2f6ed4e9ffcff10200c55a7"
+      },
+      {
+        "product": "kvrocks",
+        "op": "zswap",
+        "round": 2,
+        "path": "../lavik-v0.1.0-large-objects-2026-10-14/raw/kvrocks/zswap/r2/c80.json",
+        "sha256": "30aa27692e3037d89d4c8833c42e56de691f2cabdc89b484084de137378f9a9c"
+      },
+      {
+        "product": "kvrocks",
+        "op": "zswap",
+        "round": 3,
+        "path": "../lavik-v0.1.0-large-objects-2026-10-14/raw/kvrocks/zswap/r3/c80.json",
+        "sha256": "03560159c1222b8f8646d0774072e7f6ece0402f885f6a9bccf6caaaebb7402f"
+      },
+      {
+        "product": "kvrocks",
+        "op": "stream",
+        "round": 1,
+        "path": "../lavik-v0.1.0-large-objects-2026-10-14/raw/kvrocks/stream/r1/c80.json",
+        "sha256": "426544b3f247ffeebb224585a89d40958513419681631fd7f5318b400027de31"
+      },
+      {
+        "product": "kvrocks",
+        "op": "stream",
+        "round": 2,
+        "path": "../lavik-v0.1.0-large-objects-2026-10-14/raw/kvrocks/stream/r2/c80.json",
+        "sha256": "39cb81532f9eab157600a51021465ac11c19e27a15d886037441ca1becf03a35"
+      },
+      {
+        "product": "kvrocks",
+        "op": "stream",
+        "round": 3,
+        "path": "../lavik-v0.1.0-large-objects-2026-10-14/raw/kvrocks/stream/r3/c80.json",
+        "sha256": "d2e0bc92b0a76dc09d78a674d9a6420c267ccc06768424593e7de4ed9adadbd2"
       }
-    },
-    "source": "main-large-reads-set-c80-20261016/client/results/pr/sswap/r1/c80.json"
-  },
-  {
-    "suite": "main-large-reads-set-c80-20261016",
-    "system": "Lavik main",
-    "op": "zrange",
-    "metrics": {
-      "OPERATIONS": {
-        "count": 54868,
-        "qps": 912.597403,
-        "avg_ms": 87.54904,
-        "p50_ms": 80.029,
-        "p99_ms": 203.906,
-        "p999_ms": 242.803,
-        "max_ms": 275.168
-      },
-      "ZRANGE_WITHSCORES": {
-        "count": 54868,
-        "qps": 912.597403,
-        "avg_ms": 87.54904,
-        "p50_ms": 80.029,
-        "p99_ms": 203.906,
-        "p999_ms": 242.803,
-        "max_ms": 275.168
-      }
-    },
-    "source": "main-large-reads-set-c80-20261016/client/results/pr/zrange/r1/c80.json"
-  },
-  {
-    "suite": "main-large-reads-set-c80-20261016",
-    "system": "redis",
-    "op": "hgetall",
-    "metrics": {
-      "HGETALL": {
-        "count": 103269,
-        "qps": 1719.977659,
-        "avg_ms": 46.4949,
-        "p50_ms": 45.712,
-        "p99_ms": 89.838,
-        "p999_ms": 96.314,
-        "max_ms": 122.115
-      },
-      "OPERATIONS": {
-        "count": 103269,
-        "qps": 1719.977659,
-        "avg_ms": 46.4949,
-        "p50_ms": 45.712,
-        "p99_ms": 89.838,
-        "p999_ms": 96.314,
-        "max_ms": 122.115
-      }
-    },
-    "source": "main-large-reads-set-c80-20261016/client/results/redis/hgetall/r1/c80.json"
-  },
-  {
-    "suite": "main-large-reads-set-c80-20261016",
-    "system": "redis",
-    "op": "smembers",
-    "metrics": {
-      "OPERATIONS": {
-        "count": 18568,
-        "qps": 308.254939,
-        "avg_ms": 259.066316,
-        "p50_ms": 259.1,
-        "p99_ms": 496.968,
-        "p999_ms": 728.929,
-        "max_ms": 748.83
-      },
-      "SMEMBERS": {
-        "count": 18568,
-        "qps": 308.254939,
-        "avg_ms": 259.066316,
-        "p50_ms": 259.1,
-        "p99_ms": 496.968,
-        "p999_ms": 728.929,
-        "max_ms": 748.83
-      }
-    },
-    "source": "main-large-reads-set-c80-20261016/client/results/redis/smembers/r1/c80.json"
-  },
-  {
-    "suite": "main-large-reads-set-c80-20261016",
-    "system": "redis",
-    "op": "sswap",
-    "metrics": {
-      "OPERATIONS": {
-        "count": 9088934,
-        "qps": 151480.090097,
-        "avg_ms": 0.52721,
-        "p50_ms": 0.513,
-        "p99_ms": 0.975,
-        "p999_ms": 1.089,
-        "max_ms": 205.981
-      },
-      "SADD": {
-        "count": 9088934,
-        "qps": 151480.090097,
-        "avg_ms": 0.263141,
-        "p50_ms": 0.254,
-        "p99_ms": 0.524,
-        "p999_ms": 0.584,
-        "max_ms": 3.18
-      },
-      "SREM": {
-        "count": 9088934,
-        "qps": 151480.090097,
-        "avg_ms": 0.26324,
-        "p50_ms": 0.254,
-        "p99_ms": 0.523,
-        "p999_ms": 0.584,
-        "max_ms": 205.832
-      }
-    },
-    "source": "main-large-reads-set-c80-20261016/client/results/redis/sswap/r1/c80.json"
-  },
-  {
-    "suite": "main-large-reads-set-c80-20261016",
-    "system": "redis",
-    "op": "zrange",
-    "metrics": {
-      "OPERATIONS": {
-        "count": 29087,
-        "qps": 483.484157,
-        "avg_ms": 165.247364,
-        "p50_ms": 162.556,
-        "p99_ms": 317.407,
-        "p999_ms": 332.377,
-        "max_ms": 471.627
-      },
-      "ZRANGE_WITHSCORES": {
-        "count": 29087,
-        "qps": 483.484157,
-        "avg_ms": 165.247364,
-        "p50_ms": 162.556,
-        "p99_ms": 317.407,
-        "p999_ms": 332.377,
-        "max_ms": 471.627
-      }
-    },
-    "source": "main-large-reads-set-c80-20261016/client/results/redis/zrange/r1/c80.json"
-  },
-  {
-    "suite": "main-large-reads-set-c80-20261016",
-    "system": "valkey",
-    "op": "hgetall",
-    "metrics": {
-      "HGETALL": {
-        "count": 41415,
-        "qps": 689.457833,
-        "avg_ms": 116.0024,
-        "p50_ms": 115.12,
-        "p99_ms": 164.302,
-        "p999_ms": 302.107,
-        "max_ms": 367.231
-      },
-      "OPERATIONS": {
-        "count": 41415,
-        "qps": 689.457833,
-        "avg_ms": 116.0024,
-        "p50_ms": 115.12,
-        "p99_ms": 164.302,
-        "p999_ms": 302.107,
-        "max_ms": 367.231
-      }
-    },
-    "source": "main-large-reads-set-c80-20261016/client/results/valkey/hgetall/r1/c80.json"
-  },
-  {
-    "suite": "main-large-reads-set-c80-20261016",
-    "system": "valkey",
-    "op": "smembers",
-    "metrics": {
-      "OPERATIONS": {
-        "count": 12925,
-        "qps": 214.996417,
-        "avg_ms": 372.064228,
-        "p50_ms": 373.775,
-        "p99_ms": 567.996,
-        "p999_ms": 714.128,
-        "max_ms": 894.254
-      },
-      "SMEMBERS": {
-        "count": 12925,
-        "qps": 214.996417,
-        "avg_ms": 372.064228,
-        "p50_ms": 373.775,
-        "p99_ms": 567.996,
-        "p999_ms": 714.128,
-        "max_ms": 894.254
-      }
-    },
-    "source": "main-large-reads-set-c80-20261016/client/results/valkey/smembers/r1/c80.json"
-  },
-  {
-    "suite": "main-large-reads-set-c80-20261016",
-    "system": "valkey",
-    "op": "sswap",
-    "metrics": {
-      "OPERATIONS": {
-        "count": 16432492,
-        "qps": 273871.39447,
-        "avg_ms": 0.291284,
-        "p50_ms": 0.274,
-        "p99_ms": 0.534,
-        "p999_ms": 0.64,
-        "max_ms": 3.332
-      },
-      "SADD": {
-        "count": 16432492,
-        "qps": 273871.39447,
-        "avg_ms": 0.145253,
-        "p50_ms": 0.135,
-        "p99_ms": 0.285,
-        "p999_ms": 0.355,
-        "max_ms": 3.156
-      },
-      "SREM": {
-        "count": 16432492,
-        "qps": 273871.39447,
-        "avg_ms": 0.145268,
-        "p50_ms": 0.135,
-        "p99_ms": 0.285,
-        "p999_ms": 0.355,
-        "max_ms": 3.069
-      }
-    },
-    "source": "main-large-reads-set-c80-20261016/client/results/valkey/sswap/r1/c80.json"
-  },
-  {
-    "suite": "main-large-reads-set-c80-20261016",
-    "system": "valkey",
-    "op": "zrange",
-    "metrics": {
-      "OPERATIONS": {
-        "count": 16920,
-        "qps": 281.803827,
-        "avg_ms": 283.844024,
-        "p50_ms": 284.917,
-        "p99_ms": 450.743,
-        "p999_ms": 529.133,
-        "max_ms": 565.342
-      },
-      "ZRANGE_WITHSCORES": {
-        "count": 16920,
-        "qps": 281.803827,
-        "avg_ms": 283.844024,
-        "p50_ms": 284.917,
-        "p99_ms": 450.743,
-        "p999_ms": 529.133,
-        "max_ms": 565.342
-      }
-    },
-    "source": "main-large-reads-set-c80-20261016/client/results/valkey/zrange/r1/c80.json"
+    ]
   }
-]
+}

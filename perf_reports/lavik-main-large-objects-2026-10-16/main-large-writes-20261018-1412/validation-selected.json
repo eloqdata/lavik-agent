@@ -1,0 +1,6456 @@
+{
+  "original_analysis": {
+    "path": "outputs/main-large-writes-20261018-1412/comparison.json",
+    "sha256": "99988a550273f76a9a79c20d2cbae14e07c3c541cfa37e8dd18e00dcc8b135cc"
+  },
+  "original_complete": true,
+  "selected_points": 8,
+  "scope_is_filtered": true,
+  "cases": [
+    {
+      "op": "set",
+      "label": "set-main-set-c80",
+      "revision": "9c68079a7dd775db647cf55fe578a6cd43426a82",
+      "binary_sha256": "4fe9c53a6b1ebcff1bce17ce3aac213e879f20b82f09a326ae02560a792056c3",
+      "client_binary": "bench",
+      "client_binary_sha256": "f596a6f1a5a1a600c5cec3240e0f56a0dd56f338283d5666e38a4c82ccb62b08",
+      "valid": true,
+      "clean_stop_verified": true,
+      "keys": 8192,
+      "connections": 80,
+      "elapsed_seconds": 60.071701,
+      "unit": "QPS",
+      "metrics": {
+        "OPERATIONS": {
+          "count": 135588,
+          "qps": 2257.102721,
+          "avg_ms": 35.167213,
+          "p50_ms": 28.804,
+          "p99_ms": 205.08,
+          "p999_ms": 304.305,
+          "max_ms": 433.534
+        },
+        "SET": {
+          "count": 135588,
+          "qps": 2257.102721,
+          "avg_ms": 35.167213,
+          "p50_ms": 28.804,
+          "p99_ms": 205.08,
+          "p999_ms": 304.305,
+          "max_ms": 433.534
+        }
+      },
+      "server": {
+        "available": true,
+        "valid": true,
+        "path": "/Users/chen/Documents/Codex/2026-10-13/azure-lavik-2026-10-13-users/outputs/main-large-writes-20261018-1412/server/observations/set-main-set-c80/monitor.jsonl",
+        "completed": true,
+        "errors": [],
+        "pid": 1997213,
+        "start_ticks": 63716338,
+        "first_sample_time": 1792333597.1352682,
+        "last_sample_time": 1792333642.1354737,
+        "elapsed_seconds": 45.000205987,
+        "sample_count": 46,
+        "HZ": 100,
+        "user_seconds": 469.4,
+        "system_seconds": 177.25,
+        "cpu_seconds": 646.65,
+        "cpu_cores": 14.369934221785766,
+        "thread_cpu_cores_sum": 14.369045336965737,
+        "threads": [
+          {
+            "tid": 1997233,
+            "comm": "lavik",
+            "cpus_seen": [
+              6
+            ],
+            "user_seconds": 34.57,
+            "system_seconds": 9.6,
+            "cpu_seconds": 44.17,
+            "cpu_fraction": 0.9815510625164731,
+            "cpu_percent": 98.1551062516473
+          },
+          {
+            "tid": 1997227,
+            "comm": "lavik",
+            "cpus_seen": [
+              0
+            ],
+            "user_seconds": 31.98,
+            "system_seconds": 11.82,
+            "cpu_seconds": 43.8,
+            "cpu_fraction": 0.9733288779312093,
+            "cpu_percent": 97.33288779312093
+          },
+          {
+            "tid": 1997228,
+            "comm": "lavik",
+            "cpus_seen": [
+              1
+            ],
+            "user_seconds": 33.33,
+            "system_seconds": 10.06,
+            "cpu_seconds": 43.39,
+            "cpu_fraction": 0.9642178085259172,
+            "cpu_percent": 96.42178085259172
+          },
+          {
+            "tid": 1997239,
+            "comm": "lavik",
+            "cpus_seen": [
+              12
+            ],
+            "user_seconds": 33.36,
+            "system_seconds": 9.88,
+            "cpu_seconds": 43.24,
+            "cpu_fraction": 0.9608844904508104,
+            "cpu_percent": 96.08844904508103
+          },
+          {
+            "tid": 1997234,
+            "comm": "lavik",
+            "cpus_seen": [
+              7
+            ],
+            "user_seconds": 32.2,
+            "system_seconds": 11.02,
+            "cpu_seconds": 43.22,
+            "cpu_fraction": 0.9604400480407961,
+            "cpu_percent": 96.0440048040796
+          },
+          {
+            "tid": 1997240,
+            "comm": "lavik",
+            "cpus_seen": [
+              13
+            ],
+            "user_seconds": 31.31,
+            "system_seconds": 11.33,
+            "cpu_seconds": 42.64,
+            "cpu_fraction": 0.9475512181503828,
+            "cpu_percent": 94.75512181503828
+          },
+          {
+            "tid": 1997230,
+            "comm": "lavik",
+            "cpus_seen": [
+              3
+            ],
+            "user_seconds": 31.22,
+            "system_seconds": 11.27,
+            "cpu_seconds": 42.489999999999995,
+            "cpu_fraction": 0.9442179000752758,
+            "cpu_percent": 94.42179000752758
+          },
+          {
+            "tid": 1997229,
+            "comm": "lavik",
+            "cpus_seen": [
+              2
+            ],
+            "user_seconds": 29.74,
+            "system_seconds": 12.46,
+            "cpu_seconds": 42.2,
+            "cpu_fraction": 0.9377734851300693,
+            "cpu_percent": 93.77734851300693
+          },
+          {
+            "tid": 1997242,
+            "comm": "lavik",
+            "cpus_seen": [
+              15
+            ],
+            "user_seconds": 30.66,
+            "system_seconds": 11.42,
+            "cpu_seconds": 42.08,
+            "cpu_fraction": 0.9351068306699837,
+            "cpu_percent": 93.51068306699838
+          },
+          {
+            "tid": 1997236,
+            "comm": "lavik",
+            "cpus_seen": [
+              9
+            ],
+            "user_seconds": 29.85,
+            "system_seconds": 12.08,
+            "cpu_seconds": 41.93,
+            "cpu_fraction": 0.9317735125948768,
+            "cpu_percent": 93.1773512594877
+          },
+          {
+            "tid": 1997241,
+            "comm": "lavik",
+            "cpus_seen": [
+              14
+            ],
+            "user_seconds": 30.66,
+            "system_seconds": 10.62,
+            "cpu_seconds": 41.28,
+            "cpu_fraction": 0.9173291342694138,
+            "cpu_percent": 91.73291342694138
+          },
+          {
+            "tid": 1997235,
+            "comm": "lavik",
+            "cpus_seen": [
+              8
+            ],
+            "user_seconds": 30.18,
+            "system_seconds": 11.02,
+            "cpu_seconds": 41.2,
+            "cpu_fraction": 0.9155513646293568,
+            "cpu_percent": 91.55513646293568
+          },
+          {
+            "tid": 1997232,
+            "comm": "lavik",
+            "cpus_seen": [
+              5
+            ],
+            "user_seconds": 22.86,
+            "system_seconds": 11.62,
+            "cpu_seconds": 34.48,
+            "cpu_fraction": 0.7662187148645684,
+            "cpu_percent": 76.62187148645684
+          },
+          {
+            "tid": 1997231,
+            "comm": "lavik",
+            "cpus_seen": [
+              4
+            ],
+            "user_seconds": 23.05,
+            "system_seconds": 10.52,
+            "cpu_seconds": 33.57,
+            "cpu_fraction": 0.7459965852089201,
+            "cpu_percent": 74.599658520892
+          },
+          {
+            "tid": 1997237,
+            "comm": "lavik",
+            "cpus_seen": [
+              10
+            ],
+            "user_seconds": 21.92,
+            "system_seconds": 11.56,
+            "cpu_seconds": 33.480000000000004,
+            "cpu_fraction": 0.743996594363856,
+            "cpu_percent": 74.3996594363856
+          },
+          {
+            "tid": 1997238,
+            "comm": "lavik",
+            "cpus_seen": [
+              11
+            ],
+            "user_seconds": 22.5,
+            "system_seconds": 10.94,
+            "cpu_seconds": 33.44,
+            "cpu_fraction": 0.7431077095438273,
+            "cpu_percent": 74.31077095438275
+          },
+          {
+            "tid": 1997213,
+            "comm": "lavik",
+            "cpus_seen": [
+              5
+            ],
+            "user_seconds": 0.0,
+            "system_seconds": 0.0,
+            "cpu_seconds": 0.0,
+            "cpu_fraction": 0.0,
+            "cpu_percent": 0.0
+          },
+          {
+            "tid": 1997215,
+            "comm": "dpdk-intr",
+            "cpus_seen": [
+              13
+            ],
+            "user_seconds": 0.0,
+            "system_seconds": 0.0,
+            "cpu_seconds": 0.0,
+            "cpu_fraction": 0.0,
+            "cpu_percent": 0.0
+          }
+        ],
+        "selected_nic": "eth1",
+        "selected_nic_rates": {
+          "valid": true,
+          "rx_mbps": 18956.19274361612,
+          "tx_mbps": 39.45963732950412,
+          "counter_delta": {
+            "rx_bytes": 106629072274,
+            "rx_packets": 5123297,
+            "rx_errors": 0,
+            "rx_dropped": 0,
+            "rx_fifo": 0,
+            "rx_frame": 0,
+            "rx_compressed": 0,
+            "rx_multicast": 0,
+            "tx_bytes": 221961476,
+            "tx_packets": 3264032,
+            "tx_errors": 0,
+            "tx_dropped": 0,
+            "tx_fifo": 0,
+            "tx_collisions": 0,
+            "tx_carrier": 0,
+            "tx_compressed": 0
+          }
+        },
+        "interfaces": {
+          "enP26559s2": {
+            "valid": true,
+            "rx_mbps": 19213.563801947403,
+            "tx_mbps": 39.45963732950412,
+            "counter_delta": {
+              "rx_bytes": 108076791104,
+              "rx_packets": 76174566,
+              "rx_errors": 0,
+              "rx_dropped": 413,
+              "rx_fifo": 0,
+              "rx_frame": 0,
+              "rx_compressed": 0,
+              "rx_multicast": 0,
+              "tx_bytes": 221961476,
+              "tx_packets": 3264032,
+              "tx_errors": 0,
+              "tx_dropped": 0,
+              "tx_fifo": 0,
+              "tx_collisions": 0,
+              "tx_carrier": 0,
+              "tx_compressed": 0
+            }
+          },
+          "eth0": {
+            "valid": true,
+            "rx_mbps": 0.005286909132565523,
+            "tx_mbps": 0.010288664014865901,
+            "counter_delta": {
+              "rx_bytes": 29739,
+              "rx_packets": 119,
+              "rx_errors": 0,
+              "rx_dropped": 0,
+              "rx_fifo": 0,
+              "rx_frame": 0,
+              "rx_compressed": 0,
+              "rx_multicast": 0,
+              "tx_bytes": 57874,
+              "tx_packets": 151,
+              "tx_errors": 0,
+              "tx_dropped": 0,
+              "tx_fifo": 0,
+              "tx_collisions": 0,
+              "tx_carrier": 0,
+              "tx_compressed": 0
+            }
+          },
+          "eth1": {
+            "valid": true,
+            "rx_mbps": 18956.19274361612,
+            "tx_mbps": 39.45963732950412,
+            "counter_delta": {
+              "rx_bytes": 106629072274,
+              "rx_packets": 5123297,
+              "rx_errors": 0,
+              "rx_dropped": 0,
+              "rx_fifo": 0,
+              "rx_frame": 0,
+              "rx_compressed": 0,
+              "rx_multicast": 0,
+              "tx_bytes": 221961476,
+              "tx_packets": 3264032,
+              "tx_errors": 0,
+              "tx_dropped": 0,
+              "tx_fifo": 0,
+              "tx_collisions": 0,
+              "tx_carrier": 0,
+              "tx_compressed": 0
+            }
+          },
+          "lo": {
+            "valid": true,
+            "rx_mbps": 0.0,
+            "tx_mbps": 0.0,
+            "counter_delta": {
+              "rx_bytes": 0,
+              "rx_packets": 0,
+              "rx_errors": 0,
+              "rx_dropped": 0,
+              "rx_fifo": 0,
+              "rx_frame": 0,
+              "rx_compressed": 0,
+              "rx_multicast": 0,
+              "tx_bytes": 0,
+              "tx_packets": 0,
+              "tx_errors": 0,
+              "tx_dropped": 0,
+              "tx_fifo": 0,
+              "tx_collisions": 0,
+              "tx_carrier": 0,
+              "tx_compressed": 0
+            }
+          }
+        },
+        "host_cpu": {
+          "counter_delta": {
+            "user": 47078,
+            "nice": 0,
+            "system": 11039,
+            "idle": 9,
+            "iowait": 6729,
+            "irq": 0,
+            "softirq": 7016,
+            "steal": 0
+          },
+          "percent": {
+            "user": 65.50347149754421,
+            "nice": 0.0,
+            "system": 15.35946348318515,
+            "idle": 0.012522436031222607,
+            "iowait": 9.362608006010769,
+            "irq": 0.0,
+            "softirq": 9.761934577228645,
+            "steal": 0.0
+          }
+        },
+        "read_error_samples": 0,
+        "tcp": {
+          "scope": "host-wide TCP, first-to-last monitor sample",
+          "retrans_segments_delta": 0,
+          "retrans_segments_per_second": 0.0,
+          "out_segments_delta": 3264179,
+          "retrans_to_out_segments_percent": 0.0
+        }
+      },
+      "client": {
+        "available": true,
+        "valid": true,
+        "path": "/Users/chen/Documents/Codex/2026-10-13/azure-lavik-2026-10-13-users/outputs/main-large-writes-20261018-1412/client/observations/set-main-set-c80/monitor.jsonl",
+        "completed": true,
+        "errors": [],
+        "pid": 349287,
+        "start_ticks": 63740294,
+        "first_sample_time": 1792333596.8232133,
+        "last_sample_time": 1792333641.823355,
+        "elapsed_seconds": 45.000142052,
+        "sample_count": 46,
+        "HZ": 100,
+        "user_seconds": 23.42,
+        "system_seconds": 17.25,
+        "cpu_seconds": 40.67,
+        "cpu_cores": 0.9037749248214306,
+        "thread_cpu_cores_sum": 0.9033304817799644,
+        "threads": [
+          {
+            "tid": 349289,
+            "comm": "bench",
+            "cpus_seen": [
+              1
+            ],
+            "user_seconds": 1.68,
+            "system_seconds": 1.23,
+            "cpu_seconds": 2.91,
+            "cpu_fraction": 0.06466646253332588,
+            "cpu_percent": 6.466646253332587
+          },
+          {
+            "tid": 349294,
+            "comm": "bench",
+            "cpus_seen": [
+              6
+            ],
+            "user_seconds": 1.55,
+            "system_seconds": 1.23,
+            "cpu_seconds": 2.7800000000000002,
+            "cpu_fraction": 0.06177758276379585,
+            "cpu_percent": 6.177758276379585
+          },
+          {
+            "tid": 349297,
+            "comm": "bench",
+            "cpus_seen": [
+              9
+            ],
+            "user_seconds": 1.53,
+            "system_seconds": 1.15,
+            "cpu_seconds": 2.6799999999999997,
+            "cpu_fraction": 0.05955536755646506,
+            "cpu_percent": 5.955536755646507
+          },
+          {
+            "tid": 349295,
+            "comm": "bench",
+            "cpus_seen": [
+              7
+            ],
+            "user_seconds": 1.47,
+            "system_seconds": 1.2,
+            "cpu_seconds": 2.67,
+            "cpu_fraction": 0.05933314603573198,
+            "cpu_percent": 5.933314603573199
+          },
+          {
+            "tid": 349302,
+            "comm": "bench",
+            "cpus_seen": [
+              14
+            ],
+            "user_seconds": 1.46,
+            "system_seconds": 1.15,
+            "cpu_seconds": 2.61,
+            "cpu_fraction": 0.05799981691133351,
+            "cpu_percent": 5.799981691133351
+          },
+          {
+            "tid": 349290,
+            "comm": "bench",
+            "cpus_seen": [
+              2
+            ],
+            "user_seconds": 1.54,
+            "system_seconds": 1.03,
+            "cpu_seconds": 2.5700000000000003,
+            "cpu_fraction": 0.057110930828401206,
+            "cpu_percent": 5.71109308284012
+          },
+          {
+            "tid": 349292,
+            "comm": "bench",
+            "cpus_seen": [
+              4
+            ],
+            "user_seconds": 1.48,
+            "system_seconds": 1.07,
+            "cpu_seconds": 2.55,
+            "cpu_fraction": 0.05666648778693504,
+            "cpu_percent": 5.666648778693504
+          },
+          {
+            "tid": 349300,
+            "comm": "bench",
+            "cpus_seen": [
+              12
+            ],
+            "user_seconds": 1.47,
+            "system_seconds": 1.05,
+            "cpu_seconds": 2.52,
+            "cpu_fraction": 0.055999823224735804,
+            "cpu_percent": 5.59998232247358
+          },
+          {
+            "tid": 349296,
+            "comm": "bench",
+            "cpus_seen": [
+              8
+            ],
+            "user_seconds": 1.44,
+            "system_seconds": 1.07,
+            "cpu_seconds": 2.51,
+            "cpu_fraction": 0.05577760170400272,
+            "cpu_percent": 5.577760170400272
+          },
+          {
+            "tid": 349301,
+            "comm": "bench",
+            "cpus_seen": [
+              13
+            ],
+            "user_seconds": 1.46,
+            "system_seconds": 1.03,
+            "cpu_seconds": 2.49,
+            "cpu_fraction": 0.055333158662536575,
+            "cpu_percent": 5.533315866253657
+          },
+          {
+            "tid": 349288,
+            "comm": "bench",
+            "cpus_seen": [
+              0
+            ],
+            "user_seconds": 1.43,
+            "system_seconds": 1.02,
+            "cpu_seconds": 2.45,
+            "cpu_fraction": 0.054444272579604255,
+            "cpu_percent": 5.4444272579604265
+          },
+          {
+            "tid": 349291,
+            "comm": "bench",
+            "cpus_seen": [
+              3
+            ],
+            "user_seconds": 1.39,
+            "system_seconds": 1.06,
+            "cpu_seconds": 2.45,
+            "cpu_fraction": 0.054444272579604255,
+            "cpu_percent": 5.4444272579604265
+          },
+          {
+            "tid": 349293,
+            "comm": "bench",
+            "cpus_seen": [
+              5
+            ],
+            "user_seconds": 1.42,
+            "system_seconds": 1.01,
+            "cpu_seconds": 2.4299999999999997,
+            "cpu_fraction": 0.05399982953813809,
+            "cpu_percent": 5.399982953813809
+          },
+          {
+            "tid": 349299,
+            "comm": "bench",
+            "cpus_seen": [
+              11
+            ],
+            "user_seconds": 1.35,
+            "system_seconds": 1.0,
+            "cpu_seconds": 2.35,
+            "cpu_fraction": 0.05222205737227347,
+            "cpu_percent": 5.2222057372273465
+          },
+          {
+            "tid": 349298,
+            "comm": "bench",
+            "cpus_seen": [
+              10
+            ],
+            "user_seconds": 1.35,
+            "system_seconds": 0.99,
+            "cpu_seconds": 2.34,
+            "cpu_fraction": 0.05199983585154039,
+            "cpu_percent": 5.1999835851540395
+          },
+          {
+            "tid": 349303,
+            "comm": "bench",
+            "cpus_seen": [
+              15
+            ],
+            "user_seconds": 1.38,
+            "system_seconds": 0.96,
+            "cpu_seconds": 2.34,
+            "cpu_fraction": 0.05199983585154039,
+            "cpu_percent": 5.1999835851540395
+          },
+          {
+            "tid": 349287,
+            "comm": "bench",
+            "cpus_seen": [
+              31
+            ],
+            "user_seconds": 0.0,
+            "system_seconds": 0.0,
+            "cpu_seconds": 0.0,
+            "cpu_fraction": 0.0,
+            "cpu_percent": 0.0
+          }
+        ],
+        "selected_nic": "eth0",
+        "selected_nic_rates": {
+          "valid": true,
+          "rx_mbps": 31.22893164150672,
+          "tx_mbps": 19012.19991731061,
+          "counter_delta": {
+            "rx_bytes": 175663295,
+            "rx_packets": 3252137,
+            "rx_errors": 0,
+            "rx_dropped": 0,
+            "rx_fifo": 0,
+            "rx_frame": 0,
+            "rx_compressed": 0,
+            "rx_multicast": 0,
+            "tx_bytes": 106943962125,
+            "tx_packets": 5456538,
+            "tx_errors": 0,
+            "tx_dropped": 0,
+            "tx_fifo": 0,
+            "tx_collisions": 0,
+            "tx_carrier": 0,
+            "tx_compressed": 0
+          }
+        },
+        "interfaces": {
+          "enP43625s1": {
+            "valid": true,
+            "rx_mbps": 39.32321933462327,
+            "tx_mbps": 19843.608294394548,
+            "counter_delta": {
+              "rx_bytes": 221193807,
+              "rx_packets": 3252146,
+              "rx_errors": 0,
+              "rx_dropped": 0,
+              "rx_fifo": 0,
+              "rx_frame": 0,
+              "rx_compressed": 0,
+              "rx_multicast": 0,
+              "tx_bytes": 111620649009,
+              "tx_packets": 76332185,
+              "tx_errors": 0,
+              "tx_dropped": 0,
+              "tx_fifo": 0,
+              "tx_collisions": 0,
+              "tx_carrier": 0,
+              "tx_compressed": 0
+            }
+          },
+          "eth0": {
+            "valid": true,
+            "rx_mbps": 31.22893164150672,
+            "tx_mbps": 19012.19991731061,
+            "counter_delta": {
+              "rx_bytes": 175663295,
+              "rx_packets": 3252137,
+              "rx_errors": 0,
+              "rx_dropped": 0,
+              "rx_fifo": 0,
+              "rx_frame": 0,
+              "rx_compressed": 0,
+              "rx_multicast": 0,
+              "tx_bytes": 106943962125,
+              "tx_packets": 5456538,
+              "tx_errors": 0,
+              "tx_dropped": 0,
+              "tx_fifo": 0,
+              "tx_collisions": 0,
+              "tx_carrier": 0,
+              "tx_compressed": 0
+            }
+          },
+          "lo": {
+            "valid": true,
+            "rx_mbps": 0.00011768851738023843,
+            "tx_mbps": 0.00011768851738023843,
+            "counter_delta": {
+              "rx_bytes": 662,
+              "rx_packets": 4,
+              "rx_errors": 0,
+              "rx_dropped": 0,
+              "rx_fifo": 0,
+              "rx_frame": 0,
+              "rx_compressed": 0,
+              "rx_multicast": 0,
+              "tx_bytes": 662,
+              "tx_packets": 4,
+              "tx_errors": 0,
+              "tx_dropped": 0,
+              "tx_fifo": 0,
+              "tx_collisions": 0,
+              "tx_carrier": 0,
+              "tx_compressed": 0
+            }
+          }
+        },
+        "host_cpu": {
+          "counter_delta": {
+            "user": 2366,
+            "nice": 0,
+            "system": 1736,
+            "idle": 135790,
+            "iowait": 51,
+            "irq": 0,
+            "softirq": 716,
+            "steal": 0
+          },
+          "percent": {
+            "user": 1.6820821987928252,
+            "nice": 0.0,
+            "system": 1.2341904890550908,
+            "idle": 96.53843692902694,
+            "iowait": 0.03625790031210232,
+            "irq": 0.0,
+            "softirq": 0.5090324828130444,
+            "steal": 0.0
+          }
+        },
+        "read_error_samples": 0,
+        "tcp": {
+          "scope": "host-wide TCP, first-to-last monitor sample",
+          "retrans_segments_delta": 154774,
+          "retrans_segments_per_second": 3439.4113649941505,
+          "out_segments_delta": 76178200,
+          "retrans_to_out_segments_percent": 0.20317361134812847
+        }
+      },
+      "state_validation": null,
+      "server_cpu_cores": 14.369934221785766,
+      "server_eth1_tx_gbps": 0.03945963732950412,
+      "server_eth1_rx_gbps": 18.95619274361612,
+      "client_eth0_tx_gbps": 19.01219991731061,
+      "client_eth0_rx_gbps": 0.03122893164150672,
+      "launch_settings": [
+        "taskset",
+        "-c",
+        "0-15",
+        "<binary>",
+        "--storage=spdk",
+        "--bind=10.84.1.4",
+        "--threads=16",
+        "--pin-workers",
+        "--metrics-port=0",
+        "--spdk-max-completions-per-poll=16",
+        "--log-dir=<session>",
+        "--shutdown-checkpoint",
+        "--data-file=spdk://2401:00:00.0/1",
+        "--data-file=spdk://221c:00:00.0/1",
+        "--data-file=spdk://7f10:00:00.0/1",
+        "--data-file=spdk://399c:00:00.0/1",
+        "--data-file=spdk://c0ef:00:00.0/1",
+        "--data-file=spdk://6319:00:00.0/1"
+      ],
+      "launch_environment": {
+        "BYCORF_EAL_ARGS": "-a 2401:00:00.0 -a 221c:00:00.0 -a 7f10:00:00.0 -a 399c:00:00.0 -a c0ef:00:00.0 -a 6319:00:00.0",
+        "BYCORF_DPDK_MEMORY_MB": "8192"
+      },
+      "source_path": "client/results/set-main-set-c80"
+    },
+    {
+      "op": "setrange",
+      "label": "setrange-main-setrange-c80",
+      "revision": "9c68079a7dd775db647cf55fe578a6cd43426a82",
+      "binary_sha256": "4fe9c53a6b1ebcff1bce17ce3aac213e879f20b82f09a326ae02560a792056c3",
+      "client_binary": "bench",
+      "client_binary_sha256": "f596a6f1a5a1a600c5cec3240e0f56a0dd56f338283d5666e38a4c82ccb62b08",
+      "valid": true,
+      "clean_stop_verified": true,
+      "keys": 8192,
+      "connections": 80,
+      "elapsed_seconds": 60.006066,
+      "unit": "QPS",
+      "metrics": {
+        "OPERATIONS": {
+          "count": 3568921,
+          "qps": 59476.004091,
+          "avg_ms": 1.343824,
+          "p50_ms": 0.328,
+          "p99_ms": 9.385,
+          "p999_ms": 14.838,
+          "max_ms": 40.817
+        },
+        "SETRANGE": {
+          "count": 3568921,
+          "qps": 59476.004091,
+          "avg_ms": 1.343824,
+          "p50_ms": 0.328,
+          "p99_ms": 9.385,
+          "p999_ms": 14.838,
+          "max_ms": 40.817
+        }
+      },
+      "server": {
+        "available": true,
+        "valid": true,
+        "path": "/Users/chen/Documents/Codex/2026-10-13/azure-lavik-2026-10-13-users/outputs/main-large-writes-20261018-1412/server/observations/setrange-main-setrange-c80/monitor.jsonl",
+        "completed": true,
+        "errors": [],
+        "pid": 1998049,
+        "start_ticks": 63735192,
+        "first_sample_time": 1792333785.0513084,
+        "last_sample_time": 1792333830.0514948,
+        "elapsed_seconds": 45.000186874,
+        "sample_count": 46,
+        "HZ": 100,
+        "user_seconds": 439.29,
+        "system_seconds": 67.86,
+        "cpu_seconds": 507.15000000000003,
+        "cpu_cores": 11.269953198639245,
+        "thread_cpu_cores_sum": 11.27084208383681,
+        "threads": [
+          {
+            "tid": 1998063,
+            "comm": "lavik",
+            "cpus_seen": [
+              0
+            ],
+            "user_seconds": 29.73,
+            "system_seconds": 4.02,
+            "cpu_seconds": 33.75,
+            "cpu_fraction": 0.7499968854462673,
+            "cpu_percent": 74.99968854462674
+          },
+          {
+            "tid": 1998064,
+            "comm": "lavik",
+            "cpus_seen": [
+              1
+            ],
+            "user_seconds": 28.91,
+            "system_seconds": 4.79,
+            "cpu_seconds": 33.7,
+            "cpu_fraction": 0.74888577894931,
+            "cpu_percent": 74.888577894931
+          },
+          {
+            "tid": 1998075,
+            "comm": "lavik",
+            "cpus_seen": [
+              12
+            ],
+            "user_seconds": 29.8,
+            "system_seconds": 3.81,
+            "cpu_seconds": 33.61,
+            "cpu_fraction": 0.7468857872547865,
+            "cpu_percent": 74.68857872547865
+          },
+          {
+            "tid": 1998076,
+            "comm": "lavik",
+            "cpus_seen": [
+              13
+            ],
+            "user_seconds": 29.21,
+            "system_seconds": 4.34,
+            "cpu_seconds": 33.55,
+            "cpu_fraction": 0.7455524594584375,
+            "cpu_percent": 74.55524594584375
+          },
+          {
+            "tid": 1998072,
+            "comm": "lavik",
+            "cpus_seen": [
+              9
+            ],
+            "user_seconds": 29.43,
+            "system_seconds": 3.79,
+            "cpu_seconds": 33.22,
+            "cpu_fraction": 0.7382191565785184,
+            "cpu_percent": 73.82191565785185
+          },
+          {
+            "tid": 1998078,
+            "comm": "lavik",
+            "cpus_seen": [
+              15
+            ],
+            "user_seconds": 28.43,
+            "system_seconds": 4.79,
+            "cpu_seconds": 33.22,
+            "cpu_fraction": 0.7382191565785184,
+            "cpu_percent": 73.82191565785185
+          },
+          {
+            "tid": 1998071,
+            "comm": "lavik",
+            "cpus_seen": [
+              8
+            ],
+            "user_seconds": 28.34,
+            "system_seconds": 4.87,
+            "cpu_seconds": 33.21,
+            "cpu_fraction": 0.737996935279127,
+            "cpu_percent": 73.79969352791271
+          },
+          {
+            "tid": 1998070,
+            "comm": "lavik",
+            "cpus_seen": [
+              7
+            ],
+            "user_seconds": 29.2,
+            "system_seconds": 3.99,
+            "cpu_seconds": 33.19,
+            "cpu_fraction": 0.737552492680344,
+            "cpu_percent": 73.7552492680344
+          },
+          {
+            "tid": 1998069,
+            "comm": "lavik",
+            "cpus_seen": [
+              6
+            ],
+            "user_seconds": 29.09,
+            "system_seconds": 4.04,
+            "cpu_seconds": 33.13,
+            "cpu_fraction": 0.7362191648839952,
+            "cpu_percent": 73.62191648839952
+          },
+          {
+            "tid": 1998065,
+            "comm": "lavik",
+            "cpus_seen": [
+              2
+            ],
+            "user_seconds": 28.49,
+            "system_seconds": 4.51,
+            "cpu_seconds": 33.0,
+            "cpu_fraction": 0.7333302879919058,
+            "cpu_percent": 73.33302879919059
+          },
+          {
+            "tid": 1998066,
+            "comm": "lavik",
+            "cpus_seen": [
+              3
+            ],
+            "user_seconds": 29.49,
+            "system_seconds": 3.43,
+            "cpu_seconds": 32.92,
+            "cpu_fraction": 0.731552517596774,
+            "cpu_percent": 73.1552517596774
+          },
+          {
+            "tid": 1998077,
+            "comm": "lavik",
+            "cpus_seen": [
+              14
+            ],
+            "user_seconds": 28.73,
+            "system_seconds": 4.15,
+            "cpu_seconds": 32.88,
+            "cpu_fraction": 0.7306636323992081,
+            "cpu_percent": 73.0663632399208
+          },
+          {
+            "tid": 1998068,
+            "comm": "lavik",
+            "cpus_seen": [
+              5
+            ],
+            "user_seconds": 22.92,
+            "system_seconds": 4.35,
+            "cpu_seconds": 27.270000000000003,
+            "cpu_fraction": 0.605997483440584,
+            "cpu_percent": 60.599748344058405
+          },
+          {
+            "tid": 1998067,
+            "comm": "lavik",
+            "cpus_seen": [
+              4
+            ],
+            "user_seconds": 22.42,
+            "system_seconds": 4.61,
+            "cpu_seconds": 27.03,
+            "cpu_fraction": 0.6006641722551883,
+            "cpu_percent": 60.06641722551883
+          },
+          {
+            "tid": 1998074,
+            "comm": "lavik",
+            "cpus_seen": [
+              11
+            ],
+            "user_seconds": 22.92,
+            "system_seconds": 3.84,
+            "cpu_seconds": 26.76,
+            "cpu_fraction": 0.5946641971716182,
+            "cpu_percent": 59.46641971716182
+          },
+          {
+            "tid": 1998073,
+            "comm": "lavik",
+            "cpus_seen": [
+              10
+            ],
+            "user_seconds": 22.19,
+            "system_seconds": 4.56,
+            "cpu_seconds": 26.75,
+            "cpu_fraction": 0.5944419758722267,
+            "cpu_percent": 59.44419758722267
+          },
+          {
+            "tid": 1998049,
+            "comm": "lavik",
+            "cpus_seen": [
+              2
+            ],
+            "user_seconds": 0.0,
+            "system_seconds": 0.0,
+            "cpu_seconds": 0.0,
+            "cpu_fraction": 0.0,
+            "cpu_percent": 0.0
+          },
+          {
+            "tid": 1998051,
+            "comm": "dpdk-intr",
+            "cpus_seen": [
+              10
+            ],
+            "user_seconds": 0.0,
+            "system_seconds": 0.0,
+            "cpu_seconds": 0.0,
+            "cpu_fraction": 0.0,
+            "cpu_percent": 0.0
+          }
+        ],
+        "selected_nic": "eth1",
+        "selected_nic_rates": {
+          "valid": true,
+          "rx_mbps": 177.91402667764842,
+          "tx_mbps": 36.26958947014972,
+          "counter_delta": {
+            "rx_bytes": 1000770556,
+            "rx_packets": 2684438,
+            "rx_errors": 0,
+            "rx_dropped": 0,
+            "rx_fifo": 0,
+            "rx_frame": 0,
+            "rx_compressed": 0,
+            "rx_multicast": 0,
+            "tx_bytes": 204017288,
+            "tx_packets": 2684438,
+            "tx_errors": 0,
+            "tx_dropped": 0,
+            "tx_fifo": 0,
+            "tx_collisions": 0,
+            "tx_carrier": 0,
+            "tx_compressed": 0
+          }
+        },
+        "interfaces": {
+          "enP26559s2": {
+            "valid": true,
+            "rx_mbps": 184.5952668432023,
+            "tx_mbps": 36.26958947014972,
+            "counter_delta": {
+              "rx_bytes": 1038352688,
+              "rx_packets": 2684438,
+              "rx_errors": 0,
+              "rx_dropped": 0,
+              "rx_fifo": 0,
+              "rx_frame": 0,
+              "rx_compressed": 0,
+              "rx_multicast": 0,
+              "tx_bytes": 204017288,
+              "tx_packets": 2684438,
+              "tx_errors": 0,
+              "tx_dropped": 0,
+              "tx_fifo": 0,
+              "tx_collisions": 0,
+              "tx_carrier": 0,
+              "tx_compressed": 0
+            }
+          },
+          "eth0": {
+            "valid": true,
+            "rx_mbps": 0.005988241798962268,
+            "tx_mbps": 0.011701284740758119,
+            "counter_delta": {
+              "rx_bytes": 33684,
+              "rx_packets": 135,
+              "rx_errors": 0,
+              "rx_dropped": 0,
+              "rx_fifo": 0,
+              "rx_frame": 0,
+              "rx_compressed": 0,
+              "rx_multicast": 0,
+              "tx_bytes": 65820,
+              "tx_packets": 170,
+              "tx_errors": 0,
+              "tx_dropped": 0,
+              "tx_fifo": 0,
+              "tx_collisions": 0,
+              "tx_carrier": 0,
+              "tx_compressed": 0
+            }
+          },
+          "eth1": {
+            "valid": true,
+            "rx_mbps": 177.91402667764842,
+            "tx_mbps": 36.26958947014972,
+            "counter_delta": {
+              "rx_bytes": 1000770556,
+              "rx_packets": 2684438,
+              "rx_errors": 0,
+              "rx_dropped": 0,
+              "rx_fifo": 0,
+              "rx_frame": 0,
+              "rx_compressed": 0,
+              "rx_multicast": 0,
+              "tx_bytes": 204017288,
+              "tx_packets": 2684438,
+              "tx_errors": 0,
+              "tx_dropped": 0,
+              "tx_fifo": 0,
+              "tx_collisions": 0,
+              "tx_carrier": 0,
+              "tx_compressed": 0
+            }
+          },
+          "lo": {
+            "valid": true,
+            "rx_mbps": 0.0,
+            "tx_mbps": 0.0,
+            "counter_delta": {
+              "rx_bytes": 0,
+              "rx_packets": 0,
+              "rx_errors": 0,
+              "rx_dropped": 0,
+              "rx_fifo": 0,
+              "rx_frame": 0,
+              "rx_compressed": 0,
+              "rx_multicast": 0,
+              "tx_bytes": 0,
+              "tx_packets": 0,
+              "tx_errors": 0,
+              "tx_dropped": 0,
+              "tx_fifo": 0,
+              "tx_collisions": 0,
+              "tx_carrier": 0,
+              "tx_compressed": 0
+            }
+          }
+        },
+        "host_cpu": {
+          "counter_delta": {
+            "user": 43757,
+            "nice": 0,
+            "system": 4196,
+            "idle": 0,
+            "iowait": 20559,
+            "irq": 0,
+            "softirq": 2733,
+            "steal": 0
+          },
+          "percent": {
+            "user": 61.41764334339252,
+            "nice": 0.0,
+            "system": 5.8895361077970385,
+            "idle": 0.0,
+            "iowait": 28.85676187802653,
+            "irq": 0.0,
+            "softirq": 3.8360586707839146,
+            "steal": 0.0
+          }
+        },
+        "read_error_samples": 0,
+        "tcp": {
+          "scope": "host-wide TCP, first-to-last monitor sample",
+          "retrans_segments_delta": 0,
+          "retrans_segments_per_second": 0.0,
+          "out_segments_delta": 2684632,
+          "retrans_to_out_segments_percent": 0.0
+        }
+      },
+      "client": {
+        "available": true,
+        "valid": true,
+        "path": "/Users/chen/Documents/Codex/2026-10-13/azure-lavik-2026-10-13-users/outputs/main-large-writes-20261018-1412/client/observations/setrange-main-setrange-c80/monitor.jsonl",
+        "completed": true,
+        "errors": [],
+        "pid": 349562,
+        "start_ticks": 63759085,
+        "first_sample_time": 1792333784.7283792,
+        "last_sample_time": 1792333829.728547,
+        "elapsed_seconds": 45.000168345,
+        "sample_count": 46,
+        "HZ": 100,
+        "user_seconds": 6.01,
+        "system_seconds": 38.14,
+        "cpu_seconds": 44.15,
+        "cpu_cores": 0.9811074407881751,
+        "thread_cpu_cores_sum": 0.9815518835699591,
+        "threads": [
+          {
+            "tid": 349572,
+            "comm": "bench",
+            "cpus_seen": [
+              9
+            ],
+            "user_seconds": 0.42,
+            "system_seconds": 2.62,
+            "cpu_seconds": 3.04,
+            "cpu_fraction": 0.06755530283116766,
+            "cpu_percent": 6.755530283116767
+          },
+          {
+            "tid": 349577,
+            "comm": "bench",
+            "cpus_seen": [
+              14
+            ],
+            "user_seconds": 0.38,
+            "system_seconds": 2.65,
+            "cpu_seconds": 3.03,
+            "cpu_fraction": 0.06733308144027567,
+            "cpu_percent": 6.733308144027567
+          },
+          {
+            "tid": 349574,
+            "comm": "bench",
+            "cpus_seen": [
+              11
+            ],
+            "user_seconds": 0.34,
+            "system_seconds": 2.62,
+            "cpu_seconds": 2.96,
+            "cpu_fraction": 0.06577753170403168,
+            "cpu_percent": 6.5777531704031675
+          },
+          {
+            "tid": 349563,
+            "comm": "bench",
+            "cpus_seen": [
+              0
+            ],
+            "user_seconds": 0.4,
+            "system_seconds": 2.5,
+            "cpu_seconds": 2.9,
+            "cpu_fraction": 0.06444420335867967,
+            "cpu_percent": 6.444420335867968
+          },
+          {
+            "tid": 349573,
+            "comm": "bench",
+            "cpus_seen": [
+              10
+            ],
+            "user_seconds": 0.39,
+            "system_seconds": 2.49,
+            "cpu_seconds": 2.8800000000000003,
+            "cpu_fraction": 0.06399976057689569,
+            "cpu_percent": 6.399976057689569
+          },
+          {
+            "tid": 349571,
+            "comm": "bench",
+            "cpus_seen": [
+              8
+            ],
+            "user_seconds": 0.37,
+            "system_seconds": 2.44,
+            "cpu_seconds": 2.81,
+            "cpu_fraction": 0.062444210840651694,
+            "cpu_percent": 6.244421084065169
+          },
+          {
+            "tid": 349578,
+            "comm": "bench",
+            "cpus_seen": [
+              15
+            ],
+            "user_seconds": 0.36,
+            "system_seconds": 2.43,
+            "cpu_seconds": 2.79,
+            "cpu_fraction": 0.06199976805886769,
+            "cpu_percent": 6.199976805886769
+          },
+          {
+            "tid": 349576,
+            "comm": "bench",
+            "cpus_seen": [
+              13
+            ],
+            "user_seconds": 0.37,
+            "system_seconds": 2.41,
+            "cpu_seconds": 2.7800000000000002,
+            "cpu_fraction": 0.0617775466679757,
+            "cpu_percent": 6.177754666797569
+          },
+          {
+            "tid": 349570,
+            "comm": "bench",
+            "cpus_seen": [
+              7
+            ],
+            "user_seconds": 0.39,
+            "system_seconds": 2.36,
+            "cpu_seconds": 2.75,
+            "cpu_fraction": 0.061110882495299695,
+            "cpu_percent": 6.11108824952997
+          },
+          {
+            "tid": 349575,
+            "comm": "bench",
+            "cpus_seen": [
+              12
+            ],
+            "user_seconds": 0.38,
+            "system_seconds": 2.35,
+            "cpu_seconds": 2.73,
+            "cpu_fraction": 0.0606664397135157,
+            "cpu_percent": 6.06664397135157
+          },
+          {
+            "tid": 349565,
+            "comm": "bench",
+            "cpus_seen": [
+              2
+            ],
+            "user_seconds": 0.36,
+            "system_seconds": 2.31,
+            "cpu_seconds": 2.67,
+            "cpu_fraction": 0.0593331113681637,
+            "cpu_percent": 5.9333111368163705
+          },
+          {
+            "tid": 349566,
+            "comm": "bench",
+            "cpus_seen": [
+              3
+            ],
+            "user_seconds": 0.36,
+            "system_seconds": 2.28,
+            "cpu_seconds": 2.6399999999999997,
+            "cpu_fraction": 0.058666447195487706,
+            "cpu_percent": 5.86664471954877
+          },
+          {
+            "tid": 349568,
+            "comm": "bench",
+            "cpus_seen": [
+              5
+            ],
+            "user_seconds": 0.42,
+            "system_seconds": 2.21,
+            "cpu_seconds": 2.63,
+            "cpu_fraction": 0.05844422580459571,
+            "cpu_percent": 5.844422580459571
+          },
+          {
+            "tid": 349567,
+            "comm": "bench",
+            "cpus_seen": [
+              4
+            ],
+            "user_seconds": 0.36,
+            "system_seconds": 2.21,
+            "cpu_seconds": 2.57,
+            "cpu_fraction": 0.05711089745924371,
+            "cpu_percent": 5.7110897459243715
+          },
+          {
+            "tid": 349569,
+            "comm": "bench",
+            "cpus_seen": [
+              6
+            ],
+            "user_seconds": 0.35,
+            "system_seconds": 2.21,
+            "cpu_seconds": 2.56,
+            "cpu_fraction": 0.05688867606835172,
+            "cpu_percent": 5.688867606835172
+          },
+          {
+            "tid": 349564,
+            "comm": "bench",
+            "cpus_seen": [
+              1
+            ],
+            "user_seconds": 0.37,
+            "system_seconds": 2.06,
+            "cpu_seconds": 2.43,
+            "cpu_fraction": 0.053999797986755735,
+            "cpu_percent": 5.399979798675574
+          },
+          {
+            "tid": 349562,
+            "comm": "bench",
+            "cpus_seen": [
+              31
+            ],
+            "user_seconds": 0.0,
+            "system_seconds": 0.0,
+            "cpu_seconds": 0.0,
+            "cpu_fraction": 0.0,
+            "cpu_percent": 0.0
+          }
+        ],
+        "selected_nic": "eth0",
+        "selected_nic_rates": {
+          "valid": true,
+          "rx_mbps": 29.59545639450874,
+          "tx_mbps": 184.58620830743916,
+          "counter_delta": {
+            "rx_bytes": 166475065,
+            "rx_packets": 2684293,
+            "rx_errors": 0,
+            "rx_dropped": 0,
+            "rx_fifo": 0,
+            "rx_frame": 0,
+            "rx_compressed": 0,
+            "rx_multicast": 0,
+            "tx_bytes": 1038301306,
+            "tx_packets": 2684323,
+            "tx_errors": 0,
+            "tx_dropped": 0,
+            "tx_fifo": 0,
+            "tx_collisions": 0,
+            "tx_carrier": 0,
+            "tx_compressed": 0
+          }
+        },
+        "interfaces": {
+          "enP43625s1": {
+            "valid": true,
+            "rx_mbps": 36.276455756445685,
+            "tx_mbps": 184.58646963979484,
+            "counter_delta": {
+              "rx_bytes": 204055827,
+              "rx_packets": 2684313,
+              "rx_errors": 0,
+              "rx_dropped": 0,
+              "rx_fifo": 0,
+              "rx_frame": 0,
+              "rx_compressed": 0,
+              "rx_multicast": 0,
+              "tx_bytes": 1038302776,
+              "tx_packets": 2684345,
+              "tx_errors": 0,
+              "tx_dropped": 0,
+              "tx_fifo": 0,
+              "tx_collisions": 0,
+              "tx_carrier": 0,
+              "tx_compressed": 0
+            }
+          },
+          "eth0": {
+            "valid": true,
+            "rx_mbps": 29.59545639450874,
+            "tx_mbps": 184.58620830743916,
+            "counter_delta": {
+              "rx_bytes": 166475065,
+              "rx_packets": 2684293,
+              "rx_errors": 0,
+              "rx_dropped": 0,
+              "rx_fifo": 0,
+              "rx_frame": 0,
+              "rx_compressed": 0,
+              "rx_multicast": 0,
+              "tx_bytes": 1038301306,
+              "tx_packets": 2684323,
+              "tx_errors": 0,
+              "tx_dropped": 0,
+              "tx_fifo": 0,
+              "tx_collisions": 0,
+              "tx_carrier": 0,
+              "tx_compressed": 0
+            }
+          },
+          "lo": {
+            "valid": true,
+            "rx_mbps": 0.00027199898245180667,
+            "tx_mbps": 0.00027199898245180667,
+            "counter_delta": {
+              "rx_bytes": 1530,
+              "rx_packets": 12,
+              "rx_errors": 0,
+              "rx_dropped": 0,
+              "rx_fifo": 0,
+              "rx_frame": 0,
+              "rx_compressed": 0,
+              "rx_multicast": 0,
+              "tx_bytes": 1530,
+              "tx_packets": 12,
+              "tx_errors": 0,
+              "tx_dropped": 0,
+              "tx_fifo": 0,
+              "tx_collisions": 0,
+              "tx_carrier": 0,
+              "tx_compressed": 0
+            }
+          }
+        },
+        "host_cpu": {
+          "counter_delta": {
+            "user": 565,
+            "nice": 0,
+            "system": 2969,
+            "idle": 136669,
+            "iowait": 3,
+            "irq": 0,
+            "softirq": 562,
+            "steal": 0
+          },
+          "percent": {
+            "user": 0.4013696294612412,
+            "nice": 0.0,
+            "system": 2.109144123664469,
+            "idle": 97.08811661741305,
+            "iowait": 0.002131166174130484,
+            "irq": 0.0,
+            "softirq": 0.3992384632871107,
+            "steal": 0.0
+          }
+        },
+        "read_error_samples": 0,
+        "tcp": {
+          "scope": "host-wide TCP, first-to-last monitor sample",
+          "retrans_segments_delta": 0,
+          "retrans_segments_per_second": 0.0,
+          "out_segments_delta": 2684342,
+          "retrans_to_out_segments_percent": 0.0
+        }
+      },
+      "state_validation": null,
+      "server_cpu_cores": 11.269953198639245,
+      "server_eth1_tx_gbps": 0.036269589470149716,
+      "server_eth1_rx_gbps": 0.1779140266776484,
+      "client_eth0_tx_gbps": 0.18458620830743916,
+      "client_eth0_rx_gbps": 0.02959545639450874,
+      "launch_settings": [
+        "taskset",
+        "-c",
+        "0-15",
+        "<binary>",
+        "--storage=spdk",
+        "--bind=10.84.1.4",
+        "--threads=16",
+        "--pin-workers",
+        "--metrics-port=0",
+        "--spdk-max-completions-per-poll=16",
+        "--log-dir=<session>",
+        "--shutdown-checkpoint",
+        "--data-file=spdk://2401:00:00.0/1",
+        "--data-file=spdk://221c:00:00.0/1",
+        "--data-file=spdk://7f10:00:00.0/1",
+        "--data-file=spdk://399c:00:00.0/1",
+        "--data-file=spdk://c0ef:00:00.0/1",
+        "--data-file=spdk://6319:00:00.0/1"
+      ],
+      "launch_environment": {
+        "BYCORF_EAL_ARGS": "-a 2401:00:00.0 -a 221c:00:00.0 -a 7f10:00:00.0 -a 399c:00:00.0 -a c0ef:00:00.0 -a 6319:00:00.0",
+        "BYCORF_DPDK_MEMORY_MB": "8192"
+      },
+      "source_path": "client/results/setrange-main-setrange-c80"
+    },
+    {
+      "op": "hash",
+      "label": "hash-main-hash-c80",
+      "revision": "9c68079a7dd775db647cf55fe578a6cd43426a82",
+      "binary_sha256": "4fe9c53a6b1ebcff1bce17ce3aac213e879f20b82f09a326ae02560a792056c3",
+      "client_binary": "bench",
+      "client_binary_sha256": "f596a6f1a5a1a600c5cec3240e0f56a0dd56f338283d5666e38a4c82ccb62b08",
+      "valid": true,
+      "clean_stop_verified": true,
+      "keys": 8192,
+      "connections": 80,
+      "elapsed_seconds": 60.006718,
+      "unit": "QPS",
+      "metrics": {
+        "HSET": {
+          "count": 4891412,
+          "qps": 81514.406123,
+          "avg_ms": 0.980223,
+          "p50_ms": 0.36,
+          "p99_ms": 8.846,
+          "p999_ms": 11.825,
+          "max_ms": 29.001
+        },
+        "OPERATIONS": {
+          "count": 4891412,
+          "qps": 81514.406123,
+          "avg_ms": 0.980223,
+          "p50_ms": 0.36,
+          "p99_ms": 8.846,
+          "p999_ms": 11.825,
+          "max_ms": 29.001
+        }
+      },
+      "server": {
+        "available": true,
+        "valid": true,
+        "path": "/Users/chen/Documents/Codex/2026-10-13/azure-lavik-2026-10-13-users/outputs/main-large-writes-20261018-1412/server/observations/hash-main-hash-c80/monitor.jsonl",
+        "completed": true,
+        "errors": [],
+        "pid": 1998920,
+        "start_ticks": 63752220,
+        "first_sample_time": 1792334011.251795,
+        "last_sample_time": 1792334056.2519987,
+        "elapsed_seconds": 45.000204312,
+        "sample_count": 46,
+        "HZ": 100,
+        "user_seconds": 468.73,
+        "system_seconds": 90.76,
+        "cpu_seconds": 559.49,
+        "cpu_cores": 12.433054661727466,
+        "thread_cpu_cores_sum": 12.433721325367301,
+        "threads": [
+          {
+            "tid": 1998948,
+            "comm": "lavik",
+            "cpus_seen": [
+              14
+            ],
+            "user_seconds": 31.51,
+            "system_seconds": 5.65,
+            "cpu_seconds": 37.160000000000004,
+            "cpu_fraction": 0.8257740285434818,
+            "cpu_percent": 82.5774028543482
+          },
+          {
+            "tid": 1998936,
+            "comm": "lavik",
+            "cpus_seen": [
+              2
+            ],
+            "user_seconds": 32.66,
+            "system_seconds": 4.48,
+            "cpu_seconds": 37.14,
+            "cpu_fraction": 0.8253295861169244,
+            "cpu_percent": 82.53295861169245
+          },
+          {
+            "tid": 1998942,
+            "comm": "lavik",
+            "cpus_seen": [
+              8
+            ],
+            "user_seconds": 31.62,
+            "system_seconds": 5.08,
+            "cpu_seconds": 36.7,
+            "cpu_fraction": 0.8155518527326637,
+            "cpu_percent": 81.55518527326637
+          },
+          {
+            "tid": 1998949,
+            "comm": "lavik",
+            "cpus_seen": [
+              15
+            ],
+            "user_seconds": 30.45,
+            "system_seconds": 6.19,
+            "cpu_seconds": 36.64,
+            "cpu_fraction": 0.8142185254529917,
+            "cpu_percent": 81.42185254529917
+          },
+          {
+            "tid": 1998937,
+            "comm": "lavik",
+            "cpus_seen": [
+              3
+            ],
+            "user_seconds": 30.77,
+            "system_seconds": 5.82,
+            "cpu_seconds": 36.59,
+            "cpu_fraction": 0.8131074193865985,
+            "cpu_percent": 81.31074193865986
+          },
+          {
+            "tid": 1998943,
+            "comm": "lavik",
+            "cpus_seen": [
+              9
+            ],
+            "user_seconds": 30.61,
+            "system_seconds": 5.81,
+            "cpu_seconds": 36.42,
+            "cpu_fraction": 0.8093296587608614,
+            "cpu_percent": 80.93296587608613
+          },
+          {
+            "tid": 1998940,
+            "comm": "lavik",
+            "cpus_seen": [
+              6
+            ],
+            "user_seconds": 30.33,
+            "system_seconds": 5.33,
+            "cpu_seconds": 35.66,
+            "cpu_fraction": 0.7924408465516835,
+            "cpu_percent": 79.24408465516834
+          },
+          {
+            "tid": 1998946,
+            "comm": "lavik",
+            "cpus_seen": [
+              12
+            ],
+            "user_seconds": 29.08,
+            "system_seconds": 6.51,
+            "cpu_seconds": 35.589999999999996,
+            "cpu_fraction": 0.7908852980587329,
+            "cpu_percent": 79.08852980587328
+          },
+          {
+            "tid": 1998941,
+            "comm": "lavik",
+            "cpus_seen": [
+              7
+            ],
+            "user_seconds": 29.47,
+            "system_seconds": 6.09,
+            "cpu_seconds": 35.56,
+            "cpu_fraction": 0.7902186344188971,
+            "cpu_percent": 79.02186344188969
+          },
+          {
+            "tid": 1998934,
+            "comm": "lavik",
+            "cpus_seen": [
+              0
+            ],
+            "user_seconds": 28.92,
+            "system_seconds": 6.63,
+            "cpu_seconds": 35.550000000000004,
+            "cpu_fraction": 0.7899964132056184,
+            "cpu_percent": 78.99964132056184
+          },
+          {
+            "tid": 1998947,
+            "comm": "lavik",
+            "cpus_seen": [
+              13
+            ],
+            "user_seconds": 29.98,
+            "system_seconds": 5.19,
+            "cpu_seconds": 35.17,
+            "cpu_fraction": 0.7815520071010295,
+            "cpu_percent": 78.15520071010295
+          },
+          {
+            "tid": 1998935,
+            "comm": "lavik",
+            "cpus_seen": [
+              1
+            ],
+            "user_seconds": 30.07,
+            "system_seconds": 5.06,
+            "cpu_seconds": 35.13,
+            "cpu_fraction": 0.7806631222479149,
+            "cpu_percent": 78.06631222479149
+          },
+          {
+            "tid": 1998938,
+            "comm": "lavik",
+            "cpus_seen": [
+              4
+            ],
+            "user_seconds": 24.96,
+            "system_seconds": 6.76,
+            "cpu_seconds": 31.72,
+            "cpu_fraction": 0.7048856885198934,
+            "cpu_percent": 70.48856885198934
+          },
+          {
+            "tid": 1998944,
+            "comm": "lavik",
+            "cpus_seen": [
+              10
+            ],
+            "user_seconds": 26.21,
+            "system_seconds": 5.51,
+            "cpu_seconds": 31.72,
+            "cpu_fraction": 0.7048856885198934,
+            "cpu_percent": 70.48856885198934
+          },
+          {
+            "tid": 1998945,
+            "comm": "lavik",
+            "cpus_seen": [
+              11
+            ],
+            "user_seconds": 26.53,
+            "system_seconds": 4.99,
+            "cpu_seconds": 31.520000000000003,
+            "cpu_fraction": 0.7004412642543204,
+            "cpu_percent": 70.04412642543205
+          },
+          {
+            "tid": 1998939,
+            "comm": "lavik",
+            "cpus_seen": [
+              5
+            ],
+            "user_seconds": 25.58,
+            "system_seconds": 5.67,
+            "cpu_seconds": 31.25,
+            "cpu_fraction": 0.6944412914957967,
+            "cpu_percent": 69.44412914957967
+          },
+          {
+            "tid": 1998920,
+            "comm": "lavik",
+            "cpus_seen": [
+              12
+            ],
+            "user_seconds": 0.0,
+            "system_seconds": 0.0,
+            "cpu_seconds": 0.0,
+            "cpu_fraction": 0.0,
+            "cpu_percent": 0.0
+          },
+          {
+            "tid": 1998922,
+            "comm": "dpdk-intr",
+            "cpus_seen": [
+              2
+            ],
+            "user_seconds": 0.0,
+            "system_seconds": 0.0,
+            "cpu_seconds": 0.0,
+            "cpu_fraction": 0.0,
+            "cpu_percent": 0.0
+          }
+        ],
+        "selected_nic": "eth1",
+        "selected_nic_rates": {
+          "valid": true,
+          "rx_mbps": 238.6137486299509,
+          "tx_mbps": 45.93857009330816,
+          "counter_delta": {
+            "rx_bytes": 1342208430,
+            "rx_packets": 3691505,
+            "rx_errors": 0,
+            "rx_dropped": 0,
+            "rx_fifo": 0,
+            "rx_frame": 0,
+            "rx_compressed": 0,
+            "rx_multicast": 0,
+            "tx_bytes": 258405630,
+            "tx_packets": 3691509,
+            "tx_errors": 0,
+            "tx_dropped": 0,
+            "tx_fifo": 0,
+            "tx_collisions": 0,
+            "tx_carrier": 0,
+            "tx_compressed": 0
+          }
+        },
+        "interfaces": {
+          "enP26559s2": {
+            "valid": true,
+            "rx_mbps": 247.80145269310216,
+            "tx_mbps": 45.9385825376961,
+            "counter_delta": {
+              "rx_bytes": 1393889500,
+              "rx_packets": 3691505,
+              "rx_errors": 0,
+              "rx_dropped": 0,
+              "rx_fifo": 0,
+              "rx_frame": 0,
+              "rx_compressed": 0,
+              "rx_multicast": 0,
+              "tx_bytes": 258405700,
+              "tx_packets": 3691510,
+              "tx_errors": 0,
+              "tx_dropped": 0,
+              "tx_fifo": 0,
+              "tx_collisions": 0,
+              "tx_carrier": 0,
+              "tx_compressed": 0
+            }
+          },
+          "eth0": {
+            "valid": true,
+            "rx_mbps": 0.006008506053113584,
+            "tx_mbps": 0.013096296094878938,
+            "counter_delta": {
+              "rx_bytes": 33798,
+              "rx_packets": 136,
+              "rx_errors": 0,
+              "rx_dropped": 0,
+              "rx_fifo": 0,
+              "rx_frame": 0,
+              "rx_compressed": 0,
+              "rx_multicast": 0,
+              "tx_bytes": 73667,
+              "tx_packets": 173,
+              "tx_errors": 0,
+              "tx_dropped": 0,
+              "tx_fifo": 0,
+              "tx_collisions": 0,
+              "tx_carrier": 0,
+              "tx_compressed": 0
+            }
+          },
+          "eth1": {
+            "valid": true,
+            "rx_mbps": 238.6137486299509,
+            "tx_mbps": 45.93857009330816,
+            "counter_delta": {
+              "rx_bytes": 1342208430,
+              "rx_packets": 3691505,
+              "rx_errors": 0,
+              "rx_dropped": 0,
+              "rx_fifo": 0,
+              "rx_frame": 0,
+              "rx_compressed": 0,
+              "rx_multicast": 0,
+              "tx_bytes": 258405630,
+              "tx_packets": 3691509,
+              "tx_errors": 0,
+              "tx_dropped": 0,
+              "tx_fifo": 0,
+              "tx_collisions": 0,
+              "tx_carrier": 0,
+              "tx_compressed": 0
+            }
+          },
+          "lo": {
+            "valid": true,
+            "rx_mbps": 0.0,
+            "tx_mbps": 0.0,
+            "counter_delta": {
+              "rx_bytes": 0,
+              "rx_packets": 0,
+              "rx_errors": 0,
+              "rx_dropped": 0,
+              "rx_fifo": 0,
+              "rx_frame": 0,
+              "rx_compressed": 0,
+              "rx_multicast": 0,
+              "tx_bytes": 0,
+              "tx_packets": 0,
+              "tx_errors": 0,
+              "tx_dropped": 0,
+              "tx_fifo": 0,
+              "tx_collisions": 0,
+              "tx_carrier": 0,
+              "tx_compressed": 0
+            }
+          }
+        },
+        "host_cpu": {
+          "counter_delta": {
+            "user": 46788,
+            "nice": 0,
+            "system": 5431,
+            "idle": 0,
+            "iowait": 15208,
+            "irq": 0,
+            "softirq": 3864,
+            "steal": 0
+          },
+          "percent": {
+            "user": 65.62960261463579,
+            "nice": 0.0,
+            "system": 7.618072407456761,
+            "idle": 0.0,
+            "iowait": 21.33228598280288,
+            "irq": 0.0,
+            "softirq": 5.420038995104571,
+            "steal": 0.0
+          }
+        },
+        "read_error_samples": 0,
+        "tcp": {
+          "scope": "host-wide TCP, first-to-last monitor sample",
+          "retrans_segments_delta": 0,
+          "retrans_segments_per_second": 0.0,
+          "out_segments_delta": 3691711,
+          "retrans_to_out_segments_percent": 0.0
+        }
+      },
+      "client": {
+        "available": true,
+        "valid": true,
+        "path": "/Users/chen/Documents/Codex/2026-10-13/azure-lavik-2026-10-13-users/outputs/main-large-writes-20261018-1412/client/observations/hash-main-hash-c80/monitor.jsonl",
+        "completed": true,
+        "errors": [],
+        "pid": 350060,
+        "start_ticks": 63781703,
+        "first_sample_time": 1792334010.907652,
+        "last_sample_time": 1792334055.9078634,
+        "elapsed_seconds": 45.000211562,
+        "sample_count": 46,
+        "HZ": 100,
+        "user_seconds": 8.18,
+        "system_seconds": 51.89,
+        "cpu_seconds": 60.07,
+        "cpu_cores": 1.3348826131014357,
+        "thread_cpu_cores_sum": 1.3348826131014357,
+        "threads": [
+          {
+            "tid": 350070,
+            "comm": "bench",
+            "cpus_seen": [
+              9
+            ],
+            "user_seconds": 0.52,
+            "system_seconds": 3.49,
+            "cpu_seconds": 4.01,
+            "cpu_fraction": 0.08911069216808319,
+            "cpu_percent": 8.91106921680832
+          },
+          {
+            "tid": 350063,
+            "comm": "bench",
+            "cpus_seen": [
+              2
+            ],
+            "user_seconds": 0.51,
+            "system_seconds": 3.49,
+            "cpu_seconds": 4.0,
+            "cpu_fraction": 0.08888847099060668,
+            "cpu_percent": 8.888847099060667
+          },
+          {
+            "tid": 350075,
+            "comm": "bench",
+            "cpus_seen": [
+              14
+            ],
+            "user_seconds": 0.54,
+            "system_seconds": 3.43,
+            "cpu_seconds": 3.97,
+            "cpu_fraction": 0.08822180745817713,
+            "cpu_percent": 8.822180745817713
+          },
+          {
+            "tid": 350069,
+            "comm": "bench",
+            "cpus_seen": [
+              8
+            ],
+            "user_seconds": 0.53,
+            "system_seconds": 3.39,
+            "cpu_seconds": 3.92,
+            "cpu_fraction": 0.08711070157079455,
+            "cpu_percent": 8.711070157079455
+          },
+          {
+            "tid": 350073,
+            "comm": "bench",
+            "cpus_seen": [
+              12
+            ],
+            "user_seconds": 0.5,
+            "system_seconds": 3.41,
+            "cpu_seconds": 3.91,
+            "cpu_fraction": 0.08688848039331803,
+            "cpu_percent": 8.688848039331804
+          },
+          {
+            "tid": 350074,
+            "comm": "bench",
+            "cpus_seen": [
+              13
+            ],
+            "user_seconds": 0.5,
+            "system_seconds": 3.36,
+            "cpu_seconds": 3.86,
+            "cpu_fraction": 0.08577737450593544,
+            "cpu_percent": 8.577737450593544
+          },
+          {
+            "tid": 350072,
+            "comm": "bench",
+            "cpus_seen": [
+              11
+            ],
+            "user_seconds": 0.5,
+            "system_seconds": 3.29,
+            "cpu_seconds": 3.79,
+            "cpu_fraction": 0.08422182626359984,
+            "cpu_percent": 8.422182626359984
+          },
+          {
+            "tid": 350068,
+            "comm": "bench",
+            "cpus_seen": [
+              7
+            ],
+            "user_seconds": 0.56,
+            "system_seconds": 3.22,
+            "cpu_seconds": 3.7800000000000002,
+            "cpu_fraction": 0.08399960508612332,
+            "cpu_percent": 8.399960508612331
+          },
+          {
+            "tid": 350066,
+            "comm": "bench",
+            "cpus_seen": [
+              5
+            ],
+            "user_seconds": 0.57,
+            "system_seconds": 3.16,
+            "cpu_seconds": 3.73,
+            "cpu_fraction": 0.08288849919874072,
+            "cpu_percent": 8.288849919874073
+          },
+          {
+            "tid": 350062,
+            "comm": "bench",
+            "cpus_seen": [
+              1
+            ],
+            "user_seconds": 0.52,
+            "system_seconds": 3.2,
+            "cpu_seconds": 3.72,
+            "cpu_fraction": 0.08266627802126422,
+            "cpu_percent": 8.266627802126422
+          },
+          {
+            "tid": 350071,
+            "comm": "bench",
+            "cpus_seen": [
+              10
+            ],
+            "user_seconds": 0.48,
+            "system_seconds": 3.24,
+            "cpu_seconds": 3.72,
+            "cpu_fraction": 0.08266627802126422,
+            "cpu_percent": 8.266627802126422
+          },
+          {
+            "tid": 350076,
+            "comm": "bench",
+            "cpus_seen": [
+              15
+            ],
+            "user_seconds": 0.44,
+            "system_seconds": 3.22,
+            "cpu_seconds": 3.66,
+            "cpu_fraction": 0.08133295095640511,
+            "cpu_percent": 8.133295095640511
+          },
+          {
+            "tid": 350061,
+            "comm": "bench",
+            "cpus_seen": [
+              0
+            ],
+            "user_seconds": 0.49,
+            "system_seconds": 3.05,
+            "cpu_seconds": 3.54,
+            "cpu_fraction": 0.07866629682668691,
+            "cpu_percent": 7.866629682668691
+          },
+          {
+            "tid": 350064,
+            "comm": "bench",
+            "cpus_seen": [
+              3
+            ],
+            "user_seconds": 0.54,
+            "system_seconds": 3.0,
+            "cpu_seconds": 3.54,
+            "cpu_fraction": 0.07866629682668691,
+            "cpu_percent": 7.866629682668691
+          },
+          {
+            "tid": 350067,
+            "comm": "bench",
+            "cpus_seen": [
+              6
+            ],
+            "user_seconds": 0.53,
+            "system_seconds": 2.97,
+            "cpu_seconds": 3.5,
+            "cpu_fraction": 0.07777741211678084,
+            "cpu_percent": 7.777741211678085
+          },
+          {
+            "tid": 350065,
+            "comm": "bench",
+            "cpus_seen": [
+              4
+            ],
+            "user_seconds": 0.47,
+            "system_seconds": 2.95,
+            "cpu_seconds": 3.42,
+            "cpu_fraction": 0.07599964269696871,
+            "cpu_percent": 7.599964269696871
+          },
+          {
+            "tid": 350060,
+            "comm": "bench",
+            "cpus_seen": [
+              8
+            ],
+            "user_seconds": 0.0,
+            "system_seconds": 0.0,
+            "cpu_seconds": 0.0,
+            "cpu_fraction": 0.0,
+            "cpu_percent": 0.0
+          }
+        ],
+        "selected_nic": "eth0",
+        "selected_nic_rates": {
+          "valid": true,
+          "rx_mbps": 36.74722830406412,
+          "tx_mbps": 247.75132980518146,
+          "counter_delta": {
+            "rx_bytes": 206704131,
+            "rx_packets": 3690691,
+            "rx_errors": 0,
+            "rx_dropped": 0,
+            "rx_fifo": 0,
+            "rx_frame": 0,
+            "rx_compressed": 0,
+            "rx_multicast": 0,
+            "tx_bytes": 1393607782,
+            "tx_packets": 3690728,
+            "tx_errors": 0,
+            "tx_dropped": 0,
+            "tx_fifo": 0,
+            "tx_collisions": 0,
+            "tx_carrier": 0,
+            "tx_compressed": 0
+          }
+        },
+        "interfaces": {
+          "enP43625s1": {
+            "valid": true,
+            "rx_mbps": 45.9329988071757,
+            "tx_mbps": 247.75164767035372,
+            "counter_delta": {
+              "rx_bytes": 258374333,
+              "rx_packets": 3690699,
+              "rx_errors": 0,
+              "rx_dropped": 0,
+              "rx_fifo": 0,
+              "rx_frame": 0,
+              "rx_compressed": 0,
+              "rx_multicast": 0,
+              "tx_bytes": 1393609570,
+              "tx_packets": 3690755,
+              "tx_errors": 0,
+              "tx_dropped": 0,
+              "tx_fifo": 0,
+              "tx_collisions": 0,
+              "tx_carrier": 0,
+              "tx_compressed": 0
+            }
+          },
+          "eth0": {
+            "valid": true,
+            "rx_mbps": 36.74722830406412,
+            "tx_mbps": 247.75132980518146,
+            "counter_delta": {
+              "rx_bytes": 206704131,
+              "rx_packets": 3690691,
+              "rx_errors": 0,
+              "rx_dropped": 0,
+              "rx_fifo": 0,
+              "rx_frame": 0,
+              "rx_compressed": 0,
+              "rx_multicast": 0,
+              "tx_bytes": 1393607782,
+              "tx_packets": 3690728,
+              "tx_errors": 0,
+              "tx_dropped": 0,
+              "tx_fifo": 0,
+              "tx_collisions": 0,
+              "tx_carrier": 0,
+              "tx_compressed": 0
+            }
+          },
+          "lo": {
+            "valid": true,
+            "rx_mbps": 0.0,
+            "tx_mbps": 0.0,
+            "counter_delta": {
+              "rx_bytes": 0,
+              "rx_packets": 0,
+              "rx_errors": 0,
+              "rx_dropped": 0,
+              "rx_fifo": 0,
+              "rx_frame": 0,
+              "rx_compressed": 0,
+              "rx_multicast": 0,
+              "tx_bytes": 0,
+              "tx_packets": 0,
+              "tx_errors": 0,
+              "tx_dropped": 0,
+              "tx_fifo": 0,
+              "tx_collisions": 0,
+              "tx_carrier": 0,
+              "tx_compressed": 0
+            }
+          }
+        },
+        "host_cpu": {
+          "counter_delta": {
+            "user": 697,
+            "nice": 0,
+            "system": 3995,
+            "idle": 134013,
+            "iowait": 55,
+            "irq": 0,
+            "softirq": 727,
+            "steal": 0
+          },
+          "percent": {
+            "user": 0.49968814298106634,
+            "nice": 0.0,
+            "system": 2.864066185379283,
+            "idle": 96.07561995024626,
+            "iowait": 0.039430197796210396,
+            "irq": 0.0,
+            "softirq": 0.5211955235971811,
+            "steal": 0.0
+          }
+        },
+        "read_error_samples": 0,
+        "tcp": {
+          "scope": "host-wide TCP, first-to-last monitor sample",
+          "retrans_segments_delta": 0,
+          "retrans_segments_per_second": 0.0,
+          "out_segments_delta": 3690765,
+          "retrans_to_out_segments_percent": 0.0
+        }
+      },
+      "state_validation": null,
+      "server_cpu_cores": 12.433054661727466,
+      "server_eth1_tx_gbps": 0.04593857009330816,
+      "server_eth1_rx_gbps": 0.23861374862995088,
+      "client_eth0_tx_gbps": 0.24775132980518147,
+      "client_eth0_rx_gbps": 0.03674722830406412,
+      "launch_settings": [
+        "taskset",
+        "-c",
+        "0-15",
+        "<binary>",
+        "--storage=spdk",
+        "--bind=10.84.1.4",
+        "--threads=16",
+        "--pin-workers",
+        "--metrics-port=0",
+        "--spdk-max-completions-per-poll=16",
+        "--log-dir=<session>",
+        "--shutdown-checkpoint",
+        "--data-file=spdk://2401:00:00.0/1",
+        "--data-file=spdk://221c:00:00.0/1",
+        "--data-file=spdk://7f10:00:00.0/1",
+        "--data-file=spdk://399c:00:00.0/1",
+        "--data-file=spdk://c0ef:00:00.0/1",
+        "--data-file=spdk://6319:00:00.0/1"
+      ],
+      "launch_environment": {
+        "BYCORF_EAL_ARGS": "-a 2401:00:00.0 -a 221c:00:00.0 -a 7f10:00:00.0 -a 399c:00:00.0 -a c0ef:00:00.0 -a 6319:00:00.0",
+        "BYCORF_DPDK_MEMORY_MB": "8192"
+      },
+      "source_path": "client/results/hash-main-hash-c80"
+    },
+    {
+      "op": "list",
+      "label": "list-main-list-c80",
+      "revision": "9c68079a7dd775db647cf55fe578a6cd43426a82",
+      "binary_sha256": "4fe9c53a6b1ebcff1bce17ce3aac213e879f20b82f09a326ae02560a792056c3",
+      "client_binary": "bench",
+      "client_binary_sha256": "f596a6f1a5a1a600c5cec3240e0f56a0dd56f338283d5666e38a4c82ccb62b08",
+      "valid": true,
+      "clean_stop_verified": true,
+      "keys": 8192,
+      "connections": 80,
+      "elapsed_seconds": 60.002665,
+      "unit": "pairs/s",
+      "metrics": {
+        "LPUSH": {
+          "count": 5183656,
+          "qps": 86390.430033,
+          "avg_ms": 0.521678,
+          "p50_ms": 0.29,
+          "p99_ms": 6.439,
+          "p999_ms": 11.289,
+          "max_ms": 45.675
+        },
+        "OPERATIONS": {
+          "count": 5183656,
+          "qps": 86390.430033,
+          "avg_ms": 0.92525,
+          "p50_ms": 0.588,
+          "p99_ms": 8.481,
+          "p999_ms": 16.991,
+          "max_ms": 47.962
+        },
+        "RPOP": {
+          "count": 5183656,
+          "qps": 86390.430033,
+          "avg_ms": 0.403096,
+          "p50_ms": 0.284,
+          "p99_ms": 3.012,
+          "p999_ms": 9.907,
+          "max_ms": 44.766
+        }
+      },
+      "server": {
+        "available": true,
+        "valid": true,
+        "path": "/Users/chen/Documents/Codex/2026-10-13/azure-lavik-2026-10-13-users/outputs/main-large-writes-20261018-1412/server/observations/list-main-list-c80/monitor.jsonl",
+        "completed": true,
+        "errors": [],
+        "pid": 1999856,
+        "start_ticks": 63774815,
+        "first_sample_time": 1792334186.581208,
+        "last_sample_time": 1792334231.581333,
+        "elapsed_seconds": 45.000124555,
+        "sample_count": 46,
+        "HZ": 100,
+        "user_seconds": 512.58,
+        "system_seconds": 169.42,
+        "cpu_seconds": 682.0,
+        "cpu_cores": 15.155513606777838,
+        "thread_cpu_cores_sum": 15.155513606777838,
+        "threads": [
+          {
+            "tid": 1999879,
+            "comm": "lavik",
+            "cpus_seen": [
+              9
+            ],
+            "user_seconds": 31.99,
+            "system_seconds": 11.44,
+            "cpu_seconds": 43.43,
+            "cpu_fraction": 0.9651084397981841,
+            "cpu_percent": 96.5108439798184
+          },
+          {
+            "tid": 1999878,
+            "comm": "lavik",
+            "cpus_seen": [
+              8
+            ],
+            "user_seconds": 32.74,
+            "system_seconds": 10.65,
+            "cpu_seconds": 43.39,
+            "cpu_fraction": 0.964219553369634,
+            "cpu_percent": 96.4219553369634
+          },
+          {
+            "tid": 1999872,
+            "comm": "lavik",
+            "cpus_seen": [
+              2
+            ],
+            "user_seconds": 31.4,
+            "system_seconds": 11.66,
+            "cpu_seconds": 43.06,
+            "cpu_fraction": 0.9568862403340964,
+            "cpu_percent": 95.68862403340964
+          },
+          {
+            "tid": 1999884,
+            "comm": "lavik",
+            "cpus_seen": [
+              14
+            ],
+            "user_seconds": 32.44,
+            "system_seconds": 10.61,
+            "cpu_seconds": 43.05,
+            "cpu_fraction": 0.9566640187269588,
+            "cpu_percent": 95.66640187269589
+          },
+          {
+            "tid": 1999871,
+            "comm": "lavik",
+            "cpus_seen": [
+              1
+            ],
+            "user_seconds": 32.9,
+            "system_seconds": 10.14,
+            "cpu_seconds": 43.04,
+            "cpu_fraction": 0.9564417971198214,
+            "cpu_percent": 95.64417971198213
+          },
+          {
+            "tid": 1999873,
+            "comm": "lavik",
+            "cpus_seen": [
+              3
+            ],
+            "user_seconds": 33.41,
+            "system_seconds": 9.61,
+            "cpu_seconds": 43.019999999999996,
+            "cpu_fraction": 0.9559973539055463,
+            "cpu_percent": 95.59973539055463
+          },
+          {
+            "tid": 1999883,
+            "comm": "lavik",
+            "cpus_seen": [
+              13
+            ],
+            "user_seconds": 32.14,
+            "system_seconds": 10.83,
+            "cpu_seconds": 42.97,
+            "cpu_fraction": 0.9548862458698588,
+            "cpu_percent": 95.48862458698588
+          },
+          {
+            "tid": 1999885,
+            "comm": "lavik",
+            "cpus_seen": [
+              15
+            ],
+            "user_seconds": 33.03,
+            "system_seconds": 9.94,
+            "cpu_seconds": 42.97,
+            "cpu_fraction": 0.9548862458698588,
+            "cpu_percent": 95.48862458698588
+          },
+          {
+            "tid": 1999870,
+            "comm": "lavik",
+            "cpus_seen": [
+              0
+            ],
+            "user_seconds": 31.77,
+            "system_seconds": 11.07,
+            "cpu_seconds": 42.84,
+            "cpu_fraction": 0.9519973649770713,
+            "cpu_percent": 95.19973649770712
+          },
+          {
+            "tid": 1999882,
+            "comm": "lavik",
+            "cpus_seen": [
+              12
+            ],
+            "user_seconds": 32.13,
+            "system_seconds": 10.71,
+            "cpu_seconds": 42.84,
+            "cpu_fraction": 0.9519973649770713,
+            "cpu_percent": 95.19973649770712
+          },
+          {
+            "tid": 1999877,
+            "comm": "lavik",
+            "cpus_seen": [
+              7
+            ],
+            "user_seconds": 32.58,
+            "system_seconds": 10.06,
+            "cpu_seconds": 42.64,
+            "cpu_fraction": 0.9475529328343212,
+            "cpu_percent": 94.75529328343211
+          },
+          {
+            "tid": 1999876,
+            "comm": "lavik",
+            "cpus_seen": [
+              6
+            ],
+            "user_seconds": 32.14,
+            "system_seconds": 10.25,
+            "cpu_seconds": 42.39,
+            "cpu_fraction": 0.9419973926558836,
+            "cpu_percent": 94.19973926558835
+          },
+          {
+            "tid": 1999875,
+            "comm": "lavik",
+            "cpus_seen": [
+              5
+            ],
+            "user_seconds": 32.68,
+            "system_seconds": 9.29,
+            "cpu_seconds": 41.97,
+            "cpu_fraction": 0.9326640851561083,
+            "cpu_percent": 93.26640851561083
+          },
+          {
+            "tid": 1999874,
+            "comm": "lavik",
+            "cpus_seen": [
+              4
+            ],
+            "user_seconds": 30.19,
+            "system_seconds": 11.54,
+            "cpu_seconds": 41.730000000000004,
+            "cpu_fraction": 0.9273307665848083,
+            "cpu_percent": 92.73307665848083
+          },
+          {
+            "tid": 1999880,
+            "comm": "lavik",
+            "cpus_seen": [
+              10
+            ],
+            "user_seconds": 31.22,
+            "system_seconds": 10.19,
+            "cpu_seconds": 41.41,
+            "cpu_fraction": 0.920219675156408,
+            "cpu_percent": 92.02196751564081
+          },
+          {
+            "tid": 1999881,
+            "comm": "lavik",
+            "cpus_seen": [
+              11
+            ],
+            "user_seconds": 29.83,
+            "system_seconds": 11.42,
+            "cpu_seconds": 41.25,
+            "cpu_fraction": 0.916664129442208,
+            "cpu_percent": 91.6664129442208
+          },
+          {
+            "tid": 1999856,
+            "comm": "lavik",
+            "cpus_seen": [
+              0
+            ],
+            "user_seconds": 0.0,
+            "system_seconds": 0.0,
+            "cpu_seconds": 0.0,
+            "cpu_fraction": 0.0,
+            "cpu_percent": 0.0
+          },
+          {
+            "tid": 1999858,
+            "comm": "dpdk-intr",
+            "cpus_seen": [
+              2
+            ],
+            "user_seconds": 0.0,
+            "system_seconds": 0.0,
+            "cpu_seconds": 0.0,
+            "cpu_fraction": 0.0,
+            "cpu_percent": 0.0
+          }
+        ],
+        "selected_nic": "eth1",
+        "selected_nic_rates": {
+          "valid": true,
+          "rx_mbps": 306.75266098716247,
+          "tx_mbps": 279.2260273111593,
+          "counter_delta": {
+            "rx_bytes": 1725488494,
+            "rx_packets": 7794776,
+            "rx_errors": 0,
+            "rx_dropped": 0,
+            "rx_fifo": 0,
+            "rx_frame": 0,
+            "rx_compressed": 0,
+            "rx_multicast": 0,
+            "tx_bytes": 1570650751,
+            "tx_packets": 7794827,
+            "tx_errors": 0,
+            "tx_dropped": 0,
+            "tx_fifo": 0,
+            "tx_collisions": 0,
+            "tx_carrier": 0,
+            "tx_compressed": 0
+          }
+        },
+        "interfaces": {
+          "enP26559s2": {
+            "valid": true,
+            "rx_mbps": 326.1529569781876,
+            "tx_mbps": 279.2260402889012,
+            "counter_delta": {
+              "rx_bytes": 1834615461,
+              "rx_packets": 7794777,
+              "rx_errors": 0,
+              "rx_dropped": 0,
+              "rx_fifo": 0,
+              "rx_frame": 0,
+              "rx_compressed": 0,
+              "rx_multicast": 0,
+              "tx_bytes": 1570650824,
+              "tx_packets": 7794828,
+              "tx_errors": 0,
+              "tx_dropped": 0,
+              "tx_fifo": 0,
+              "tx_collisions": 0,
+              "tx_carrier": 0,
+              "tx_compressed": 0
+            }
+          },
+          "eth0": {
+            "valid": true,
+            "rx_mbps": 0.005917316954857483,
+            "tx_mbps": 0.010574015176745326,
+            "counter_delta": {
+              "rx_bytes": 33285,
+              "rx_packets": 131,
+              "rx_errors": 0,
+              "rx_dropped": 0,
+              "rx_fifo": 0,
+              "rx_frame": 0,
+              "rx_compressed": 0,
+              "rx_multicast": 0,
+              "tx_bytes": 59479,
+              "tx_packets": 164,
+              "tx_errors": 0,
+              "tx_dropped": 0,
+              "tx_fifo": 0,
+              "tx_collisions": 0,
+              "tx_carrier": 0,
+              "tx_compressed": 0
+            }
+          },
+          "eth1": {
+            "valid": true,
+            "rx_mbps": 306.75266098716247,
+            "tx_mbps": 279.2260273111593,
+            "counter_delta": {
+              "rx_bytes": 1725488494,
+              "rx_packets": 7794776,
+              "rx_errors": 0,
+              "rx_dropped": 0,
+              "rx_fifo": 0,
+              "rx_frame": 0,
+              "rx_compressed": 0,
+              "rx_multicast": 0,
+              "tx_bytes": 1570650751,
+              "tx_packets": 7794827,
+              "tx_errors": 0,
+              "tx_dropped": 0,
+              "tx_fifo": 0,
+              "tx_collisions": 0,
+              "tx_carrier": 0,
+              "tx_compressed": 0
+            }
+          },
+          "lo": {
+            "valid": true,
+            "rx_mbps": 0.0,
+            "tx_mbps": 0.0,
+            "counter_delta": {
+              "rx_bytes": 0,
+              "rx_packets": 0,
+              "rx_errors": 0,
+              "rx_dropped": 0,
+              "rx_fifo": 0,
+              "rx_frame": 0,
+              "rx_compressed": 0,
+              "rx_multicast": 0,
+              "tx_bytes": 0,
+              "tx_packets": 0,
+              "tx_errors": 0,
+              "tx_dropped": 0,
+              "tx_fifo": 0,
+              "tx_collisions": 0,
+              "tx_carrier": 0,
+              "tx_compressed": 0
+            }
+          }
+        },
+        "host_cpu": {
+          "counter_delta": {
+            "user": 51313,
+            "nice": 0,
+            "system": 9546,
+            "idle": 1,
+            "iowait": 2709,
+            "irq": 0,
+            "softirq": 7883,
+            "steal": 0
+          },
+          "percent": {
+            "user": 71.81464479650674,
+            "nice": 0.0,
+            "system": 13.360017914124168,
+            "idle": 0.0013995409505682137,
+            "iowait": 3.7913564350892908,
+            "irq": 0.0,
+            "softirq": 11.032581313329228,
+            "steal": 0.0
+          }
+        },
+        "read_error_samples": 0,
+        "tcp": {
+          "scope": "host-wide TCP, first-to-last monitor sample",
+          "retrans_segments_delta": 0,
+          "retrans_segments_per_second": 0.0,
+          "out_segments_delta": 7795010,
+          "retrans_to_out_segments_percent": 0.0
+        }
+      },
+      "client": {
+        "available": true,
+        "valid": true,
+        "path": "/Users/chen/Documents/Codex/2026-10-13/azure-lavik-2026-10-13-users/outputs/main-large-writes-20261018-1412/client/observations/list-main-list-c80/monitor.jsonl",
+        "completed": true,
+        "errors": [],
+        "pid": 350276,
+        "start_ticks": 63799228,
+        "first_sample_time": 1792334186.195755,
+        "last_sample_time": 1792334231.195961,
+        "elapsed_seconds": 45.000206214,
+        "sample_count": 46,
+        "HZ": 100,
+        "user_seconds": 11.94,
+        "system_seconds": 110.8,
+        "cpu_seconds": 122.74,
+        "cpu_cores": 2.7275430564985808,
+        "thread_cpu_cores_sum": 2.7293208261296704,
+        "threads": [
+          {
+            "tid": 350277,
+            "comm": "bench",
+            "cpus_seen": [
+              0
+            ],
+            "user_seconds": 0.77,
+            "system_seconds": 7.82,
+            "cpu_seconds": 8.59,
+            "cpu_fraction": 0.19088801413820117,
+            "cpu_percent": 19.088801413820114
+          },
+          {
+            "tid": 350292,
+            "comm": "bench",
+            "cpus_seen": [
+              15
+            ],
+            "user_seconds": 0.75,
+            "system_seconds": 7.44,
+            "cpu_seconds": 8.190000000000001,
+            "cpu_fraction": 0.18199916598275526,
+            "cpu_percent": 18.199916598275525
+          },
+          {
+            "tid": 350287,
+            "comm": "bench",
+            "cpus_seen": [
+              10
+            ],
+            "user_seconds": 0.73,
+            "system_seconds": 7.41,
+            "cpu_seconds": 8.14,
+            "cpu_fraction": 0.18088805996332452,
+            "cpu_percent": 18.08880599633245
+          },
+          {
+            "tid": 350289,
+            "comm": "bench",
+            "cpus_seen": [
+              12
+            ],
+            "user_seconds": 0.68,
+            "system_seconds": 7.27,
+            "cpu_seconds": 7.949999999999999,
+            "cpu_fraction": 0.17666585708948768,
+            "cpu_percent": 17.666585708948766
+          },
+          {
+            "tid": 350288,
+            "comm": "bench",
+            "cpus_seen": [
+              11
+            ],
+            "user_seconds": 0.79,
+            "system_seconds": 7.05,
+            "cpu_seconds": 7.84,
+            "cpu_fraction": 0.17422142384674005,
+            "cpu_percent": 17.422142384674007
+          },
+          {
+            "tid": 350286,
+            "comm": "bench",
+            "cpus_seen": [
+              9
+            ],
+            "user_seconds": 0.76,
+            "system_seconds": 7.07,
+            "cpu_seconds": 7.83,
+            "cpu_fraction": 0.1739992026428539,
+            "cpu_percent": 17.39992026428539
+          },
+          {
+            "tid": 350290,
+            "comm": "bench",
+            "cpus_seen": [
+              13
+            ],
+            "user_seconds": 0.66,
+            "system_seconds": 7.16,
+            "cpu_seconds": 7.82,
+            "cpu_fraction": 0.17377698143896778,
+            "cpu_percent": 17.377698143896776
+          },
+          {
+            "tid": 350279,
+            "comm": "bench",
+            "cpus_seen": [
+              2
+            ],
+            "user_seconds": 0.76,
+            "system_seconds": 7.04,
+            "cpu_seconds": 7.8,
+            "cpu_fraction": 0.17333253903119547,
+            "cpu_percent": 17.333253903119548
+          },
+          {
+            "tid": 350282,
+            "comm": "bench",
+            "cpus_seen": [
+              5
+            ],
+            "user_seconds": 0.8,
+            "system_seconds": 6.92,
+            "cpu_seconds": 7.72,
+            "cpu_fraction": 0.17155476940010628,
+            "cpu_percent": 17.15547694001063
+          },
+          {
+            "tid": 350278,
+            "comm": "bench",
+            "cpus_seen": [
+              1
+            ],
+            "user_seconds": 0.78,
+            "system_seconds": 6.78,
+            "cpu_seconds": 7.5600000000000005,
+            "cpu_fraction": 0.16799923013792792,
+            "cpu_percent": 16.799923013792792
+          },
+          {
+            "tid": 350291,
+            "comm": "bench",
+            "cpus_seen": [
+              14
+            ],
+            "user_seconds": 0.73,
+            "system_seconds": 6.77,
+            "cpu_seconds": 7.5,
+            "cpu_fraction": 0.16666590291461103,
+            "cpu_percent": 16.6665902914611
+          },
+          {
+            "tid": 350285,
+            "comm": "bench",
+            "cpus_seen": [
+              8
+            ],
+            "user_seconds": 0.76,
+            "system_seconds": 6.67,
+            "cpu_seconds": 7.43,
+            "cpu_fraction": 0.165110354487408,
+            "cpu_percent": 16.5110354487408
+          },
+          {
+            "tid": 350280,
+            "comm": "bench",
+            "cpus_seen": [
+              3
+            ],
+            "user_seconds": 0.73,
+            "system_seconds": 6.66,
+            "cpu_seconds": 7.390000000000001,
+            "cpu_fraction": 0.1642214696718634,
+            "cpu_percent": 16.42214696718634
+          },
+          {
+            "tid": 350281,
+            "comm": "bench",
+            "cpus_seen": [
+              4
+            ],
+            "user_seconds": 0.81,
+            "system_seconds": 6.52,
+            "cpu_seconds": 7.33,
+            "cpu_fraction": 0.16288814244854652,
+            "cpu_percent": 16.28881424485465
+          },
+          {
+            "tid": 350284,
+            "comm": "bench",
+            "cpus_seen": [
+              7
+            ],
+            "user_seconds": 0.81,
+            "system_seconds": 6.52,
+            "cpu_seconds": 7.33,
+            "cpu_fraction": 0.16288814244854652,
+            "cpu_percent": 16.28881424485465
+          },
+          {
+            "tid": 350283,
+            "comm": "bench",
+            "cpus_seen": [
+              6
+            ],
+            "user_seconds": 0.65,
+            "system_seconds": 5.75,
+            "cpu_seconds": 6.4,
+            "cpu_fraction": 0.14222157048713474,
+            "cpu_percent": 14.222157048713473
+          },
+          {
+            "tid": 350276,
+            "comm": "bench",
+            "cpus_seen": [
+              10
+            ],
+            "user_seconds": 0.0,
+            "system_seconds": 0.0,
+            "cpu_seconds": 0.0,
+            "cpu_fraction": 0.0,
+            "cpu_percent": 0.0
+          }
+        ],
+        "selected_nic": "eth0",
+        "selected_nic_rates": {
+          "valid": true,
+          "rx_mbps": 259.6530657756154,
+          "tx_mbps": 325.94094565364077,
+          "counter_delta": {
+            "rx_bytes": 1460555188,
+            "rx_packets": 7789624,
+            "rx_errors": 0,
+            "rx_dropped": 0,
+            "rx_fifo": 0,
+            "rx_frame": 0,
+            "rx_compressed": 0,
+            "rx_multicast": 0,
+            "tx_bytes": 1833426221,
+            "tx_packets": 7789614,
+            "tx_errors": 0,
+            "tx_dropped": 0,
+            "tx_fifo": 0,
+            "tx_collisions": 0,
+            "tx_carrier": 0,
+            "tx_compressed": 0
+          }
+        },
+        "interfaces": {
+          "enP43625s1": {
+            "valid": true,
+            "rx_mbps": 279.04065906465627,
+            "tx_mbps": 325.9413292963271,
+            "counter_delta": {
+              "rx_bytes": 1569610900,
+              "rx_packets": 7789634,
+              "rx_errors": 0,
+              "rx_dropped": 0,
+              "rx_fifo": 0,
+              "rx_frame": 0,
+              "rx_compressed": 0,
+              "rx_multicast": 0,
+              "tx_bytes": 1833428379,
+              "tx_packets": 7789641,
+              "tx_errors": 0,
+              "tx_dropped": 0,
+              "tx_fifo": 0,
+              "tx_collisions": 0,
+              "tx_carrier": 0,
+              "tx_compressed": 0
+            }
+          },
+          "eth0": {
+            "valid": true,
+            "rx_mbps": 259.6530657756154,
+            "tx_mbps": 325.94094565364077,
+            "counter_delta": {
+              "rx_bytes": 1460555188,
+              "rx_packets": 7789624,
+              "rx_errors": 0,
+              "rx_dropped": 0,
+              "rx_fifo": 0,
+              "rx_frame": 0,
+              "rx_compressed": 0,
+              "rx_multicast": 0,
+              "tx_bytes": 1833426221,
+              "tx_packets": 7789614,
+              "tx_errors": 0,
+              "tx_dropped": 0,
+              "tx_fifo": 0,
+              "tx_collisions": 0,
+              "tx_carrier": 0,
+              "tx_compressed": 0
+            }
+          },
+          "lo": {
+            "valid": true,
+            "rx_mbps": 0.0,
+            "tx_mbps": 0.0,
+            "counter_delta": {
+              "rx_bytes": 0,
+              "rx_packets": 0,
+              "rx_errors": 0,
+              "rx_dropped": 0,
+              "rx_fifo": 0,
+              "rx_frame": 0,
+              "rx_compressed": 0,
+              "rx_multicast": 0,
+              "tx_bytes": 0,
+              "tx_packets": 0,
+              "tx_errors": 0,
+              "tx_dropped": 0,
+              "tx_fifo": 0,
+              "tx_collisions": 0,
+              "tx_carrier": 0,
+              "tx_compressed": 0
+            }
+          }
+        },
+        "host_cpu": {
+          "counter_delta": {
+            "user": 1016,
+            "nice": 0,
+            "system": 8440,
+            "idle": 123921,
+            "iowait": 55,
+            "irq": 0,
+            "softirq": 1631,
+            "steal": 0
+          },
+          "percent": {
+            "user": 0.7522415465375417,
+            "nice": 0.0,
+            "system": 6.248935681866981,
+            "idle": 91.75051642566802,
+            "iowait": 0.040721737263351175,
+            "irq": 0.0,
+            "softirq": 1.2075846086641049,
+            "steal": 0.0
+          }
+        },
+        "read_error_samples": 0,
+        "tcp": {
+          "scope": "host-wide TCP, first-to-last monitor sample",
+          "retrans_segments_delta": 0,
+          "retrans_segments_per_second": 0.0,
+          "out_segments_delta": 7789657,
+          "retrans_to_out_segments_percent": 0.0
+        }
+      },
+      "state_validation": null,
+      "server_cpu_cores": 15.155513606777838,
+      "server_eth1_tx_gbps": 0.2792260273111593,
+      "server_eth1_rx_gbps": 0.3067526609871625,
+      "client_eth0_tx_gbps": 0.3259409456536408,
+      "client_eth0_rx_gbps": 0.2596530657756154,
+      "launch_settings": [
+        "taskset",
+        "-c",
+        "0-15",
+        "<binary>",
+        "--storage=spdk",
+        "--bind=10.84.1.4",
+        "--threads=16",
+        "--pin-workers",
+        "--metrics-port=0",
+        "--spdk-max-completions-per-poll=16",
+        "--log-dir=<session>",
+        "--shutdown-checkpoint",
+        "--data-file=spdk://2401:00:00.0/1",
+        "--data-file=spdk://221c:00:00.0/1",
+        "--data-file=spdk://7f10:00:00.0/1",
+        "--data-file=spdk://399c:00:00.0/1",
+        "--data-file=spdk://c0ef:00:00.0/1",
+        "--data-file=spdk://6319:00:00.0/1"
+      ],
+      "launch_environment": {
+        "BYCORF_EAL_ARGS": "-a 2401:00:00.0 -a 221c:00:00.0 -a 7f10:00:00.0 -a 399c:00:00.0 -a c0ef:00:00.0 -a 6319:00:00.0",
+        "BYCORF_DPDK_MEMORY_MB": "8192"
+      },
+      "source_path": "client/results/list-main-list-c80"
+    },
+    {
+      "op": "zincr",
+      "label": "zincr-main-zincr-c80",
+      "revision": "9c68079a7dd775db647cf55fe578a6cd43426a82",
+      "binary_sha256": "4fe9c53a6b1ebcff1bce17ce3aac213e879f20b82f09a326ae02560a792056c3",
+      "client_binary": "bench",
+      "client_binary_sha256": "f596a6f1a5a1a600c5cec3240e0f56a0dd56f338283d5666e38a4c82ccb62b08",
+      "valid": true,
+      "clean_stop_verified": true,
+      "keys": 8192,
+      "connections": 80,
+      "elapsed_seconds": 60.017968,
+      "unit": "QPS",
+      "metrics": {
+        "OPERATIONS": {
+          "count": 1454070,
+          "qps": 24227.244669,
+          "avg_ms": 3.299888,
+          "p50_ms": 1.132,
+          "p99_ms": 21.621,
+          "p999_ms": 30.917,
+          "max_ms": 54.407
+        },
+        "ZINCRBY": {
+          "count": 1454070,
+          "qps": 24227.244669,
+          "avg_ms": 3.299888,
+          "p50_ms": 1.132,
+          "p99_ms": 21.621,
+          "p999_ms": 30.917,
+          "max_ms": 54.407
+        }
+      },
+      "server": {
+        "available": true,
+        "valid": true,
+        "path": "/Users/chen/Documents/Codex/2026-10-13/azure-lavik-2026-10-13-users/outputs/main-large-writes-20261018-1412/server/observations/zincr-main-zincr-c80/monitor.jsonl",
+        "completed": true,
+        "errors": [],
+        "pid": 2000675,
+        "start_ticks": 63792392,
+        "first_sample_time": 1792335578.7897973,
+        "last_sample_time": 1792335623.7900212,
+        "elapsed_seconds": 45.000224288,
+        "sample_count": 46,
+        "HZ": 100,
+        "user_seconds": 543.81,
+        "system_seconds": 39.33,
+        "cpu_seconds": 583.14,
+        "cpu_cores": 12.958602078690156,
+        "thread_cpu_cores_sum": 12.958157636460891,
+        "threads": [
+          {
+            "tid": 2000696,
+            "comm": "lavik",
+            "cpus_seen": [
+              7
+            ],
+            "user_seconds": 36.16,
+            "system_seconds": 2.7,
+            "cpu_seconds": 38.86,
+            "cpu_fraction": 0.863551251462598,
+            "cpu_percent": 86.35512514625981
+          },
+          {
+            "tid": 2000695,
+            "comm": "lavik",
+            "cpus_seen": [
+              6
+            ],
+            "user_seconds": 36.5,
+            "system_seconds": 2.32,
+            "cpu_seconds": 38.82,
+            "cpu_fraction": 0.8626623670040674,
+            "cpu_percent": 86.26623670040674
+          },
+          {
+            "tid": 2000691,
+            "comm": "lavik",
+            "cpus_seen": [
+              2
+            ],
+            "user_seconds": 36.41,
+            "system_seconds": 2.28,
+            "cpu_seconds": 38.69,
+            "cpu_fraction": 0.8597734925138425,
+            "cpu_percent": 85.97734925138425
+          },
+          {
+            "tid": 2000692,
+            "comm": "lavik",
+            "cpus_seen": [
+              3
+            ],
+            "user_seconds": 36.15,
+            "system_seconds": 2.32,
+            "cpu_seconds": 38.47,
+            "cpu_fraction": 0.8548846279919234,
+            "cpu_percent": 85.48846279919235
+          },
+          {
+            "tid": 2000689,
+            "comm": "lavik",
+            "cpus_seen": [
+              0
+            ],
+            "user_seconds": 35.86,
+            "system_seconds": 2.56,
+            "cpu_seconds": 38.42,
+            "cpu_fraction": 0.8537735224187601,
+            "cpu_percent": 85.37735224187601
+          },
+          {
+            "tid": 2000690,
+            "comm": "lavik",
+            "cpus_seen": [
+              1
+            ],
+            "user_seconds": 35.77,
+            "system_seconds": 2.46,
+            "cpu_seconds": 38.230000000000004,
+            "cpu_fraction": 0.8495513212407393,
+            "cpu_percent": 84.95513212407393
+          },
+          {
+            "tid": 2000703,
+            "comm": "lavik",
+            "cpus_seen": [
+              14
+            ],
+            "user_seconds": 34.89,
+            "system_seconds": 2.76,
+            "cpu_seconds": 37.65,
+            "cpu_fraction": 0.8366624965920436,
+            "cpu_percent": 83.66624965920437
+          },
+          {
+            "tid": 2000701,
+            "comm": "lavik",
+            "cpus_seen": [
+              12
+            ],
+            "user_seconds": 34.77,
+            "system_seconds": 2.46,
+            "cpu_seconds": 37.230000000000004,
+            "cpu_fraction": 0.8273292097774712,
+            "cpu_percent": 82.73292097774711
+          },
+          {
+            "tid": 2000697,
+            "comm": "lavik",
+            "cpus_seen": [
+              8
+            ],
+            "user_seconds": 34.66,
+            "system_seconds": 2.45,
+            "cpu_seconds": 37.11,
+            "cpu_fraction": 0.8246625564018789,
+            "cpu_percent": 82.4662556401879
+          },
+          {
+            "tid": 2000702,
+            "comm": "lavik",
+            "cpus_seen": [
+              13
+            ],
+            "user_seconds": 34.78,
+            "system_seconds": 2.33,
+            "cpu_seconds": 37.11,
+            "cpu_fraction": 0.8246625564018789,
+            "cpu_percent": 82.4662556401879
+          },
+          {
+            "tid": 2000704,
+            "comm": "lavik",
+            "cpus_seen": [
+              15
+            ],
+            "user_seconds": 34.44,
+            "system_seconds": 2.61,
+            "cpu_seconds": 37.05,
+            "cpu_fraction": 0.8233292297140827,
+            "cpu_percent": 82.33292297140827
+          },
+          {
+            "tid": 2000698,
+            "comm": "lavik",
+            "cpus_seen": [
+              9
+            ],
+            "user_seconds": 34.47,
+            "system_seconds": 2.1,
+            "cpu_seconds": 36.57,
+            "cpu_fraction": 0.8126626162117142,
+            "cpu_percent": 81.26626162117141
+          },
+          {
+            "tid": 2000693,
+            "comm": "lavik",
+            "cpus_seen": [
+              4
+            ],
+            "user_seconds": 29.94,
+            "system_seconds": 3.23,
+            "cpu_seconds": 33.17,
+            "cpu_fraction": 0.7371074372366027,
+            "cpu_percent": 73.71074372366026
+          },
+          {
+            "tid": 2000694,
+            "comm": "lavik",
+            "cpus_seen": [
+              5
+            ],
+            "user_seconds": 30.69,
+            "system_seconds": 2.16,
+            "cpu_seconds": 32.85,
+            "cpu_fraction": 0.7299963615683569,
+            "cpu_percent": 72.99963615683568
+          },
+          {
+            "tid": 2000699,
+            "comm": "lavik",
+            "cpus_seen": [
+              10
+            ],
+            "user_seconds": 29.19,
+            "system_seconds": 2.46,
+            "cpu_seconds": 31.650000000000002,
+            "cpu_fraction": 0.7033298278124351,
+            "cpu_percent": 70.33298278124352
+          },
+          {
+            "tid": 2000700,
+            "comm": "lavik",
+            "cpus_seen": [
+              11
+            ],
+            "user_seconds": 29.12,
+            "system_seconds": 2.12,
+            "cpu_seconds": 31.240000000000002,
+            "cpu_fraction": 0.6942187621124952,
+            "cpu_percent": 69.42187621124953
+          },
+          {
+            "tid": 2000675,
+            "comm": "lavik",
+            "cpus_seen": [
+              1
+            ],
+            "user_seconds": 0.0,
+            "system_seconds": 0.0,
+            "cpu_seconds": 0.0,
+            "cpu_fraction": 0.0,
+            "cpu_percent": 0.0
+          },
+          {
+            "tid": 2000677,
+            "comm": "dpdk-intr",
+            "cpus_seen": [
+              5
+            ],
+            "user_seconds": 0.0,
+            "system_seconds": 0.0,
+            "cpu_seconds": 0.0,
+            "cpu_fraction": 0.0,
+            "cpu_percent": 0.0
+          }
+        ],
+        "selected_nic": "eth1",
+        "selected_nic_rates": {
+          "valid": true,
+          "rx_mbps": 27.72763940051587,
+          "tx_mbps": 14.956446165524499,
+          "counter_delta": {
+            "rx_bytes": 155968749,
+            "rx_packets": 1087917,
+            "rx_errors": 0,
+            "rx_dropped": 0,
+            "rx_fifo": 0,
+            "rx_frame": 0,
+            "rx_compressed": 0,
+            "rx_multicast": 0,
+            "tx_bytes": 84130429,
+            "tx_packets": 1087987,
+            "tx_errors": 0,
+            "tx_dropped": 0,
+            "tx_fifo": 0,
+            "tx_collisions": 0,
+            "tx_carrier": 0,
+            "tx_compressed": 0
+          }
+        },
+        "interfaces": {
+          "enP26559s2": {
+            "valid": true,
+            "rx_mbps": 30.435330438235702,
+            "tx_mbps": 14.95644723218585,
+            "counter_delta": {
+              "rx_bytes": 171199587,
+              "rx_packets": 1087917,
+              "rx_errors": 0,
+              "rx_dropped": 0,
+              "rx_fifo": 0,
+              "rx_frame": 0,
+              "rx_compressed": 0,
+              "rx_multicast": 0,
+              "tx_bytes": 84130435,
+              "tx_packets": 1087987,
+              "tx_errors": 0,
+              "tx_dropped": 0,
+              "tx_fifo": 0,
+              "tx_collisions": 0,
+              "tx_carrier": 0,
+              "tx_compressed": 0
+            }
+          },
+          "eth0": {
+            "valid": true,
+            "rx_mbps": 0.0052833514446149156,
+            "tx_mbps": 0.010279059878449289,
+            "counter_delta": {
+              "rx_bytes": 29719,
+              "rx_packets": 119,
+              "rx_errors": 0,
+              "rx_dropped": 0,
+              "rx_fifo": 0,
+              "rx_frame": 0,
+              "rx_compressed": 0,
+              "rx_multicast": 0,
+              "tx_bytes": 57820,
+              "tx_packets": 150,
+              "tx_errors": 0,
+              "tx_dropped": 0,
+              "tx_fifo": 0,
+              "tx_collisions": 0,
+              "tx_carrier": 0,
+              "tx_compressed": 0
+            }
+          },
+          "eth1": {
+            "valid": true,
+            "rx_mbps": 27.72763940051587,
+            "tx_mbps": 14.956446165524499,
+            "counter_delta": {
+              "rx_bytes": 155968749,
+              "rx_packets": 1087917,
+              "rx_errors": 0,
+              "rx_dropped": 0,
+              "rx_fifo": 0,
+              "rx_frame": 0,
+              "rx_compressed": 0,
+              "rx_multicast": 0,
+              "tx_bytes": 84130429,
+              "tx_packets": 1087987,
+              "tx_errors": 0,
+              "tx_dropped": 0,
+              "tx_fifo": 0,
+              "tx_collisions": 0,
+              "tx_carrier": 0,
+              "tx_compressed": 0
+            }
+          },
+          "lo": {
+            "valid": true,
+            "rx_mbps": 0.0,
+            "tx_mbps": 0.0,
+            "counter_delta": {
+              "rx_bytes": 0,
+              "rx_packets": 0,
+              "rx_errors": 0,
+              "rx_dropped": 0,
+              "rx_fifo": 0,
+              "rx_frame": 0,
+              "rx_compressed": 0,
+              "rx_multicast": 0,
+              "tx_bytes": 0,
+              "tx_packets": 0,
+              "tx_errors": 0,
+              "tx_dropped": 0,
+              "tx_fifo": 0,
+              "tx_collisions": 0,
+              "tx_carrier": 0,
+              "tx_compressed": 0
+            }
+          }
+        },
+        "host_cpu": {
+          "counter_delta": {
+            "user": 54277,
+            "nice": 0,
+            "system": 2630,
+            "idle": 0,
+            "iowait": 13250,
+            "irq": 0,
+            "softirq": 1385,
+            "steal": 0
+          },
+          "percent": {
+            "user": 75.86732269156579,
+            "nice": 0.0,
+            "system": 3.676162254340108,
+            "idle": 0.0,
+            "iowait": 18.520589304184956,
+            "irq": 0.0,
+            "softirq": 1.9359257499091442,
+            "steal": 0.0
+          }
+        },
+        "read_error_samples": 0,
+        "tcp": {
+          "scope": "host-wide TCP, first-to-last monitor sample",
+          "retrans_segments_delta": 0,
+          "retrans_segments_per_second": 0.0,
+          "out_segments_delta": 1088159,
+          "retrans_to_out_segments_percent": 0.0
+        }
+      },
+      "client": {
+        "available": true,
+        "valid": true,
+        "path": "/Users/chen/Documents/Codex/2026-10-13/azure-lavik-2026-10-13-users/outputs/main-large-writes-20261018-1412/client/observations/zincr-main-zincr-c80/monitor.jsonl",
+        "completed": true,
+        "errors": [],
+        "pid": 352118,
+        "start_ticks": 63938462,
+        "first_sample_time": 1792335578.4873056,
+        "last_sample_time": 1792335623.4874737,
+        "elapsed_seconds": 45.00016818,
+        "sample_count": 46,
+        "HZ": 100,
+        "user_seconds": 2.8,
+        "system_seconds": 16.44,
+        "cpu_seconds": 19.240000000000002,
+        "cpu_cores": 0.42755395764389786,
+        "thread_cpu_cores_sum": 0.42799840042731147,
+        "threads": [
+          {
+            "tid": 352121,
+            "comm": "bench",
+            "cpus_seen": [
+              2
+            ],
+            "user_seconds": 0.19,
+            "system_seconds": 1.17,
+            "cpu_seconds": 1.3599999999999999,
+            "cpu_fraction": 0.030222109272125833,
+            "cpu_percent": 3.0222109272125834
+          },
+          {
+            "tid": 352127,
+            "comm": "bench",
+            "cpus_seen": [
+              8
+            ],
+            "user_seconds": 0.2,
+            "system_seconds": 1.11,
+            "cpu_seconds": 1.31,
+            "cpu_fraction": 0.0291110023135918,
+            "cpu_percent": 2.9111002313591796
+          },
+          {
+            "tid": 352119,
+            "comm": "bench",
+            "cpus_seen": [
+              0
+            ],
+            "user_seconds": 0.18,
+            "system_seconds": 1.13,
+            "cpu_seconds": 1.3099999999999998,
+            "cpu_fraction": 0.029111002313591792,
+            "cpu_percent": 2.911100231359179
+          },
+          {
+            "tid": 352132,
+            "comm": "bench",
+            "cpus_seen": [
+              13
+            ],
+            "user_seconds": 0.17,
+            "system_seconds": 1.14,
+            "cpu_seconds": 1.3099999999999998,
+            "cpu_fraction": 0.029111002313591792,
+            "cpu_percent": 2.911100231359179
+          },
+          {
+            "tid": 352134,
+            "comm": "bench",
+            "cpus_seen": [
+              15
+            ],
+            "user_seconds": 0.17,
+            "system_seconds": 1.12,
+            "cpu_seconds": 1.29,
+            "cpu_fraction": 0.02866655953017818,
+            "cpu_percent": 2.866655953017818
+          },
+          {
+            "tid": 352130,
+            "comm": "bench",
+            "cpus_seen": [
+              11
+            ],
+            "user_seconds": 0.18,
+            "system_seconds": 1.1,
+            "cpu_seconds": 1.28,
+            "cpu_fraction": 0.028444338138471373,
+            "cpu_percent": 2.8444338138471372
+          },
+          {
+            "tid": 352129,
+            "comm": "bench",
+            "cpus_seen": [
+              10
+            ],
+            "user_seconds": 0.18,
+            "system_seconds": 1.09,
+            "cpu_seconds": 1.27,
+            "cpu_fraction": 0.028222116746764565,
+            "cpu_percent": 2.8222116746764567
+          },
+          {
+            "tid": 352131,
+            "comm": "bench",
+            "cpus_seen": [
+              12
+            ],
+            "user_seconds": 0.17,
+            "system_seconds": 1.08,
+            "cpu_seconds": 1.25,
+            "cpu_fraction": 0.02777767396335095,
+            "cpu_percent": 2.777767396335095
+          },
+          {
+            "tid": 352133,
+            "comm": "bench",
+            "cpus_seen": [
+              14
+            ],
+            "user_seconds": 0.14,
+            "system_seconds": 1.1,
+            "cpu_seconds": 1.2400000000000002,
+            "cpu_fraction": 0.027555452571644146,
+            "cpu_percent": 2.755545257164415
+          },
+          {
+            "tid": 352128,
+            "comm": "bench",
+            "cpus_seen": [
+              9
+            ],
+            "user_seconds": 0.18,
+            "system_seconds": 1.05,
+            "cpu_seconds": 1.23,
+            "cpu_fraction": 0.027333231179937335,
+            "cpu_percent": 2.7333231179937334
+          },
+          {
+            "tid": 352123,
+            "comm": "bench",
+            "cpus_seen": [
+              4
+            ],
+            "user_seconds": 0.2,
+            "system_seconds": 0.93,
+            "cpu_seconds": 1.1300000000000001,
+            "cpu_fraction": 0.02511101726286926,
+            "cpu_percent": 2.511101726286926
+          },
+          {
+            "tid": 352125,
+            "comm": "bench",
+            "cpus_seen": [
+              6
+            ],
+            "user_seconds": 0.19,
+            "system_seconds": 0.94,
+            "cpu_seconds": 1.13,
+            "cpu_fraction": 0.025111017262869257,
+            "cpu_percent": 2.5111017262869257
+          },
+          {
+            "tid": 352126,
+            "comm": "bench",
+            "cpus_seen": [
+              7
+            ],
+            "user_seconds": 0.16,
+            "system_seconds": 0.9,
+            "cpu_seconds": 1.06,
+            "cpu_fraction": 0.023555467520921608,
+            "cpu_percent": 2.3555467520921605
+          },
+          {
+            "tid": 352122,
+            "comm": "bench",
+            "cpus_seen": [
+              3
+            ],
+            "user_seconds": 0.17,
+            "system_seconds": 0.87,
+            "cpu_seconds": 1.04,
+            "cpu_fraction": 0.023111024737507993,
+            "cpu_percent": 2.311102473750799
+          },
+          {
+            "tid": 352124,
+            "comm": "bench",
+            "cpus_seen": [
+              5
+            ],
+            "user_seconds": 0.17,
+            "system_seconds": 0.86,
+            "cpu_seconds": 1.03,
+            "cpu_fraction": 0.022888803345801182,
+            "cpu_percent": 2.2888803345801185
+          },
+          {
+            "tid": 352120,
+            "comm": "bench",
+            "cpus_seen": [
+              1
+            ],
+            "user_seconds": 0.17,
+            "system_seconds": 0.85,
+            "cpu_seconds": 1.02,
+            "cpu_fraction": 0.022666581954094375,
+            "cpu_percent": 2.2666581954094376
+          },
+          {
+            "tid": 352118,
+            "comm": "bench",
+            "cpus_seen": [
+              23
+            ],
+            "user_seconds": 0.0,
+            "system_seconds": 0.0,
+            "cpu_seconds": 0.0,
+            "cpu_fraction": 0.0,
+            "cpu_percent": 0.0
+          }
+        ],
+        "selected_nic": "eth0",
+        "selected_nic_rates": {
+          "valid": true,
+          "rx_mbps": 12.23898003662972,
+          "tx_mbps": 30.410345368624796,
+          "counter_delta": {
+            "rx_bytes": 68844520,
+            "rx_packets": 1086808,
+            "rx_errors": 0,
+            "rx_dropped": 0,
+            "rx_fifo": 0,
+            "rx_frame": 0,
+            "rx_compressed": 0,
+            "rx_multicast": 0,
+            "tx_bytes": 171058832,
+            "tx_packets": 1086770,
+            "tx_errors": 0,
+            "tx_dropped": 0,
+            "tx_fifo": 0,
+            "tx_collisions": 0,
+            "tx_carrier": 0,
+            "tx_compressed": 0
+          }
+        },
+        "interfaces": {
+          "enP43625s1": {
+            "valid": true,
+            "rx_mbps": 14.943996415970728,
+            "tx_mbps": 30.410581101077117,
+            "counter_delta": {
+              "rx_bytes": 84060294,
+              "rx_packets": 1086815,
+              "rx_errors": 0,
+              "rx_dropped": 0,
+              "rx_fifo": 0,
+              "rx_frame": 0,
+              "rx_compressed": 0,
+              "rx_multicast": 0,
+              "tx_bytes": 171060158,
+              "tx_packets": 1086790,
+              "tx_errors": 0,
+              "tx_dropped": 0,
+              "tx_fifo": 0,
+              "tx_collisions": 0,
+              "tx_carrier": 0,
+              "tx_compressed": 0
+            }
+          },
+          "eth0": {
+            "valid": true,
+            "rx_mbps": 12.23898003662972,
+            "tx_mbps": 30.410345368624796,
+            "counter_delta": {
+              "rx_bytes": 68844520,
+              "rx_packets": 1086808,
+              "rx_errors": 0,
+              "rx_dropped": 0,
+              "rx_fifo": 0,
+              "rx_frame": 0,
+              "rx_compressed": 0,
+              "rx_multicast": 0,
+              "tx_bytes": 171058832,
+              "tx_packets": 1086770,
+              "tx_errors": 0,
+              "tx_dropped": 0,
+              "tx_fifo": 0,
+              "tx_collisions": 0,
+              "tx_carrier": 0,
+              "tx_compressed": 0
+            }
+          },
+          "lo": {
+            "valid": true,
+            "rx_mbps": 0.0,
+            "tx_mbps": 0.0,
+            "counter_delta": {
+              "rx_bytes": 0,
+              "rx_packets": 0,
+              "rx_errors": 0,
+              "rx_dropped": 0,
+              "rx_fifo": 0,
+              "rx_frame": 0,
+              "rx_compressed": 0,
+              "rx_multicast": 0,
+              "tx_bytes": 0,
+              "tx_packets": 0,
+              "tx_errors": 0,
+              "tx_dropped": 0,
+              "tx_fifo": 0,
+              "tx_collisions": 0,
+              "tx_carrier": 0,
+              "tx_compressed": 0
+            }
+          }
+        },
+        "host_cpu": {
+          "counter_delta": {
+            "user": 251,
+            "nice": 0,
+            "system": 1326,
+            "idle": 140722,
+            "iowait": 0,
+            "irq": 0,
+            "softirq": 209,
+            "steal": 0
+          },
+          "percent": {
+            "user": 0.17613046285120834,
+            "nice": 0.0,
+            "system": 0.9304740786482162,
+            "idle": 98.7467370252898,
+            "iowait": 0.0,
+            "irq": 0.0,
+            "softirq": 0.1466584332107671,
+            "steal": 0.0
+          }
+        },
+        "read_error_samples": 0,
+        "tcp": {
+          "scope": "host-wide TCP, first-to-last monitor sample",
+          "retrans_segments_delta": 0,
+          "retrans_segments_per_second": 0.0,
+          "out_segments_delta": 1086794,
+          "retrans_to_out_segments_percent": 0.0
+        }
+      },
+      "state_validation": null,
+      "server_cpu_cores": 12.958602078690156,
+      "server_eth1_tx_gbps": 0.014956446165524499,
+      "server_eth1_rx_gbps": 0.02772763940051587,
+      "client_eth0_tx_gbps": 0.030410345368624796,
+      "client_eth0_rx_gbps": 0.01223898003662972,
+      "launch_settings": [
+        "taskset",
+        "-c",
+        "0-15",
+        "<binary>",
+        "--storage=spdk",
+        "--bind=10.84.1.4",
+        "--threads=16",
+        "--pin-workers",
+        "--metrics-port=0",
+        "--spdk-max-completions-per-poll=16",
+        "--log-dir=<session>",
+        "--shutdown-checkpoint",
+        "--data-file=spdk://2401:00:00.0/1",
+        "--data-file=spdk://221c:00:00.0/1",
+        "--data-file=spdk://7f10:00:00.0/1",
+        "--data-file=spdk://399c:00:00.0/1",
+        "--data-file=spdk://c0ef:00:00.0/1",
+        "--data-file=spdk://6319:00:00.0/1"
+      ],
+      "launch_environment": {
+        "BYCORF_EAL_ARGS": "-a 2401:00:00.0 -a 221c:00:00.0 -a 7f10:00:00.0 -a 399c:00:00.0 -a c0ef:00:00.0 -a 6319:00:00.0",
+        "BYCORF_DPDK_MEMORY_MB": "8192"
+      },
+      "source_path": "client/results/zincr-main-zincr-c80"
+    },
+    {
+      "op": "zswap",
+      "label": "zswap-main-zswap-c80",
+      "revision": "9c68079a7dd775db647cf55fe578a6cd43426a82",
+      "binary_sha256": "4fe9c53a6b1ebcff1bce17ce3aac213e879f20b82f09a326ae02560a792056c3",
+      "client_binary": "bench",
+      "client_binary_sha256": "f596a6f1a5a1a600c5cec3240e0f56a0dd56f338283d5666e38a4c82ccb62b08",
+      "valid": true,
+      "clean_stop_verified": true,
+      "keys": 8192,
+      "connections": 80,
+      "elapsed_seconds": 60.012707,
+      "unit": "pairs/s",
+      "metrics": {
+        "OPERATIONS": {
+          "count": 1137675,
+          "qps": 18957.235217,
+          "avg_ms": 4.218501,
+          "p50_ms": 1.754,
+          "p99_ms": 26.756,
+          "p999_ms": 37.095,
+          "max_ms": 209.562
+        },
+        "ZADD": {
+          "count": 1137675,
+          "qps": 18957.235217,
+          "avg_ms": 1.751644,
+          "p50_ms": 0.732,
+          "p99_ms": 12.057,
+          "p999_ms": 20.719,
+          "max_ms": 42.223
+        },
+        "ZREM": {
+          "count": 1137675,
+          "qps": 18957.235217,
+          "avg_ms": 2.465952,
+          "p50_ms": 0.907,
+          "p99_ms": 17.96,
+          "p999_ms": 26.663,
+          "max_ms": 208.996
+        }
+      },
+      "server": {
+        "available": true,
+        "valid": true,
+        "path": "/Users/chen/Documents/Codex/2026-10-13/azure-lavik-2026-10-13-users/outputs/main-large-writes-20261018-1412/server/observations/zswap-main-zswap-c80/monitor.jsonl",
+        "completed": true,
+        "errors": [],
+        "pid": 2001726,
+        "start_ticks": 63931609,
+        "first_sample_time": 1792336955.0016763,
+        "last_sample_time": 1792337000.0018737,
+        "elapsed_seconds": 45.000197654,
+        "sample_count": 46,
+        "HZ": 100,
+        "user_seconds": 554.06,
+        "system_seconds": 54.42,
+        "cpu_seconds": 608.4799999999999,
+        "cpu_cores": 13.521718386183867,
+        "thread_cpu_cores_sum": 13.52082950119924,
+        "threads": [
+          {
+            "tid": 2001755,
+            "comm": "lavik",
+            "cpus_seen": [
+              15
+            ],
+            "user_seconds": 37.93,
+            "system_seconds": 3.06,
+            "cpu_seconds": 40.99,
+            "cpu_fraction": 0.9108848879990745,
+            "cpu_percent": 91.08848879990744
+          },
+          {
+            "tid": 2001754,
+            "comm": "lavik",
+            "cpus_seen": [
+              14
+            ],
+            "user_seconds": 37.85,
+            "system_seconds": 2.97,
+            "cpu_seconds": 40.82,
+            "cpu_fraction": 0.9071071268143991,
+            "cpu_percent": 90.71071268143992
+          },
+          {
+            "tid": 2001748,
+            "comm": "lavik",
+            "cpus_seen": [
+              8
+            ],
+            "user_seconds": 37.26,
+            "system_seconds": 3.44,
+            "cpu_seconds": 40.699999999999996,
+            "cpu_fraction": 0.9044404718605105,
+            "cpu_percent": 90.44404718605105
+          },
+          {
+            "tid": 2001749,
+            "comm": "lavik",
+            "cpus_seen": [
+              9
+            ],
+            "user_seconds": 37.37,
+            "system_seconds": 3.27,
+            "cpu_seconds": 40.64,
+            "cpu_fraction": 0.9031071443835664,
+            "cpu_percent": 90.31071443835664
+          },
+          {
+            "tid": 2001743,
+            "comm": "lavik",
+            "cpus_seen": [
+              3
+            ],
+            "user_seconds": 36.62,
+            "system_seconds": 3.73,
+            "cpu_seconds": 40.349999999999994,
+            "cpu_fraction": 0.8966627282450024,
+            "cpu_percent": 89.66627282450024
+          },
+          {
+            "tid": 2001742,
+            "comm": "lavik",
+            "cpus_seen": [
+              2
+            ],
+            "user_seconds": 36.9,
+            "system_seconds": 3.33,
+            "cpu_seconds": 40.23,
+            "cpu_fraction": 0.893996073291114,
+            "cpu_percent": 89.39960732911139
+          },
+          {
+            "tid": 2001752,
+            "comm": "lavik",
+            "cpus_seen": [
+              12
+            ],
+            "user_seconds": 35.44,
+            "system_seconds": 3.41,
+            "cpu_seconds": 38.849999999999994,
+            "cpu_fraction": 0.8633295413213964,
+            "cpu_percent": 86.33295413213963
+          },
+          {
+            "tid": 2001753,
+            "comm": "lavik",
+            "cpus_seen": [
+              13
+            ],
+            "user_seconds": 34.85,
+            "system_seconds": 3.89,
+            "cpu_seconds": 38.74,
+            "cpu_fraction": 0.8608851076136654,
+            "cpu_percent": 86.08851076136654
+          },
+          {
+            "tid": 2001746,
+            "comm": "lavik",
+            "cpus_seen": [
+              6
+            ],
+            "user_seconds": 34.5,
+            "system_seconds": 3.04,
+            "cpu_seconds": 37.54,
+            "cpu_fraction": 0.8342185580747805,
+            "cpu_percent": 83.42185580747805
+          },
+          {
+            "tid": 2001747,
+            "comm": "lavik",
+            "cpus_seen": [
+              7
+            ],
+            "user_seconds": 33.95,
+            "system_seconds": 3.53,
+            "cpu_seconds": 37.480000000000004,
+            "cpu_fraction": 0.8328852305978364,
+            "cpu_percent": 83.28852305978364
+          },
+          {
+            "tid": 2001740,
+            "comm": "lavik",
+            "cpus_seen": [
+              0
+            ],
+            "user_seconds": 34.22,
+            "system_seconds": 3.06,
+            "cpu_seconds": 37.28,
+            "cpu_fraction": 0.8284408056746888,
+            "cpu_percent": 82.84408056746888
+          },
+          {
+            "tid": 2001741,
+            "comm": "lavik",
+            "cpus_seen": [
+              1
+            ],
+            "user_seconds": 33.76,
+            "system_seconds": 3.3,
+            "cpu_seconds": 37.059999999999995,
+            "cpu_fraction": 0.8235519382592265,
+            "cpu_percent": 82.35519382592265
+          },
+          {
+            "tid": 2001751,
+            "comm": "lavik",
+            "cpus_seen": [
+              11
+            ],
+            "user_seconds": 31.95,
+            "system_seconds": 3.97,
+            "cpu_seconds": 35.92,
+            "cpu_fraction": 0.798218716197286,
+            "cpu_percent": 79.8218716197286
+          },
+          {
+            "tid": 2001750,
+            "comm": "lavik",
+            "cpus_seen": [
+              10
+            ],
+            "user_seconds": 31.99,
+            "system_seconds": 3.7,
+            "cpu_seconds": 35.69,
+            "cpu_fraction": 0.7931076275356663,
+            "cpu_percent": 79.31076275356665
+          },
+          {
+            "tid": 2001745,
+            "comm": "lavik",
+            "cpus_seen": [
+              5
+            ],
+            "user_seconds": 29.87,
+            "system_seconds": 3.26,
+            "cpu_seconds": 33.13,
+            "cpu_fraction": 0.7362189885193788,
+            "cpu_percent": 73.62189885193789
+          },
+          {
+            "tid": 2001744,
+            "comm": "lavik",
+            "cpus_seen": [
+              4
+            ],
+            "user_seconds": 29.58,
+            "system_seconds": 3.44,
+            "cpu_seconds": 33.019999999999996,
+            "cpu_fraction": 0.7337745548116476,
+            "cpu_percent": 73.37745548116476
+          },
+          {
+            "tid": 2001726,
+            "comm": "lavik",
+            "cpus_seen": [
+              3
+            ],
+            "user_seconds": 0.0,
+            "system_seconds": 0.0,
+            "cpu_seconds": 0.0,
+            "cpu_fraction": 0.0,
+            "cpu_percent": 0.0
+          },
+          {
+            "tid": 2001728,
+            "comm": "dpdk-intr",
+            "cpus_seen": [
+              4
+            ],
+            "user_seconds": 0.0,
+            "system_seconds": 0.0,
+            "cpu_seconds": 0.0,
+            "cpu_fraction": 0.0,
+            "cpu_percent": 0.0
+          }
+        ],
+        "selected_nic": "eth1",
+        "selected_nic_rates": {
+          "valid": true,
+          "rx_mbps": 40.60969896290136,
+          "tx_mbps": 21.22436437598853,
+          "counter_delta": {
+            "rx_bytes": 228430560,
+            "rx_packets": 1705537,
+            "rx_errors": 0,
+            "rx_dropped": 0,
+            "rx_fifo": 0,
+            "rx_frame": 0,
+            "rx_compressed": 0,
+            "rx_multicast": 0,
+            "tx_bytes": 119387574,
+            "tx_packets": 1705537,
+            "tx_errors": 0,
+            "tx_dropped": 0,
+            "tx_fifo": 0,
+            "tx_collisions": 0,
+            "tx_carrier": 0,
+            "tx_compressed": 0
+          }
+        },
+        "interfaces": {
+          "enP26559s2": {
+            "valid": true,
+            "rx_mbps": 44.85454538488193,
+            "tx_mbps": 21.22436437598853,
+            "counter_delta": {
+              "rx_bytes": 252307926,
+              "rx_packets": 1705536,
+              "rx_errors": 0,
+              "rx_dropped": 0,
+              "rx_fifo": 0,
+              "rx_frame": 0,
+              "rx_compressed": 0,
+              "rx_multicast": 0,
+              "tx_bytes": 119387574,
+              "tx_packets": 1705537,
+              "tx_errors": 0,
+              "tx_dropped": 0,
+              "tx_fifo": 0,
+              "tx_collisions": 0,
+              "tx_carrier": 0,
+              "tx_compressed": 0
+            }
+          },
+          "eth0": {
+            "valid": true,
+            "rx_mbps": 0.005916240680696989,
+            "tx_mbps": 0.010581464634026427,
+            "counter_delta": {
+              "rx_bytes": 33279,
+              "rx_packets": 131,
+              "rx_errors": 0,
+              "rx_dropped": 0,
+              "rx_fifo": 0,
+              "rx_frame": 0,
+              "rx_compressed": 0,
+              "rx_multicast": 0,
+              "tx_bytes": 59521,
+              "tx_packets": 165,
+              "tx_errors": 0,
+              "tx_dropped": 0,
+              "tx_fifo": 0,
+              "tx_collisions": 0,
+              "tx_carrier": 0,
+              "tx_compressed": 0
+            }
+          },
+          "eth1": {
+            "valid": true,
+            "rx_mbps": 40.60969896290136,
+            "tx_mbps": 21.22436437598853,
+            "counter_delta": {
+              "rx_bytes": 228430560,
+              "rx_packets": 1705537,
+              "rx_errors": 0,
+              "rx_dropped": 0,
+              "rx_fifo": 0,
+              "rx_frame": 0,
+              "rx_compressed": 0,
+              "rx_multicast": 0,
+              "tx_bytes": 119387574,
+              "tx_packets": 1705537,
+              "tx_errors": 0,
+              "tx_dropped": 0,
+              "tx_fifo": 0,
+              "tx_collisions": 0,
+              "tx_carrier": 0,
+              "tx_compressed": 0
+            }
+          },
+          "lo": {
+            "valid": true,
+            "rx_mbps": 0.0,
+            "tx_mbps": 0.0,
+            "counter_delta": {
+              "rx_bytes": 0,
+              "rx_packets": 0,
+              "rx_errors": 0,
+              "rx_dropped": 0,
+              "rx_fifo": 0,
+              "rx_frame": 0,
+              "rx_compressed": 0,
+              "rx_multicast": 0,
+              "tx_bytes": 0,
+              "tx_packets": 0,
+              "tx_errors": 0,
+              "tx_dropped": 0,
+              "tx_fifo": 0,
+              "tx_collisions": 0,
+              "tx_carrier": 0,
+              "tx_compressed": 0
+            }
+          }
+        },
+        "host_cpu": {
+          "counter_delta": {
+            "user": 55296,
+            "nice": 0,
+            "system": 3445,
+            "idle": 1,
+            "iowait": 10558,
+            "irq": 0,
+            "softirq": 2118,
+            "steal": 0
+          },
+          "percent": {
+            "user": 77.42585902713601,
+            "nice": 0.0,
+            "system": 4.82371390965863,
+            "idle": 0.0014002072306701391,
+            "iowait": 14.783387941415329,
+            "irq": 0.0,
+            "softirq": 2.9656389145593547,
+            "steal": 0.0
+          }
+        },
+        "read_error_samples": 0,
+        "tcp": {
+          "scope": "host-wide TCP, first-to-last monitor sample",
+          "retrans_segments_delta": 1,
+          "retrans_segments_per_second": 0.02222212461573736,
+          "out_segments_delta": 1705719,
+          "retrans_to_out_segments_percent": 5.8626303629144075e-05
+        }
+      },
+      "client": {
+        "available": true,
+        "valid": true,
+        "path": "/Users/chen/Documents/Codex/2026-10-13/azure-lavik-2026-10-13-users/outputs/main-large-writes-20261018-1412/client/observations/zswap-main-zswap-c80/monitor.jsonl",
+        "completed": true,
+        "errors": [],
+        "pid": 353988,
+        "start_ticks": 64076078,
+        "first_sample_time": 1792336954.6476467,
+        "last_sample_time": 1792336999.6479063,
+        "elapsed_seconds": 45.000259756,
+        "sample_count": 46,
+        "HZ": 100,
+        "user_seconds": 3.32,
+        "system_seconds": 25.45,
+        "cpu_seconds": 28.77,
+        "cpu_cores": 0.6393296428953174,
+        "thread_cpu_cores_sum": 0.6386629800768655,
+        "threads": [
+          {
+            "tid": 353998,
+            "comm": "bench",
+            "cpus_seen": [
+              9
+            ],
+            "user_seconds": 0.21,
+            "system_seconds": 1.85,
+            "cpu_seconds": 2.06,
+            "cpu_fraction": 0.04577751353369321,
+            "cpu_percent": 4.5777513533693215
+          },
+          {
+            "tid": 354001,
+            "comm": "bench",
+            "cpus_seen": [
+              12
+            ],
+            "user_seconds": 0.21,
+            "system_seconds": 1.81,
+            "cpu_seconds": 2.02,
+            "cpu_fraction": 0.04488862977575742,
+            "cpu_percent": 4.488862977575742
+          },
+          {
+            "tid": 354003,
+            "comm": "bench",
+            "cpus_seen": [
+              14
+            ],
+            "user_seconds": 0.21,
+            "system_seconds": 1.81,
+            "cpu_seconds": 2.02,
+            "cpu_fraction": 0.04488862977575742,
+            "cpu_percent": 4.488862977575742
+          },
+          {
+            "tid": 354000,
+            "comm": "bench",
+            "cpus_seen": [
+              11
+            ],
+            "user_seconds": 0.21,
+            "system_seconds": 1.74,
+            "cpu_seconds": 1.95,
+            "cpu_fraction": 0.043333083199369786,
+            "cpu_percent": 4.333308319936979
+          },
+          {
+            "tid": 353989,
+            "comm": "bench",
+            "cpus_seen": [
+              0
+            ],
+            "user_seconds": 0.18,
+            "system_seconds": 1.71,
+            "cpu_seconds": 1.89,
+            "cpu_fraction": 0.0419997575624661,
+            "cpu_percent": 4.1999757562466105
+          },
+          {
+            "tid": 353999,
+            "comm": "bench",
+            "cpus_seen": [
+              10
+            ],
+            "user_seconds": 0.19,
+            "system_seconds": 1.67,
+            "cpu_seconds": 1.8599999999999999,
+            "cpu_fraction": 0.04133309474401426,
+            "cpu_percent": 4.133309474401426
+          },
+          {
+            "tid": 353997,
+            "comm": "bench",
+            "cpus_seen": [
+              8
+            ],
+            "user_seconds": 0.22,
+            "system_seconds": 1.62,
+            "cpu_seconds": 1.84,
+            "cpu_fraction": 0.040888652865046365,
+            "cpu_percent": 4.088865286504636
+          },
+          {
+            "tid": 353991,
+            "comm": "bench",
+            "cpus_seen": [
+              2
+            ],
+            "user_seconds": 0.19,
+            "system_seconds": 1.65,
+            "cpu_seconds": 1.8399999999999999,
+            "cpu_fraction": 0.040888652865046365,
+            "cpu_percent": 4.088865286504636
+          },
+          {
+            "tid": 354004,
+            "comm": "bench",
+            "cpus_seen": [
+              15
+            ],
+            "user_seconds": 0.2,
+            "system_seconds": 1.59,
+            "cpu_seconds": 1.79,
+            "cpu_fraction": 0.03977754816762663,
+            "cpu_percent": 3.977754816762663
+          },
+          {
+            "tid": 353996,
+            "comm": "bench",
+            "cpus_seen": [
+              7
+            ],
+            "user_seconds": 0.22,
+            "system_seconds": 1.54,
+            "cpu_seconds": 1.76,
+            "cpu_fraction": 0.039110885349174784,
+            "cpu_percent": 3.9110885349174787
+          },
+          {
+            "tid": 354002,
+            "comm": "bench",
+            "cpus_seen": [
+              13
+            ],
+            "user_seconds": 0.21,
+            "system_seconds": 1.53,
+            "cpu_seconds": 1.74,
+            "cpu_fraction": 0.03866644347020689,
+            "cpu_percent": 3.866644347020689
+          },
+          {
+            "tid": 353994,
+            "comm": "bench",
+            "cpus_seen": [
+              5
+            ],
+            "user_seconds": 0.21,
+            "system_seconds": 1.49,
+            "cpu_seconds": 1.7,
+            "cpu_fraction": 0.0377775597122711,
+            "cpu_percent": 3.77775597122711
+          },
+          {
+            "tid": 353990,
+            "comm": "bench",
+            "cpus_seen": [
+              1
+            ],
+            "user_seconds": 0.25,
+            "system_seconds": 1.34,
+            "cpu_seconds": 1.59,
+            "cpu_fraction": 0.03533312937794768,
+            "cpu_percent": 3.5333129377947676
+          },
+          {
+            "tid": 353993,
+            "comm": "bench",
+            "cpus_seen": [
+              4
+            ],
+            "user_seconds": 0.2,
+            "system_seconds": 1.38,
+            "cpu_seconds": 1.5799999999999998,
+            "cpu_fraction": 0.03511090843846373,
+            "cpu_percent": 3.511090843846372
+          },
+          {
+            "tid": 353992,
+            "comm": "bench",
+            "cpus_seen": [
+              3
+            ],
+            "user_seconds": 0.22,
+            "system_seconds": 1.35,
+            "cpu_seconds": 1.57,
+            "cpu_fraction": 0.03488868749897978,
+            "cpu_percent": 3.488868749897978
+          },
+          {
+            "tid": 353995,
+            "comm": "bench",
+            "cpus_seen": [
+              6
+            ],
+            "user_seconds": 0.18,
+            "system_seconds": 1.35,
+            "cpu_seconds": 1.53,
+            "cpu_fraction": 0.03399980374104399,
+            "cpu_percent": 3.399980374104399
+          },
+          {
+            "tid": 353988,
+            "comm": "bench",
+            "cpus_seen": [
+              23
+            ],
+            "user_seconds": 0.0,
+            "system_seconds": 0.0,
+            "cpu_seconds": 0.0,
+            "cpu_fraction": 0.0,
+            "cpu_percent": 0.0
+          }
+        ],
+        "selected_nic": "eth0",
+        "selected_nic_rates": {
+          "valid": true,
+          "rx_mbps": 16.99224555916139,
+          "tx_mbps": 44.882673899025754,
+          "counter_delta": {
+            "rx_bytes": 95581933,
+            "rx_packets": 1706393,
+            "rx_errors": 0,
+            "rx_dropped": 0,
+            "rx_fifo": 0,
+            "rx_frame": 0,
+            "rx_compressed": 0,
+            "rx_multicast": 0,
+            "tx_bytes": 252466498,
+            "tx_packets": 1706426,
+            "tx_errors": 0,
+            "tx_dropped": 0,
+            "tx_fifo": 0,
+            "tx_collisions": 0,
+            "tx_carrier": 0,
+            "tx_compressed": 0
+          }
+        },
+        "interfaces": {
+          "enP43625s1": {
+            "valid": true,
+            "rx_mbps": 21.239349932253756,
+            "tx_mbps": 44.882924564245485,
+            "counter_delta": {
+              "rx_bytes": 119472033,
+              "rx_packets": 1706402,
+              "rx_errors": 0,
+              "rx_dropped": 0,
+              "rx_fifo": 0,
+              "rx_frame": 0,
+              "rx_compressed": 0,
+              "rx_multicast": 0,
+              "tx_bytes": 252467908,
+              "tx_packets": 1706447,
+              "tx_errors": 0,
+              "tx_dropped": 0,
+              "tx_fifo": 0,
+              "tx_collisions": 0,
+              "tx_carrier": 0,
+              "tx_compressed": 0
+            }
+          },
+          "eth0": {
+            "valid": true,
+            "rx_mbps": 16.99224555916139,
+            "tx_mbps": 44.882673899025754,
+            "counter_delta": {
+              "rx_bytes": 95581933,
+              "rx_packets": 1706393,
+              "rx_errors": 0,
+              "rx_dropped": 0,
+              "rx_fifo": 0,
+              "rx_frame": 0,
+              "rx_compressed": 0,
+              "rx_multicast": 0,
+              "tx_bytes": 252466498,
+              "tx_packets": 1706426,
+              "tx_errors": 0,
+              "tx_dropped": 0,
+              "tx_fifo": 0,
+              "tx_collisions": 0,
+              "tx_carrier": 0,
+              "tx_compressed": 0
+            }
+          },
+          "lo": {
+            "valid": true,
+            "rx_mbps": 0.0,
+            "tx_mbps": 0.0,
+            "counter_delta": {
+              "rx_bytes": 0,
+              "rx_packets": 0,
+              "rx_errors": 0,
+              "rx_dropped": 0,
+              "rx_fifo": 0,
+              "rx_frame": 0,
+              "rx_compressed": 0,
+              "rx_multicast": 0,
+              "tx_bytes": 0,
+              "tx_packets": 0,
+              "tx_errors": 0,
+              "tx_dropped": 0,
+              "tx_fifo": 0,
+              "tx_collisions": 0,
+              "tx_carrier": 0,
+              "tx_compressed": 0
+            }
+          }
+        },
+        "host_cpu": {
+          "counter_delta": {
+            "user": 290,
+            "nice": 0,
+            "system": 1995,
+            "idle": 139043,
+            "iowait": 67,
+            "irq": 0,
+            "softirq": 333,
+            "steal": 0
+          },
+          "percent": {
+            "user": 0.20461729510047416,
+            "nice": 0.0,
+            "system": 1.4076258749153308,
+            "idle": 98.10552607812147,
+            "iowait": 0.0472736509370061,
+            "irq": 0.0,
+            "softirq": 0.23495710092571687,
+            "steal": 0.0
+          }
+        },
+        "read_error_samples": 0,
+        "tcp": {
+          "scope": "host-wide TCP, first-to-last monitor sample",
+          "retrans_segments_delta": 1,
+          "retrans_segments_per_second": 0.022222093948394764,
+          "out_segments_delta": 1706449,
+          "retrans_to_out_segments_percent": 5.860122394516332e-05
+        }
+      },
+      "state_validation": {
+        "warm_after_sha256": "0a72236f5ea89f1645b8000867db843a38d13c8feb9e79cde71f0143e7998b5f",
+        "formal_before_sha256": "0a72236f5ea89f1645b8000867db843a38d13c8feb9e79cde71f0143e7998b5f",
+        "formal_after_sha256": "050f401e2481ee6d2d051a9faea78b102c71b6d2e7057f91ca89a910204ac442",
+        "changed_flags": 317475,
+        "capacity_connections": 1280,
+        "active_connections": 80,
+        "keys": 8192,
+        "valid": true
+      },
+      "server_cpu_cores": 13.521718386183867,
+      "server_eth1_tx_gbps": 0.021224364375988528,
+      "server_eth1_rx_gbps": 0.04060969896290136,
+      "client_eth0_tx_gbps": 0.044882673899025755,
+      "client_eth0_rx_gbps": 0.01699224555916139,
+      "launch_settings": [
+        "taskset",
+        "-c",
+        "0-15",
+        "<binary>",
+        "--storage=spdk",
+        "--bind=10.84.1.4",
+        "--threads=16",
+        "--pin-workers",
+        "--metrics-port=0",
+        "--spdk-max-completions-per-poll=16",
+        "--log-dir=<session>",
+        "--shutdown-checkpoint",
+        "--data-file=spdk://2401:00:00.0/1",
+        "--data-file=spdk://221c:00:00.0/1",
+        "--data-file=spdk://7f10:00:00.0/1",
+        "--data-file=spdk://399c:00:00.0/1",
+        "--data-file=spdk://c0ef:00:00.0/1",
+        "--data-file=spdk://6319:00:00.0/1"
+      ],
+      "launch_environment": {
+        "BYCORF_EAL_ARGS": "-a 2401:00:00.0 -a 221c:00:00.0 -a 7f10:00:00.0 -a 399c:00:00.0 -a c0ef:00:00.0 -a 6319:00:00.0",
+        "BYCORF_DPDK_MEMORY_MB": "8192"
+      },
+      "source_path": "client/results/zswap-main-zswap-c80"
+    },
+    {
+      "op": "stream",
+      "label": "stream-main-stream-c80",
+      "revision": "9c68079a7dd775db647cf55fe578a6cd43426a82",
+      "binary_sha256": "4fe9c53a6b1ebcff1bce17ce3aac213e879f20b82f09a326ae02560a792056c3",
+      "client_binary": "bench",
+      "client_binary_sha256": "f596a6f1a5a1a600c5cec3240e0f56a0dd56f338283d5666e38a4c82ccb62b08",
+      "valid": true,
+      "clean_stop_verified": true,
+      "keys": 8192,
+      "connections": 80,
+      "elapsed_seconds": 60.014885,
+      "unit": "QPS",
+      "metrics": {
+        "OPERATIONS": {
+          "count": 3503523,
+          "qps": 58377.567157,
+          "avg_ms": 1.368803,
+          "p50_ms": 0.807,
+          "p99_ms": 9.584,
+          "p999_ms": 18.879,
+          "max_ms": 209.419
+        },
+        "XADD_MAXLEN": {
+          "count": 3503523,
+          "qps": 58377.567157,
+          "avg_ms": 1.368803,
+          "p50_ms": 0.807,
+          "p99_ms": 9.584,
+          "p999_ms": 18.879,
+          "max_ms": 209.419
+        }
+      },
+      "server": {
+        "available": true,
+        "valid": true,
+        "path": "/Users/chen/Documents/Codex/2026-10-13/azure-lavik-2026-10-13-users/outputs/main-large-writes-20261018-1412/server/observations/stream-main-stream-c80/monitor.jsonl",
+        "completed": true,
+        "errors": [],
+        "pid": 2002790,
+        "start_ticks": 64069221,
+        "first_sample_time": 1792337482.0944378,
+        "last_sample_time": 1792337527.094625,
+        "elapsed_seconds": 45.000187406,
+        "sample_count": 46,
+        "HZ": 100,
+        "user_seconds": 561.9,
+        "system_seconds": 80.69,
+        "cpu_seconds": 642.5899999999999,
+        "cpu_cores": 14.279718308780234,
+        "thread_cpu_cores_sum": 14.279496087483471,
+        "threads": [
+          {
+            "tid": 2002804,
+            "comm": "lavik",
+            "cpus_seen": [
+              0
+            ],
+            "user_seconds": 36.07,
+            "system_seconds": 5.05,
+            "cpu_seconds": 41.12,
+            "cpu_fraction": 0.9137739722949988,
+            "cpu_percent": 91.37739722949988
+          },
+          {
+            "tid": 2002805,
+            "comm": "lavik",
+            "cpus_seen": [
+              1
+            ],
+            "user_seconds": 35.23,
+            "system_seconds": 5.88,
+            "cpu_seconds": 41.11,
+            "cpu_fraction": 0.9135517509982345,
+            "cpu_percent": 91.35517509982344
+          },
+          {
+            "tid": 2002813,
+            "comm": "lavik",
+            "cpus_seen": [
+              9
+            ],
+            "user_seconds": 35.81,
+            "system_seconds": 4.94,
+            "cpu_seconds": 40.75,
+            "cpu_fraction": 0.905551784314718,
+            "cpu_percent": 90.55517843147179
+          },
+          {
+            "tid": 2002817,
+            "comm": "lavik",
+            "cpus_seen": [
+              13
+            ],
+            "user_seconds": 35.2,
+            "system_seconds": 5.55,
+            "cpu_seconds": 40.75,
+            "cpu_fraction": 0.905551784314718,
+            "cpu_percent": 90.55517843147179
+          },
+          {
+            "tid": 2002816,
+            "comm": "lavik",
+            "cpus_seen": [
+              12
+            ],
+            "user_seconds": 36.5,
+            "system_seconds": 4.24,
+            "cpu_seconds": 40.74,
+            "cpu_fraction": 0.9053295630179536,
+            "cpu_percent": 90.53295630179535
+          },
+          {
+            "tid": 2002818,
+            "comm": "lavik",
+            "cpus_seen": [
+              14
+            ],
+            "user_seconds": 35.74,
+            "system_seconds": 4.99,
+            "cpu_seconds": 40.730000000000004,
+            "cpu_fraction": 0.9051073417211893,
+            "cpu_percent": 90.51073417211893
+          },
+          {
+            "tid": 2002807,
+            "comm": "lavik",
+            "cpus_seen": [
+              3
+            ],
+            "user_seconds": 36.17,
+            "system_seconds": 4.51,
+            "cpu_seconds": 40.68,
+            "cpu_fraction": 0.9039962352373675,
+            "cpu_percent": 90.39962352373675
+          },
+          {
+            "tid": 2002812,
+            "comm": "lavik",
+            "cpus_seen": [
+              8
+            ],
+            "user_seconds": 34.5,
+            "system_seconds": 6.12,
+            "cpu_seconds": 40.62,
+            "cpu_fraction": 0.9026629074567813,
+            "cpu_percent": 90.26629074567813
+          },
+          {
+            "tid": 2002810,
+            "comm": "lavik",
+            "cpus_seen": [
+              6
+            ],
+            "user_seconds": 36.38,
+            "system_seconds": 4.15,
+            "cpu_seconds": 40.53,
+            "cpu_fraction": 0.9006629157859023,
+            "cpu_percent": 90.06629157859022
+          },
+          {
+            "tid": 2002811,
+            "comm": "lavik",
+            "cpus_seen": [
+              7
+            ],
+            "user_seconds": 34.53,
+            "system_seconds": 5.98,
+            "cpu_seconds": 40.510000000000005,
+            "cpu_fraction": 0.9002184731923737,
+            "cpu_percent": 90.02184731923737
+          },
+          {
+            "tid": 2002806,
+            "comm": "lavik",
+            "cpus_seen": [
+              2
+            ],
+            "user_seconds": 36.18,
+            "system_seconds": 4.18,
+            "cpu_seconds": 40.36,
+            "cpu_fraction": 0.8968851537409084,
+            "cpu_percent": 89.68851537409084
+          },
+          {
+            "tid": 2002819,
+            "comm": "lavik",
+            "cpus_seen": [
+              15
+            ],
+            "user_seconds": 35.72,
+            "system_seconds": 4.51,
+            "cpu_seconds": 40.23,
+            "cpu_fraction": 0.8939962768829718,
+            "cpu_percent": 89.39962768829717
+          },
+          {
+            "tid": 2002809,
+            "comm": "lavik",
+            "cpus_seen": [
+              5
+            ],
+            "user_seconds": 33.86,
+            "system_seconds": 5.15,
+            "cpu_seconds": 39.01,
+            "cpu_fraction": 0.8668852786777214,
+            "cpu_percent": 86.68852786777214
+          },
+          {
+            "tid": 2002808,
+            "comm": "lavik",
+            "cpus_seen": [
+              4
+            ],
+            "user_seconds": 33.67,
+            "system_seconds": 5.29,
+            "cpu_seconds": 38.96,
+            "cpu_fraction": 0.8657741721938996,
+            "cpu_percent": 86.57741721938997
+          },
+          {
+            "tid": 2002815,
+            "comm": "lavik",
+            "cpus_seen": [
+              11
+            ],
+            "user_seconds": 32.64,
+            "system_seconds": 5.71,
+            "cpu_seconds": 38.35,
+            "cpu_fraction": 0.8522186730912744,
+            "cpu_percent": 85.22186730912745
+          },
+          {
+            "tid": 2002814,
+            "comm": "lavik",
+            "cpus_seen": [
+              10
+            ],
+            "user_seconds": 33.69,
+            "system_seconds": 4.44,
+            "cpu_seconds": 38.129999999999995,
+            "cpu_fraction": 0.8473298045624587,
+            "cpu_percent": 84.73298045624587
+          },
+          {
+            "tid": 2002790,
+            "comm": "lavik",
+            "cpus_seen": [
+              1
+            ],
+            "user_seconds": 0.0,
+            "system_seconds": 0.0,
+            "cpu_seconds": 0.0,
+            "cpu_fraction": 0.0,
+            "cpu_percent": 0.0
+          },
+          {
+            "tid": 2002792,
+            "comm": "dpdk-intr",
+            "cpus_seen": [
+              2
+            ],
+            "user_seconds": 0.0,
+            "system_seconds": 0.0,
+            "cpu_seconds": 0.0,
+            "cpu_fraction": 0.0,
+            "cpu_percent": 0.0
+          }
+        ],
+        "selected_nic": "eth1",
+        "selected_nic_rates": {
+          "valid": true,
+          "rx_mbps": 189.12598037014493,
+          "tx_mbps": 41.20960260162699,
+          "counter_delta": {
+            "rx_bytes": 1063838070,
+            "rx_packets": 2634146,
+            "rx_errors": 0,
+            "rx_dropped": 0,
+            "rx_fifo": 0,
+            "rx_frame": 0,
+            "rx_compressed": 0,
+            "rx_multicast": 0,
+            "tx_bytes": 231804980,
+            "tx_packets": 2634148,
+            "tx_errors": 0,
+            "tx_dropped": 0,
+            "tx_fifo": 0,
+            "tx_collisions": 0,
+            "tx_carrier": 0,
+            "tx_compressed": 0
+          }
+        },
+        "interfaces": {
+          "enP26559s2": {
+            "valid": true,
+            "rx_mbps": 195.68212408879674,
+            "tx_mbps": 41.20960260162699,
+            "counter_delta": {
+              "rx_bytes": 1100716532,
+              "rx_packets": 2634147,
+              "rx_errors": 0,
+              "rx_dropped": 0,
+              "rx_fifo": 0,
+              "rx_frame": 0,
+              "rx_compressed": 0,
+              "rx_multicast": 0,
+              "tx_bytes": 231804980,
+              "tx_packets": 2634148,
+              "tx_errors": 0,
+              "tx_dropped": 0,
+              "tx_fifo": 0,
+              "tx_collisions": 0,
+              "tx_carrier": 0,
+              "tx_compressed": 0
+            }
+          },
+          "eth0": {
+            "valid": true,
+            "rx_mbps": 0.006306107071059961,
+            "tx_mbps": 0.01178821757371772,
+            "counter_delta": {
+              "rx_bytes": 35472,
+              "rx_packets": 139,
+              "rx_errors": 0,
+              "rx_dropped": 0,
+              "rx_fifo": 0,
+              "rx_frame": 0,
+              "rx_compressed": 0,
+              "rx_multicast": 0,
+              "tx_bytes": 66309,
+              "tx_packets": 175,
+              "tx_errors": 0,
+              "tx_dropped": 0,
+              "tx_fifo": 0,
+              "tx_collisions": 0,
+              "tx_carrier": 0,
+              "tx_compressed": 0
+            }
+          },
+          "eth1": {
+            "valid": true,
+            "rx_mbps": 189.12598037014493,
+            "tx_mbps": 41.20960260162699,
+            "counter_delta": {
+              "rx_bytes": 1063838070,
+              "rx_packets": 2634146,
+              "rx_errors": 0,
+              "rx_dropped": 0,
+              "rx_fifo": 0,
+              "rx_frame": 0,
+              "rx_compressed": 0,
+              "rx_multicast": 0,
+              "tx_bytes": 231804980,
+              "tx_packets": 2634148,
+              "tx_errors": 0,
+              "tx_dropped": 0,
+              "tx_fifo": 0,
+              "tx_collisions": 0,
+              "tx_carrier": 0,
+              "tx_compressed": 0
+            }
+          },
+          "lo": {
+            "valid": true,
+            "rx_mbps": 0.0,
+            "tx_mbps": 0.0,
+            "counter_delta": {
+              "rx_bytes": 0,
+              "rx_packets": 0,
+              "rx_errors": 0,
+              "rx_dropped": 0,
+              "rx_fifo": 0,
+              "rx_frame": 0,
+              "rx_compressed": 0,
+              "rx_multicast": 0,
+              "tx_bytes": 0,
+              "tx_packets": 0,
+              "tx_errors": 0,
+              "tx_dropped": 0,
+              "tx_fifo": 0,
+              "tx_collisions": 0,
+              "tx_carrier": 0,
+              "tx_compressed": 0
+            }
+          }
+        },
+        "host_cpu": {
+          "counter_delta": {
+            "user": 56101,
+            "nice": 0,
+            "system": 4875,
+            "idle": 1,
+            "iowait": 7071,
+            "irq": 0,
+            "softirq": 3380,
+            "steal": 0
+          },
+          "percent": {
+            "user": 78.54202833622669,
+            "nice": 0.0,
+            "system": 6.825054600436803,
+            "idle": 0.0014000112000896008,
+            "iowait": 9.899479195833568,
+            "irq": 0.0,
+            "softirq": 4.73203785630285,
+            "steal": 0.0
+          }
+        },
+        "read_error_samples": 0,
+        "tcp": {
+          "scope": "host-wide TCP, first-to-last monitor sample",
+          "retrans_segments_delta": 0,
+          "retrans_segments_per_second": 0.0,
+          "out_segments_delta": 2634342,
+          "retrans_to_out_segments_percent": 0.0
+        }
+      },
+      "client": {
+        "available": true,
+        "valid": true,
+        "path": "/Users/chen/Documents/Codex/2026-10-13/azure-lavik-2026-10-13-users/outputs/main-large-writes-20261018-1412/client/observations/stream-main-stream-c80/monitor.jsonl",
+        "completed": true,
+        "errors": [],
+        "pid": 354804,
+        "start_ticks": 64128782,
+        "first_sample_time": 1792337481.7143512,
+        "last_sample_time": 1792337526.7145612,
+        "elapsed_seconds": 45.000210459,
+        "sample_count": 46,
+        "HZ": 100,
+        "user_seconds": 6.6,
+        "system_seconds": 38.89,
+        "cpu_seconds": 45.49,
+        "cpu_cores": 1.0108841611184518,
+        "thread_cpu_cores_sum": 1.0106619399355286,
+        "threads": [
+          {
+            "tid": 354815,
+            "comm": "bench",
+            "cpus_seen": [
+              10
+            ],
+            "user_seconds": 0.38,
+            "system_seconds": 2.72,
+            "cpu_seconds": 3.1,
+            "cpu_fraction": 0.06888856670624754,
+            "cpu_percent": 6.8888566706247545
+          },
+          {
+            "tid": 354813,
+            "comm": "bench",
+            "cpus_seen": [
+              8
+            ],
+            "user_seconds": 0.38,
+            "system_seconds": 2.71,
+            "cpu_seconds": 3.09,
+            "cpu_fraction": 0.06866634552332417,
+            "cpu_percent": 6.866634552332417
+          },
+          {
+            "tid": 354818,
+            "comm": "bench",
+            "cpus_seen": [
+              13
+            ],
+            "user_seconds": 0.42,
+            "system_seconds": 2.66,
+            "cpu_seconds": 3.08,
+            "cpu_fraction": 0.06844412434040079,
+            "cpu_percent": 6.844412434040079
+          },
+          {
+            "tid": 354805,
+            "comm": "bench",
+            "cpus_seen": [
+              0
+            ],
+            "user_seconds": 0.41,
+            "system_seconds": 2.63,
+            "cpu_seconds": 3.04,
+            "cpu_fraction": 0.06755523960870727,
+            "cpu_percent": 6.755523960870727
+          },
+          {
+            "tid": 354814,
+            "comm": "bench",
+            "cpus_seen": [
+              9
+            ],
+            "user_seconds": 0.41,
+            "system_seconds": 2.61,
+            "cpu_seconds": 3.02,
+            "cpu_fraction": 0.06711079724286051,
+            "cpu_percent": 6.711079724286051
+          },
+          {
+            "tid": 354817,
+            "comm": "bench",
+            "cpus_seen": [
+              12
+            ],
+            "user_seconds": 0.41,
+            "system_seconds": 2.56,
+            "cpu_seconds": 2.97,
+            "cpu_fraction": 0.06599969132824361,
+            "cpu_percent": 6.599969132824361
+          },
+          {
+            "tid": 354807,
+            "comm": "bench",
+            "cpus_seen": [
+              2
+            ],
+            "user_seconds": 0.37,
+            "system_seconds": 2.55,
+            "cpu_seconds": 2.92,
+            "cpu_fraction": 0.06488858541362671,
+            "cpu_percent": 6.488858541362672
+          },
+          {
+            "tid": 354816,
+            "comm": "bench",
+            "cpus_seen": [
+              11
+            ],
+            "user_seconds": 0.41,
+            "system_seconds": 2.5,
+            "cpu_seconds": 2.91,
+            "cpu_fraction": 0.06466636423070335,
+            "cpu_percent": 6.466636423070334
+          },
+          {
+            "tid": 354819,
+            "comm": "bench",
+            "cpus_seen": [
+              14
+            ],
+            "user_seconds": 0.4,
+            "system_seconds": 2.51,
+            "cpu_seconds": 2.9099999999999997,
+            "cpu_fraction": 0.06466636423070334,
+            "cpu_percent": 6.466636423070333
+          },
+          {
+            "tid": 354820,
+            "comm": "bench",
+            "cpus_seen": [
+              15
+            ],
+            "user_seconds": 0.4,
+            "system_seconds": 2.44,
+            "cpu_seconds": 2.84,
+            "cpu_fraction": 0.06311081595023968,
+            "cpu_percent": 6.3110815950239685
+          },
+          {
+            "tid": 354808,
+            "comm": "bench",
+            "cpus_seen": [
+              3
+            ],
+            "user_seconds": 0.45,
+            "system_seconds": 2.24,
+            "cpu_seconds": 2.6900000000000004,
+            "cpu_fraction": 0.05977749820638901,
+            "cpu_percent": 5.977749820638901
+          },
+          {
+            "tid": 354812,
+            "comm": "bench",
+            "cpus_seen": [
+              7
+            ],
+            "user_seconds": 0.4,
+            "system_seconds": 2.26,
+            "cpu_seconds": 2.6599999999999997,
+            "cpu_fraction": 0.059110834657618856,
+            "cpu_percent": 5.911083465761885
+          },
+          {
+            "tid": 354806,
+            "comm": "bench",
+            "cpus_seen": [
+              1
+            ],
+            "user_seconds": 0.46,
+            "system_seconds": 2.15,
+            "cpu_seconds": 2.61,
+            "cpu_fraction": 0.05799972874300196,
+            "cpu_percent": 5.799972874300196
+          },
+          {
+            "tid": 354809,
+            "comm": "bench",
+            "cpus_seen": [
+              4
+            ],
+            "user_seconds": 0.45,
+            "system_seconds": 2.12,
+            "cpu_seconds": 2.5700000000000003,
+            "cpu_fraction": 0.057110844011308455,
+            "cpu_percent": 5.711084401130845
+          },
+          {
+            "tid": 354810,
+            "comm": "bench",
+            "cpus_seen": [
+              5
+            ],
+            "user_seconds": 0.47,
+            "system_seconds": 2.07,
+            "cpu_seconds": 2.54,
+            "cpu_fraction": 0.05644418046253831,
+            "cpu_percent": 5.644418046253831
+          },
+          {
+            "tid": 354811,
+            "comm": "bench",
+            "cpus_seen": [
+              6
+            ],
+            "user_seconds": 0.38,
+            "system_seconds": 2.15,
+            "cpu_seconds": 2.53,
+            "cpu_fraction": 0.05622195927961492,
+            "cpu_percent": 5.622195927961492
+          },
+          {
+            "tid": 354804,
+            "comm": "bench",
+            "cpus_seen": [
+              26
+            ],
+            "user_seconds": 0.0,
+            "system_seconds": 0.0,
+            "cpu_seconds": 0.0,
+            "cpu_fraction": 0.0,
+            "cpu_percent": 0.0
+          }
+        ],
+        "selected_nic": "eth0",
+        "selected_nic_rates": {
+          "valid": true,
+          "rx_mbps": 34.63433686426884,
+          "tx_mbps": 195.55039068134062,
+          "counter_delta": {
+            "rx_bytes": 194819056,
+            "rx_packets": 2632346,
+            "rx_errors": 0,
+            "rx_dropped": 0,
+            "rx_fifo": 0,
+            "rx_frame": 0,
+            "rx_compressed": 0,
+            "rx_multicast": 0,
+            "tx_bytes": 1099976092,
+            "tx_packets": 2632389,
+            "tx_errors": 0,
+            "tx_dropped": 0,
+            "tx_fifo": 0,
+            "tx_collisions": 0,
+            "tx_carrier": 0,
+            "tx_compressed": 0
+          }
+        },
+        "interfaces": {
+          "enP43625s1": {
+            "valid": true,
+            "rx_mbps": 41.18602853399157,
+            "tx_mbps": 195.55059796926002,
+            "counter_delta": {
+              "rx_bytes": 231672494,
+              "rx_packets": 2632355,
+              "rx_errors": 0,
+              "rx_dropped": 0,
+              "rx_fifo": 0,
+              "rx_frame": 0,
+              "rx_compressed": 0,
+              "rx_multicast": 0,
+              "tx_bytes": 1099977258,
+              "tx_packets": 2632412,
+              "tx_errors": 0,
+              "tx_dropped": 0,
+              "tx_fifo": 0,
+              "tx_collisions": 0,
+              "tx_carrier": 0,
+              "tx_compressed": 0
+            }
+          },
+          "eth0": {
+            "valid": true,
+            "rx_mbps": 34.63433686426884,
+            "tx_mbps": 195.55039068134062,
+            "counter_delta": {
+              "rx_bytes": 194819056,
+              "rx_packets": 2632346,
+              "rx_errors": 0,
+              "rx_dropped": 0,
+              "rx_fifo": 0,
+              "rx_frame": 0,
+              "rx_compressed": 0,
+              "rx_multicast": 0,
+              "tx_bytes": 1099976092,
+              "tx_packets": 2632389,
+              "tx_errors": 0,
+              "tx_dropped": 0,
+              "tx_fifo": 0,
+              "tx_collisions": 0,
+              "tx_carrier": 0,
+              "tx_compressed": 0
+            }
+          },
+          "lo": {
+            "valid": true,
+            "rx_mbps": 0.0,
+            "tx_mbps": 0.0,
+            "counter_delta": {
+              "rx_bytes": 0,
+              "rx_packets": 0,
+              "rx_errors": 0,
+              "rx_dropped": 0,
+              "rx_fifo": 0,
+              "rx_frame": 0,
+              "rx_compressed": 0,
+              "rx_multicast": 0,
+              "tx_bytes": 0,
+              "tx_packets": 0,
+              "tx_errors": 0,
+              "tx_dropped": 0,
+              "tx_fifo": 0,
+              "tx_collisions": 0,
+              "tx_carrier": 0,
+              "tx_compressed": 0
+            }
+          }
+        },
+        "host_cpu": {
+          "counter_delta": {
+            "user": 564,
+            "nice": 0,
+            "system": 3036,
+            "idle": 136451,
+            "iowait": 32,
+            "irq": 0,
+            "softirq": 532,
+            "steal": 0
+          },
+          "percent": {
+            "user": 0.40109518899121716,
+            "nice": 0.0,
+            "system": 2.159086868399531,
+            "idle": 97.03872275361803,
+            "iowait": 0.022757173843473314,
+            "irq": 0.0,
+            "softirq": 0.37833801514774384,
+            "steal": 0.0
+          }
+        },
+        "read_error_samples": 0,
+        "tcp": {
+          "scope": "host-wide TCP, first-to-last monitor sample",
+          "retrans_segments_delta": 0,
+          "retrans_segments_per_second": 0.0,
+          "out_segments_delta": 2632412,
+          "retrans_to_out_segments_percent": 0.0
+        }
+      },
+      "state_validation": null,
+      "server_cpu_cores": 14.279718308780234,
+      "server_eth1_tx_gbps": 0.04120960260162699,
+      "server_eth1_rx_gbps": 0.18912598037014494,
+      "client_eth0_tx_gbps": 0.1955503906813406,
+      "client_eth0_rx_gbps": 0.03463433686426884,
+      "launch_settings": [
+        "taskset",
+        "-c",
+        "0-15",
+        "<binary>",
+        "--storage=spdk",
+        "--bind=10.84.1.4",
+        "--threads=16",
+        "--pin-workers",
+        "--metrics-port=0",
+        "--spdk-max-completions-per-poll=16",
+        "--log-dir=<session>",
+        "--shutdown-checkpoint",
+        "--data-file=spdk://2401:00:00.0/1",
+        "--data-file=spdk://221c:00:00.0/1",
+        "--data-file=spdk://7f10:00:00.0/1",
+        "--data-file=spdk://399c:00:00.0/1",
+        "--data-file=spdk://c0ef:00:00.0/1",
+        "--data-file=spdk://6319:00:00.0/1"
+      ],
+      "launch_environment": {
+        "BYCORF_EAL_ARGS": "-a 2401:00:00.0 -a 221c:00:00.0 -a 7f10:00:00.0 -a 399c:00:00.0 -a c0ef:00:00.0 -a 6319:00:00.0",
+        "BYCORF_DPDK_MEMORY_MB": "8192"
+      },
+      "source_path": "client/results/stream-main-stream-c80"
+    },
+    {
+      "op": "sswap",
+      "label": "sswap-main-sswap-c80",
+      "revision": "9c68079a7dd775db647cf55fe578a6cd43426a82",
+      "binary_sha256": "4fe9c53a6b1ebcff1bce17ce3aac213e879f20b82f09a326ae02560a792056c3",
+      "client_binary": "bench_sswap",
+      "client_binary_sha256": "3f52c506cb5927b62c7ca6e295a7e6d14f89865f6685b69841ff9e67a58ca39d",
+      "valid": true,
+      "clean_stop_verified": true,
+      "keys": 8192,
+      "connections": 80,
+      "elapsed_seconds": 60.011829,
+      "unit": "pairs/s",
+      "metrics": {
+        "OPERATIONS": {
+          "count": 2719710,
+          "qps": 45319.565002,
+          "avg_ms": 1.764121,
+          "p50_ms": 0.745,
+          "p99_ms": 14.326,
+          "p999_ms": 19.647,
+          "max_ms": 41.787
+        },
+        "SADD": {
+          "count": 2719710,
+          "qps": 45319.565002,
+          "avg_ms": 1.057904,
+          "p50_ms": 0.367,
+          "p99_ms": 8.643,
+          "p999_ms": 12.114,
+          "max_ms": 39.737
+        },
+        "SREM": {
+          "count": 2719710,
+          "qps": 45319.565002,
+          "avg_ms": 0.705382,
+          "p50_ms": 0.35,
+          "p99_ms": 9.072,
+          "p999_ms": 10.837,
+          "max_ms": 35.896
+        }
+      },
+      "server": {
+        "available": true,
+        "valid": true,
+        "path": "/Users/chen/Documents/Codex/2026-10-13/azure-lavik-2026-10-13-users/outputs/main-large-writes-20261018-1412/server/observations/sswap-main-sswap-c80/monitor.jsonl",
+        "completed": true,
+        "errors": [],
+        "pid": 2003753,
+        "start_ticks": 64121915,
+        "first_sample_time": 1792338040.2851217,
+        "last_sample_time": 1792338085.2853208,
+        "elapsed_seconds": 45.00019936,
+        "sample_count": 46,
+        "HZ": 100,
+        "user_seconds": 506.99,
+        "system_seconds": 97.95,
+        "cpu_seconds": 604.94,
+        "cpu_cores": 13.443051555405376,
+        "thread_cpu_cores_sum": 13.443051555405376,
+        "threads": [
+          {
+            "tid": 2003767,
+            "comm": "lavik",
+            "cpus_seen": [
+              0
+            ],
+            "user_seconds": 33.64,
+            "system_seconds": 5.88,
+            "cpu_seconds": 39.52,
+            "cpu_fraction": 0.878218331519854,
+            "cpu_percent": 87.8218331519854
+          },
+          {
+            "tid": 2003768,
+            "comm": "lavik",
+            "cpus_seen": [
+              1
+            ],
+            "user_seconds": 33.95,
+            "system_seconds": 5.52,
+            "cpu_seconds": 39.47,
+            "cpu_fraction": 0.8771072253311901,
+            "cpu_percent": 87.71072253311901
+          },
+          {
+            "tid": 2003774,
+            "comm": "lavik",
+            "cpus_seen": [
+              7
+            ],
+            "user_seconds": 32.66,
+            "system_seconds": 6.56,
+            "cpu_seconds": 39.22,
+            "cpu_fraction": 0.8715516943878712,
+            "cpu_percent": 87.15516943878713
+          },
+          {
+            "tid": 2003773,
+            "comm": "lavik",
+            "cpus_seen": [
+              6
+            ],
+            "user_seconds": 32.5,
+            "system_seconds": 6.7,
+            "cpu_seconds": 39.2,
+            "cpu_fraction": 0.8711072519124058,
+            "cpu_percent": 87.11072519124058
+          },
+          {
+            "tid": 2003779,
+            "comm": "lavik",
+            "cpus_seen": [
+              12
+            ],
+            "user_seconds": 32.45,
+            "system_seconds": 6.48,
+            "cpu_seconds": 38.93000000000001,
+            "cpu_fraction": 0.8651072784936215,
+            "cpu_percent": 86.51072784936214
+          },
+          {
+            "tid": 2003780,
+            "comm": "lavik",
+            "cpus_seen": [
+              13
+            ],
+            "user_seconds": 32.59,
+            "system_seconds": 6.28,
+            "cpu_seconds": 38.870000000000005,
+            "cpu_fraction": 0.8637739510672248,
+            "cpu_percent": 86.37739510672249
+          },
+          {
+            "tid": 2003770,
+            "comm": "lavik",
+            "cpus_seen": [
+              3
+            ],
+            "user_seconds": 32.89,
+            "system_seconds": 5.97,
+            "cpu_seconds": 38.86,
+            "cpu_fraction": 0.8635517298294919,
+            "cpu_percent": 86.3551729829492
+          },
+          {
+            "tid": 2003769,
+            "comm": "lavik",
+            "cpus_seen": [
+              2
+            ],
+            "user_seconds": 32.95,
+            "system_seconds": 5.86,
+            "cpu_seconds": 38.81,
+            "cpu_fraction": 0.8624406236408282,
+            "cpu_percent": 86.24406236408282
+          },
+          {
+            "tid": 2003775,
+            "comm": "lavik",
+            "cpus_seen": [
+              8
+            ],
+            "user_seconds": 31.23,
+            "system_seconds": 6.76,
+            "cpu_seconds": 37.99,
+            "cpu_fraction": 0.8442184821467422,
+            "cpu_percent": 84.42184821467421
+          },
+          {
+            "tid": 2003776,
+            "comm": "lavik",
+            "cpus_seen": [
+              9
+            ],
+            "user_seconds": 31.41,
+            "system_seconds": 6.47,
+            "cpu_seconds": 37.88,
+            "cpu_fraction": 0.8417740485316819,
+            "cpu_percent": 84.1774048531682
+          },
+          {
+            "tid": 2003782,
+            "comm": "lavik",
+            "cpus_seen": [
+              15
+            ],
+            "user_seconds": 31.98,
+            "system_seconds": 5.82,
+            "cpu_seconds": 37.8,
+            "cpu_fraction": 0.8399962786298197,
+            "cpu_percent": 83.99962786298197
+          },
+          {
+            "tid": 2003781,
+            "comm": "lavik",
+            "cpus_seen": [
+              14
+            ],
+            "user_seconds": 31.39,
+            "system_seconds": 6.28,
+            "cpu_seconds": 37.67,
+            "cpu_fraction": 0.8371074025392939,
+            "cpu_percent": 83.71074025392939
+          },
+          {
+            "tid": 2003771,
+            "comm": "lavik",
+            "cpus_seen": [
+              4
+            ],
+            "user_seconds": 30.26,
+            "system_seconds": 5.88,
+            "cpu_seconds": 36.14,
+            "cpu_fraction": 0.8031075531661822,
+            "cpu_percent": 80.31075531661821
+          },
+          {
+            "tid": 2003772,
+            "comm": "lavik",
+            "cpus_seen": [
+              5
+            ],
+            "user_seconds": 31.75,
+            "system_seconds": 4.38,
+            "cpu_seconds": 36.13,
+            "cpu_fraction": 0.8028853319284495,
+            "cpu_percent": 80.28853319284495
+          },
+          {
+            "tid": 2003778,
+            "comm": "lavik",
+            "cpus_seen": [
+              11
+            ],
+            "user_seconds": 27.6,
+            "system_seconds": 6.63,
+            "cpu_seconds": 34.230000000000004,
+            "cpu_fraction": 0.7606632967592257,
+            "cpu_percent": 76.06632967592257
+          },
+          {
+            "tid": 2003777,
+            "comm": "lavik",
+            "cpus_seen": [
+              10
+            ],
+            "user_seconds": 27.75,
+            "system_seconds": 6.47,
+            "cpu_seconds": 34.22,
+            "cpu_fraction": 0.7604410755214929,
+            "cpu_percent": 76.0441075521493
+          },
+          {
+            "tid": 2003753,
+            "comm": "lavik",
+            "cpus_seen": [
+              1
+            ],
+            "user_seconds": 0.0,
+            "system_seconds": 0.0,
+            "cpu_seconds": 0.0,
+            "cpu_fraction": 0.0,
+            "cpu_percent": 0.0
+          },
+          {
+            "tid": 2003755,
+            "comm": "dpdk-intr",
+            "cpus_seen": [
+              3
+            ],
+            "user_seconds": 0.0,
+            "system_seconds": 0.0,
+            "cpu_seconds": 0.0,
+            "cpu_fraction": 0.0,
+            "cpu_percent": 0.0
+          }
+        ],
+        "selected_nic": "eth1",
+        "selected_nic_rates": {
+          "valid": true,
+          "rx_mbps": 93.22508423660459,
+          "tx_mbps": 50.64048569583937,
+          "counter_delta": {
+            "rx_bytes": 524393422,
+            "rx_packets": 4069336,
+            "rx_errors": 0,
+            "rx_dropped": 0,
+            "rx_fifo": 0,
+            "rx_frame": 0,
+            "rx_compressed": 0,
+            "rx_multicast": 0,
+            "tx_bytes": 284853994,
+            "tx_packets": 4069343,
+            "tx_errors": 0,
+            "tx_dropped": 0,
+            "tx_fifo": 0,
+            "tx_collisions": 0,
+            "tx_carrier": 0,
+            "tx_compressed": 0
+          }
+        },
+        "interfaces": {
+          "enP26559s2": {
+            "valid": true,
+            "rx_mbps": 103.3531645225138,
+            "tx_mbps": 50.640486762501304,
+            "counter_delta": {
+              "rx_bytes": 581364126,
+              "rx_packets": 4069336,
+              "rx_errors": 0,
+              "rx_dropped": 0,
+              "rx_fifo": 0,
+              "rx_frame": 0,
+              "rx_compressed": 0,
+              "rx_multicast": 0,
+              "tx_bytes": 284854000,
+              "tx_packets": 4069343,
+              "tx_errors": 0,
+              "tx_dropped": 0,
+              "tx_fifo": 0,
+              "tx_collisions": 0,
+              "tx_carrier": 0,
+              "tx_compressed": 0
+            }
+          },
+          "eth0": {
+            "valid": true,
+            "rx_mbps": 0.006058106494575316,
+            "tx_mbps": 0.012181990475519527,
+            "counter_delta": {
+              "rx_bytes": 34077,
+              "rx_packets": 138,
+              "rx_errors": 0,
+              "rx_dropped": 0,
+              "rx_fifo": 0,
+              "rx_frame": 0,
+              "rx_compressed": 0,
+              "rx_multicast": 0,
+              "tx_bytes": 68524,
+              "tx_packets": 175,
+              "tx_errors": 0,
+              "tx_dropped": 0,
+              "tx_fifo": 0,
+              "tx_collisions": 0,
+              "tx_carrier": 0,
+              "tx_compressed": 0
+            }
+          },
+          "eth1": {
+            "valid": true,
+            "rx_mbps": 93.22508423660459,
+            "tx_mbps": 50.64048569583937,
+            "counter_delta": {
+              "rx_bytes": 524393422,
+              "rx_packets": 4069336,
+              "rx_errors": 0,
+              "rx_dropped": 0,
+              "rx_fifo": 0,
+              "rx_frame": 0,
+              "rx_compressed": 0,
+              "rx_multicast": 0,
+              "tx_bytes": 284853994,
+              "tx_packets": 4069343,
+              "tx_errors": 0,
+              "tx_dropped": 0,
+              "tx_fifo": 0,
+              "tx_collisions": 0,
+              "tx_carrier": 0,
+              "tx_compressed": 0
+            }
+          },
+          "lo": {
+            "valid": true,
+            "rx_mbps": 0.0,
+            "tx_mbps": 0.0,
+            "counter_delta": {
+              "rx_bytes": 0,
+              "rx_packets": 0,
+              "rx_errors": 0,
+              "rx_dropped": 0,
+              "rx_fifo": 0,
+              "rx_frame": 0,
+              "rx_compressed": 0,
+              "rx_multicast": 0,
+              "tx_bytes": 0,
+              "tx_packets": 0,
+              "tx_errors": 0,
+              "tx_dropped": 0,
+              "tx_fifo": 0,
+              "tx_collisions": 0,
+              "tx_carrier": 0,
+              "tx_compressed": 0
+            }
+          }
+        },
+        "host_cpu": {
+          "counter_delta": {
+            "user": 50584,
+            "nice": 0,
+            "system": 5883,
+            "idle": 1,
+            "iowait": 10546,
+            "irq": 0,
+            "softirq": 4154,
+            "steal": 0
+          },
+          "percent": {
+            "user": 71.07688848920863,
+            "nice": 0.0,
+            "system": 8.266355665467627,
+            "idle": 0.0014051258992805755,
+            "iowait": 14.81845773381295,
+            "irq": 0.0,
+            "softirq": 5.83689298561151,
+            "steal": 0.0
+          }
+        },
+        "read_error_samples": 0,
+        "tcp": {
+          "scope": "host-wide TCP, first-to-last monitor sample",
+          "retrans_segments_delta": 0,
+          "retrans_segments_per_second": 0.0,
+          "out_segments_delta": 4069549,
+          "retrans_to_out_segments_percent": 0.0
+        }
+      },
+      "client": {
+        "available": true,
+        "valid": true,
+        "path": "/Users/chen/Documents/Codex/2026-10-13/azure-lavik-2026-10-13-users/outputs/main-large-writes-20261018-1412/client/observations/sswap-main-sswap-c80/monitor.jsonl",
+        "completed": true,
+        "errors": [],
+        "pid": 355700,
+        "start_ticks": 64184605,
+        "first_sample_time": 1792338039.9369686,
+        "last_sample_time": 1792338084.9371364,
+        "elapsed_seconds": 45.000168271,
+        "sample_count": 46,
+        "HZ": 100,
+        "user_seconds": 7.76,
+        "system_seconds": 58.84,
+        "cpu_seconds": 66.60000000000001,
+        "cpu_cores": 1.4799944657744724,
+        "thread_cpu_cores_sum": 1.4795500229919574,
+        "threads": [
+          {
+            "tid": 355713,
+            "comm": "bench_sswap",
+            "cpus_seen": [
+              12
+            ],
+            "user_seconds": 0.51,
+            "system_seconds": 4.16,
+            "cpu_seconds": 4.67,
+            "cpu_fraction": 0.10377738971721899,
+            "cpu_percent": 10.3777389717219
+          },
+          {
+            "tid": 355714,
+            "comm": "bench_sswap",
+            "cpus_seen": [
+              13
+            ],
+            "user_seconds": 0.48,
+            "system_seconds": 3.98,
+            "cpu_seconds": 4.46,
+            "cpu_fraction": 0.099110740500813,
+            "cpu_percent": 9.9110740500813
+          },
+          {
+            "tid": 355712,
+            "comm": "bench_sswap",
+            "cpus_seen": [
+              11
+            ],
+            "user_seconds": 0.48,
+            "system_seconds": 3.95,
+            "cpu_seconds": 4.43,
+            "cpu_fraction": 0.09844407632704072,
+            "cpu_percent": 9.844407632704073
+          },
+          {
+            "tid": 355715,
+            "comm": "bench_sswap",
+            "cpus_seen": [
+              14
+            ],
+            "user_seconds": 0.47,
+            "system_seconds": 3.88,
+            "cpu_seconds": 4.35,
+            "cpu_fraction": 0.09666630519698129,
+            "cpu_percent": 9.666630519698128
+          },
+          {
+            "tid": 355710,
+            "comm": "bench_sswap",
+            "cpus_seen": [
+              9
+            ],
+            "user_seconds": 0.48,
+            "system_seconds": 3.85,
+            "cpu_seconds": 4.33,
+            "cpu_fraction": 0.09622186241446644,
+            "cpu_percent": 9.622186241446643
+          },
+          {
+            "tid": 355701,
+            "comm": "bench_sswap",
+            "cpus_seen": [
+              0
+            ],
+            "user_seconds": 0.49,
+            "system_seconds": 3.81,
+            "cpu_seconds": 4.3,
+            "cpu_fraction": 0.09555519824069415,
+            "cpu_percent": 9.555519824069416
+          },
+          {
+            "tid": 355711,
+            "comm": "bench_sswap",
+            "cpus_seen": [
+              10
+            ],
+            "user_seconds": 0.46,
+            "system_seconds": 3.83,
+            "cpu_seconds": 4.29,
+            "cpu_fraction": 0.09533297684943673,
+            "cpu_percent": 9.533297684943673
+          },
+          {
+            "tid": 355716,
+            "comm": "bench_sswap",
+            "cpus_seen": [
+              15
+            ],
+            "user_seconds": 0.44,
+            "system_seconds": 3.79,
+            "cpu_seconds": 4.23,
+            "cpu_fraction": 0.09399964850189216,
+            "cpu_percent": 9.399964850189217
+          },
+          {
+            "tid": 355709,
+            "comm": "bench_sswap",
+            "cpus_seen": [
+              8
+            ],
+            "user_seconds": 0.49,
+            "system_seconds": 3.72,
+            "cpu_seconds": 4.21,
+            "cpu_fraction": 0.0935552057193773,
+            "cpu_percent": 9.35552057193773
+          },
+          {
+            "tid": 355703,
+            "comm": "bench_sswap",
+            "cpus_seen": [
+              2
+            ],
+            "user_seconds": 0.42,
+            "system_seconds": 3.71,
+            "cpu_seconds": 4.13,
+            "cpu_fraction": 0.09177743458931786,
+            "cpu_percent": 9.177743458931786
+          },
+          {
+            "tid": 355704,
+            "comm": "bench_sswap",
+            "cpus_seen": [
+              3
+            ],
+            "user_seconds": 0.53,
+            "system_seconds": 3.51,
+            "cpu_seconds": 4.04,
+            "cpu_fraction": 0.08977744206800102,
+            "cpu_percent": 8.977744206800102
+          },
+          {
+            "tid": 355708,
+            "comm": "bench_sswap",
+            "cpus_seen": [
+              7
+            ],
+            "user_seconds": 0.53,
+            "system_seconds": 3.47,
+            "cpu_seconds": 4.0,
+            "cpu_fraction": 0.08888855650297131,
+            "cpu_percent": 8.888855650297131
+          },
+          {
+            "tid": 355706,
+            "comm": "bench_sswap",
+            "cpus_seen": [
+              5
+            ],
+            "user_seconds": 0.5,
+            "system_seconds": 3.48,
+            "cpu_seconds": 3.98,
+            "cpu_fraction": 0.08844411372045645,
+            "cpu_percent": 8.844411372045645
+          },
+          {
+            "tid": 355702,
+            "comm": "bench_sswap",
+            "cpus_seen": [
+              1
+            ],
+            "user_seconds": 0.48,
+            "system_seconds": 3.29,
+            "cpu_seconds": 3.77,
+            "cpu_fraction": 0.08377746450405045,
+            "cpu_percent": 8.377746450405045
+          },
+          {
+            "tid": 355705,
+            "comm": "bench_sswap",
+            "cpus_seen": [
+              4
+            ],
+            "user_seconds": 0.48,
+            "system_seconds": 3.26,
+            "cpu_seconds": 3.7399999999999998,
+            "cpu_fraction": 0.08311080033027816,
+            "cpu_percent": 8.311080033027817
+          },
+          {
+            "tid": 355707,
+            "comm": "bench_sswap",
+            "cpus_seen": [
+              6
+            ],
+            "user_seconds": 0.52,
+            "system_seconds": 3.13,
+            "cpu_seconds": 3.65,
+            "cpu_fraction": 0.08111080780896131,
+            "cpu_percent": 8.111080780896131
+          },
+          {
+            "tid": 355700,
+            "comm": "bench_sswap",
+            "cpus_seen": [
+              13
+            ],
+            "user_seconds": 0.0,
+            "system_seconds": 0.0,
+            "cpu_seconds": 0.0,
+            "cpu_fraction": 0.0,
+            "cpu_percent": 0.0
+          }
+        ],
+        "selected_nic": "eth0",
+        "selected_nic_rates": {
+          "valid": true,
+          "rx_mbps": 40.50595520049805,
+          "tx_mbps": 103.33346017722938,
+          "counter_delta": {
+            "rx_bytes": 227846850,
+            "rx_packets": 4068169,
+            "rx_errors": 0,
+            "rx_dropped": 0,
+            "rx_fifo": 0,
+            "rx_frame": 0,
+            "rx_compressed": 0,
+            "rx_multicast": 0,
+            "tx_bytes": 581252887,
+            "tx_packets": 4068200,
+            "tx_errors": 0,
+            "tx_dropped": 0,
+            "tx_fifo": 0,
+            "tx_collisions": 0,
+            "tx_carrier": 0,
+            "tx_compressed": 0
+          }
+        },
+        "interfaces": {
+          "enP43625s1": {
+            "valid": true,
+            "rx_mbps": 50.63126916057127,
+            "tx_mbps": 103.33379564264163,
+            "counter_delta": {
+              "rx_bytes": 284801954,
+              "rx_packets": 4068180,
+              "rx_errors": 0,
+              "rx_dropped": 0,
+              "rx_fifo": 0,
+              "rx_frame": 0,
+              "rx_compressed": 0,
+              "rx_multicast": 0,
+              "tx_bytes": 581254774,
+              "tx_packets": 4068226,
+              "tx_errors": 0,
+              "tx_dropped": 0,
+              "tx_fifo": 0,
+              "tx_collisions": 0,
+              "tx_carrier": 0,
+              "tx_compressed": 0
+            }
+          },
+          "eth0": {
+            "valid": true,
+            "rx_mbps": 40.50595520049805,
+            "tx_mbps": 103.33346017722938,
+            "counter_delta": {
+              "rx_bytes": 227846850,
+              "rx_packets": 4068169,
+              "rx_errors": 0,
+              "rx_dropped": 0,
+              "rx_fifo": 0,
+              "rx_frame": 0,
+              "rx_compressed": 0,
+              "rx_multicast": 0,
+              "tx_bytes": 581252887,
+              "tx_packets": 4068200,
+              "tx_errors": 0,
+              "tx_dropped": 0,
+              "tx_fifo": 0,
+              "tx_collisions": 0,
+              "tx_carrier": 0,
+              "tx_compressed": 0
+            }
+          },
+          "lo": {
+            "valid": true,
+            "rx_mbps": 0.000117688448809934,
+            "tx_mbps": 0.000117688448809934,
+            "counter_delta": {
+              "rx_bytes": 662,
+              "rx_packets": 4,
+              "rx_errors": 0,
+              "rx_dropped": 0,
+              "rx_fifo": 0,
+              "rx_frame": 0,
+              "rx_compressed": 0,
+              "rx_multicast": 0,
+              "tx_bytes": 662,
+              "tx_packets": 4,
+              "tx_errors": 0,
+              "tx_dropped": 0,
+              "tx_fifo": 0,
+              "tx_collisions": 0,
+              "tx_carrier": 0,
+              "tx_compressed": 0
+            }
+          }
+        },
+        "host_cpu": {
+          "counter_delta": {
+            "user": 686,
+            "nice": 0,
+            "system": 4495,
+            "idle": 133056,
+            "iowait": 20,
+            "irq": 0,
+            "softirq": 851,
+            "steal": 0
+          },
+          "percent": {
+            "user": 0.49314201915058803,
+            "nice": 0.0,
+            "system": 3.2313022974954713,
+            "idle": 95.64942346953447,
+            "iowait": 0.014377318342582742,
+            "irq": 0.0,
+            "softirq": 0.6117548954768957,
+            "steal": 0.0
+          }
+        },
+        "read_error_samples": 0,
+        "tcp": {
+          "scope": "host-wide TCP, first-to-last monitor sample",
+          "retrans_segments_delta": 0,
+          "retrans_segments_per_second": 0.0,
+          "out_segments_delta": 4068222,
+          "retrans_to_out_segments_percent": 0.0
+        }
+      },
+      "state_validation": {
+        "warm_after_sha256": "78fe1763fc3a0147ac05cd8b7d75410f39b2383d887f5ad7224a1729b720a37a",
+        "formal_before_sha256": "78fe1763fc3a0147ac05cd8b7d75410f39b2383d887f5ad7224a1729b720a37a",
+        "formal_after_sha256": "824ac37e80c49caebc913a6444f1bd7488e01532a3cbfb9c31bad9230026d8cf",
+        "changed_flags": 327256,
+        "capacity_connections": 1280,
+        "active_connections": 80,
+        "keys": 8192,
+        "valid": true
+      },
+      "server_cpu_cores": 13.443051555405376,
+      "server_eth1_tx_gbps": 0.050640485695839364,
+      "server_eth1_rx_gbps": 0.09322508423660458,
+      "client_eth0_tx_gbps": 0.10333346017722939,
+      "client_eth0_rx_gbps": 0.04050595520049805,
+      "launch_settings": [
+        "taskset",
+        "-c",
+        "0-15",
+        "<binary>",
+        "--storage=spdk",
+        "--bind=10.84.1.4",
+        "--threads=16",
+        "--pin-workers",
+        "--metrics-port=0",
+        "--spdk-max-completions-per-poll=16",
+        "--log-dir=<session>",
+        "--shutdown-checkpoint",
+        "--data-file=spdk://2401:00:00.0/1",
+        "--data-file=spdk://221c:00:00.0/1",
+        "--data-file=spdk://7f10:00:00.0/1",
+        "--data-file=spdk://399c:00:00.0/1",
+        "--data-file=spdk://c0ef:00:00.0/1",
+        "--data-file=spdk://6319:00:00.0/1"
+      ],
+      "launch_environment": {
+        "BYCORF_EAL_ARGS": "-a 2401:00:00.0 -a 221c:00:00.0 -a 7f10:00:00.0 -a 399c:00:00.0 -a c0ef:00:00.0 -a 6319:00:00.0",
+        "BYCORF_DPDK_MEMORY_MB": "8192"
+      },
+      "source_path": "client/results/sswap-main-sswap-c80"
+    }
+  ]
+}

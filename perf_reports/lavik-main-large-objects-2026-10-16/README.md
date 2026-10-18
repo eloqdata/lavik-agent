@@ -1,36 +1,79 @@
-# Lavik main：1 MiB 大对象读写测试
+# Lavik main：1 MiB 大对象测试结果
 
-测试版本：[main `07e0f2ac`](https://github.com/eloqdata/lavik/commit/07e0f2ac656b62f0f9091f44c6a68d89b40b9934)，测量日期 2026-10-15～16。服务端 Azure Standard_L16aos_v4，客户端 Standard_F32als_v6。
+Lavik main [`9c68079`](https://github.com/eloqdata/lavik/commit/9c68079a7dd775db647cf55fe578a6cd43426a82)，2026-10-18（UTC）测量。每组 8,192 keys，每 key 约 1 MiB 用户数据，合计约 8 GiB。服务器为 Azure Standard_L16aos_v4，客户端为 Standard_F32als_v6。
 
-每项 **8,192 keys × 约 1 MiB 有效载荷、80 连接、16 个客户端线程**；预热 90 秒，正式测量 60 秒，各一轮。Lavik defrag 开启。
+## main 整读
 
-本目录包含 **11 项 Lavik main 正式结果**（7 项原有写入、3 项整读、1 项 Set 添加/删除），以及补充测试新测的 12 项 Redis/Valkey/Kvrocks 结果，共 23 个正式点，全部零错误。原 [0.1.0 大对象结果](../lavik-v0.1.0-large-objects-2026-10-14) 单独保留。
+吞吐单位为 QPS，延迟单位为 ms。
 
-## Main 结果
+| 命令 | 80 连接 QPS | Avg | p99.9 | 1 连接 QPS | Avg | p99.9 |
+|---|---:|---:|---:|---:|---:|---:|
+| HGETALL | 2,628.7 | 30.427 | 240.626 | 309.2 | 3.233 | 3.985 |
+| HKEYS | 4,523.0 | 17.684 | 109.109 | 413.1 | 2.418 | 3.179 |
+| HVALS | 2,730.8 | 29.236 | 221.018 | 319.8 | 3.125 | 3.934 |
+| SMEMBERS | 2,315.4 | 34.544 | 128.965 | 209.1 | 4.779 | 6.258 |
+| LRANGE | 2,733.9 | 29.231 | 222.346 | 469.7 | 2.127 | 2.624 |
+| ZRANGE WITHSCORES | 1,803.6 | 44.316 | 272.043 | 137.4 | 7.273 | 8.272 |
 
-| 操作 | 吞吐量 | 平均 ms | p99 ms | p99.9 ms |
-|---|---:|---:|---:|---:|
-| [SET 1 MiB](main-large-objects-c80-20261015/client/results/pr/set/r1/c80.json) | 2,250 ops/s | 35.285 | 224.070 | 342.045 |
-| [SETRANGE 256 B](main-large-objects-c80-20261015/client/results/pr/setrange/r1/c80.json) | 59,441 ops/s | 1.345 | 9.346 | 14.832 |
-| [HSET 256 B](main-large-objects-c80-20261015/client/results/pr/hash/r1/c80.json) | 82,100 ops/s | 0.973 | 8.750 | 11.593 |
-| [LPUSH / RPOP](main-large-objects-c80-20261015/client/results/pr/list/r1/c80.json) | 84,510 pairs/s | 0.946 | 8.782 | 17.003 |
-| [ZINCRBY](main-large-objects-c80-20261015/client/results/pr/zincr/r1/c80.json) | 24,230 ops/s | 3.300 | 21.786 | 31.801 |
-| [ZREM / ZADD](main-large-objects-c80-20261015/client/results/pr/zswap/r1/c80.json) | 18,964 pairs/s | 4.217 | 27.041 | 38.253 |
-| [XADD MAXLEN](main-large-objects-c80-20261015/client/results/pr/stream/r1/c80.json) | 58,598 ops/s | 1.364 | 9.631 | 18.876 |
-| [HGETALL](main-large-reads-set-c80-20261016/client/results/pr/hgetall/r1/c80.json) | 2,631 ops/s | 30.391 | 43.196 | 55.007 |
-| [ZRANGE 0 -1 WITHSCORES](main-large-reads-set-c80-20261016/client/results/pr/zrange/r1/c80.json) | 913 ops/s | 87.549 | 203.906 | 242.803 |
-| [SADD / SREM](main-large-reads-set-c80-20261016/client/results/pr/sswap/r1/c80.json) | 45,071 pairs/s | 1.774 | 14.213 | 19.633 |
-| [SMEMBERS](main-large-reads-set-c80-20261016/client/results/pr/smembers/r1/c80.json) | 973 ops/s | 82.051 | 743.359 | 816.342 |
+## main 写入
 
-LPUSH/RPOP、ZREM/ZADD、SADD/SREM 按完整顺序操作对统计。每条命令各自的延迟也保存在对应 JSON 中。Set 添加/删除在每个 key 的 80 个固定槽位内切换，配对结束后保持成员数量不变。
+以下使用较晚的完整写入复测；均为 80 连接。
 
-## 报告和原始结果
+| 命令 | 单位 | 吞吐 | Avg ms | p99 ms | p99.9 ms |
+|---|---|---:|---:|---:|---:|
+| SET 1 MiB | QPS | 2,257.1 | 35.167 | 205.080 | 304.305 |
+| SETRANGE 256 B | QPS | 59,476.0 | 1.344 | 9.385 | 14.838 |
+| HSET 256 B | QPS | 81,514.4 | 0.980 | 8.846 | 11.825 |
+| LPUSH/RPOP | pairs/s | 86,390.4 | 0.925 | 8.481 | 16.991 |
+| ZINCRBY | QPS | 24,227.2 | 3.300 | 21.621 | 30.917 |
+| ZREM/ZADD | pairs/s | 18,957.2 | 4.219 | 26.756 | 37.095 |
+| XADD MAXLEN = 4096 | QPS | 58,377.6 | 1.369 | 9.584 | 18.879 |
+| SADD/SREM | pairs/s | 45,319.6 | 1.764 | 14.326 | 19.647 |
 
-- [七项写入报告](main-large-objects-c80-20261015/README.zh-CN.md)：main 新测一轮；Redis/Valkey/Kvrocks 对照来自原报告的三轮中位数。
-- [整读与 Set 写入报告](main-large-reads-set-c80-20261016/README.zh-CN.md)：四个系统各四项，均为本次新测一轮。
-- [23 个正式点汇总](formal-points.json)：包含操作对和各组成命令的完整统计，以及原始文件路径。
-- 每个测试目录的 `client/results/<system>/<op>/r1/` 包含正式结果、装载、预热、运行命令和验证记录；`server/` 包含启动命令、配置、日志及快照。`pr` 是框架内部标签，实际测试版本为上述 main。
-- `main-source-identity.json` 记录 main 与所用构建的源码树等价性；`verification.json` 记录校验结果。客户端源码保存在各目录的 `client/bench.cpp`。
-- [来源和归档范围](SOURCE.json)、[文件 SHA-256](SHA256SUMS)。在本目录运行 `shasum -a 256 -c SHA256SUMS` 可核对文件。
+LPUSH/RPOP、ZREM/ZADD、SADD/SREM 按完整操作对统计；子命令指标保留在原始 JSON 中。
 
-1 MiB 指有效载荷，不含字段名、score、协议和索引等开销。整读包含完整回复校验，可能受客户端或网络限制；不同类型的返回字节数不同。单轮结果用于观察性能差距。
+## Redis / Valkey / Kvrocks 整读
+
+Redis 8.10.2、Valkey 9.1.2、Apache Kvrocks 2.17.0。每格为 **QPS / Avg ms / p99.9 ms**；测量日期（UTC）和原文件路径见 [SOURCE.json](SOURCE.json) 与 [formal-points.json](formal-points.json)。
+
+### 80 连接
+
+| 命令 | Redis | Valkey | Kvrocks |
+|---|---:|---:|---:|
+| HGETALL | 1,720.0 / 46.495 / 96.314 | 689.5 / 116.002 / 302.107 | 2,439.0 / 32.792 / 57.092 |
+| HKEYS | 5,601.0 / 14.280 / 27.669 | 2,451.3 / 32.624 / 34.805 | 8,079.5 / 9.899 / 23.512 |
+| HVALS | 2,158.0 / 37.059 / 75.825 | 822.6 / 96.932 / 215.772 | 2,602.3 / 30.735 / 52.471 |
+| SMEMBERS | 308.3 / 259.066 / 728.929 | 215.0 / 372.064 / 714.128 | 1,318.2 / 60.658 / 163.870 |
+| LRANGE | 2,735.7 / 29.234 / 221.266 | 1,726.8 / 46.321 / 111.248 | 2,734.2 / 29.253 / 231.499 |
+| ZRANGE WITHSCORES | 483.5 / 165.247 / 332.377 | 281.8 / 283.844 / 529.133 | 796.7 / 100.334 / 184.425 |
+
+### 1 连接
+
+| 命令 | Redis | Valkey | Kvrocks |
+|---|---:|---:|---:|
+| HGETALL | 666.0 / 1.500 / 1.669 | 471.6 / 2.119 / 2.358 | 387.3 / 2.580 / 3.052 |
+| HKEYS | 2,551.5 / 0.391 / 0.490 | 1,625.6 / 0.614 / 0.799 | 707.6 / 1.412 / 1.595 |
+| HVALS | 755.4 / 1.322 / 1.448 | 564.5 / 1.770 / 2.036 | 420.6 / 2.376 / 2.893 |
+| SMEMBERS | 198.5 / 5.037 / 7.764 | 166.4 / 6.008 / 6.509 | 128.6 / 7.770 / 9.222 |
+| LRANGE | 976.9 / 1.022 / 1.128 | 1,012.3 / 0.986 / 1.197 | 494.0 / 2.022 / 2.564 |
+| ZRANGE WITHSCORES | 218.6 / 4.573 / 4.807 | 178.3 / 5.606 / 5.993 | 78.1 / 12.806 / 14.876 |
+
+## 数据与测量口径
+
+- String 为 1 MiB；Hash/List 为 4,096 × 256 B；Set/ZSet 为 32,768 × 32 B；Stream 为 4,096 条 entry，每条含一个 256 B payload。HKEYS 只返回字段名，整读返回的协议字节数并不相同。
+- main 与本轮 peer 整读预热 60 秒、正式 60 秒；main 写入预热 90 秒、正式 60 秒。80 连接用 16 个客户端线程，1 连接用 1 个线程，pipeline 1，各一轮。正式 CPU/NIC 观察窗口为其中 45 秒。
+- main 整读在装载后干净重启；peer 每个数据类型重新启动空库，装载和测量保持同一个进程。Redis/Valkey 关闭周期 RDB 和 AOF，Kvrocks 保持后台 compaction。main 写入每项独立装载，在同一进程内预热和测量。
+- 历史 peer HGETALL/ZRANGE/SMEMBERS 的 80 连接结果、Redis LRANGE 的 1 连接结果来自 10 月 16 日，预热 90 秒。历史 Hash 数据编码/客户端与新整读不同；Redis LRANGE 沿用相同客户端源码但二进制不同，且其 warm/formal seed 为 10180/20180；新 1 连接使用 10101/20101。各点的原命令和客户端 SHA 已保留。
+- 整读延迟包含网络接收、RESP 解析与完整回复校验，不是纯服务端 CPU 时间。跨日期和客户端口径差异应与性能数值一并阅读。
+
+## peer 写入参照
+
+旧的七组写入保留在 [v0.1.0 大对象归档](../lavik-v0.1.0-large-objects-2026-10-14/README.md)：三家 peer、每项三轮，80 连接共 63 个正式原始点，采用 30 秒起的自适应预热，原汇总取三轮中位数。本目录仅补充保留 10 月 16 日三家的 SADD/SREM 结果，不将旧 peer 数据标成此次重测。
+
+## 原始数据
+
+- [formal-points.json](formal-points.json)：59 个正式点，含 20 个 canonical main 点、36 个 peer 整读点和 3 个 peer SADD/SREM 参照点；含指标、命令与原文件路径。
+- [SOURCE.json](SOURCE.json)：来源、筛选规则、历史参照及验证文件 SHA。原始结果、运行命令、客户端源码、CPU/NIC 记录、配置和日志按来源目录存放。
+- [SHA256SUMS](SHA256SUMS)：发布内容校验和。操作对状态二进制留在本地，仅发布其 SHA 和原状态清单。
+
+目录名保留以维持已有链接；内容对应上述 main 提交与实际测量日期。

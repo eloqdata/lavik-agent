@@ -1,0 +1,41 @@
+{
+  "time": 1792340502.0574286,
+  "active": {
+    "root": "/mnt/dev/benchmark/peer-large-reads-fill-20261018",
+    "product": "redis",
+    "revision": "8.10.2",
+    "version": "8.10.2",
+    "binary": "/mnt/dev/benchmark/release010-latest/downloads/redis/src/redis-server",
+    "binary_sha256": "34d31ea3bd53b35f4fc4c587742174a2b2f79f92f9514e15a6d83726e3b9ce18",
+    "label": "session-redis-setread",
+    "args": [
+      "taskset",
+      "-c",
+      "0-15",
+      "/mnt/dev/benchmark/release010-latest/downloads/redis/src/redis-server",
+      "--bind",
+      "10.84.1.4",
+      "--protected-mode",
+      "no",
+      "--port",
+      "6379",
+      "--dir",
+      "/mnt/peer-large-reads-fill-20261018/session-redis-setread",
+      "--save",
+      "",
+      "--appendonly",
+      "no",
+      "--io-threads",
+      "16",
+      "--maxclients",
+      "10000"
+    ],
+    "data_dir": "/mnt/peer-large-reads-fill-20261018/session-redis-setread",
+    "pid": 2021695,
+    "start_ticks": "64393713",
+    "supervisor_pid": 2021694,
+    "started_at": 1792340262.7130015
+  },
+  "returncode": 0,
+  "supervisor_pid": 2021694
+}

@@ -1,0 +1,46 @@
+{
+  "time": 1792341816.4852965,
+  "active": {
+    "root": "/mnt/dev/benchmark/peer-large-reads-fill-20261018",
+    "product": "valkey",
+    "revision": "9.1.2",
+    "version": "9.1.2",
+    "binary": "/mnt/dev/benchmark/release010-latest/downloads/valkey/src/valkey-server",
+    "binary_sha256": "f33bbe718e212dd4f1adbfb7d1783dd0262c0d34546459c1a3cfc33651d4b946",
+    "label": "session-valkey-listread",
+    "args": [
+      "taskset",
+      "-c",
+      "0-15",
+      "/mnt/dev/benchmark/release010-latest/downloads/valkey/src/valkey-server",
+      "--bind",
+      "10.84.1.4",
+      "--protected-mode",
+      "no",
+      "--port",
+      "6379",
+      "--dir",
+      "/mnt/peer-large-reads-fill-20261018/session-valkey-listread",
+      "--save",
+      "",
+      "--appendonly",
+      "no",
+      "--io-threads",
+      "8",
+      "--maxclients",
+      "10000"
+    ],
+    "data_dir": "/mnt/peer-large-reads-fill-20261018/session-valkey-listread",
+    "pid": 2027947,
+    "start_ticks": "64549079",
+    "supervisor_pid": 2027946,
+    "started_at": 1792341816.3664114
+  },
+  "config": {
+    "save": "",
+    "appendonly": "no",
+    "io-threads": "8",
+    "daemonize": "no"
+  },
+  "info_server": "# Server\nredis_version:7.2.4\nserver_name:valkey\nvalkey_version:9.1.2\nvalkey_release_stage:ga\nredis_git_sha1:00000000\nredis_git_dirty:1\nredis_build_id:a35af791755d5a3d\nserver_mode:standalone\nos:Linux 6.17.0-1022-azure x86_64\narch_bits:64\nmonotonic_clock:X86 TSC @ 2596.29 ticks/us\nmultiplexing_api:epoll\ngcc_version:13.3.0\nprocess_id:2027947\nprocess_supervised:no\nrun_id:d203b5e4ee24318e21a3d583d0da14b8ed346443\ntcp_port:6379\nserver_time_usec:1792341816484824\nuptime_in_seconds:0\nuptime_in_days:0\nhz:10\nconfigured_hz:10\nclients_hz:10\nlru_clock:13956920\nexecutable:/mnt/dev/benchmark/release010-latest/downloads/valkey/src/valkey-server\nconfig_file:\nio_threads_active:0\navailability_zone:\nlistener0:name=tcp,bind=10.84.1.4,port=6379"
+}
