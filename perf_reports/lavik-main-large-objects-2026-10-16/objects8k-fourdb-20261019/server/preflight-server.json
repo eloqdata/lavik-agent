@@ -1,0 +1,128 @@
+{
+  "time": 1792388520.1104674,
+  "root": "/mnt/dev/benchmark/objects8k-fourdb-20261019",
+  "boot_id": "627b9c8b-089f-4c8f-8c00-4a8f3878274a",
+  "kernel": "6.17.0-1022-azure",
+  "devices": [
+    {
+      "serial": "4d4fd73b0687ec770001",
+      "bdf": "2401:00:00.0",
+      "device": "/dev/nvme1n1",
+      "bytes": 1919850381312
+    },
+    {
+      "serial": "4d4fd73b0687ec770002",
+      "bdf": "221c:00:00.0",
+      "device": "/dev/nvme3n1",
+      "bytes": 1919850381312
+    },
+    {
+      "serial": "4d4fd73b0687ec770003",
+      "bdf": "7f10:00:00.0",
+      "device": "/dev/nvme5n1",
+      "bytes": 1919850381312
+    },
+    {
+      "serial": "4d4fd73b0687ec770004",
+      "bdf": "399c:00:00.0",
+      "device": "/dev/nvme4n1",
+      "bytes": 1919850381312
+    },
+    {
+      "serial": "4d4fd73b0687ec770005",
+      "bdf": "c0ef:00:00.0",
+      "device": "/dev/nvme6n1",
+      "bytes": 1919850381312
+    },
+    {
+      "serial": "4d4fd73b0687ec770006",
+      "bdf": "6319:00:00.0",
+      "device": "/dev/nvme2n1",
+      "bytes": 1919850381312
+    }
+  ],
+  "drivers": {
+    "2401:00:00.0": "vfio-pci",
+    "221c:00:00.0": "vfio-pci",
+    "7f10:00:00.0": "vfio-pci",
+    "399c:00:00.0": "vfio-pci",
+    "c0ef:00:00.0": "vfio-pci",
+    "6319:00:00.0": "vfio-pci"
+  },
+  "lsblk": {
+    "blockdevices": [
+      {
+        "name": "nvme0n1",
+        "path": "/dev/nvme0n1",
+        "size": 34359738368,
+        "model": "MSFT NVMe Accelerator v1.0",
+        "serial": "SN: 00000",
+        "fstype": null,
+        "mountpoints": [
+          null
+        ],
+        "children": [
+          {
+            "name": "nvme0n1p1",
+            "path": "/dev/nvme0n1p1",
+            "size": 33284931072,
+            "model": null,
+            "serial": null,
+            "fstype": "ext4",
+            "mountpoints": [
+              "/"
+            ]
+          },
+          {
+            "name": "nvme0n1p14",
+            "path": "/dev/nvme0n1p14",
+            "size": 4194304,
+            "model": null,
+            "serial": null,
+            "fstype": null,
+            "mountpoints": [
+              null
+            ]
+          },
+          {
+            "name": "nvme0n1p15",
+            "path": "/dev/nvme0n1p15",
+            "size": 111149056,
+            "model": null,
+            "serial": null,
+            "fstype": "vfat",
+            "mountpoints": [
+              "/boot/efi"
+            ]
+          },
+          {
+            "name": "nvme0n1p16",
+            "path": "/dev/nvme0n1p16",
+            "size": 957350400,
+            "model": null,
+            "serial": null,
+            "fstype": "ext4",
+            "mountpoints": [
+              "/boot"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "nvme0n2",
+        "path": "/dev/nvme0n2",
+        "size": 536870912000,
+        "model": "MSFT NVMe Accelerator v1.0",
+        "serial": "SN: 00000",
+        "fstype": "ext4",
+        "mountpoints": [
+          "/mnt/dev"
+        ]
+      }
+    ]
+  },
+  "mounts": "/ /dev/nvme0n1p1 ext4 rw,relatime,discard,errors=remount-ro,commit=30\n/dev devtmpfs devtmpfs rw,nosuid,noexec,relatime,size=65945432k,nr_inodes=16486358,mode=755,inode64\n/proc proc proc rw,nosuid,nodev,noexec,relatime\n/sys sysfs sysfs rw,nosuid,nodev,noexec,relatime\n/sys/kernel/security securityfs securityfs rw,nosuid,nodev,noexec,relatime\n/dev/shm tmpfs tmpfs rw,nosuid,nodev,inode64\n/dev/pts devpts devpts rw,nosuid,noexec,relatime,gid=5,mode=620,ptmxmode=000\n/run tmpfs tmpfs rw,nosuid,nodev,size=26380200k,nr_inodes=819200,mode=755,inode64\n/run/lock tmpfs tmpfs rw,nosuid,nodev,noexec,relatime,size=5120k,inode64\n/sys/fs/cgroup cgroup2 cgroup2 rw,nosuid,nodev,noexec,relatime,nsdelegate,memory_recursiveprot\n/sys/fs/pstore none pstore rw,nosuid,nodev,noexec,relatime\n/sys/firmware/efi/efivars efivarfs efivarfs rw,nosuid,nodev,noexec,relatime\n/sys/fs/bpf bpf bpf rw,nosuid,nodev,noexec,relatime,mode=700\n/proc/sys/fs/binfmt_misc systemd-1 autofs rw,relatime,fd=32,pgrp=1,timeout=0,minproto=5,maxproto=5,direct,pipe_ino=11275\n/dev/hugepages hugetlbfs hugetlbfs rw,nosuid,nodev,relatime,pagesize=2M\n/dev/mqueue mqueue mqueue rw,nosuid,nodev,noexec,relatime\n/sys/kernel/debug debugfs debugfs rw,nosuid,nodev,noexec,relatime\n/sys/kernel/tracing tracefs tracefs rw,nosuid,nodev,noexec,relatime\n/sys/fs/fuse/connections fusectl fusectl rw,nosuid,nodev,noexec,relatime\n/sys/kernel/config configfs configfs rw,nosuid,nodev,noexec,relatime\n/boot /dev/nvme0n1p16 ext4 rw,relatime,discard\n/boot/efi /dev/nvme0n1p15 vfat rw,relatime,fmask=0077,dmask=0077,codepage=437,iocharset=iso8859-1,shortname=mixed,errors=remount-ro\n/proc/sys/fs/binfmt_misc binfmt_misc binfmt_misc rw,nosuid,nodev,noexec,relatime\n/mnt/dev /dev/nvme0n2 ext4 rw,relatime,stripe=8192\n/sys/kernel/debug/tracing tracefs tracefs rw,nosuid,nodev,noexec,relatime\n/run/user/1000 tmpfs tmpfs rw,nosuid,nodev,relatime,size=13190096k,nr_inodes=3297524,mode=700,uid=1000,gid=1000,inode64",
+  "meminfo": "MemTotal:       131900984 kB\nMemFree:        80292480 kB\nMemAvailable:   121238348 kB\nBuffers:          329416 kB\nCached:         40275580 kB\nSwapCached:            0 kB\nActive:          1126952 kB\nInactive:       39579400 kB\nActive(anon):      61176 kB\nInactive(anon):    53048 kB\nActive(file):    1065776 kB\nInactive(file): 39526352 kB\nUnevictable:       30464 kB\nMlocked:           27392 kB\nSwapTotal:             0 kB\nSwapFree:              0 kB\nZswap:                 0 kB\nZswapped:              0 kB\nDirty:              4036 kB\nWriteback:             0 kB\nAnonPages:        131912 kB\nMapped:           140916 kB\nShmem:              4284 kB\nKReclaimable:    1611012 kB\nSlab:            1999112 kB\nSReclaimable:    1611012 kB\nSUnreclaim:       388100 kB\nKernelStack:        5056 kB\nPageTables:         4980 kB\nSecPageTables:         0 kB\nNFS_Unstable:          0 kB\nBounce:                0 kB\nWritebackTmp:          0 kB\nCommitLimit:    61756188 kB\nCommitted_AS:     402004 kB\nVmallocTotal:   34359738367 kB\nVmallocUsed:       70472 kB\nVmallocChunk:          0 kB\nPercpu:            73856 kB\nHardwareCorrupted:     0 kB\nAnonHugePages:     24576 kB\nShmemHugePages:        0 kB\nShmemPmdMapped:        0 kB\nFileHugePages:   2144256 kB\nFilePmdMapped:         0 kB\nCmaTotal:              0 kB\nCmaFree:               0 kB\nUnaccepted:            0 kB\nBalloon:               0 kB\nHugePages_Total:    4096\nHugePages_Free:     4096\nHugePages_Rsvd:        0\nHugePages_Surp:        0\nHugepagesize:       2048 kB\nHugetlb:         8388608 kB\nDirectMap4k:      263188 kB\nDirectMap2M:    21751808 kB\nDirectMap1G:    114294784 kB\n",
+  "peer_manifest_sha256": "391fba5bb360149ba338c613c67bb83958be192a10a90b74a9f66a19cbfe88cc",
+  "kvrocks_template_sha256": "9b0cfd7d4b47a862de08f4c8ba073303b047561b14e9e6dcad860a79c9d65fc7"
+}

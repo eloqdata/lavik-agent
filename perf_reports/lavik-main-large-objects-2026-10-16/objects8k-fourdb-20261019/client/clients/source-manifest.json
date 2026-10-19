@@ -1,0 +1,55 @@
+{
+  "source_clients": {
+    "bench.cpp": {
+      "source": "work/main-large-writes-20261018-1412/bench.cpp",
+      "source_sha256": "ab2446bcd3147ebe62b7ca450b5520634469082081b705f6872f314d5ce36780",
+      "derived_sha256": "9c8eac9e8a3a15f283a95d59aafab53f6d080b88a55573377562df5da9ca5013",
+      "allowed_ops": [
+        "set",
+        "setrange",
+        "hash",
+        "list",
+        "zincr",
+        "zswap",
+        "stream"
+      ]
+    },
+    "bench_sswap.cpp": {
+      "source": "work/main-large-writes-20261018-1412/bench_sswap.cpp",
+      "source_sha256": "325d8822c108d1f1be387fc4d386d16190a33753a5490305cb33b20990e4fae4",
+      "derived_sha256": "cd7e8ad848f58a802d2e7960c7d5227ea47bb8abea23c7475f35c0f6a0f3cf0d",
+      "allowed_ops": [
+        "sswap"
+      ]
+    },
+    "bench_hash.cpp": {
+      "source": "work/pr342-packed-20261017/bench_hash.cpp",
+      "source_sha256": "5a16774f39bd0565360f8092a42d2ddf8582b8c0befb30b822ab572cf825b14d",
+      "derived_sha256": "d850123fe5215d490184227b6d7b41d922dea3d464dd4cec7733e4f13a43bc93",
+      "allowed_ops": [
+        "hgetall",
+        "hkeys",
+        "hvals"
+      ]
+    },
+    "bench_lrange.cpp": {
+      "source": "work/pr342-packed-20261017/bench_lrange.cpp",
+      "source_sha256": "a29bec4837d5368f9afad61ea279afe739994642a80f15a116ae428b0da53b54",
+      "derived_sha256": "be90e105f995d1682a99560c3f0c32d4f5bde9cdca3fb5ca6454c1b45afd65da",
+      "allowed_ops": [
+        "lrange"
+      ]
+    },
+    "bench_workdist.cpp": {
+      "source": "work/pr342-packed-20261017/bench_workdist.cpp",
+      "source_sha256": "682dda4d704bac714ddbf1096ad8335b8d9a3b7060486ff16e693719e63159fc",
+      "derived_sha256": "a9899779d12d91d801d45c6b3960173c150994a96dc9648c742b3e2019952cc9",
+      "allowed_ops": [
+        "smembers",
+        "zrange"
+      ]
+    }
+  },
+  "shape": "8192-byte logical payload, fixed per client",
+  "score_semantics": "ZINCRBY +/-32768, ZADD sequence%32768 unchanged"
+}

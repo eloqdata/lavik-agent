@@ -1,4 +1,6 @@
-# Lavik main：1 MiB 大对象测试结果
+# Lavik main：1 MiB 与 8 KiB 对象测试结果
+
+下面保留 2026-10-18 的 1 MiB 测量；文末追加 2026-10-19 的独立 8 KiB 四库测试。两个数据集的 main 提交分别标识。
 
 Lavik main [`9c68079`](https://github.com/eloqdata/lavik/commit/9c68079a7dd775db647cf55fe578a6cd43426a82)，2026-10-18（UTC）测量。每组 8,192 keys，每 key 约 1 MiB 用户数据，合计约 8 GiB。服务器为 Azure Standard_L16aos_v4，客户端为 Standard_F32als_v6。
 
@@ -50,3 +52,58 @@ Redis 8.10.2、Valkey 9.1.2、Apache Kvrocks 2.17.0。每格为 **吞吐 / Avg m
 - [SHA256SUMS](SHA256SUMS)：发布内容校验和。操作对状态二进制留在本地，仅发布其 SHA 和原状态清单。
 
 目录名保留以维持已有链接；内容对应上述 main 提交与实际测量日期。
+
+## 8 KiB 四库读写对比（2026-10-19）
+
+Lavik main [`684894d`](https://github.com/eloqdata/lavik/commit/684894d973878ca0e0649b54404ce77521f1695f)、Redis 8.10.2、Valkey 9.1.2、Apache Kvrocks 2.17.0。服务器为 Azure Standard_L16aos_v4，客户端为 Standard_F32als_v6。每项独立装载 **8,192 keys × 8 KiB 用户数据**，合计 64 MiB；**80 连接、16 个客户端线程、pipeline 1**，预热 90 秒、正式测量 60 秒，各一轮。
+
+每格为 **吞吐 / Avg ms / p99.9 ms**。LPUSH/RPOP、ZREM/ZADD、SADD/SREM 的吞吐单位为 pairs/s，其余为 QPS。此节对应上述 main 提交；前面的 1 MiB 数据保留其原测量日期和 `9c68079` 身份。
+
+| 命令 | Lavik main `684894d` | Redis 8.10.2 | Valkey 9.1.2 | Kvrocks 2.17.0 |
+|---|---:|---:|---:|---:|
+| HGETALL | 271,007.3 / 0.295 / 0.550 | 138,608.7 / 0.577 / 1.148 | 107,829.1 / 0.741 / 1.027 | 256,931.5 / 0.311 / 0.891 |
+| HKEYS | 369,558.4 / 0.216 / 0.404 | 349,623.0 / 0.228 / 0.514 | 242,446.4 / 0.329 / 0.617 | 336,377.3 / 0.237 / 0.853 |
+| HVALS | 272,143.5 / 0.293 / 0.545 | 165,529.8 / 0.483 / 1.021 | 125,095.5 / 0.639 / 0.927 | 262,276.7 / 0.304 / 0.654 |
+| SMEMBERS | 250,489.2 / 0.319 / 0.581 | 55,028.5 / 1.453 / 2.873 | 33,008.9 / 2.423 / 2.743 | 147,763.2 / 0.541 / 1.187 |
+| LRANGE | 276,759.8 / 0.288 / 0.552 | 214,683.1 / 0.372 / 0.825 | 249,831.8 / 0.319 / 0.596 | 294,097.8 / 0.271 / 0.794 |
+| ZRANGE WITHSCORES | 189,294.2 / 0.422 / 0.752 | 65,386.0 / 1.222 / 2.493 | 52,571.8 / 1.521 / 1.820 | 99,322.3 / 0.804 / 1.491 |
+| SET 8 KiB | 287,938.0 / 0.275 / 2.134 | 287,477.3 / 0.276 / 2.436 | 287,818.8 / 0.276 / 2.538 | 200,608.7 / 0.396 / 3.516 |
+| SETRANGE 256 B | 105,816.6 / 0.755 / 8.854 | 416,530.3 / 0.191 / 0.434 | 568,578.9 / 0.139 / 0.344 | 259,062.7 / 0.308 / 3.457 |
+| HSET 256 B | 102,442.4 / 0.779 / 9.635 | 373,935.1 / 0.213 / 0.478 | 534,227.7 / 0.148 / 0.357 | 339,452.5 / 0.234 / 0.985 |
+| LPUSH/RPOP | 62,099.1 / 1.287 / 10.194 | 176,945.2 / 0.451 / 0.948 | 252,946.2 / 0.315 / 0.659 | 142,585.6 / 0.560 / 2.072 |
+| ZINCRBY | 82,055.0 / 0.974 / 9.587 | 225,544.9 / 0.353 / 0.735 | 306,119.3 / 0.260 / 0.504 | 223,283.6 / 0.357 / 1.213 |
+| ZREM/ZADD | 47,292.2 / 1.690 / 11.241 | 132,686.3 / 0.602 / 1.236 | 187,195.8 / 0.426 / 0.784 | 121,514.4 / 0.657 / 2.280 |
+| XADD MAXLEN = 32 | 95,850.5 / 0.833 / 9.143 | 222,169.8 / 0.358 / 0.752 | 356,271.1 / 0.223 / 0.466 | 385.1 / 206.991 / 436.325 |
+| SADD/SREM | 52,292.2 / 1.529 / 10.662 | 198,620.8 / 0.402 / 0.789 | 285,571.4 / 0.279 / 0.603 | 137,651.1 / 0.580 / 2.283 |
+
+![8 KiB 读命令](objects8k-reads.svg)
+
+![8 KiB 写命令](objects8k-writes.svg)
+
+写命令的 p99.9 跨越三个数量级，右侧使用对数刻度的点图；左侧吞吐仍为线性柱状图。
+
+Kvrocks 的 XADD MAXLEN 在正式窗口内仍继续降速：前 10 秒平均 431.7 QPS，最后 10 秒为 346.1 QPS。表中保留该窗口的汇总值，并非稳定平台值；[逐秒数据](objects8k-fourdb-20261019/client/results/kvrocks-stream-c80/result.json)与其余原始结果一起归档。
+
+### 8 KiB 数据与测量口径
+
+- String 为 8,192 B；Hash/List 为 32 × 256 B；Set/ZSet 为 256 × 32 B；Stream 为 32 条 entry，每条含一个 256 B payload。字段名、score、stream ID 和协议编码不计入用户 payload。
+- SET 覆盖整个 String；SETRANGE 随机替换 256 B；HSET 随机替换一个已有字段。LPUSH/RPOP 每对增加并取出一个 256 B 元素。ZINCRBY 随机选择成员并加上 ±32768；ZREM/ZADD 和 SADD/SREM 使用每连接独占的成员槽位。XADD 使用精确 `MAXLEN = 32`。
+- 每项使用独立数据和服务进程，装载、预热、正式测量之间保持同一进程。操作对在预热和正式阶段连续保存成员状态；延迟按完整操作对计，两个子命令的指标另存于原始 JSON。
+- Redis/Valkey 关闭周期 RDB 和 AOF；Kvrocks 关闭 WAL。各数据库实际配置、启动命令和版本标识保留在归档中。
+- 整读延迟包含接收、解析与完整回复校验；HKEYS 只返回字段名，返回的协议字节数与其他整读不同。CPU/NIC 观察窗口为正式阶段中的 45 秒。装载、预热、正式阶段分别使用随机种子 101、10180、20180。
+- 本组 ZSet 的 compact 编码为 11,272 B，低于 16 KiB 提升阈值；装载、预热和正式测量均未观察到 grouped 写提交。历史 1 MiB 组使用不同 main 提交和测量条件，尺寸间差异不能单独归因于 grouped 编码。
+
+### 8 KiB 运行与原始数据
+
+归档的运行脚本分别执行 Lavik 和对照库两个阶段；对照库阶段在文件系统准备完成后执行：
+
+```sh
+cd /opt/benchmark/objects8k-fourdb-20261019
+sudo python3 run.py lavik
+sudo python3 run.py peers
+```
+
+- [运行接口](objects8k-fourdb-20261019/client/runtime-interface.md)与[客户端接口](objects8k-fourdb-20261019/client/clients/client-interface.md)说明装载、采样和执行顺序。
+- [56 个正式点及校验结果](objects8k-fourdb-20261019/comparison.json)；[实际命令和原始结果](objects8k-fourdb-20261019/client/results/)；[服务端配置与日志](objects8k-fourdb-20261019/server/)。
+- [客户端源码](objects8k-fourdb-20261019/client/clients/)、[编译身份](objects8k-fourdb-20261019/client/client-build-manifest.json)、[41 项 Linux fake RESP 验证](objects8k-fourdb-20261019/client/linux-client-tests.json)。
+- [formal-points.json](formal-points.json) 中的 `objects8k_fourdb` 包含此节 56 个正式点，ID 使用 `产品/8k/命令/c80`；原有 59 个 1 MiB 点及其 20 个 canonical main 点保持独立。

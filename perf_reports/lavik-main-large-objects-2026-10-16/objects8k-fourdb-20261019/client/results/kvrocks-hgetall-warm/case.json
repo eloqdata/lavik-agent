@@ -1,0 +1,67 @@
+{
+  "label": "kvrocks-hgetall-warm",
+  "product": "kvrocks",
+  "op": "hgetall",
+  "phase": "warm",
+  "keys": 8192,
+  "connections": 80,
+  "client_threads": 16,
+  "seconds": 90,
+  "shape": {
+    "structure": "hash",
+    "logical_payload_bytes": 8192,
+    "items_per_key": 32,
+    "item_bytes": 256
+  },
+  "pipeline": 1,
+  "revision": "2.17.0",
+  "binary_sha256": "7a3a70738951934540ca5e48d1405899641c7163d6ce282ff48f3e0c2b013d58",
+  "active": {
+    "revision": "2.17.0",
+    "version": "2.17.0",
+    "binary": "/mnt/dev/benchmark/storage-peers-20261014/sources/kvrocks/build/kvrocks",
+    "binary_sha256": "7a3a70738951934540ca5e48d1405899641c7163d6ce282ff48f3e0c2b013d58",
+    "root": "/mnt/dev/benchmark/objects8k-fourdb-20261019",
+    "product": "kvrocks",
+    "label": "session-kvrocks-hgetall",
+    "owner_token": "dcc07fa6402e830129361ac36f116cb7",
+    "args": [
+      "/mnt/dev/benchmark/storage-peers-20261014/sources/kvrocks/build/kvrocks",
+      "-c",
+      "/mnt/dev/benchmark/objects8k-fourdb-20261019/session-kvrocks-hgetall/server.conf"
+    ],
+    "cpu_affinity": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15
+    ],
+    "environment": {
+      "LC_ALL": "C"
+    },
+    "data_dir": "/mnt/storage-peers-20261014/objects8k-fourdb-20261019/session-kvrocks-hgetall",
+    "time": 1792393216.5520556,
+    "manifest_sha256": "391fba5bb360149ba338c613c67bb83958be192a10a90b74a9f66a19cbfe88cc",
+    "config_sha256": "6e27db7fed7c4ceaf0fdefd867033c060fa67a41cc997f606b042729ec4ba294",
+    "pid": 2248873,
+    "start_ticks": "69689100",
+    "supervisor_pid": 2248872
+  },
+  "profiled": false,
+  "observed": false,
+  "observation_seconds": 0,
+  "client_binary_sha256": "34d5a9df39b6a8f8c5754b4911ba5a7dd775538f60c66e498161c5a9c7e0dcbe",
+  "state_path": null
+}

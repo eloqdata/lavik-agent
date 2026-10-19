@@ -1,0 +1,67 @@
+{
+  "label": "kvrocks-zswap-warm",
+  "product": "kvrocks",
+  "op": "zswap",
+  "phase": "warm",
+  "keys": 8192,
+  "connections": 80,
+  "client_threads": 16,
+  "seconds": 90,
+  "shape": {
+    "structure": "zset",
+    "logical_payload_bytes": 8192,
+    "items_per_key": 256,
+    "item_bytes": 32
+  },
+  "pipeline": 1,
+  "revision": "2.17.0",
+  "binary_sha256": "7a3a70738951934540ca5e48d1405899641c7163d6ce282ff48f3e0c2b013d58",
+  "active": {
+    "revision": "2.17.0",
+    "version": "2.17.0",
+    "binary": "/mnt/dev/benchmark/storage-peers-20261014/sources/kvrocks/build/kvrocks",
+    "binary_sha256": "7a3a70738951934540ca5e48d1405899641c7163d6ce282ff48f3e0c2b013d58",
+    "root": "/mnt/dev/benchmark/objects8k-fourdb-20261019",
+    "product": "kvrocks",
+    "label": "session-kvrocks-zswap",
+    "owner_token": "bd0521b276e66131fbcc41d871a81673",
+    "args": [
+      "/mnt/dev/benchmark/storage-peers-20261014/sources/kvrocks/build/kvrocks",
+      "-c",
+      "/mnt/dev/benchmark/objects8k-fourdb-20261019/session-kvrocks-zswap/server.conf"
+    ],
+    "cpu_affinity": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15
+    ],
+    "environment": {
+      "LC_ALL": "C"
+    },
+    "data_dir": "/mnt/storage-peers-20261014/objects8k-fourdb-20261019/session-kvrocks-zswap",
+    "time": 1792394951.6984358,
+    "manifest_sha256": "391fba5bb360149ba338c613c67bb83958be192a10a90b74a9f66a19cbfe88cc",
+    "config_sha256": "856c607612a75b29d7fb0820167dfb31aff4e73e1bbc3235583969bc903a5edb",
+    "pid": 2258249,
+    "start_ticks": "69862615",
+    "supervisor_pid": 2258248
+  },
+  "profiled": false,
+  "observed": false,
+  "observation_seconds": 0,
+  "client_binary_sha256": "849d1cb8ce4374cc05abbb250257eb5447910e0caf04c4b83fd4468d222290a5",
+  "state_path": "/opt/benchmark/objects8k-fourdb-20261019/states/kvrocks-zswap.bin"
+}

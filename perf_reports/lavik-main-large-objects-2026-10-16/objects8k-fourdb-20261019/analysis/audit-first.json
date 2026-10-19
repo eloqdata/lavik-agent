@@ -1,0 +1,120 @@
+{
+  "status": "passed",
+  "audited_at_utc": "2026-10-19T05:08:40.377672+00:00",
+  "scope": "Independent offline audit of completed Lavik HGETALL only; later active HKEYS excluded; no remote calls or workloads",
+  "point": "lavik-hgetall-c80",
+  "revision": "684894d973878ca0e0649b54404ce77521f1695f",
+  "binary_sha256": "cec4ef957bd0ea87e40895539866d42399f82b9e28c4ceb174752bb3d6c977e5",
+  "runtime_manifest_sha256": "bdb883598e3a1f7ce9fb1d64d9c3186ecf3b0b996b5281fd98455262335a99f0",
+  "client_binary_sha256": "34d5a9df39b6a8f8c5754b4911ba5a7dd775538f60c66e498161c5a9c7e0dcbe",
+  "load_commands": 8192,
+  "warm_seconds": 90.000384,
+  "formal_seconds": 60.000406,
+  "formal_metrics": {
+    "count": 16260545,
+    "qps": 271007.250538,
+    "avg_ms": 0.294597,
+    "p50_ms": 0.285,
+    "p99_ms": 0.461,
+    "p999_ms": 0.55,
+    "max_ms": 201.626
+  },
+  "bounded_validations": {
+    "phases": [
+      "loaded",
+      "before",
+      "after"
+    ],
+    "keys": [
+      0,
+      4096,
+      8191
+    ],
+    "fields_per_key": 32,
+    "field_value_bytes": 256
+  },
+  "commandstats_matched": true,
+  "observations": {
+    "server": {
+      "seconds": 45.000259326,
+      "samples": 46,
+      "cpu_cores": 15.245023257091086,
+      "nic": "eth1",
+      "rx_gbps": 0.33087650709153166,
+      "tx_gbps": 19.094178043359662,
+      "rx_errors_delta": 0,
+      "tx_errors_delta": 0
+    },
+    "client": {
+      "seconds": 45.000272949,
+      "samples": 46,
+      "cpu_cores": 7.033957335297317,
+      "nic": "eth0",
+      "rx_gbps": 19.07243610110308,
+      "tx_gbps": 0.3931693343294081,
+      "rx_errors_delta": 0,
+      "tx_errors_delta": 0
+    }
+  },
+  "clean_checkpoint": {
+    "generation": 13,
+    "entries": 8192
+  },
+  "input_sha256": {
+    "client/families/lavik-hgetall.json": "8d6e6660a210679c0fbe46445fa7352ca8b9985f80162a27b33b4b64c2e4ffb9",
+    "server/main-manifest.json": "e9708e21437874ccf150d7c5db28fdae970af43bdeb1f2b9f8383213ec05ca3a",
+    "client/main-manifest.json": "e9708e21437874ccf150d7c5db28fdae970af43bdeb1f2b9f8383213ec05ca3a",
+    "server/runtime-manifest.json": "bdb883598e3a1f7ce9fb1d64d9c3186ecf3b0b996b5281fd98455262335a99f0",
+    "client/runtime-manifest.json": "bdb883598e3a1f7ce9fb1d64d9c3186ecf3b0b996b5281fd98455262335a99f0",
+    "client/client-build-manifest.json": "dd2233915837370611dfc851d1a7118b9d3e655483848edca6c44cf634fe47be",
+    "client/linux-client-tests.json": "4088253e867b6ed111abe079e2b986cc96e5777660e7a7535e83cd39d1ff1212",
+    "server/session-lavik-hgetall/reset-data.json": "fe8f1161ec22bc389bf5daa107b49756ed315f03aab248d516862c200da1aae2",
+    "server/session-lavik-hgetall/stop.json": "eba14a7881a98fa94a3147bf111a108e17c883afd33d92d9728d0e88b04843cf",
+    "server/session-lavik-hgetall/logs/lavik.log": "1ffbfbf4d0c313aa339cc49f80be52e6672d629189494aec66d3a46c5bc6af99",
+    "client/results/lavik-hgetall-load/result.json": "59ab36a0a5a041765c70456bfd8a3d1002497839741f2fc30ab28eaad8c4bd7b",
+    "client/results/lavik-hgetall-load/command.json": "ccb11c2f3fa797dc478c2d0400b126abffd59fd4fd7354b42b7e5766415ecbf0",
+    "client/results/lavik-hgetall-load/case.json": "0209d982436953d2d1ede44389ce1e01a860e9fd7b94be6ca7095fae53d054ff",
+    "client/results/lavik-hgetall-load/server-before.json": "1a3355627668cb22ba30643d18c73c7a07cabad10ef717d9ce7de71de017c08e",
+    "client/results/lavik-hgetall-load/server-after.json": "8126d4e8f691b21a70089c8fbc21eafc83e6a3cef65822a267cc1b2c7b7b84ab",
+    "server/snapshots/lavik-hgetall-load-before.json": "1a3355627668cb22ba30643d18c73c7a07cabad10ef717d9ce7de71de017c08e",
+    "server/snapshots/lavik-hgetall-load-after.json": "8126d4e8f691b21a70089c8fbc21eafc83e6a3cef65822a267cc1b2c7b7b84ab",
+    "client/results/lavik-hgetall-load/command-counts.json": "52ca1b96a1577864cc882ec2f36c028d8c92ec555e2fb1175110973a98cc4501",
+    "client/results/lavik-hgetall-load/timing.json": "0ae634890db57c5ab2c74eb8b79d0bfd049937b1a725db7581d7f5212f2cf2ef",
+    "client/results/lavik-hgetall-warm/result.json": "cc621e89d7a6b0e3d77e99848f7cdb3a308822b6f2cb4fc50468093cea76d263",
+    "client/results/lavik-hgetall-warm/command.json": "d17aa4ac8a9c95330c029b08efbcb01f58636849a35f1ccd85caefde5371c875",
+    "client/results/lavik-hgetall-warm/case.json": "b1b5bd407c6af4a026e3c9a690cdf3f0e3add110d01f5feeb119da1ec12a9655",
+    "client/results/lavik-hgetall-warm/server-before.json": "248f8a96b730a99a10ecb30debd709e58af36c05b29a64968381fd9692a50c98",
+    "client/results/lavik-hgetall-warm/server-after.json": "fec4b7107a73a17fef9ea6c5a0cdd4c1c47c24f4e06fef4268d16c67e74bd968",
+    "server/snapshots/lavik-hgetall-warm-before.json": "248f8a96b730a99a10ecb30debd709e58af36c05b29a64968381fd9692a50c98",
+    "server/snapshots/lavik-hgetall-warm-after.json": "fec4b7107a73a17fef9ea6c5a0cdd4c1c47c24f4e06fef4268d16c67e74bd968",
+    "client/results/lavik-hgetall-warm/command-counts.json": "b942a195d94df796f670f0316168474c29f7b0b021cb5510ccf9070d5631283f",
+    "client/results/lavik-hgetall-warm/timing.json": "aeebfc44dcd8958b7faa59c1d055b3552f9f7953598b79465740b0ad9be6fb96",
+    "client/results/lavik-hgetall-c80/result.json": "89caf673dcfcb0cf8b4e05676f96c9aa34e05311682bf8bccb7f17e6eb307a89",
+    "client/results/lavik-hgetall-c80/command.json": "1ae1e10a343edfa6753e9f73dca770998da82a443470793eb12a323ff881ad78",
+    "client/results/lavik-hgetall-c80/case.json": "dcbc3879168a77d140b42dae98d654ceb9189260cd9cdebe4971a5b338b18755",
+    "client/results/lavik-hgetall-c80/server-before.json": "4991c1ef9b30bc4d5d305841430c05d6d71e9db30a579ecb86019260531e0530",
+    "client/results/lavik-hgetall-c80/server-after.json": "c0e3f9f48ca7795bf5c9676a2604905178e7696d2f97a8f3578700b30f553a5f",
+    "server/snapshots/lavik-hgetall-c80-before.json": "4991c1ef9b30bc4d5d305841430c05d6d71e9db30a579ecb86019260531e0530",
+    "server/snapshots/lavik-hgetall-c80-after.json": "c0e3f9f48ca7795bf5c9676a2604905178e7696d2f97a8f3578700b30f553a5f",
+    "client/results/lavik-hgetall-c80/command-counts.json": "d58fcb0529421eab35a2195f3db7ecb9a27d0449a47cb1d405119c55c2eb1539",
+    "client/results/lavik-hgetall-c80/timing.json": "195b401c5c9357743d48affcafcd58bb6e756fa0f2612fba6b9bba7ddaee9fab",
+    "client/validations/lavik-hgetall-loaded/result.json": "5116fef6cfed4117f6416b254740e86dd4ca432ede2012b9e7a70c63306af172",
+    "client/validations/lavik-hgetall-before/result.json": "021b50f20967b5fc9669ce0fea18046b5efdf48614b6cd8dad3877f59cea7288",
+    "client/validations/lavik-hgetall-after/result.json": "c29e21208033ab5f8587c25de4e2df2deee5ab12b76cb6870668472329ab1c77",
+    "client/results/lavik-hgetall-c80/client-identity.json": "46d83995bd3779e762bbbf07a7c799c3c1d0bb21ade9efd2b699c481a2c649df",
+    "server/observations/lavik-hgetall-c80/exit-status.json": "c14196f132c1e9be0508ae80ab52fcb3e1d3fc05880415f3dc980971df207c9e",
+    "server/observations/lavik-hgetall-c80/identity.json": "22a9ea22167cff165070b1170a5216d3a02f8221f3cebb8670c72990cd39d1c5",
+    "server/observations/lavik-hgetall-c80/monitor.jsonl": "d70defc68581c5ace66dc402b7f070fa69895c7b5e30e5aac44917b46b74146d",
+    "client/observations/lavik-hgetall-c80/exit-status.json": "c14196f132c1e9be0508ae80ab52fcb3e1d3fc05880415f3dc980971df207c9e",
+    "client/observations/lavik-hgetall-c80/identity.json": "e212494fb00dce765afca4c7f38a7bc3dc476348f54eada18fe88d353c307f71",
+    "client/observations/lavik-hgetall-c80/monitor.jsonl": "940d65aab37fc6fd297dfa6de5e5ffdf986a6466ac2d77b1e027a3ab28d78cef"
+  },
+  "analyzer_crosscheck": {
+    "status": "passed",
+    "checked_at_utc": "2026-10-19T05:10:57.293656+00:00",
+    "comparison_sha256": "f6d1f719a7720fc434d88dfec45edccb1fe4795cf77892279281aa088529a753",
+    "analyzer_sha256": "cdbafb786eb7582b9246c91fcfac728f96fccb3a79b6da42b582679d1bc7c0a9",
+    "formal_metrics_identical": true,
+    "raw_computed_cpu_nic_identical": true
+  }
+}
