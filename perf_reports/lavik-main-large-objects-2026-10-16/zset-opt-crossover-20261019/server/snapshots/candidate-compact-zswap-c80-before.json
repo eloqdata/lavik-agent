@@ -1,0 +1,96 @@
+{
+  "time": 1792399599.7302291,
+  "active": {
+    "revision": "32bdd6b474733c2850b80e3cc217461075e73af5",
+    "version": "32bdd6b474733c2850b80e3cc217461075e73af5",
+    "binary": "/mnt/dev/benchmark/zset-compact-20261019/sources/candidate/build-gcc13/lavik",
+    "binary_sha256": "8ae509e9a04d7d4c55c5aa9b966421531e26e97b4800c1c2885ea38d8b845ead",
+    "root": "/mnt/dev/benchmark/zset-opt-crossover-20261019",
+    "product": "candidate",
+    "label": "session-candidate-compact-zswap",
+    "owner_token": "a181ff78ed1907f314fa7549a569e09c",
+    "args": [
+      "/mnt/dev/benchmark/zset-compact-20261019/sources/candidate/build-gcc13/lavik",
+      "--storage=spdk",
+      "--alsologtostderr",
+      "--bind=10.84.1.4",
+      "--threads=16",
+      "--pin-workers",
+      "--metrics-port=0",
+      "--spdk-max-completions-per-poll=16",
+      "--log-dir=/mnt/dev/benchmark/zset-opt-crossover-20261019/session-candidate-compact-zswap/logs",
+      "--shutdown-checkpoint",
+      "--data-file=spdk://2401:00:00.0/1",
+      "--data-file=spdk://221c:00:00.0/1",
+      "--data-file=spdk://7f10:00:00.0/1",
+      "--data-file=spdk://399c:00:00.0/1",
+      "--data-file=spdk://c0ef:00:00.0/1",
+      "--data-file=spdk://6319:00:00.0/1"
+    ],
+    "cpu_affinity": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15
+    ],
+    "environment": {
+      "LC_ALL": "C",
+      "BYCORF_EAL_ARGS": "-a 2401:00:00.0 -a 221c:00:00.0 -a 7f10:00:00.0 -a 399c:00:00.0 -a c0ef:00:00.0 -a 6319:00:00.0",
+      "BYCORF_DPDK_MEMORY_MB": "8192"
+    },
+    "time": 1792399498.3065965,
+    "manifest_sha256": "f49f7b2ec3eb91d756a682880c714951b1fc27ba816dbbdbf686739c2c40bca5",
+    "data_dir": null,
+    "config_sha256": null,
+    "spdk_ready_sha256": "84e72f2ed542bed0a8ac8b0956ada8a2d9e05b8b4b638b454f1f8fbd9df96b3e",
+    "expected_recovery": {
+      "mode": "checkpoint",
+      "checkpoint": {
+        "generation": 5,
+        "entries": 16384
+      }
+    },
+    "previous_stop_sha256": "f668a5daa43a75f57d508ecfbe8a9773736799877c5345fa342b48cd6be7181a",
+    "pid": 2265951,
+    "start_ticks": "70317276",
+    "supervisor_pid": 2265950
+  },
+  "config": {
+    "defrag-paused": "no"
+  },
+  "stat": "cpu  172975141 4137 59316102 605181947 250748273 0 26584460 0 0 0\ncpu0 11233914 585 3836723 37355856 15591825 0 1650608 0 0 0\ncpu1 11177380 134 3778899 37515857 15565549 0 1668267 0 0 0\ncpu2 11458046 253 3861031 37247825 15460326 0 1680538 0 0 0\ncpu3 11386219 404 3787146 37474417 15402304 0 1681360 0 0 0\ncpu4 10331228 291 3744475 37781753 16161080 0 1661652 0 0 0\ncpu5 10262385 20 3668170 38027055 16123039 0 1620634 0 0 0\ncpu6 10929033 231 3756264 37780670 15577274 0 1646386 0 0 0\ncpu7 10872795 241 3697053 37982888 15521338 0 1643635 0 0 0\ncpu8 10933049 474 3740467 37776826 15607662 0 1638517 0 0 0\ncpu9 10836410 59 3642080 38015941 15578090 0 1645048 0 0 0\ncpu10 10330226 170 3733729 37835054 16121929 0 1670495 0 0 0\ncpu11 10257329 161 3672809 38063552 16099492 0 1614300 0 0 0\ncpu12 10810509 267 3654732 37906171 15494649 0 1709518 0 0 0\ncpu13 10658509 198 3563756 38211607 15479604 0 1693355 0 0 0\ncpu14 10793360 440 3623567 38001192 15498388 0 1682587 0 0 0\ncpu15 10704745 202 3555195 38205275 15465717 0 1677554 0 0 0\nintr 41591210637 0 0 0 0 3286 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 5018 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 277460 219781 365109 283738 331952 242066 345240 259304 341585 245213 347983 227772 293196 177852 325357 191164 233077377 1801053987 1791508856 1808474628 1809387965 1795109612 1784067128 1801183962 1787577191 1807959160 1790553455 1774307355 1806837894 1781166533 1777078192 1777149690 1787014365 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0\nctxt 22914937820\nbtime 1791696325\nprocesses 2266296\nprocs_running 1\nprocs_blocked 16\nsoftirq 28461547506 0 229631171 1789832 1691890340 31403 56 55039924 553039369 5066848 155254787\n",
+  "meminfo": "MemTotal:       131900984 kB\nMemFree:        77827932 kB\nMemAvailable:   118906200 kB\nBuffers:          336116 kB\nCached:         40392724 kB\nSwapCached:            0 kB\nActive:          3397100 kB\nInactive:       39694912 kB\nActive(anon):    2322996 kB\nInactive(anon):    53044 kB\nActive(file):    1074104 kB\nInactive(file): 39641868 kB\nUnevictable:       30504 kB\nMlocked:           27432 kB\nSwapTotal:             0 kB\nSwapFree:              0 kB\nZswap:                 0 kB\nZswapped:              0 kB\nDirty:               704 kB\nWriteback:             0 kB\nAnonPages:       2393748 kB\nMapped:           127848 kB\nShmem:              4284 kB\nKReclaimable:    1619568 kB\nSlab:            2025024 kB\nSReclaimable:    1619568 kB\nSUnreclaim:       405456 kB\nKernelStack:        5376 kB\nPageTables:        10560 kB\nSecPageTables:         0 kB\nNFS_Unstable:          0 kB\nBounce:                0 kB\nWritebackTmp:          0 kB\nCommitLimit:    61756188 kB\nCommitted_AS:     561096 kB\nVmallocTotal:   34359738367 kB\nVmallocUsed:       72744 kB\nVmallocChunk:          0 kB\nPercpu:            88640 kB\nHardwareCorrupted:     0 kB\nAnonHugePages:     30720 kB\nShmemHugePages:        0 kB\nShmemPmdMapped:        0 kB\nFileHugePages:   2144256 kB\nFilePmdMapped:         0 kB\nCmaTotal:              0 kB\nCmaFree:               0 kB\nUnaccepted:            0 kB\nBalloon:               0 kB\nHugePages_Total:    4096\nHugePages_Free:        0\nHugePages_Rsvd:        0\nHugePages_Surp:        0\nHugepagesize:       2048 kB\nHugetlb:         8388608 kB\nDirectMap4k:      263188 kB\nDirectMap2M:    21751808 kB\nDirectMap1G:    114294784 kB\n",
+  "diskstats": "   7       0 loop0 11 0 28 0 0 0 0 0 0 0 0 0 0 0 0 0 0\n   7       1 loop1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0\n   7       2 loop2 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0\n   7       3 loop3 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0\n   7       4 loop4 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0\n   7       5 loop5 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0\n   7       6 loop6 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0\n   7       7 loop7 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0\n 259       1 nvme0n2 1709115 5943 88593334 139174196 939437 1355059 361498040 49697778 0 4880275 188888642 7357 0 1034670832 13698 30421 2968\n 259       0 nvme0n1 676896 58309 138487011 3413580 1742998 331746 217084236 34530352 0 1854796 38308708 101417 2 3807445176 248317 50822 116458\n 259       2 nvme0n1p1 671964 57081 138407288 3412623 1742650 331689 216987064 34519237 0 2300981 38180058 101352 0 3805225080 248197 0 0\n 259       3 nvme0n1p14 4219 0 33986 652 0 0 0 0 0 649 652 0 0 0 0 0 0\n 259       4 nvme0n1p15 427 1194 28216 195 2 0 2 0 0 82 200 2 2 402328 4 0 0\n 259       5 nvme0n1p16 225 34 15474 97 346 57 97170 11114 0 925 11328 63 0 1817768 116 0 0\n",
+  "net/dev": "Inter-|   Receive                                                |  Transmit\n face |bytes    packets errs drop fifo frame compressed multicast|bytes    packets errs drop fifo colls carrier compressed\n    lo: 12731987629 5516256    0    0    0     0          0         0 12731987629 5516256    0    0    0     0       0          0\n  eth0: 2312148606 3667461    0    0    0     0          0         0 1852363373 3104077    0    0    0     0       0          0\n  eth1: 50019098641157 63687594845    0    0    0     0          0         0 61933660577551 61934264172    0    0    0     0       0          0\nenP26559s2: 51255933083004 75384691165    0 144955    0     0          0         0 63547776858961 86390658421    0    0    0     0       0          0\n",
+  "process_stat": "2265951 (lavik) S 2265950 2265951 2265951 0 -1 4194560 574649 0 0 0 100300 17877 0 0 20 0 18 0 70317276 73242644480 568262 18446744073709551615 94827965739008 94827985436169 140733980549504 0 0 0 0 4096 16450 0 0 0 17 0 0 0 0 0 0 94827989178432 94827989888672 94828225814528 140733980556165 140733980556691 140733980556691 140733980557227 0\n",
+  "process_status": "Name:\tlavik\nUmask:\t0022\nState:\tS (sleeping)\nTgid:\t2265951\nNgid:\t0\nPid:\t2265951\nPPid:\t2265950\nTracerPid:\t0\nUid:\t0\t0\t0\t0\nGid:\t0\t0\t0\t0\nFDSize:\t8192\nGroups:\t0 \nNStgid:\t2265951\nNSpid:\t2265951\nNSpgid:\t2265951\nNSsid:\t2265951\nKthread:\t0\nVmPeak:\t71526020 kB\nVmSize:\t71526020 kB\nVmLck:\t       0 kB\nVmPin:\t       0 kB\nVmHWM:\t 2275020 kB\nVmRSS:\t 2275020 kB\nRssAnon:\t 2258876 kB\nRssFile:\t   16144 kB\nRssShmem:\t       0 kB\nVmData:\t 3336352 kB\nVmStk:\t     132 kB\nVmExe:\t   19236 kB\nVmLib:\t    2308 kB\nVmPTE:\t    5160 kB\nVmSwap:\t       0 kB\nHugetlbPages:\t 8388608 kB\nCoreDumping:\t0\nTHP_enabled:\t0\nuntag_mask:\t0xffffffffffffffff\nThreads:\t18\nSigQ:\t1/515053\nSigPnd:\t0000000000000000\nShdPnd:\t0000000000000000\nSigBlk:\t0000000000000000\nSigIgn:\t0000000000001000\nSigCgt:\t0000000100004042\nCapInh:\t0000000000000000\nCapPrm:\t000001ffffffffff\nCapEff:\t000001ffffffffff\nCapBnd:\t000001ffffffffff\nCapAmb:\t0000000000000000\nNoNewPrivs:\t0\nSeccomp:\t0\nSeccomp_filters:\t0\nSpeculation_Store_Bypass:\tvulnerable\nSpeculationIndirectBranch:\talways enabled\nCpus_allowed:\tffff\nCpus_allowed_list:\t0-15\nMems_allowed:\t00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000001\nMems_allowed_list:\t0\nvoluntary_ctxt_switches:\t31\nnonvoluntary_ctxt_switches:\t43\nx86_Thread_features:\t\nx86_Thread_features_locked:\t\n",
+  "process_io": "rchar: 100092\nwchar: 9994\nsyscr: 4588\nsyscw: 60\nread_bytes: 0\nwrite_bytes: 36864\ncancelled_write_bytes: 0\n",
+  "proc_stat": "2265951 (lavik) S 2265950 2265951 2265951 0 -1 4194560 574649 0 0 0 100300 17877 0 0 20 0 18 0 70317276 73242644480 568262 18446744073709551615 94827965739008 94827985436169 140733980549504 0 0 0 0 4096 16450 0 0 0 17 0 0 0 0 0 0 94827989178432 94827989888672 94828225814528 140733980556165 140733980556691 140733980556691 140733980557227 0\n",
+  "proc_status": "Name:\tlavik\nUmask:\t0022\nState:\tS (sleeping)\nTgid:\t2265951\nNgid:\t0\nPid:\t2265951\nPPid:\t2265950\nTracerPid:\t0\nUid:\t0\t0\t0\t0\nGid:\t0\t0\t0\t0\nFDSize:\t8192\nGroups:\t0 \nNStgid:\t2265951\nNSpid:\t2265951\nNSpgid:\t2265951\nNSsid:\t2265951\nKthread:\t0\nVmPeak:\t71526020 kB\nVmSize:\t71526020 kB\nVmLck:\t       0 kB\nVmPin:\t       0 kB\nVmHWM:\t 2275020 kB\nVmRSS:\t 2275020 kB\nRssAnon:\t 2258876 kB\nRssFile:\t   16144 kB\nRssShmem:\t       0 kB\nVmData:\t 3336352 kB\nVmStk:\t     132 kB\nVmExe:\t   19236 kB\nVmLib:\t    2308 kB\nVmPTE:\t    5160 kB\nVmSwap:\t       0 kB\nHugetlbPages:\t 8388608 kB\nCoreDumping:\t0\nTHP_enabled:\t0\nuntag_mask:\t0xffffffffffffffff\nThreads:\t18\nSigQ:\t1/515053\nSigPnd:\t0000000000000000\nShdPnd:\t0000000000000000\nSigBlk:\t0000000000000000\nSigIgn:\t0000000000001000\nSigCgt:\t0000000100004042\nCapInh:\t0000000000000000\nCapPrm:\t000001ffffffffff\nCapEff:\t000001ffffffffff\nCapBnd:\t000001ffffffffff\nCapAmb:\t0000000000000000\nNoNewPrivs:\t0\nSeccomp:\t0\nSeccomp_filters:\t0\nSpeculation_Store_Bypass:\tvulnerable\nSpeculationIndirectBranch:\talways enabled\nCpus_allowed:\tffff\nCpus_allowed_list:\t0-15\nMems_allowed:\t00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000001\nMems_allowed_list:\t0\nvoluntary_ctxt_switches:\t31\nnonvoluntary_ctxt_switches:\t43\nx86_Thread_features:\t\nx86_Thread_features_locked:\t\n",
+  "info": {
+    "server": "# Server\nlavik_version:0.1.1-dev\nredis_mode:standalone\nprocess_id:2265951\nrun_id:fc75931e32b44c20af49f348d3e3d978d986b788\ntcp_port:6379\nworker_threads:16\nuptime_in_seconds:95",
+    "memory": "# Memory\nused_memory:1514394272\nused_memory_human:1.41G\nused_memory_rss:2329645056\nused_memory_rss_human:2.17G\nused_memory_peak:1514414576\nused_memory_peak_human:1.41G\nmaxmemory:108053286093\nmaxmemory_human:100.63G\nmaxmemory_clients:5402664304\nclient_buffered_request_bytes:26\nfullsync_reserved_memory:0\nmemory_admission_pending:0\nmaxmemory_policy:noeviction\nnumber_of_cached_scripts:0\nallocator_allocated:1514394272\nallocator_active:2582839296\nallocator_resident:2329645056\nallocator_reserved:3224043520\nmem_fragmentation_ratio:0.901971\noom_rejected_commands:0",
+    "commandstats": "# Commandstats\ncmdstat_ping:calls=1,usec=12,usec_per_call=12.91,rejected_calls=0,failed_calls=0\ncmdstat_exists:calls=1,usec=71,usec_per_call=71.86,rejected_calls=0,failed_calls=0\ncmdstat_zadd:calls=4215079,usec=810357631,usec_per_call=192.25,rejected_calls=0,failed_calls=0\ncmdstat_zcard:calls=6,usec=115,usec_per_call=19.27,rejected_calls=0,failed_calls=0\ncmdstat_zrange:calls=6,usec=774,usec_per_call=129.05,rejected_calls=0,failed_calls=0\ncmdstat_zrem:calls=4215079,usec=5124292480,usec_per_call=1215.70,rejected_calls=0,failed_calls=0\ncmdstat_config:calls=4,usec=51,usec_per_call=13.00,rejected_calls=0,failed_calls=0\ncmdstat_info:calls=11,usec=3791,usec_per_call=344.65,rejected_calls=0,failed_calls=0",
+    "stats": "# Stats\ntotal_commands_processed:8430188\ntomb_raider_rounds:0\ntomb_raider_reaped:0\ntomb_raider_refreshed:0\ntomb_raider_enabled:1\ntomb_raider_running:0\ntomb_raider_eligible:1\ntomb_raider_blocked_reason:none\ntomb_raider_mode:interval\ntomb_raider_interval_ms:86400000\ntomb_raider_block_sleep_ms:10\ntomb_raider_daily_second:0\n\ndefrag_max_active_per_device:8\ndefrag_paused:0\ndefrag_block_sleep_ms:0\ndefrag_record_sleep_us:0\ndefrag_active:0\ndefrag_pending:0\n\ntx_cleaner_rounds:1\ntx_cleaner_failures:0\ntx_cleaner_retired_blocks:0\ntx_cleaner_cooldown_ms:60000\ntx_backlog_bytes_total:0\ntx_backlog_bytes_max:0\ntx_cleaner_running:0\n\ntx_commit_batches:0\ntx_commit_batch_transactions:0\ntx_commit_input_fences:0\ntx_commit_merged_fences:0\ntx_commit_queue_depth:0\ntx_commit_queue_peak:0\ntx_commit_backpressure_waits:0\ntx_commit_queue_high_watermark:4096\n\nstorage_dirty_staging_bytes:0\nstorage_expiration_pause_count:0\nstorage_flushes_pending:0\nstorage_tx_commits_pending:0\nstorage_durability_pending:0"
+  },
+  "info_server": "# Server\nlavik_version:0.1.1-dev\nredis_mode:standalone\nprocess_id:2265951\nrun_id:fc75931e32b44c20af49f348d3e3d978d986b788\ntcp_port:6379\nworker_threads:16\nuptime_in_seconds:95",
+  "info_memory": "# Memory\nused_memory:1514394272\nused_memory_human:1.41G\nused_memory_rss:2329645056\nused_memory_rss_human:2.17G\nused_memory_peak:1514414576\nused_memory_peak_human:1.41G\nmaxmemory:108053286093\nmaxmemory_human:100.63G\nmaxmemory_clients:5402664304\nclient_buffered_request_bytes:26\nfullsync_reserved_memory:0\nmemory_admission_pending:0\nmaxmemory_policy:noeviction\nnumber_of_cached_scripts:0\nallocator_allocated:1514394272\nallocator_active:2582839296\nallocator_resident:2329645056\nallocator_reserved:3224043520\nmem_fragmentation_ratio:0.901971\noom_rejected_commands:0",
+  "info_commandstats": "# Commandstats\ncmdstat_ping:calls=1,usec=12,usec_per_call=12.91,rejected_calls=0,failed_calls=0\ncmdstat_exists:calls=1,usec=71,usec_per_call=71.86,rejected_calls=0,failed_calls=0\ncmdstat_zadd:calls=4215079,usec=810357631,usec_per_call=192.25,rejected_calls=0,failed_calls=0\ncmdstat_zcard:calls=6,usec=115,usec_per_call=19.27,rejected_calls=0,failed_calls=0\ncmdstat_zrange:calls=6,usec=774,usec_per_call=129.05,rejected_calls=0,failed_calls=0\ncmdstat_zrem:calls=4215079,usec=5124292480,usec_per_call=1215.70,rejected_calls=0,failed_calls=0\ncmdstat_config:calls=4,usec=51,usec_per_call=13.00,rejected_calls=0,failed_calls=0\ncmdstat_info:calls=11,usec=3791,usec_per_call=344.65,rejected_calls=0,failed_calls=0",
+  "info_stats": "# Stats\ntotal_commands_processed:8430188\ntomb_raider_rounds:0\ntomb_raider_reaped:0\ntomb_raider_refreshed:0\ntomb_raider_enabled:1\ntomb_raider_running:0\ntomb_raider_eligible:1\ntomb_raider_blocked_reason:none\ntomb_raider_mode:interval\ntomb_raider_interval_ms:86400000\ntomb_raider_block_sleep_ms:10\ntomb_raider_daily_second:0\n\ndefrag_max_active_per_device:8\ndefrag_paused:0\ndefrag_block_sleep_ms:0\ndefrag_record_sleep_us:0\ndefrag_active:0\ndefrag_pending:0\n\ntx_cleaner_rounds:1\ntx_cleaner_failures:0\ntx_cleaner_retired_blocks:0\ntx_cleaner_cooldown_ms:60000\ntx_backlog_bytes_total:0\ntx_backlog_bytes_max:0\ntx_cleaner_running:0\n\ntx_commit_batches:0\ntx_commit_batch_transactions:0\ntx_commit_input_fences:0\ntx_commit_merged_fences:0\ntx_commit_queue_depth:0\ntx_commit_queue_peak:0\ntx_commit_backpressure_waits:0\ntx_commit_queue_high_watermark:4096\n\nstorage_dirty_staging_bytes:0\nstorage_expiration_pause_count:0\nstorage_flushes_pending:0\nstorage_tx_commits_pending:0\nstorage_durability_pending:0",
+  "defrag_paused": "no",
+  "defrag": "defrag-paused\nno",
+  "transactions_drained": true,
+  "transaction_drain_confirmed": true
+}

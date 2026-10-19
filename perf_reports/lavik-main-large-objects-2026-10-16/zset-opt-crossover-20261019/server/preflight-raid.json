@@ -1,0 +1,415 @@
+{
+  "time": 1792397164.7319198,
+  "root": "/mnt/dev/benchmark/zset-opt-crossover-20261019",
+  "boot_id": "627b9c8b-089f-4c8f-8c00-4a8f3878274a",
+  "kernel": "6.17.0-1022-azure",
+  "protected_mounts": {
+    "/": {
+      "source": "/dev/nvme0n1p1",
+      "target": "/",
+      "fstype": "ext4",
+      "maj:min": "259:2",
+      "uuid": "4255d757-c0f2-4577-ba35-8c54d5fe7830",
+      "ancestor_block_names": [
+        "nvme0n1",
+        "nvme0n1p1"
+      ]
+    },
+    "/mnt/dev": {
+      "source": "/dev/nvme0n2",
+      "target": "/mnt/dev",
+      "fstype": "ext4",
+      "maj:min": "259:1",
+      "uuid": "59156ab3-81b9-4b64-83e9-cd16d3e37d21",
+      "ancestor_block_names": [
+        "nvme0n2"
+      ]
+    }
+  },
+  "variants": {
+    "main": {
+      "schema_version": 1,
+      "product": "main",
+      "revision": "684894d973878ca0e0649b54404ce77521f1695f",
+      "base_revision": "684894d973878ca0e0649b54404ce77521f1695f",
+      "binary": "/mnt/dev/benchmark/zset-compact-20261019/sources/main/build-gcc13/lavik",
+      "binary_sha256": "cec4ef957bd0ea87e40895539866d42399f82b9e28c4ceb174752bb3d6c977e5",
+      "build_root": "/mnt/dev/benchmark/zset-compact-20261019",
+      "build_manifest_path": "/mnt/dev/benchmark/zset-compact-20261019/build-manifest.json",
+      "build_manifest_sha256": "9480ba1458320dfdf28e4bd2b4b7d66117d0e4b4bceec6d1f8ee0c5224415157",
+      "source_manifest_path": "/mnt/dev/benchmark/zset-compact-20261019/source-manifest.json",
+      "source_manifest_sha256": "2bf4b0dffd9e9ecbe9a55b830b596fff4320c2eaee7c9d479eaefce3af349d0c",
+      "bycorf_revision": "86d686724ddd1c5617fb1b62f8131e05571e8423"
+    },
+    "candidate": {
+      "schema_version": 1,
+      "product": "candidate",
+      "revision": "32bdd6b474733c2850b80e3cc217461075e73af5",
+      "base_revision": "684894d973878ca0e0649b54404ce77521f1695f",
+      "binary": "/mnt/dev/benchmark/zset-compact-20261019/sources/candidate/build-gcc13/lavik",
+      "binary_sha256": "8ae509e9a04d7d4c55c5aa9b966421531e26e97b4800c1c2885ea38d8b845ead",
+      "build_root": "/mnt/dev/benchmark/zset-compact-20261019",
+      "build_manifest_path": "/mnt/dev/benchmark/zset-compact-20261019/build-manifest.json",
+      "build_manifest_sha256": "9480ba1458320dfdf28e4bd2b4b7d66117d0e4b4bceec6d1f8ee0c5224415157",
+      "source_manifest_path": "/mnt/dev/benchmark/zset-compact-20261019/source-manifest.json",
+      "source_manifest_sha256": "2bf4b0dffd9e9ecbe9a55b830b596fff4320c2eaee7c9d479eaefce3af349d0c",
+      "bycorf_revision": "86d686724ddd1c5617fb1b62f8131e05571e8423"
+    }
+  },
+  "mode": "raid",
+  "meminfo": "MemTotal:       131900984 kB\nMemFree:        83617224 kB\nMemAvailable:   129529068 kB\nBuffers:          718728 kB\nCached:         44717484 kB\nSwapCached:            0 kB\nActive:          1130084 kB\nInactive:       44402288 kB\nActive(anon):      56000 kB\nInactive(anon):    53048 kB\nActive(file):    1074084 kB\nInactive(file): 44349240 kB\nUnevictable:       30504 kB\nMlocked:           27432 kB\nSwapTotal:             0 kB\nSwapFree:              0 kB\nZswap:                 0 kB\nZswapped:              0 kB\nDirty:               944 kB\nWriteback:             0 kB\nAnonPages:        126768 kB\nMapped:           111988 kB\nShmem:              4304 kB\nKReclaimable:    1745792 kB\nSlab:            2154272 kB\nSReclaimable:    1745792 kB\nSUnreclaim:       408480 kB\nKernelStack:        4992 kB\nPageTables:         5252 kB\nSecPageTables:         0 kB\nNFS_Unstable:          0 kB\nBounce:                0 kB\nWritebackTmp:          0 kB\nCommitLimit:    65950492 kB\nCommitted_AS:     361728 kB\nVmallocTotal:   34359738367 kB\nVmallocUsed:       72200 kB\nVmallocChunk:          0 kB\nPercpu:            87296 kB\nHardwareCorrupted:     0 kB\nAnonHugePages:     24576 kB\nShmemHugePages:        0 kB\nShmemPmdMapped:        0 kB\nFileHugePages:   2158592 kB\nFilePmdMapped:         0 kB\nCmaTotal:              0 kB\nCmaFree:               0 kB\nUnaccepted:            0 kB\nBalloon:               0 kB\nHugePages_Total:       0\nHugePages_Free:        0\nHugePages_Rsvd:        0\nHugePages_Surp:        0\nHugepagesize:       2048 kB\nHugetlb:               0 kB\nDirectMap4k:      263188 kB\nDirectMap2M:    21751808 kB\nDirectMap1G:    114294784 kB\n",
+  "previous_sessions": {
+    "session-lavik-hgetall": {
+      "sha256": "eba14a7881a98fa94a3147bf111a108e17c883afd33d92d9728d0e88b04843cf",
+      "time": 1792386318.8258388
+    },
+    "session-lavik-hkeys": {
+      "sha256": "79e91fdc3e3113663ae6098e28e362c93eb352014c4fb9b2d73eeb935dbd6d66",
+      "time": 1792386485.4061015
+    },
+    "session-lavik-hvals": {
+      "sha256": "3434dd003e8dcda2aef2d948d49c3c119b48e122268b0f9d910f1b09fc8b29da",
+      "time": 1792386651.1410527
+    },
+    "session-lavik-smembers": {
+      "sha256": "5108ea4df2847199102f4071af5efab86bd7fa4cb157b52a41fa3ab2737c3bb5",
+      "time": 1792386816.7961447
+    },
+    "session-lavik-lrange": {
+      "sha256": "5c048f730d22f5237dd708837512e3c6a8097d3764b5a011705030622d998ef5",
+      "time": 1792386982.4386067
+    },
+    "session-lavik-zrange": {
+      "sha256": "832326f0cefc59d1ab34233fa2039433be6cae5f950fe01bc214e3e534c2c0f8",
+      "time": 1792387147.704042
+    },
+    "session-lavik-set": {
+      "sha256": "2a43ea64c95a4e04facaef56e98f1b461a57ae7e2121ca3b0dd7223d3bf68d4d",
+      "time": 1792387313.1865652
+    },
+    "session-lavik-setrange": {
+      "sha256": "06c6d027ffa9c5d222cde9b20648c0e0ead0cd14220ceec431da5bde21d70c22",
+      "time": 1792387477.4070518
+    },
+    "session-lavik-hash": {
+      "sha256": "f6247d95955775b0f1982a6e946d268c21372f041ca8ae78e41ca83f6e2beedb",
+      "time": 1792387641.7762997
+    },
+    "session-lavik-list": {
+      "sha256": "adfc8be9884e284c0813bede5c43aa3a77846b9ed0f2e305895803eb43984726",
+      "time": 1792387806.001941
+    },
+    "session-lavik-zincr": {
+      "sha256": "89bd6a05e92edfdf72a74719a9179ff8546239a9b1aeb76bf8d9e173b4cb9f02",
+      "time": 1792387970.4491615
+    },
+    "session-lavik-zswap": {
+      "sha256": "1a95682575638dbf453e52b8e6d77644f298e6cba278bc67d2183630cb43a64c",
+      "time": 1792388138.6574054
+    },
+    "session-lavik-stream": {
+      "sha256": "73c30425b4bc8c3108013619e2c5ef52af00c20d1780a217d2e76519ddf6b9f1",
+      "time": 1792388303.7592585
+    },
+    "session-lavik-sswap": {
+      "sha256": "33ee52bdaefb66b0a6de6fc25dd96e8d2c4c84abe6fa73980e612cc2c1cd06a2",
+      "time": 1792388472.25647
+    },
+    "session-redis-hgetall": {
+      "sha256": "f5e3ae6b3b0242b2716769f397cade7ffedee48d45a5c90cfa2310adabcca132",
+      "time": 1792388945.6803343
+    },
+    "session-redis-hkeys": {
+      "sha256": "ad639a50519aff04fe8d972b8863ab02901d7d5b9fcabb3c6f07e31ea10ebcb9",
+      "time": 1792389103.096212
+    },
+    "session-redis-hvals": {
+      "sha256": "5006230c31cd1d3b9b74de7f3102274f3519dfdacca4d22afaff85b68a1c4b8c",
+      "time": 1792389259.3416166
+    },
+    "session-redis-smembers": {
+      "sha256": "46aeaf32c74c80860e287efa876e1536c3ba15e2658c468bafc59a7ea515ed36",
+      "time": 1792389415.0249066
+    },
+    "session-redis-lrange": {
+      "sha256": "351fdbfe88bb3ec8e2c2b75cdf10124836b7a12e434c53163575507c5410d41d",
+      "time": 1792389571.7862332
+    },
+    "session-redis-zrange": {
+      "sha256": "f83141b8d5fe8bba86c42ba87903b2b1e0766797263de31afdec89a472d7725b",
+      "time": 1792389728.9349194
+    },
+    "session-redis-set": {
+      "sha256": "d198b2c9188d1b3233b3422570b9105b116ba24b57c5f76e5da950a7cc73c5ed",
+      "time": 1792389886.1992373
+    },
+    "session-redis-setrange": {
+      "sha256": "4629714154e990acbd4d8da67f2a439236a6b1a5366833fa5910ad524cf26a40",
+      "time": 1792390044.5133817
+    },
+    "session-redis-hash": {
+      "sha256": "aaff0aa04571243df8f07ed753787be7a78c616b3a8760662498c6edc1cae65d",
+      "time": 1792390202.6387308
+    },
+    "session-redis-list": {
+      "sha256": "f6d309e1409dd52c1bd6b51b8419ae52d2d370f7dbd070f847cee2e034798ebf",
+      "time": 1792390359.7614348
+    },
+    "session-redis-zincr": {
+      "sha256": "bdf773332f39b28fc5846c65a83f461e05a95d751710b28dd65eebca27bec65e",
+      "time": 1792390518.15898
+    },
+    "session-redis-zswap": {
+      "sha256": "e31819ce84cf5defb2aa202ecfcd05b74ed6bf1925987b43ae9af5f5d248d5e4",
+      "time": 1792390680.6653948
+    },
+    "session-redis-stream": {
+      "sha256": "b0b237a16d3e1f7999fe5703416727ad5a6c165a55166161206665b72e4676be",
+      "time": 1792390838.0980005
+    },
+    "session-redis-sswap": {
+      "sha256": "21494d280d70fb2c3973251d5f907b4ad8397f154a42368bc61294ea76d73543",
+      "time": 1792391000.1447387
+    },
+    "session-valkey-hgetall": {
+      "sha256": "f307b4bb826a431608fd6cd626c5d8df9f6c0c5330ecf20646bb5b8cc9f18ddb",
+      "time": 1792391155.9508781
+    },
+    "session-valkey-hkeys": {
+      "sha256": "fa3c8665fa5c293d28dead182f87c1b43a375fe17a930ecc5c49d63ff2b23674",
+      "time": 1792391313.0420752
+    },
+    "session-valkey-hvals": {
+      "sha256": "1bac1b02310420ba5acd42faef57db9aa9c1c2460f2f23d8e860aa15c31a643b",
+      "time": 1792391468.9853253
+    },
+    "session-valkey-smembers": {
+      "sha256": "80c7e62ff77ec5fa0c9b78df25e183d68ce080020a4329902126daaa47b314fd",
+      "time": 1792391624.5468347
+    },
+    "session-valkey-lrange": {
+      "sha256": "29af19c97dc9cc9e480950b7ff0989d3adc8599146b3b4526174a6db1b101a74",
+      "time": 1792391781.637687
+    },
+    "session-valkey-zrange": {
+      "sha256": "48df308d752b8dd442d06f912d125bf3e0bd302bbaf77cbb75bd1eec2bf7f5e5",
+      "time": 1792391938.2847185
+    },
+    "session-valkey-set": {
+      "sha256": "f77ccca959312e1fa154acfcb475b9d237a8654ac5fa031cecc8358b57d6a2bf",
+      "time": 1792392095.5891902
+    },
+    "session-valkey-setrange": {
+      "sha256": "fee386cdbe74f3b9a9221eaaa0563adc2a48f17b848737e8da447cd559f03ac1",
+      "time": 1792392255.2420583
+    },
+    "session-valkey-hash": {
+      "sha256": "7cafced364ff13298afd02c4685092050d9c1a2b0405fdbbe1244338f66f9f20",
+      "time": 1792392414.7116976
+    },
+    "session-valkey-list": {
+      "sha256": "4828e7f353919138b5a6a58844faf6409da42b3bf235efe9ed2e33a8cf73750a",
+      "time": 1792392572.758053
+    },
+    "session-valkey-zincr": {
+      "sha256": "148576cccd48e351e233bcf5bb9fcc222166d1f5c9c8c2ee3c295a91540b4d3b",
+      "time": 1792392731.3745244
+    },
+    "session-valkey-zswap": {
+      "sha256": "258aac9f08fab00f5b57288a26c78f73a623bd308a51b2535375b075b070a60a",
+      "time": 1792392893.9566715
+    },
+    "session-valkey-stream": {
+      "sha256": "e41f8ced013106a320023e71ae9cdd95356c943db2dc96fea398156aa5931032",
+      "time": 1792393052.670555
+    },
+    "session-valkey-sswap": {
+      "sha256": "71718c4fefc6e2af17d543faf7e524a38119f986f877a547415d53ebac45ec65",
+      "time": 1792393215.8680272
+    },
+    "session-kvrocks-hgetall": {
+      "sha256": "a3ddd804f864073c6ee2b852b555a1792110fcf3c408fc4d351afed84a80d5bb",
+      "time": 1792393372.9368932
+    },
+    "session-kvrocks-hkeys": {
+      "sha256": "74d2fb9dd42e7ebf86583c486537aaa8fffbcd78aa3f020a514d73f2ce8e0e25",
+      "time": 1792393530.6848078
+    },
+    "session-kvrocks-hvals": {
+      "sha256": "7a564f25ef116c4679d00a2a7dde9402879eed65a65021be267aacaf3f3e4d97",
+      "time": 1792393687.8440244
+    },
+    "session-kvrocks-smembers": {
+      "sha256": "03c528581d6d3ba0ee7ae21b3b3a0ee4aa01eb331ac0810c0dac48254ac4738a",
+      "time": 1792393845.189877
+    },
+    "session-kvrocks-lrange": {
+      "sha256": "f9af3a1c39f40343f6ffedf29ccd0c5b0f3f85b711613f3e6afb96752cd2447b",
+      "time": 1792394002.6896622
+    },
+    "session-kvrocks-zrange": {
+      "sha256": "0930f61930d7fb8a5277ff8790bf93a22fa479fb3eddbfdd5f35f76ba90e7025",
+      "time": 1792394160.1342542
+    },
+    "session-kvrocks-set": {
+      "sha256": "49cf87caf3096962aefacdf8412a0bca7e88c87c05d20dc55650777d6970552d",
+      "time": 1792394316.7657266
+    },
+    "session-kvrocks-setrange": {
+      "sha256": "f5f3e3ca8f7d74a1b7702a0ca07beccd5a4b66d706b8d1a70343d9fc159f829d",
+      "time": 1792394474.413278
+    },
+    "session-kvrocks-hash": {
+      "sha256": "4711acb6f406945ab5f60238622508598f5f335d9c4284167afcb90388911ebc",
+      "time": 1792394633.3012972
+    },
+    "session-kvrocks-list": {
+      "sha256": "b382af58694b3466e1922a8919f9c72828acc052bf4aa7df776f2c5b0ce32639",
+      "time": 1792394791.2767944
+    },
+    "session-kvrocks-zincr": {
+      "sha256": "17e571a245572e536879ecc8b30aed5cf2d48e6bb1837b1b990cebb80a08395f",
+      "time": 1792394951.0141008
+    },
+    "session-kvrocks-zswap": {
+      "sha256": "880443155b78443f4fc6660c1e4d35602622488d5ff0d5755e0dd10a15080433",
+      "time": 1792395117.7114038
+    },
+    "session-kvrocks-stream": {
+      "sha256": "1302c09ba3195e82fa16b20794350242fdb962ba5232ee2daa4a3b1bbbe964bb",
+      "time": 1792395274.120814
+    },
+    "session-kvrocks-sswap": {
+      "sha256": "2368cd129eac291b03ed1022d037a04f1b2d9bb989341d39b5b5fa4aef980014",
+      "time": 1792395437.4964824
+    }
+  },
+  "raid": {
+    "receipt": {
+      "root": "/mnt/dev/benchmark/objects8k-fourdb-20261019",
+      "boot_id": "627b9c8b-089f-4c8f-8c00-4a8f3878274a",
+      "time": 1792388643.0396485,
+      "devices": [
+        {
+          "serial": "4d4fd73b0687ec770001",
+          "bdf": "2401:00:00.0",
+          "device": "/dev/nvme1n1",
+          "bytes": 1919850381312
+        },
+        {
+          "serial": "4d4fd73b0687ec770002",
+          "bdf": "221c:00:00.0",
+          "device": "/dev/nvme3n1",
+          "bytes": 1919850381312
+        },
+        {
+          "serial": "4d4fd73b0687ec770003",
+          "bdf": "7f10:00:00.0",
+          "device": "/dev/nvme5n1",
+          "bytes": 1919850381312
+        },
+        {
+          "serial": "4d4fd73b0687ec770004",
+          "bdf": "399c:00:00.0",
+          "device": "/dev/nvme4n1",
+          "bytes": 1919850381312
+        },
+        {
+          "serial": "4d4fd73b0687ec770005",
+          "bdf": "c0ef:00:00.0",
+          "device": "/dev/nvme6n1",
+          "bytes": 1919850381312
+        },
+        {
+          "serial": "4d4fd73b0687ec770006",
+          "bdf": "6319:00:00.0",
+          "device": "/dev/nvme2n1",
+          "bytes": 1919850381312
+        }
+      ],
+      "md": "/dev/md127",
+      "md_uuid": "53c4d57c:6a9fb5eb:51ef76a7:ff5d5ff2",
+      "mountpoint": "/mnt/storage-peers-20261014/objects8k-fourdb-20261019",
+      "mount": {
+        "source": "/dev/md127",
+        "target": "/mnt/storage-peers-20261014/objects8k-fourdb-20261019",
+        "fstype": "ext4",
+        "options": "rw,noatime,stripe=768"
+      },
+      "detail": "/dev/md127:\n           Version : 1.2\n     Creation Time : Mon Oct 19 05:43:37 2026\n        Raid Level : raid0\n        Array Size : 11248330752 (10.48 TiB 11.52 TB)\n      Raid Devices : 6\n     Total Devices : 6\n       Persistence : Superblock is persistent\n\n       Update Time : Mon Oct 19 05:43:37 2026\n             State : clean \n    Active Devices : 6\n   Working Devices : 6\n    Failed Devices : 0\n     Spare Devices : 0\n\n            Layout : original\n        Chunk Size : 512K\n\nConsistency Policy : none\n\n              Name : objects8k-fourdb\n              UUID : 53c4d57c:6a9fb5eb:51ef76a7:ff5d5ff2\n            Events : 0\n\n    Number   Major   Minor   RaidDevice State\n       0     259        6        0      active sync   /dev/nvme1n1\n       1     259        8        1      active sync   /dev/nvme3n1\n       2     259       10        2      active sync   /dev/nvme5n1\n       3     259        9        3      active sync   /dev/nvme4n1\n       4     259       11        4      active sync   /dev/nvme6n1\n       5     259        7        5      active sync   /dev/nvme2n1",
+      "previous_hugepages": "4096"
+    },
+    "devices": [
+      {
+        "serial": "4d4fd73b0687ec770001",
+        "bdf": "2401:00:00.0",
+        "device": "/dev/nvme1n1",
+        "bytes": 1919850381312
+      },
+      {
+        "serial": "4d4fd73b0687ec770002",
+        "bdf": "221c:00:00.0",
+        "device": "/dev/nvme3n1",
+        "bytes": 1919850381312
+      },
+      {
+        "serial": "4d4fd73b0687ec770003",
+        "bdf": "7f10:00:00.0",
+        "device": "/dev/nvme5n1",
+        "bytes": 1919850381312
+      },
+      {
+        "serial": "4d4fd73b0687ec770004",
+        "bdf": "399c:00:00.0",
+        "device": "/dev/nvme4n1",
+        "bytes": 1919850381312
+      },
+      {
+        "serial": "4d4fd73b0687ec770005",
+        "bdf": "c0ef:00:00.0",
+        "device": "/dev/nvme6n1",
+        "bytes": 1919850381312
+      },
+      {
+        "serial": "4d4fd73b0687ec770006",
+        "bdf": "6319:00:00.0",
+        "device": "/dev/nvme2n1",
+        "bytes": 1919850381312
+      }
+    ],
+    "mount": {
+      "source": "/dev/md127",
+      "target": "/mnt/storage-peers-20261014/objects8k-fourdb-20261019",
+      "fstype": "ext4",
+      "options": "rw,noatime,stripe=768"
+    },
+    "md_export": {
+      "MD_LEVEL": "raid0",
+      "MD_DEVICES": "6",
+      "MD_METADATA": "1.2",
+      "MD_UUID": "53c4d57c:6a9fb5eb:51ef76a7:ff5d5ff2",
+      "MD_NAME": "objects8k-fourdb",
+      "MD_DEVICE_dev_nvme6n1_ROLE": "4",
+      "MD_DEVICE_dev_nvme6n1_DEV": "/dev/nvme6n1",
+      "MD_DEVICE_dev_nvme2n1_ROLE": "5",
+      "MD_DEVICE_dev_nvme2n1_DEV": "/dev/nvme2n1",
+      "MD_DEVICE_dev_nvme5n1_ROLE": "2",
+      "MD_DEVICE_dev_nvme5n1_DEV": "/dev/nvme5n1",
+      "MD_DEVICE_dev_nvme1n1_ROLE": "0",
+      "MD_DEVICE_dev_nvme1n1_DEV": "/dev/nvme1n1",
+      "MD_DEVICE_dev_nvme4n1_ROLE": "3",
+      "MD_DEVICE_dev_nvme4n1_DEV": "/dev/nvme4n1",
+      "MD_DEVICE_dev_nvme3n1_ROLE": "1",
+      "MD_DEVICE_dev_nvme3n1_DEV": "/dev/nvme3n1"
+    }
+  },
+  "setup_sha256": "3e79117596cfb7aa04e18bfde5ee0a1ec62c9f4d2754cd18e50a1267ed1e7047",
+  "setup_source": {
+    "revision": "d519b163cbc0e2f28c35d9bc86d610da368b032c",
+    "archive_sha256": "5f8e23ab5faecbe66aece3e748661410250c1925f35c4655781e01e3b3b91997",
+    "path_in_archive": "scripts/setup.sh",
+    "file_sha256": "3e79117596cfb7aa04e18bfde5ee0a1ec62c9f4d2754cd18e50a1267ed1e7047",
+    "source_manifest_sha256": "2bf4b0dffd9e9ecbe9a55b830b596fff4320c2eaee7c9d479eaefce3af349d0c"
+  },
+  "vfio_noiommu": "Y"
+}

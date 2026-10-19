@@ -1,0 +1,232 @@
+{
+  "complete": true,
+  "experiment": "zset-opt-crossover-20261019",
+  "points": 8,
+  "comparisons": [
+    {
+      "size": "compact",
+      "op": "zincr",
+      "baseline": {
+        "count": 5073306,
+        "qps": 84548.025011,
+        "avg_ms": 0.944801,
+        "p50_ms": 0.376,
+        "p99_ms": 7.758,
+        "p999_ms": 9.417,
+        "max_ms": 206.811
+      },
+      "candidate": {
+        "count": 4790171,
+        "qps": 79827.808996,
+        "avg_ms": 1.000754,
+        "p50_ms": 0.377,
+        "p99_ms": 8.231,
+        "p999_ms": 9.699,
+        "max_ms": 36.292
+      },
+      "change_percent": {
+        "qps": -5.582881462205513,
+        "avg_ms": 5.922199489627955,
+        "p999_ms": 2.9945842625039854
+      }
+    },
+    {
+      "size": "compact",
+      "op": "zswap",
+      "baseline": {
+        "count": 2895063,
+        "qps": 48248.261454,
+        "avg_ms": 1.657188,
+        "p50_ms": 0.662,
+        "p99_ms": 9.182,
+        "p999_ms": 10.996,
+        "max_ms": 26.876
+      },
+      "candidate": {
+        "count": 2801866,
+        "qps": 46692.818854,
+        "avg_ms": 1.712357,
+        "p50_ms": 0.667,
+        "p99_ms": 9.455,
+        "p999_ms": 11.368,
+        "max_ms": 208.841
+      },
+      "change_percent": {
+        "qps": -3.2238313943870556,
+        "avg_ms": 3.329073104560254,
+        "p999_ms": 3.3830483812295364
+      }
+    },
+    {
+      "size": "grouped",
+      "op": "zincr",
+      "baseline": {
+        "count": 1564097,
+        "qps": 26066.514001,
+        "avg_ms": 3.067695,
+        "p50_ms": 1.061,
+        "p99_ms": 20.113,
+        "p999_ms": 29.292,
+        "max_ms": 49.566
+      },
+      "candidate": {
+        "count": 2005866,
+        "qps": 33428.935548,
+        "avg_ms": 2.391766,
+        "p50_ms": 0.797,
+        "p99_ms": 17.797,
+        "p999_ms": 27.017,
+        "max_ms": 44.253
+      },
+      "change_percent": {
+        "qps": 28.24474936202652,
+        "avg_ms": -22.03377454407951,
+        "p999_ms": -7.766625699849794
+      }
+    },
+    {
+      "size": "grouped",
+      "op": "zswap",
+      "baseline": {
+        "count": 1182596,
+        "qps": 19701.809375,
+        "avg_ms": 4.058425,
+        "p50_ms": 1.713,
+        "p99_ms": 24.907,
+        "p999_ms": 34.721,
+        "max_ms": 74.047
+      },
+      "candidate": {
+        "count": 1218446,
+        "qps": 20293.930573,
+        "avg_ms": 3.939738,
+        "p50_ms": 1.421,
+        "p99_ms": 24.801,
+        "p999_ms": 34.061,
+        "max_ms": 79.304
+      },
+      "change_percent": {
+        "qps": 3.0054153236877656,
+        "avg_ms": -2.924459611795205,
+        "p999_ms": -1.900866910515242
+      }
+    }
+  ],
+  "temporal_grouped_zincr": {
+    "main": {
+      "raw_path": "zset-opt-crossover-20261019/client/results/main-grouped-zincr-c80/result.json",
+      "source_sha256": "356aaf0c5615d142e0c75b1ee8012d4a9d6df2c4dbb11f65ac53d752bf6014b6",
+      "bucket_width_seconds": 1,
+      "bucket_count": 60,
+      "ten_second_bins": [
+        {
+          "start_seconds": 0,
+          "end_seconds": 10,
+          "count": 261832,
+          "mean_ops_per_second": 26183.2
+        },
+        {
+          "start_seconds": 10,
+          "end_seconds": 20,
+          "count": 251424,
+          "mean_ops_per_second": 25142.4
+        },
+        {
+          "start_seconds": 20,
+          "end_seconds": 30,
+          "count": 252983,
+          "mean_ops_per_second": 25298.3
+        },
+        {
+          "start_seconds": 30,
+          "end_seconds": 40,
+          "count": 262029,
+          "mean_ops_per_second": 26202.9
+        },
+        {
+          "start_seconds": 40,
+          "end_seconds": 50,
+          "count": 261497,
+          "mean_ops_per_second": 26149.7
+        },
+        {
+          "start_seconds": 50,
+          "end_seconds": 60,
+          "count": 274252,
+          "mean_ops_per_second": 27425.2
+        }
+      ],
+      "first_40_seconds_mean_ops_per_second": 25706.7,
+      "last_20_seconds_mean_ops_per_second": 26787.45,
+      "last_20_vs_first_40_change_percent": 4.204156892950084,
+      "bucket_operation_count": 1564017,
+      "principal_operation_count": 1564097,
+      "completion_tail_operations": 80,
+      "principal_elapsed_seconds": 60.004073,
+      "principal_qps": 26066.514001
+    },
+    "candidate": {
+      "raw_path": "zset-opt-crossover-20261019/client/results/candidate-grouped-zincr-c80/result.json",
+      "source_sha256": "5fc1f742539b1132986ef21cb556783ddfac716b244bf91f4a4949fab1856946",
+      "bucket_width_seconds": 1,
+      "bucket_count": 60,
+      "ten_second_bins": [
+        {
+          "start_seconds": 0,
+          "end_seconds": 10,
+          "count": 383210,
+          "mean_ops_per_second": 38321.0
+        },
+        {
+          "start_seconds": 10,
+          "end_seconds": 20,
+          "count": 366916,
+          "mean_ops_per_second": 36691.6
+        },
+        {
+          "start_seconds": 20,
+          "end_seconds": 30,
+          "count": 358642,
+          "mean_ops_per_second": 35864.2
+        },
+        {
+          "start_seconds": 30,
+          "end_seconds": 40,
+          "count": 354607,
+          "mean_ops_per_second": 35460.7
+        },
+        {
+          "start_seconds": 40,
+          "end_seconds": 50,
+          "count": 273817,
+          "mean_ops_per_second": 27381.7
+        },
+        {
+          "start_seconds": 50,
+          "end_seconds": 60,
+          "count": 268594,
+          "mean_ops_per_second": 26859.4
+        }
+      ],
+      "first_40_seconds_mean_ops_per_second": 36584.375,
+      "last_20_seconds_mean_ops_per_second": 27120.55,
+      "last_20_vs_first_40_change_percent": -25.868488938242084,
+      "bucket_operation_count": 2005786,
+      "principal_operation_count": 2005866,
+      "completion_tail_operations": 80,
+      "principal_elapsed_seconds": 60.003885,
+      "principal_qps": 33428.935548
+    },
+    "full_window_qps_change_percent": 28.24474936202652,
+    "interpretation": "The candidate drops during the last 20 seconds. The full-window QPS difference describes this fixed 60-second run, not a demonstrated steady-state or causal improvement."
+  },
+  "interpretation": "Fixed main-then-candidate order; namespaces and pair state continue across versions. One run per point, not independent resets.",
+  "correctness_tests": {
+    "candidate_revision": "32bdd6b474733c2850b80e3cc217461075e73af5",
+    "passed": 158,
+    "unit": 125,
+    "e2e": 33,
+    "scope": "Selected candidate correctness tests only; no independent 158-test main receipt.",
+    "build_manifest": "zset-opt-crossover-20261019/build-provenance/build-manifest.json"
+  }
+}

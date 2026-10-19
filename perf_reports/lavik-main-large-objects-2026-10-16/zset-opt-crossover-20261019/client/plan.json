@@ -1,0 +1,109 @@
+{
+  "experiment": "zset-opt-crossover-20261019",
+  "sequence": [
+    [
+      "main",
+      "compact",
+      "zincr"
+    ],
+    [
+      "main",
+      "compact",
+      "zswap"
+    ],
+    [
+      "main",
+      "grouped",
+      "zincr"
+    ],
+    [
+      "main",
+      "grouped",
+      "zswap"
+    ],
+    [
+      "candidate",
+      "compact",
+      "zincr"
+    ],
+    [
+      "candidate",
+      "compact",
+      "zswap"
+    ],
+    [
+      "candidate",
+      "grouped",
+      "zincr"
+    ],
+    [
+      "candidate",
+      "grouped",
+      "zswap"
+    ]
+  ],
+  "keys": 8192,
+  "connections": 80,
+  "client_threads": 16,
+  "pipeline": 1,
+  "members": {
+    "compact": 256,
+    "grouped": 32768
+  },
+  "revisions": {
+    "main": "684894d973878ca0e0649b54404ce77521f1695f",
+    "candidate": "32bdd6b474733c2850b80e3cc217461075e73af5"
+  },
+  "warm_seconds": 90,
+  "formal_seconds": 60,
+  "observation_seconds": 45,
+  "seeds": {
+    "load": 101,
+    "warm": 10180,
+    "run": 20180
+  },
+  "client_manifest": {
+    "schema_version": 1,
+    "status": "complete",
+    "started_at": 1792397054.4709423,
+    "completed_at": 1792397086.6000636,
+    "compiler": "/usr/bin/g++-13",
+    "compiler_version": "g++-13 (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0\nCopyright (C) 2023 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.  There is NO\nwarranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n\n",
+    "flags": [
+      "-std=c++20",
+      "-O3",
+      "-pthread"
+    ],
+    "clients": {
+      "bench": {
+        "source": "/opt/benchmark/zset-opt-crossover-20261019/clients/bench.cpp",
+        "source_sha256": "905bf5687e017da52b3ce69b8202cc4922e233f75d7d5213680e48c867e9b7fa",
+        "binary": "/opt/benchmark/zset-opt-crossover-20261019/clients/bench",
+        "binary_sha256": "1b2bbe7a273c0d3cb7eb015d8aeabbb720a0372412ce3454feb0a9206b5960ef",
+        "build_command": [
+          "/usr/bin/g++-13",
+          "-std=c++20",
+          "-O3",
+          "-pthread",
+          "/opt/benchmark/zset-opt-crossover-20261019/clients/bench.cpp",
+          "-o",
+          "/opt/benchmark/zset-opt-crossover-20261019/clients/bench"
+        ]
+      }
+    },
+    "interface_sha256": "a21f1b38673d0f75a96ac04ab1ed2f56d6baa82470ba8127d3bbcc24ffea8fa8",
+    "test_script_sha256": "1542dae661005284b702d0b8686a628c60cb1e75618f3e5002162325dcc6f2c3",
+    "source_manifest_sha256": "d3e7b8dde905885c634f096bf21b1e6bd0cc2f50e3c2e1e0ed00020d23814f1a",
+    "linux_test_receipt": {
+      "path": "/opt/benchmark/zset-opt-crossover-20261019/linux-client-tests.json",
+      "sha256": "f706a4e4de487451270797857160d23167939686ca3262fa5dad5fcdcf1f5a72"
+    }
+  },
+  "profiled": false,
+  "loads": [
+    "main-compact-zincr",
+    "main-grouped-zincr"
+  ],
+  "state_and_data_preserved_across_versions": true,
+  "runs_per_point": 1
+}

@@ -1,0 +1,98 @@
+{
+  "repository": "https://github.com/eloqdata/lavik",
+  "base_revision": "684894d973878ca0e0649b54404ce77521f1695f",
+  "branch": "perf/zset-point-edits-20261019",
+  "variants": {
+    "main": {
+      "revision": "684894d973878ca0e0649b54404ce77521f1695f",
+      "archive": "main-source.tar.gz",
+      "archive_sha256": "a488ce507d8d84f8d52638bbd8f33c40d2667ccaab74a8fe6cecc8699bd2255b"
+    },
+    "candidate": {
+      "revision": "32bdd6b474733c2850b80e3cc217461075e73af5",
+      "archive": "candidate-source.tar.gz",
+      "archive_sha256": "0e9bed0ebb3d92cd155ddc396422168c13f7a01d3c2032a6c38c0a6b2b358c94"
+    }
+  },
+  "dependencies": [
+    {
+      "path": "bycorf",
+      "sha": "86d686724ddd1c5617fb1b62f8131e05571e8423",
+      "repo": "eloqdata/bycorf",
+      "archive": "bycorf-source.tar.gz",
+      "archive_sha256": "cf79902bea6441f7bfb8e582149bebc3cdb1b1459e56cdf85c75ff43b114b300",
+      "archive_root": "/mnt/dev/benchmark/zset-compact-20261019"
+    },
+    {
+      "path": "bycorf/third_party/abseil",
+      "sha": "76bb24329e8bf5f39704eb10d21b9a80befa7c81",
+      "repo": "abseil/abseil-cpp",
+      "archive": "bycorf-third_party-abseil.tar.gz",
+      "archive_sha256": "6b0d3da9f1ef3360e8ad691953a04e8515b11f5c250939405eb9c4fd7665fdcf",
+      "archive_root": "/mnt/dev/benchmark/pr342-packed-20261017"
+    },
+    {
+      "path": "bycorf/third_party/dpdk",
+      "sha": "37a1a9b926b4678141931f2f22e7a877b5b565c2",
+      "repo": "spdk/dpdk",
+      "archive": "bycorf-third_party-dpdk.tar.gz",
+      "archive_sha256": "171dd55871cb93d2f469e3e548e0f64ae6bb1c934f4eafc5efd3d6eba60b2afa",
+      "archive_root": "/mnt/dev/benchmark/pr342-packed-20261017"
+    },
+    {
+      "path": "bycorf/third_party/liburing",
+      "sha": "d41bf9220ec39277ff235379e9089d9e0fd6c2a5",
+      "repo": "axboe/liburing",
+      "archive": "bycorf-third_party-liburing.tar.gz",
+      "archive_sha256": "a6791db2adc314d9bd069634bd6364ae18976edc2dac06212e62a8aa9bf1c183",
+      "archive_root": "/mnt/dev/benchmark/pr342-packed-20261017"
+    },
+    {
+      "path": "bycorf/third_party/spdk",
+      "sha": "d519b163cbc0e2f28c35d9bc86d610da368b032c",
+      "repo": "spdk/spdk",
+      "archive": "bycorf-third_party-spdk.tar.gz",
+      "archive_sha256": "5f8e23ab5faecbe66aece3e748661410250c1925f35c4655781e01e3b3b91997",
+      "archive_root": "/mnt/dev/benchmark/pr342-packed-20261017"
+    },
+    {
+      "path": "third_party/mimalloc",
+      "sha": "acf2fdd329f9dc2a7ffe3f12a133fe7175e39378",
+      "repo": "microsoft/mimalloc",
+      "archive": "third_party-mimalloc.tar.gz",
+      "archive_sha256": "bd25316f6a6f12778150611a64838b2c08b80af6b624354a8d945be714f25c79",
+      "archive_root": "/mnt/dev/benchmark/pr342-packed-20261017"
+    },
+    {
+      "path": "bycorf/third_party/spdk/isa-l",
+      "sha": "c196241ae89b1aa4f62efeb849a937c011b3a926",
+      "repo": "intel/isa-l",
+      "archive": "bycorf-third_party-spdk-isa-l.tar.gz",
+      "archive_sha256": "9bd2f738fd499960438657489755bcef1a348b746823b5cbc2fc2198f86b440c",
+      "archive_root": "/mnt/dev/benchmark/pr342-packed-20261017"
+    },
+    {
+      "path": "bycorf/third_party/spdk/isa-l-crypto",
+      "sha": "07d0b253843ace996aa5a44f538c9b83b085aba6",
+      "repo": "intel/isa-l_crypto",
+      "archive": "bycorf-third_party-spdk-isa-l-crypto.tar.gz",
+      "archive_sha256": "48dacf8baca1f6dd0f1747e9620842da821d9be3c756364070c11603519cd162",
+      "archive_root": "/mnt/dev/benchmark/pr342-packed-20261017"
+    }
+  ],
+  "changed_files": [
+    "include/lavik/storage/detail/grouped/collection.h",
+    "src/storage/engine/grouped/collection.cpp",
+    "src/storage/engine/grouped/ordered_mutation.cpp",
+    "src/storage/engine/grouped/zset.cpp",
+    "src/storage/engine/grouped/zset_members.cpp",
+    "src/storage/engine/impl.h",
+    "tests/grouped/collection_test.cpp",
+    "tests/grouped/zset_write_e2e_test.cpp"
+  ],
+  "deleted_files": [],
+  "dependency_verification": {
+    "bycorf_git_tree_sha256": "20893186b0bf6bb20226b5b9cc6b7027ab846ff224c46db7d551d4c84df0fd1d",
+    "spdk_git_tree_sha256": "0439913cf0c0f029f56c0bf8fba360d52f509204fa850acff02ca50d55a560d8"
+  }
+}

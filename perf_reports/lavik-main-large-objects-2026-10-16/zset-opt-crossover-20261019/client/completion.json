@@ -1,0 +1,87 @@
+{
+  "state": "complete",
+  "formal_results": 8,
+  "loads": 2,
+  "time": 1792400000.7129703,
+  "last_stop": {
+    "time": 1792400000.6966841,
+    "requested_at": 1792399997.6739855,
+    "active": {
+      "revision": "32bdd6b474733c2850b80e3cc217461075e73af5",
+      "version": "32bdd6b474733c2850b80e3cc217461075e73af5",
+      "binary": "/mnt/dev/benchmark/zset-compact-20261019/sources/candidate/build-gcc13/lavik",
+      "binary_sha256": "8ae509e9a04d7d4c55c5aa9b966421531e26e97b4800c1c2885ea38d8b845ead",
+      "root": "/mnt/dev/benchmark/zset-opt-crossover-20261019",
+      "product": "candidate",
+      "label": "session-candidate-grouped-zswap",
+      "owner_token": "c2689800256f0ef6b1a5272448cccd27",
+      "args": [
+        "/mnt/dev/benchmark/zset-compact-20261019/sources/candidate/build-gcc13/lavik",
+        "--storage=spdk",
+        "--alsologtostderr",
+        "--bind=10.84.1.4",
+        "--threads=16",
+        "--pin-workers",
+        "--metrics-port=0",
+        "--spdk-max-completions-per-poll=16",
+        "--log-dir=/mnt/dev/benchmark/zset-opt-crossover-20261019/session-candidate-grouped-zswap/logs",
+        "--shutdown-checkpoint",
+        "--data-file=spdk://2401:00:00.0/1",
+        "--data-file=spdk://221c:00:00.0/1",
+        "--data-file=spdk://7f10:00:00.0/1",
+        "--data-file=spdk://399c:00:00.0/1",
+        "--data-file=spdk://c0ef:00:00.0/1",
+        "--data-file=spdk://6319:00:00.0/1"
+      ],
+      "cpu_affinity": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15
+      ],
+      "environment": {
+        "LC_ALL": "C",
+        "BYCORF_EAL_ARGS": "-a 2401:00:00.0 -a 221c:00:00.0 -a 7f10:00:00.0 -a 399c:00:00.0 -a c0ef:00:00.0 -a 6319:00:00.0",
+        "BYCORF_DPDK_MEMORY_MB": "8192"
+      },
+      "time": 1792399833.688614,
+      "manifest_sha256": "f49f7b2ec3eb91d756a682880c714951b1fc27ba816dbbdbf686739c2c40bca5",
+      "data_dir": null,
+      "config_sha256": null,
+      "spdk_ready_sha256": "84e72f2ed542bed0a8ac8b0956ada8a2d9e05b8b4b638b454f1f8fbd9df96b3e",
+      "expected_recovery": {
+        "mode": "checkpoint",
+        "checkpoint": {
+          "generation": 7,
+          "entries": 16384
+        }
+      },
+      "previous_stop_sha256": "5b9a37cac8af43773d273431f03bb6f785196999e5f0f201fb2f2a1f9dc17982",
+      "pid": 2267204,
+      "start_ticks": "70350814",
+      "supervisor_pid": 2267203
+    },
+    "signal": 15,
+    "returncode": 0,
+    "clean_stop_confirmed": true,
+    "clean_checkpoint_confirmed": true,
+    "checkpoint_generation": 8,
+    "checkpoint_entries": 16384
+  },
+  "state_after": {
+    "compact": "924ba04be400834df319d265348662f25685ed2c72ce29dfbbb0be0d1283845a",
+    "grouped": "5c776cdbf2b444ea4e5db22fbc7941758ed7cf9322c350721329653dedf01072"
+  }
+}

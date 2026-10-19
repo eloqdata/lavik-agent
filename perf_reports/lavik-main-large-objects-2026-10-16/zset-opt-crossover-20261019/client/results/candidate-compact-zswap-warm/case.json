@@ -1,0 +1,92 @@
+{
+  "label": "candidate-compact-zswap-warm",
+  "variant": "candidate",
+  "size": "compact",
+  "op": "zswap",
+  "phase": "warm",
+  "keys": 8192,
+  "connections": 80,
+  "client_threads": 16,
+  "seconds": 90,
+  "shape": {
+    "structure": "zset",
+    "members_per_key": 256,
+    "member_bytes": 32,
+    "logical_payload_bytes": 8192
+  },
+  "pipeline": 1,
+  "revision": "32bdd6b474733c2850b80e3cc217461075e73af5",
+  "binary_sha256": "8ae509e9a04d7d4c55c5aa9b966421531e26e97b4800c1c2885ea38d8b845ead",
+  "active": {
+    "revision": "32bdd6b474733c2850b80e3cc217461075e73af5",
+    "version": "32bdd6b474733c2850b80e3cc217461075e73af5",
+    "binary": "/mnt/dev/benchmark/zset-compact-20261019/sources/candidate/build-gcc13/lavik",
+    "binary_sha256": "8ae509e9a04d7d4c55c5aa9b966421531e26e97b4800c1c2885ea38d8b845ead",
+    "root": "/mnt/dev/benchmark/zset-opt-crossover-20261019",
+    "product": "candidate",
+    "label": "session-candidate-compact-zswap",
+    "owner_token": "a181ff78ed1907f314fa7549a569e09c",
+    "args": [
+      "/mnt/dev/benchmark/zset-compact-20261019/sources/candidate/build-gcc13/lavik",
+      "--storage=spdk",
+      "--alsologtostderr",
+      "--bind=10.84.1.4",
+      "--threads=16",
+      "--pin-workers",
+      "--metrics-port=0",
+      "--spdk-max-completions-per-poll=16",
+      "--log-dir=/mnt/dev/benchmark/zset-opt-crossover-20261019/session-candidate-compact-zswap/logs",
+      "--shutdown-checkpoint",
+      "--data-file=spdk://2401:00:00.0/1",
+      "--data-file=spdk://221c:00:00.0/1",
+      "--data-file=spdk://7f10:00:00.0/1",
+      "--data-file=spdk://399c:00:00.0/1",
+      "--data-file=spdk://c0ef:00:00.0/1",
+      "--data-file=spdk://6319:00:00.0/1"
+    ],
+    "cpu_affinity": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15
+    ],
+    "environment": {
+      "LC_ALL": "C",
+      "BYCORF_EAL_ARGS": "-a 2401:00:00.0 -a 221c:00:00.0 -a 7f10:00:00.0 -a 399c:00:00.0 -a c0ef:00:00.0 -a 6319:00:00.0",
+      "BYCORF_DPDK_MEMORY_MB": "8192"
+    },
+    "time": 1792399498.3065965,
+    "manifest_sha256": "f49f7b2ec3eb91d756a682880c714951b1fc27ba816dbbdbf686739c2c40bca5",
+    "data_dir": null,
+    "config_sha256": null,
+    "spdk_ready_sha256": "84e72f2ed542bed0a8ac8b0956ada8a2d9e05b8b4b638b454f1f8fbd9df96b3e",
+    "expected_recovery": {
+      "mode": "checkpoint",
+      "checkpoint": {
+        "generation": 5,
+        "entries": 16384
+      }
+    },
+    "previous_stop_sha256": "f668a5daa43a75f57d508ecfbe8a9773736799877c5345fa342b48cd6be7181a",
+    "pid": 2265951,
+    "start_ticks": "70317276",
+    "supervisor_pid": 2265950
+  },
+  "profiled": false,
+  "observed": false,
+  "observation_seconds": 0,
+  "client_binary_sha256": "1b2bbe7a273c0d3cb7eb015d8aeabbb720a0372412ce3454feb0a9206b5960ef",
+  "state_path": "/opt/benchmark/zset-opt-crossover-20261019/states/compact.bin"
+}
