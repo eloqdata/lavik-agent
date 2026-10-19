@@ -1,0 +1,119 @@
+{
+  "time": 1792404152.5261686,
+  "active": {
+    "revision": "d0084f4a9a869e38ab91ecef6291a89483940123",
+    "version": "d0084f4a9a869e38ab91ecef6291a89483940123",
+    "binary": "/mnt/dev/benchmark/compact-pr357-stack-20261019/sources/candidate/build-gcc13/lavik",
+    "binary_sha256": "49305cb502f9c973e3b8f64e838ab6877fe736312ed4635e8e66dc998cef9dfe",
+    "root": "/mnt/dev/benchmark/compact-pr357-stack-20261019",
+    "product": "lavik",
+    "label": "session-lavik-stream",
+    "owner_token": "464c81335c70423f4617244963a7d6d9",
+    "args": [
+      "/mnt/dev/benchmark/compact-pr357-stack-20261019/sources/candidate/build-gcc13/lavik",
+      "--storage=spdk",
+      "--alsologtostderr",
+      "--bind=10.84.1.4",
+      "--threads=16",
+      "--pin-workers",
+      "--metrics-port=0",
+      "--spdk-max-completions-per-poll=16",
+      "--log-dir=/mnt/dev/benchmark/compact-pr357-stack-20261019/session-lavik-stream/logs",
+      "--shutdown-checkpoint",
+      "--data-file=spdk://2401:00:00.0/1",
+      "--data-file=spdk://221c:00:00.0/1",
+      "--data-file=spdk://7f10:00:00.0/1",
+      "--data-file=spdk://399c:00:00.0/1",
+      "--data-file=spdk://c0ef:00:00.0/1",
+      "--data-file=spdk://6319:00:00.0/1"
+    ],
+    "cpu_affinity": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15
+    ],
+    "environment": {
+      "LC_ALL": "C",
+      "BYCORF_EAL_ARGS": "-a 2401:00:00.0 -a 221c:00:00.0 -a 7f10:00:00.0 -a 399c:00:00.0 -a c0ef:00:00.0 -a 6319:00:00.0",
+      "BYCORF_DPDK_MEMORY_MB": "8192"
+    },
+    "time": 1792404145.6396067,
+    "manifest_sha256": "cd772ac8fdca4c40139203f9798aa8c9a414d1e4f0548887c71637101d85b9e9",
+    "data_dir": null,
+    "config_sha256": null,
+    "spdk_ready_sha256": "84e72f2ed542bed0a8ac8b0956ada8a2d9e05b8b4b638b454f1f8fbd9df96b3e",
+    "expected_recovery": {
+      "mode": "checkpoint",
+      "checkpoint": {
+        "generation": 20,
+        "entries": 8192
+      }
+    },
+    "previous_stop_sha256": "f4826e0bb928dc309271a79d5534a175ee3a5a084b7f719b8a4933c8ac78642a",
+    "pid": 2320457,
+    "start_ticks": "70782009",
+    "supervisor_pid": 2320456
+  },
+  "config": {
+    "defrag-paused": "no"
+  },
+  "info_server": "# Server\nlavik_version:0.1.1-dev\nredis_mode:standalone\nprocess_id:2320457\nrun_id:770ce491f6b492c384dced0c5ca30ea7bcb61eda\ntcp_port:6379\nworker_threads:16\nuptime_in_seconds:1",
+  "recovery": {
+    "mode": "checkpoint",
+    "checkpoint": {
+      "generation": 20,
+      "entries": 8192
+    },
+    "storage_devices": [
+      {
+        "id": 0,
+        "path": "spdk://2401:00:00.0/1",
+        "capacity_bytes": 1919850381312
+      },
+      {
+        "id": 1,
+        "path": "spdk://221c:00:00.0/1",
+        "capacity_bytes": 1919850381312
+      },
+      {
+        "id": 2,
+        "path": "spdk://7f10:00:00.0/1",
+        "capacity_bytes": 1919850381312
+      },
+      {
+        "id": 3,
+        "path": "spdk://399c:00:00.0/1",
+        "capacity_bytes": 1919850381312
+      },
+      {
+        "id": 4,
+        "path": "spdk://c0ef:00:00.0/1",
+        "capacity_bytes": 1919850381312
+      },
+      {
+        "id": 5,
+        "path": "spdk://6319:00:00.0/1",
+        "capacity_bytes": 1919850381312
+      }
+    ],
+    "recovery_collection_complete": true
+  },
+  "loaded_checkpoint": {
+    "generation": 20,
+    "entries": 8192
+  },
+  "normal_request_ready": true
+}

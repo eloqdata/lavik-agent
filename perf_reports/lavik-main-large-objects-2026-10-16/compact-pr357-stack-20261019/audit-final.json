@@ -1,0 +1,2920 @@
+{
+  "schema_version": 1,
+  "experiment": "compact-pr357-stack-20261019",
+  "auditor": "zset_index_path_audit",
+  "generated_at": "2026-10-19T10:16:32.155939+00:00",
+  "status": "passed_with_interpretation_limits",
+  "publishable": true,
+  "blocking_findings": [],
+  "scope": "Independent local raw-result, commandstats, checkpoint, state, monitor and provenance cross-check; no remote actions or new benchmark runs.",
+  "identity": {
+    "stack_revision": "d0084f4a9a869e38ab91ecef6291a89483940123",
+    "baseline_revision": "684894d973878ca0e0649b54404ce77521f1695f",
+    "optimization_base_revision": "001442e89129468d974cef8c30f8b70ad249f80a",
+    "pr357_revision": "48ca16c10680899a81b31a6e6c16c54a2d21a666",
+    "bycorf_revision": "86d686724ddd1c5617fb1b62f8131e05571e8423",
+    "server_binary_sha256": "49305cb502f9c973e3b8f64e838ab6877fe736312ed4635e8e66dc998cef9dfe",
+    "stack_manifest_sha256": "cd772ac8fdca4c40139203f9798aa8c9a414d1e4f0548887c71637101d85b9e9",
+    "build_manifest_sha256": "1412170fa4635a6de08f155305edd2fcaee6aa0e76e393a2f1c9bff98ed66bf7",
+    "source_manifest_sha256": "9a2a6358d121533015d7ab962e0039bac6cfe84258dc2c7ac22a256c6b55db08",
+    "client_build_manifest_sha256": "dd2233915837370611dfc851d1a7118b9d3e655483848edca6c44cf634fe47be",
+    "client_binaries_identical_to_baseline": true,
+    "archive_binary_limit": "Binary identity is verified through collected build/runtime hash attestations; binaries are not included in the local result archive."
+  },
+  "checks": {
+    "formal_points": 14,
+    "phases_checked": 42,
+    "formal_observations": 28,
+    "baseline_observations": 28,
+    "zero_client_errors": true,
+    "zero_commandstats_failed_rejected_deltas": true,
+    "commandstats_match_all_load_warm_formal_counts": true,
+    "all_defrag_enabled": true,
+    "bounded_key_sample_checks": 126,
+    "stateful_operations": [
+      "zswap",
+      "sswap"
+    ],
+    "state_continuity_and_parity": true,
+    "all_42_phase_tx_commit_deltas_zero": true,
+    "zset_compact_tx_zero_all_phases": true,
+    "selected_nic_errors_and_drops_zero": true,
+    "logs_without_warning_error_severity": true,
+    "build_tests": {
+      "unit": 128,
+      "compact_e2e": 13,
+      "sorted_set_e2e": 33
+    },
+    "client_fake_RESP_tests": 41,
+    "checkpoint_chain": [
+      {
+        "op": "hgetall",
+        "recovered": {
+          "generation": 8,
+          "entries": 16384
+        },
+        "published": 9,
+        "entries": 8192,
+        "stop_sha256": "b689b27f9f65c512e44a36a6c850cd2d4202aeb31702743880448cbf5309fa81"
+      },
+      {
+        "op": "hkeys",
+        "recovered": {
+          "generation": 9,
+          "entries": 8192
+        },
+        "published": 10,
+        "entries": 8192,
+        "stop_sha256": "579de74ad227a04fde575ab1ed0112dd69e28819550a0002e66b0ce201d41531"
+      },
+      {
+        "op": "hvals",
+        "recovered": {
+          "generation": 10,
+          "entries": 8192
+        },
+        "published": 11,
+        "entries": 8192,
+        "stop_sha256": "d908da009f604dd33033462f2e73ce6136d725eaa573eb3953a84da8c8ca98de"
+      },
+      {
+        "op": "smembers",
+        "recovered": {
+          "generation": 11,
+          "entries": 8192
+        },
+        "published": 12,
+        "entries": 8192,
+        "stop_sha256": "21bc2b594e560cea40c3e3897d944465935b1eaf22b0c51fd7e760110dee0418"
+      },
+      {
+        "op": "lrange",
+        "recovered": {
+          "generation": 12,
+          "entries": 8192
+        },
+        "published": 13,
+        "entries": 8192,
+        "stop_sha256": "117f055232922c6518f99acaaaf4221d0c0d637224e3b390dbf77b2a953e4535"
+      },
+      {
+        "op": "zrange",
+        "recovered": {
+          "generation": 13,
+          "entries": 8192
+        },
+        "published": 14,
+        "entries": 8192,
+        "stop_sha256": "682ab1afca70d20691240c4e8210c6497f50541b79da2f386a48628679e46e45"
+      },
+      {
+        "op": "set",
+        "recovered": {
+          "generation": 14,
+          "entries": 8192
+        },
+        "published": 15,
+        "entries": 8192,
+        "stop_sha256": "6064a653950e3425edc7caabc1ab160849135676078fcfa5c7870e72c1caa822"
+      },
+      {
+        "op": "setrange",
+        "recovered": {
+          "generation": 15,
+          "entries": 8192
+        },
+        "published": 16,
+        "entries": 8192,
+        "stop_sha256": "e72c6555cf12952031f9576490d477faefc1ec9b2582dd80325055ff6ecf03be"
+      },
+      {
+        "op": "hash",
+        "recovered": {
+          "generation": 16,
+          "entries": 8192
+        },
+        "published": 17,
+        "entries": 8192,
+        "stop_sha256": "57201fcc516ef501dc6c06890dbb09d44d397b99348d98dbc1cfe2e559005853"
+      },
+      {
+        "op": "list",
+        "recovered": {
+          "generation": 17,
+          "entries": 8192
+        },
+        "published": 18,
+        "entries": 8192,
+        "stop_sha256": "7ccb6f342a563741e577e3de3c8d836a4e857c88383f2f5030ced69c4d553b0b"
+      },
+      {
+        "op": "zincr",
+        "recovered": {
+          "generation": 18,
+          "entries": 8192
+        },
+        "published": 19,
+        "entries": 8192,
+        "stop_sha256": "9f28ae2ea0bc928f6415238f6ce87938e2d8ec9e2cc5f6edcd24884ca61c690f"
+      },
+      {
+        "op": "zswap",
+        "recovered": {
+          "generation": 19,
+          "entries": 8192
+        },
+        "published": 20,
+        "entries": 8192,
+        "stop_sha256": "f4826e0bb928dc309271a79d5534a175ee3a5a084b7f719b8a4933c8ac78642a"
+      },
+      {
+        "op": "stream",
+        "recovered": {
+          "generation": 20,
+          "entries": 8192
+        },
+        "published": 21,
+        "entries": 8192,
+        "stop_sha256": "96e599665fd08f757c4e03dbb66428a07ab5af4cd32853c87476899b2ff4e618"
+      },
+      {
+        "op": "sswap",
+        "recovered": {
+          "generation": 21,
+          "entries": 8192
+        },
+        "published": 22,
+        "entries": 8192,
+        "stop_sha256": "3f7b2430a01282e282f742115de0804e01a9a737fa6100079d6ce65729c9ab99"
+      }
+    ]
+  },
+  "points": [
+    {
+      "op": "hgetall",
+      "unit": "ops/s",
+      "baseline": {
+        "count": 16260545,
+        "qps": 271007.250538,
+        "avg_ms": 0.294597,
+        "p50_ms": 0.285,
+        "p99_ms": 0.461,
+        "p999_ms": 0.55,
+        "max_ms": 201.626
+      },
+      "stack": {
+        "count": 16304909,
+        "qps": 271746.755477,
+        "avg_ms": 0.293813,
+        "p50_ms": 0.284,
+        "p99_ms": 0.454,
+        "p999_ms": 0.537,
+        "max_ms": 16.66
+      },
+      "change_percent": {
+        "qps": 0.272872750648534,
+        "avg_ms": -0.2661262674093834,
+        "p999_ms": -2.3636363636363678
+      },
+      "formal_10_second_mean": [
+        272721.4,
+        269590.6,
+        272126.3,
+        271753.2,
+        272343.1,
+        271948.3
+      ],
+      "baseline_formal_10_second_mean": [
+        271901.1,
+        271026.5,
+        271053.1,
+        271559.3,
+        271311.1,
+        269195.4
+      ],
+      "warm_final_20_seconds_10_second_mean": [
+        271028.9,
+        271248.1
+      ],
+      "formal_bucket_tail_completions": 80,
+      "formal_10_second_max_to_min_percent": 1.1613164553957223,
+      "formal_second_min": 248138,
+      "formal_second_max": 273714,
+      "phases": [
+        {
+          "phase": "load",
+          "count": 8192,
+          "command_counts": {
+            "HSET": 8192
+          },
+          "tx_commit_transactions": 0,
+          "raw_sha256": "b1a82c5c87bf8b6ea9194f0b721c960798da9c132852ab12602a0a1241c99e45"
+        },
+        {
+          "phase": "warm",
+          "count": 24416886,
+          "command_counts": {
+            "HGETALL": 24416886
+          },
+          "tx_commit_transactions": 0,
+          "raw_sha256": "cc67e92f433a8af4170e439924a258109e0c9f408bf990cfd4279d7325bc71c3"
+        },
+        {
+          "phase": "run",
+          "count": 16304909,
+          "command_counts": {
+            "HGETALL": 16304909
+          },
+          "tx_commit_transactions": 0,
+          "raw_sha256": "fdb83d483d30b773926782a826d0441ff636079b0208413df775cf448cb5a22d"
+        }
+      ],
+      "baseline_observations": {
+        "server": {
+          "path": "server/observations/lavik-hgetall-c80/monitor.jsonl",
+          "sha256": "d70defc68581c5ace66dc402b7f070fa69895c7b5e30e5aac44917b46b74146d",
+          "cpu_cores": 15.245023257091086,
+          "cpu_cores_by_monitor_10_seconds": [
+            15.248692321035561,
+            15.237017362581284,
+            15.242937046669999,
+            15.251682107664662,
+            15.244551194188618
+          ],
+          "monitor_seconds": 45.000259326,
+          "sample_count": 46,
+          "first_time": 1792386258.0145063,
+          "last_time": 1792386303.014765,
+          "selected_nic": "eth1",
+          "rx_mbps": 330.8765070915316,
+          "tx_mbps": 19094.17804335966,
+          "nic_errors_drops": {
+            "rx_errors": 0,
+            "rx_dropped": 0,
+            "tx_errors": 0,
+            "tx_dropped": 0
+          },
+          "tcp_retrans": 0,
+          "tcp_outsegs": 85465581
+        },
+        "client": {
+          "path": "client/observations/lavik-hgetall-c80/monitor.jsonl",
+          "sha256": "940d65aab37fc6fd297dfa6de5e5ffdf986a6466ac2d77b1e027a3ab28d78cef",
+          "cpu_cores": 7.033957335297317,
+          "cpu_cores_by_monitor_10_seconds": [
+            7.040833856739399,
+            7.020983902288108,
+            7.0300052598499345,
+            7.038995687911242,
+            7.043978296094074
+          ],
+          "monitor_seconds": 45.000272949,
+          "sample_count": 46,
+          "first_time": 1792386257.6172478,
+          "last_time": 1792386302.6175203,
+          "selected_nic": "eth0",
+          "rx_mbps": 19072.43610110308,
+          "tx_mbps": 393.1693343294081,
+          "nic_errors_drops": {
+            "rx_errors": 0,
+            "rx_dropped": 0,
+            "tx_errors": 0,
+            "tx_dropped": 0
+          },
+          "tcp_retrans": 0,
+          "tcp_outsegs": 25023665
+        }
+      },
+      "stack_observations": {
+        "server": {
+          "path": "server/observations/lavik-hgetall-c80/monitor.jsonl",
+          "sha256": "80e91a0afdd65bbff3b04a03cce395cabf83a328573f99010e85dfd0238cc592",
+          "cpu_cores": 15.23991749548932,
+          "cpu_cores_by_monitor_10_seconds": [
+            15.258635426949608,
+            15.235996404304851,
+            15.236990251373637,
+            15.2300099482425,
+            15.235992497797294
+          ],
+          "monitor_seconds": 45.000243617,
+          "sample_count": 46,
+          "first_time": 1792402261.9774287,
+          "last_time": 1792402306.9776719,
+          "selected_nic": "eth1",
+          "rx_mbps": 330.8942591229616,
+          "tx_mbps": 19117.555682454164,
+          "nic_errors_drops": {
+            "rx_errors": 0,
+            "rx_dropped": 0,
+            "tx_errors": 0,
+            "tx_dropped": 0
+          },
+          "tcp_retrans": 0,
+          "tcp_outsegs": 85570111
+        },
+        "client": {
+          "path": "client/observations/lavik-hgetall-c80/monitor.jsonl",
+          "sha256": "1d8c81f413a8e7af33cb25f8df0a8ab5f6c12c2f8fbcb4e43fe0f4b7fcbc0835",
+          "cpu_cores": 7.0688494373260085,
+          "cpu_cores_by_monitor_10_seconds": [
+            7.039815601182088,
+            7.081007686433844,
+            7.075984847486048,
+            7.074997041236237,
+            7.076036131655696
+          ],
+          "monitor_seconds": 45.000251147,
+          "sample_count": 46,
+          "first_time": 1792402261.5844002,
+          "last_time": 1792402306.584651,
+          "selected_nic": "eth0",
+          "rx_mbps": 19092.461965187886,
+          "tx_mbps": 393.09895418615446,
+          "nic_errors_drops": {
+            "rx_errors": 0,
+            "rx_dropped": 0,
+            "tx_errors": 0,
+            "tx_dropped": 0
+          },
+          "tcp_retrans": 0,
+          "tcp_outsegs": 25008453
+        }
+      },
+      "server_cpu_change_percent": -0.033491333634994014
+    },
+    {
+      "op": "hkeys",
+      "unit": "ops/s",
+      "baseline": {
+        "count": 22173625,
+        "qps": 369558.423848,
+        "avg_ms": 0.215965,
+        "p50_ms": 0.205,
+        "p99_ms": 0.336,
+        "p999_ms": 0.404,
+        "max_ms": 206.66
+      },
+      "stack": {
+        "count": 21911208,
+        "qps": 365185.073697,
+        "avg_ms": 0.218549,
+        "p50_ms": 0.208,
+        "p99_ms": 0.344,
+        "p999_ms": 0.414,
+        "max_ms": 31.306
+      },
+      "change_percent": {
+        "qps": -1.183398853546036,
+        "avg_ms": 1.196490172018616,
+        "p999_ms": 2.4752475247524552
+      },
+      "formal_10_second_mean": [
+        365038.4,
+        366952.9,
+        363572.7,
+        364767.7,
+        366457.2,
+        364323.9
+      ],
+      "baseline_formal_10_second_mean": [
+        367148.4,
+        370027.6,
+        370404.5,
+        369887.9,
+        369923.8,
+        369962.3
+      ],
+      "warm_final_20_seconds_10_second_mean": [
+        367444.8,
+        367218.2
+      ],
+      "formal_bucket_tail_completions": 80,
+      "formal_10_second_max_to_min_percent": 0.9297177703386561,
+      "formal_second_min": 326093,
+      "formal_second_max": 371704,
+      "phases": [
+        {
+          "phase": "load",
+          "count": 8192,
+          "command_counts": {
+            "HSET": 8192
+          },
+          "tx_commit_transactions": 0,
+          "raw_sha256": "3b07379d808d07acd02123b1c716eecd830020c6da7d8bba8651a16222b3c832"
+        },
+        {
+          "phase": "warm",
+          "count": 33003739,
+          "command_counts": {
+            "HKEYS": 33003739
+          },
+          "tx_commit_transactions": 0,
+          "raw_sha256": "5ce814435ced290fd61f31e6118378c883f719eb2848ef192a6451221e455f1b"
+        },
+        {
+          "phase": "run",
+          "count": 21911208,
+          "command_counts": {
+            "HKEYS": 21911208
+          },
+          "tx_commit_transactions": 0,
+          "raw_sha256": "d112716ed0e401123b640216c088a1826194eaa99d15ec3601879de8adf768ed"
+        }
+      ],
+      "baseline_observations": {
+        "server": {
+          "path": "server/observations/lavik-hkeys-c80/monitor.jsonl",
+          "sha256": "d55fd32fd791841089b1632ca5a72b65dda2ea8c0015cf3d6547c99e2a80ff8b",
+          "cpu_cores": 15.715049190771994,
+          "cpu_cores_by_monitor_10_seconds": [
+            15.719709785768075,
+            15.713002352236451,
+            15.717975324350538,
+            15.70898980172382,
+            15.716088613594039
+          ],
+          "monitor_seconds": 44.999540976,
+          "sample_count": 46,
+          "first_time": 1792386424.2186124,
+          "last_time": 1792386469.2181528,
+          "selected_nic": "eth1",
+          "rx_mbps": 277.26396424030935,
+          "tx_mbps": 1030.902288908717,
+          "nic_errors_drops": {
+            "rx_errors": 0,
+            "rx_dropped": 0,
+            "tx_errors": 0,
+            "tx_dropped": 0
+          },
+          "tcp_retrans": 1,
+          "tcp_outsegs": 16615557
+        },
+        "client": {
+          "path": "client/observations/lavik-hkeys-c80/monitor.jsonl",
+          "sha256": "c26d87f6ce04e290781f0a77f9d7c35c8067fc1cc26ffacbd576b846f0fb0005",
+          "cpu_cores": 5.5026490202826635,
+          "cpu_cores_by_monitor_10_seconds": [
+            5.472925150086477,
+            5.506000941526161,
+            5.522996732595133,
+            5.506988317474983,
+            5.506019682919163
+          ],
+          "monitor_seconds": 45.00014431,
+          "sample_count": 46,
+          "first_time": 1792386423.8077621,
+          "last_time": 1792386468.8079062,
+          "selected_nic": "eth0",
+          "rx_mbps": 989.357099063934,
+          "tx_mbps": 318.5678393661134,
+          "nic_errors_drops": {
+            "rx_errors": 0,
+            "rx_dropped": 0,
+            "tx_errors": 0,
+            "tx_dropped": 0
+          },
+          "tcp_retrans": 1,
+          "tcp_outsegs": 16612496
+        }
+      },
+      "stack_observations": {
+        "server": {
+          "path": "server/observations/lavik-hkeys-c80/monitor.jsonl",
+          "sha256": "93f5043bebce2821f0bd4c23f1a8feff556b4f3e8ba972158bcf00ed782ba9cc",
+          "cpu_cores": 15.689923256397389,
+          "cpu_cores_by_monitor_10_seconds": [
+            15.682609821372429,
+            15.691027625623237,
+            15.69698294051894,
+            15.687025571420385,
+            15.694015650704888
+          ],
+          "monitor_seconds": 45.002769514,
+          "sample_count": 46,
+          "first_time": 1792402428.4495568,
+          "last_time": 1792402473.452326,
+          "selected_nic": "eth1",
+          "rx_mbps": 274.37507365316145,
+          "tx_mbps": 1020.1603213268409,
+          "nic_errors_drops": {
+            "rx_errors": 0,
+            "rx_dropped": 0,
+            "tx_errors": 0,
+            "tx_dropped": 0
+          },
+          "tcp_retrans": 0,
+          "tcp_outsegs": 16443604
+        },
+        "client": {
+          "path": "client/observations/lavik-hkeys-c80/monitor.jsonl",
+          "sha256": "68e36d2dc51c10f04184cd241b4d8428de850957fa0de932125d4291350ee2f1",
+          "cpu_cores": 5.439978413077662,
+          "cpu_cores_by_monitor_10_seconds": [
+            5.442913188800387,
+            5.462994291717265,
+            5.4020000064824,
+            5.444995278100095,
+            5.454000037087201
+          ],
+          "monitor_seconds": 45.000178569,
+          "sample_count": 46,
+          "first_time": 1792402428.0234683,
+          "last_time": 1792402473.0236468,
+          "selected_nic": "eth0",
+          "rx_mbps": 978.9085599394969,
+          "tx_mbps": 315.204547071983,
+          "nic_errors_drops": {
+            "rx_errors": 0,
+            "rx_dropped": 0,
+            "tx_errors": 0,
+            "tx_dropped": 0
+          },
+          "tcp_retrans": 0,
+          "tcp_outsegs": 16437053
+        }
+      },
+      "server_cpu_change_percent": -0.15988454168733846
+    },
+    {
+      "op": "hvals",
+      "unit": "ops/s",
+      "baseline": {
+        "count": 16328714,
+        "qps": 272143.485274,
+        "avg_ms": 0.293435,
+        "p50_ms": 0.283,
+        "p99_ms": 0.457,
+        "p999_ms": 0.545,
+        "max_ms": 208.845
+      },
+      "stack": {
+        "count": 16051865,
+        "qps": 267529.506621,
+        "avg_ms": 0.298473,
+        "p50_ms": 0.287,
+        "p99_ms": 0.461,
+        "p999_ms": 0.548,
+        "max_ms": 17.705
+      },
+      "change_percent": {
+        "qps": -1.6954213136333274,
+        "avg_ms": 1.7169049363572775,
+        "p999_ms": 0.5504587155963359
+      },
+      "formal_10_second_mean": [
+        268072.7,
+        267763.5,
+        267957.3,
+        265308.2,
+        268072.5,
+        268004.3
+      ],
+      "baseline_formal_10_second_mean": [
+        272585.0,
+        273001.0,
+        270052.5,
+        272462.4,
+        272188.1,
+        272574.4
+      ],
+      "warm_final_20_seconds_10_second_mean": [
+        268565.2,
+        270731.5
+      ],
+      "formal_bucket_tail_completions": 80,
+      "formal_10_second_max_to_min_percent": 1.041995686526076,
+      "formal_second_min": 241334,
+      "formal_second_max": 269479,
+      "phases": [
+        {
+          "phase": "load",
+          "count": 8192,
+          "command_counts": {
+            "HSET": 8192
+          },
+          "tx_commit_transactions": 0,
+          "raw_sha256": "cecb710a63c23e3d240f019524ea534b09c1db1b4dd958a47eb4d352dec3903d"
+        },
+        {
+          "phase": "warm",
+          "count": 24326014,
+          "command_counts": {
+            "HVALS": 24326014
+          },
+          "tx_commit_transactions": 0,
+          "raw_sha256": "95136eed65b90a1e23b2687441eeec8541ddd3d103082731f70972323d30cda5"
+        },
+        {
+          "phase": "run",
+          "count": 16051865,
+          "command_counts": {
+            "HVALS": 16051865
+          },
+          "tx_commit_transactions": 0,
+          "raw_sha256": "d4310403e9cd9def762a2c944cb85441946192b352fc704d1641d18b67004b4d"
+        }
+      ],
+      "baseline_observations": {
+        "server": {
+          "path": "server/observations/lavik-hvals-c80/monitor.jsonl",
+          "sha256": "18a3790bba661b253bc77e024456a833bcae40e034ca1ce5fce79467da7a6491",
+          "cpu_cores": 15.186185627022514,
+          "cpu_cores_by_monitor_10_seconds": [
+            15.180809963369978,
+            15.198007641558242,
+            15.188965294733196,
+            15.184040302998177,
+            15.172022214874927
+          ],
+          "monitor_seconds": 44.99813296,
+          "sample_count": 46,
+          "first_time": 1792386590.3661773,
+          "last_time": 1792386635.3643103,
+          "selected_nic": "eth1",
+          "rx_mbps": 322.6221947676116,
+          "tx_mbps": 18537.10297139404,
+          "nic_errors_drops": {
+            "rx_errors": 0,
+            "rx_dropped": 0,
+            "tx_errors": 0,
+            "tx_dropped": 0
+          },
+          "tcp_retrans": 0,
+          "tcp_outsegs": 85675584
+        },
+        "client": {
+          "path": "client/observations/lavik-hvals-c80/monitor.jsonl",
+          "sha256": "b68aabb0f916e6c7abe53e23525de969d6219519cafa9aabc8e1126cb2f06f01",
+          "cpu_cores": 6.7968673191059725,
+          "cpu_cores_by_monitor_10_seconds": [
+            6.814892447367396,
+            6.801038165385873,
+            6.772941345650653,
+            6.80201689825058,
+            6.790028048247862
+          ],
+          "monitor_seconds": 45.000142807,
+          "sample_count": 46,
+          "first_time": 1792386589.9547803,
+          "last_time": 1792386634.954923,
+          "selected_nic": "eth0",
+          "rx_mbps": 18514.663116277872,
+          "tx_mbps": 384.97235660561483,
+          "nic_errors_drops": {
+            "rx_errors": 0,
+            "rx_dropped": 0,
+            "tx_errors": 0,
+            "tx_dropped": 0
+          },
+          "tcp_retrans": 3,
+          "tcp_outsegs": 25045360
+        }
+      },
+      "stack_observations": {
+        "server": {
+          "path": "server/observations/lavik-hvals-c80/monitor.jsonl",
+          "sha256": "3f1e8f80f1f523e57d0377b5859abf75f81c2935871592da24b76cead71743b7",
+          "cpu_cores": 15.087918366985319,
+          "cpu_cores_by_monitor_10_seconds": [
+            15.088725229786947,
+            15.07889879405263,
+            15.075156279561801,
+            15.109299921164663,
+            15.08710214298575
+          ],
+          "monitor_seconds": 45.000243472,
+          "sample_count": 46,
+          "first_time": 1792402594.6397502,
+          "last_time": 1792402639.6399934,
+          "selected_nic": "eth1",
+          "rx_mbps": 316.5826428664617,
+          "tx_mbps": 18223.11769113532,
+          "nic_errors_drops": {
+            "rx_errors": 0,
+            "rx_dropped": 0,
+            "tx_errors": 0,
+            "tx_dropped": 0
+          },
+          "tcp_retrans": 0,
+          "tcp_outsegs": 84228364
+        },
+        "client": {
+          "path": "client/observations/lavik-hvals-c80/monitor.jsonl",
+          "sha256": "02d39951988ed1fffc58e708473b497a27a974ff2d4706461853e74c2e21dbdd",
+          "cpu_cores": 6.71085321473885,
+          "cpu_cores_by_monitor_10_seconds": [
+            6.728858422800127,
+            6.719994025253312,
+            6.7260047525949584,
+            6.6639518982624075,
+            6.7200607426290535
+          ],
+          "monitor_seconds": 45.000239215,
+          "sample_count": 46,
+          "first_time": 1792402594.241423,
+          "last_time": 1792402639.2416618,
+          "selected_nic": "eth0",
+          "rx_mbps": 18198.017659760124,
+          "tx_mbps": 377.6772884872763,
+          "nic_errors_drops": {
+            "rx_errors": 0,
+            "rx_dropped": 0,
+            "tx_errors": 0,
+            "tx_dropped": 0
+          },
+          "tcp_retrans": 0,
+          "tcp_outsegs": 24556066
+        }
+      },
+      "server_cpu_change_percent": -0.6470832271557203
+    },
+    {
+      "op": "smembers",
+      "unit": "ops/s",
+      "baseline": {
+        "count": 15029460,
+        "qps": 250489.161698,
+        "avg_ms": 0.318636,
+        "p50_ms": 0.308,
+        "p99_ms": 0.491,
+        "p999_ms": 0.581,
+        "max_ms": 19.609
+      },
+      "stack": {
+        "count": 15006806,
+        "qps": 250111.658512,
+        "avg_ms": 0.31916,
+        "p50_ms": 0.308,
+        "p99_ms": 0.494,
+        "p999_ms": 0.578,
+        "max_ms": 12.056
+      },
+      "change_percent": {
+        "qps": -0.15070639521527207,
+        "avg_ms": 0.16445097226931438,
+        "p999_ms": -0.5163511187607606
+      },
+      "formal_10_second_mean": [
+        250642.1,
+        250728.2,
+        250528.5,
+        250410.2,
+        249878.4,
+        248485.2
+      ],
+      "baseline_formal_10_second_mean": [
+        250943.7,
+        250884.4,
+        250782.2,
+        248831.3,
+        250818.2,
+        250678.2
+      ],
+      "warm_final_20_seconds_10_second_mean": [
+        248584.1,
+        247191.5
+      ],
+      "formal_bucket_tail_completions": 80,
+      "formal_10_second_max_to_min_percent": 0.9026694547602743,
+      "formal_second_min": 229585,
+      "formal_second_max": 252737,
+      "phases": [
+        {
+          "phase": "load",
+          "count": 16384,
+          "command_counts": {
+            "SADD": 16384
+          },
+          "tx_commit_transactions": 0,
+          "raw_sha256": "85245a66b233e261fb78f5e52a3e942ae776e9d0a2260cfb1e815e578e62d884"
+        },
+        {
+          "phase": "warm",
+          "count": 22416946,
+          "command_counts": {
+            "SMEMBERS": 22416946
+          },
+          "tx_commit_transactions": 0,
+          "raw_sha256": "73e55ec3a763d0b0202abad770dca5bd105f0e837b8e2c2ab875694e705d5c05"
+        },
+        {
+          "phase": "run",
+          "count": 15006806,
+          "command_counts": {
+            "SMEMBERS": 15006806
+          },
+          "tx_commit_transactions": 0,
+          "raw_sha256": "fc43d39a9a19cbd6e09d1ba61b20652b39e32c774b13e013a0a23654917a2b35"
+        }
+      ],
+      "baseline_observations": {
+        "server": {
+          "path": "server/observations/lavik-smembers-c80/monitor.jsonl",
+          "sha256": "2e6db7e8ded741537e767695db5f97e99646f947594611f3eee51760996405e0",
+          "cpu_cores": 15.343687821145792,
+          "cpu_cores_by_monitor_10_seconds": [
+            15.343651378431396,
+            15.33398282440584,
+            15.338686154591974,
+            15.366350057355927,
+            15.32785817132834
+          ],
+          "monitor_seconds": 45.000263825,
+          "sample_count": 46,
+          "first_time": 1792386756.160846,
+          "last_time": 1792386801.1611097,
+          "selected_nic": "eth1",
+          "rx_mbps": 310.5199357572877,
+          "tx_mbps": 20147.450622374214,
+          "nic_errors_drops": {
+            "rx_errors": 0,
+            "rx_dropped": 0,
+            "tx_errors": 0,
+            "tx_dropped": 0
+          },
+          "tcp_retrans": 0,
+          "tcp_outsegs": 90158668
+        },
+        "client": {
+          "path": "client/observations/lavik-smembers-c80/monitor.jsonl",
+          "sha256": "c79d3fc2be47cc4ece3fb2d1afc32ba714e165c07ab801d74ddd2b58e6572db0",
+          "cpu_cores": 8.23729863746537,
+          "cpu_cores_by_monitor_10_seconds": [
+            8.262836937044465,
+            8.24500276702293,
+            8.248022094801588,
+            8.197996878202789,
+            8.227969502208243
+          ],
+          "monitor_seconds": 45.000189542,
+          "sample_count": 46,
+          "first_time": 1792386755.7530675,
+          "last_time": 1792386800.7532568,
+          "selected_nic": "eth0",
+          "rx_mbps": 20127.01941449969,
+          "tx_mbps": 368.29546276758657,
+          "nic_errors_drops": {
+            "rx_errors": 0,
+            "rx_dropped": 0,
+            "tx_errors": 0,
+            "tx_dropped": 0
+          },
+          "tcp_retrans": 0,
+          "tcp_outsegs": 23215411
+        }
+      },
+      "stack_observations": {
+        "server": {
+          "path": "server/observations/lavik-smembers-c80/monitor.jsonl",
+          "sha256": "d16ad93cdd239b3a833cd1d3ae6812b51d24d507b89e72abb0a4f0372db0e5e0",
+          "cpu_cores": 15.305482553505604,
+          "cpu_cores_by_monitor_10_seconds": [
+            15.307598515367662,
+            15.312070939293456,
+            15.304991380228856,
+            15.304020453823334,
+            15.291980368155603
+          ],
+          "monitor_seconds": 45.000214635,
+          "sample_count": 46,
+          "first_time": 1792402760.6164627,
+          "last_time": 1792402805.616677,
+          "selected_nic": "eth1",
+          "rx_mbps": 310.6100948489398,
+          "tx_mbps": 20144.160135604205,
+          "nic_errors_drops": {
+            "rx_errors": 0,
+            "rx_dropped": 0,
+            "tx_errors": 0,
+            "tx_dropped": 0
+          },
+          "tcp_retrans": 3,
+          "tcp_outsegs": 90144543
+        },
+        "client": {
+          "path": "client/observations/lavik-smembers-c80/monitor.jsonl",
+          "sha256": "44a7475c574d03354e533b0b3b690fddb3d6c59ce71b0f00b4d1707b44c19344",
+          "cpu_cores": 8.324413554210627,
+          "cpu_cores_by_monitor_10_seconds": [
+            8.32087211818059,
+            8.342989280093073,
+            8.32701487454667,
+            8.321995124143056,
+            8.293979343015048
+          ],
+          "monitor_seconds": 45.000166986,
+          "sample_count": 46,
+          "first_time": 1792402760.1903,
+          "last_time": 1792402805.190467,
+          "selected_nic": "eth0",
+          "rx_mbps": 20124.189030892678,
+          "tx_mbps": 368.41841011740814,
+          "nic_errors_drops": {
+            "rx_errors": 0,
+            "rx_dropped": 0,
+            "tx_errors": 0,
+            "tx_dropped": 0
+          },
+          "tcp_retrans": 0,
+          "tcp_outsegs": 23227036
+        }
+      },
+      "server_cpu_change_percent": -0.24899664334629978
+    },
+    {
+      "op": "lrange",
+      "unit": "ops/s",
+      "baseline": {
+        "count": 16605710,
+        "qps": 276759.825381,
+        "avg_ms": 0.288262,
+        "p50_ms": 0.278,
+        "p99_ms": 0.457,
+        "p999_ms": 0.552,
+        "max_ms": 32.246
+      },
+      "stack": {
+        "count": 16689406,
+        "qps": 278155.068799,
+        "avg_ms": 0.286754,
+        "p50_ms": 0.278,
+        "p99_ms": 0.443,
+        "p999_ms": 0.528,
+        "max_ms": 32.729
+      },
+      "change_percent": {
+        "qps": 0.5041350983941539,
+        "avg_ms": -0.5231352033913672,
+        "p999_ms": -4.34782608695653
+      },
+      "formal_10_second_mean": [
+        276048.8,
+        278366.8,
+        278374.0,
+        278765.5,
+        278354.8,
+        279022.7
+      ],
+      "baseline_formal_10_second_mean": [
+        277467.7,
+        276800.1,
+        277092.6,
+        277297.5,
+        277147.5,
+        274757.6
+      ],
+      "warm_final_20_seconds_10_second_mean": [
+        271304.2,
+        271517.1
+      ],
+      "formal_bucket_tail_completions": 80,
+      "formal_10_second_max_to_min_percent": 1.0773095191864757,
+      "formal_second_min": 249528,
+      "formal_second_max": 280167,
+      "phases": [
+        {
+          "phase": "load",
+          "count": 8192,
+          "command_counts": {
+            "RPUSH": 8192
+          },
+          "tx_commit_transactions": 0,
+          "raw_sha256": "40fa2b9e3bf234f2fff289a7ddb088d8b0fd888a7dae6a9ce6f07fba597e179d"
+        },
+        {
+          "phase": "warm",
+          "count": 24406553,
+          "command_counts": {
+            "LRANGE": 24406553
+          },
+          "tx_commit_transactions": 0,
+          "raw_sha256": "4e5284dbe7c1f9550da1b464f31500355cab0102576d431a6b92c51460f97244"
+        },
+        {
+          "phase": "run",
+          "count": 16689406,
+          "command_counts": {
+            "LRANGE": 16689406
+          },
+          "tx_commit_transactions": 0,
+          "raw_sha256": "bf1550f35df1427e66e2e8dbe82bc591960b01c3f12dae7e8ca3e7e35ebf831a"
+        }
+      ],
+      "baseline_observations": {
+        "server": {
+          "path": "server/observations/lavik-lrange-c80/monitor.jsonl",
+          "sha256": "8c980c4db43cd5edbbf49dfe17350d392bc7d7e7cc74a385ee4ee93aef1200d0",
+          "cpu_cores": 15.14081560364028,
+          "cpu_cores_by_monitor_10_seconds": [
+            15.14463811735772,
+            15.14902120408498,
+            15.124034077473583,
+            15.14496478947136,
+            15.142023803261418
+          ],
+          "monitor_seconds": 45.000217811,
+          "sample_count": 46,
+          "first_time": 1792386921.6290843,
+          "last_time": 1792386966.6293018,
+          "selected_nic": "eth1",
+          "rx_mbps": 366.1129809903444,
+          "tx_mbps": 18889.048652920534,
+          "nic_errors_drops": {
+            "rx_errors": 0,
+            "rx_dropped": 0,
+            "tx_errors": 0,
+            "tx_dropped": 0
+          },
+          "tcp_retrans": 0,
+          "tcp_outsegs": 87306167
+        },
+        "client": {
+          "path": "client/observations/lavik-lrange-c80/monitor.jsonl",
+          "sha256": "164cc23d4aeea6a53d8d0d66bc7a5ef39efd10c8877381bfd94f1913c1e78504",
+          "cpu_cores": 6.49795984448535,
+          "cpu_cores_by_monitor_10_seconds": [
+            6.4928496230055925,
+            6.506970449895095,
+            6.4960193055197735,
+            6.501001413317708,
+            6.487957227493182
+          ],
+          "monitor_seconds": 45.000278087,
+          "sample_count": 46,
+          "first_time": 1792386921.2375073,
+          "last_time": 1792386966.237785,
+          "selected_nic": "eth0",
+          "rx_mbps": 18861.53565164745,
+          "tx_mbps": 429.46858636376055,
+          "nic_errors_drops": {
+            "rx_errors": 0,
+            "rx_dropped": 0,
+            "tx_errors": 0,
+            "tx_dropped": 0
+          },
+          "tcp_retrans": 0,
+          "tcp_outsegs": 25480194
+        }
+      },
+      "stack_observations": {
+        "server": {
+          "path": "server/observations/lavik-lrange-c80/monitor.jsonl",
+          "sha256": "512f87980313cb34752521dc37fa6d16ad3c17bd8b4fdedf48948fdfeeeb039f",
+          "cpu_cores": 15.171932751588118,
+          "cpu_cores_by_monitor_10_seconds": [
+            15.19266895478201,
+            15.161015165563471,
+            15.171049758008996,
+            15.16694886614859,
+            15.16402836279865
+          ],
+          "monitor_seconds": 45.000199459,
+          "sample_count": 46,
+          "first_time": 1792402926.472282,
+          "last_time": 1792402971.472481,
+          "selected_nic": "eth1",
+          "rx_mbps": 368.02949069346255,
+          "tx_mbps": 18941.86942528147,
+          "nic_errors_drops": {
+            "rx_errors": 0,
+            "rx_dropped": 0,
+            "tx_errors": 0,
+            "tx_dropped": 0
+          },
+          "tcp_retrans": 2,
+          "tcp_outsegs": 87550279
+        },
+        "client": {
+          "path": "client/observations/lavik-lrange-c80/monitor.jsonl",
+          "sha256": "d06a4b876fa53061d486d6b0b6d5da27f7b729f623013f782fdaa8a022aa62b4",
+          "cpu_cores": 6.790862924401767,
+          "cpu_cores_by_monitor_10_seconds": [
+            6.761878698658026,
+            6.798019582375209,
+            6.80199756760567,
+            6.796981100994048,
+            6.800013477626713
+          ],
+          "monitor_seconds": 45.000172055,
+          "sample_count": 46,
+          "first_time": 1792402926.042553,
+          "last_time": 1792402971.0427248,
+          "selected_nic": "eth0",
+          "rx_mbps": 18917.712653887764,
+          "tx_mbps": 431.84523615261986,
+          "nic_errors_drops": {
+            "rx_errors": 0,
+            "rx_dropped": 0,
+            "tx_errors": 0,
+            "tx_dropped": 0
+          },
+          "tcp_retrans": 0,
+          "tcp_outsegs": 25650451
+        }
+      },
+      "server_cpu_change_percent": 0.20551830735164867
+    },
+    {
+      "op": "zrange",
+      "unit": "ops/s",
+      "baseline": {
+        "count": 11357757,
+        "qps": 189294.240894,
+        "avg_ms": 0.421577,
+        "p50_ms": 0.411,
+        "p99_ms": 0.644,
+        "p999_ms": 0.752,
+        "max_ms": 209.314
+      },
+      "stack": {
+        "count": 11491055,
+        "qps": 191515.850188,
+        "avg_ms": 0.416692,
+        "p50_ms": 0.408,
+        "p99_ms": 0.623,
+        "p999_ms": 0.72,
+        "max_ms": 27.45
+      },
+      "change_percent": {
+        "qps": 1.1736275142380403,
+        "avg_ms": -1.1587444286571547,
+        "p999_ms": -4.255319148936176
+      },
+      "formal_10_second_mean": [
+        192076.3,
+        192053.6,
+        190082.6,
+        191358.1,
+        191632.0,
+        191894.9
+      ],
+      "baseline_formal_10_second_mean": [
+        188226.0,
+        189926.9,
+        189907.6,
+        189480.3,
+        189082.3,
+        189144.6
+      ],
+      "warm_final_20_seconds_10_second_mean": [
+        191786.2,
+        192016.3
+      ],
+      "formal_bucket_tail_completions": 80,
+      "formal_10_second_max_to_min_percent": 1.0488598114714254,
+      "formal_second_min": 174210,
+      "formal_second_max": 193040,
+      "phases": [
+        {
+          "phase": "load",
+          "count": 16384,
+          "command_counts": {
+            "ZADD": 16384
+          },
+          "tx_commit_transactions": 0,
+          "raw_sha256": "9505ab3f81d7ba792aa75a8bb5ac9f538784c0f48697c7c44e5f2564babdeb6b"
+        },
+        {
+          "phase": "warm",
+          "count": 17248343,
+          "command_counts": {
+            "ZRANGE": 17248343
+          },
+          "tx_commit_transactions": 0,
+          "raw_sha256": "cd2ff805f9f5f7f4a5d2b7f47982c04bbaff305275e4d3b17f80d55c6026ff38"
+        },
+        {
+          "phase": "run",
+          "count": 11491055,
+          "command_counts": {
+            "ZRANGE": 11491055
+          },
+          "tx_commit_transactions": 0,
+          "raw_sha256": "fa29020d60e9c2c804dad826b5122782f8b19eab2497b7c718ced6cbf7589131"
+        }
+      ],
+      "baseline_observations": {
+        "server": {
+          "path": "server/observations/lavik-zrange-c80/monitor.jsonl",
+          "sha256": "0b6a5e2c2048bd155d300a57f5bbe1f59ede362f4c32ffd5143056b19843d27e",
+          "cpu_cores": 15.884363833062919,
+          "cpu_cores_by_monitor_10_seconds": [
+            15.884655401462652,
+            15.887992001984824,
+            15.880994533761681,
+            15.883967525228394,
+            15.884055559249536
+          ],
+          "monitor_seconds": 45.00022837,
+          "sample_count": 46,
+          "first_time": 1792387087.1418972,
+          "last_time": 1792387132.1421251,
+          "selected_nic": "eth1",
+          "rx_mbps": 277.71005660787495,
+          "tx_mbps": 18565.638134871537,
+          "nic_errors_drops": {
+            "rx_errors": 0,
+            "rx_dropped": 0,
+            "tx_errors": 0,
+            "tx_dropped": 0
+          },
+          "tcp_retrans": 81,
+          "tcp_outsegs": 76655634
+        },
+        "client": {
+          "path": "client/observations/lavik-zrange-c80/monitor.jsonl",
+          "sha256": "30439874ffafb89cc6f914f0cbf753bcff0ac43504c826f0bbb301804d1c800b",
+          "cpu_cores": 7.449751637427033,
+          "cpu_cores_by_monitor_10_seconds": [
+            7.391895562864351,
+            7.470959404300788,
+            7.472011560696286,
+            7.459977728982488,
+            7.458077722119557
+          ],
+          "monitor_seconds": 45.0001579,
+          "sample_count": 46,
+          "first_time": 1792387086.7444472,
+          "last_time": 1792387131.7446048,
+          "selected_nic": "eth0",
+          "rx_mbps": 18544.25087641748,
+          "tx_mbps": 321.50683773489607,
+          "nic_errors_drops": {
+            "rx_errors": 0,
+            "rx_dropped": 0,
+            "tx_errors": 0,
+            "tx_dropped": 0
+          },
+          "tcp_retrans": 0,
+          "tcp_outsegs": 17611569
+        }
+      },
+      "stack_observations": {
+        "server": {
+          "path": "server/observations/lavik-zrange-c80/monitor.jsonl",
+          "sha256": "2cc723dacd821f39084d17ab4fbf97684e15d801c2154de6bbdc543127915d68",
+          "cpu_cores": 15.887714313067244,
+          "cpu_cores_by_monitor_10_seconds": [
+            15.885687307719607,
+            15.899979706855898,
+            15.89107170687197,
+            15.868955197178792,
+            15.898041191824726
+          ],
+          "monitor_seconds": 45.000179756,
+          "sample_count": 46,
+          "first_time": 1792403092.0294464,
+          "last_time": 1792403137.029626,
+          "selected_nic": "eth1",
+          "rx_mbps": 280.5841081627345,
+          "tx_mbps": 18763.192972521865,
+          "nic_errors_drops": {
+            "rx_errors": 0,
+            "rx_dropped": 0,
+            "tx_errors": 0,
+            "tx_dropped": 0
+          },
+          "tcp_retrans": 6,
+          "tcp_outsegs": 77536997
+        },
+        "client": {
+          "path": "client/observations/lavik-zrange-c80/monitor.jsonl",
+          "sha256": "b194e3e566edca0329b4881520c18ad61b95c203b0d039626cc91252c7fb998f",
+          "cpu_cores": 7.602412538977386,
+          "cpu_cores_by_monitor_10_seconds": [
+            7.623870693053949,
+            7.558986414989615,
+            7.613026892256194,
+            7.603959892153154,
+            7.622024616090701
+          ],
+          "monitor_seconds": 45.000188854,
+          "sample_count": 46,
+          "first_time": 1792403091.6590436,
+          "last_time": 1792403136.6592321,
+          "selected_nic": "eth0",
+          "rx_mbps": 18742.667769693802,
+          "tx_mbps": 324.75911777647934,
+          "nic_errors_drops": {
+            "rx_errors": 0,
+            "rx_dropped": 0,
+            "tx_errors": 0,
+            "tx_dropped": 0
+          },
+          "tcp_retrans": 0,
+          "tcp_outsegs": 17777540
+        }
+      },
+      "server_cpu_change_percent": 0.02109294422827368
+    },
+    {
+      "op": "set",
+      "unit": "ops/s",
+      "baseline": {
+        "count": 17276375,
+        "qps": 287938.01051,
+        "avg_ms": 0.275285,
+        "p50_ms": 0.225,
+        "p99_ms": 1.904,
+        "p999_ms": 2.134,
+        "max_ms": 45.985
+      },
+      "stack": {
+        "count": 17278712,
+        "qps": 287971.226078,
+        "avg_ms": 0.275307,
+        "p50_ms": 0.225,
+        "p99_ms": 1.93,
+        "p999_ms": 2.175,
+        "max_ms": 24.501
+      },
+      "change_percent": {
+        "qps": 0.011535666284956392,
+        "avg_ms": 0.007991717674427079,
+        "p999_ms": 1.921274601686962
+      },
+      "formal_10_second_mean": [
+        291683.2,
+        287235.6,
+        287224.1,
+        287233.1,
+        287213.1,
+        287274.1
+      ],
+      "baseline_formal_10_second_mean": [
+        291691.6,
+        287228.8,
+        287230.2,
+        287236.4,
+        287227.7,
+        287014.8
+      ],
+      "warm_final_20_seconds_10_second_mean": [
+        286885.3,
+        287228.0
+      ],
+      "formal_bucket_tail_completions": 80,
+      "formal_10_second_max_to_min_percent": 1.5563705137405126,
+      "formal_second_min": 278594,
+      "formal_second_max": 329541,
+      "phases": [
+        {
+          "phase": "load",
+          "count": 8192,
+          "command_counts": {
+            "SET": 8192
+          },
+          "tx_commit_transactions": 0,
+          "raw_sha256": "365035bfbb2d2353eca379072dc66b782730ba06a5e1a5ee52f603f0dc28b2b3"
+        },
+        {
+          "phase": "warm",
+          "count": 25893693,
+          "command_counts": {
+            "SET": 25893693
+          },
+          "tx_commit_transactions": 0,
+          "raw_sha256": "68c927840c0f12a1db05b34c7b9132fd6855d6b65e67189bf7c07c03ec7c4f87"
+        },
+        {
+          "phase": "run",
+          "count": 17278712,
+          "command_counts": {
+            "SET": 17278712
+          },
+          "tx_commit_transactions": 0,
+          "raw_sha256": "66550a6d0bb350aed16fc96ac1ca039c12eec5b2ec015317b58d5f0fd3e0e405"
+        }
+      ],
+      "baseline_observations": {
+        "server": {
+          "path": "server/observations/lavik-set-c80/monitor.jsonl",
+          "sha256": "8544636658bd8a51d2bd24d988e918ba072156fb3d5df7a39bc907d853304410",
+          "cpu_cores": 15.428803795950193,
+          "cpu_cores_by_monitor_10_seconds": [
+            15.429704190969074,
+            15.433879003018781,
+            15.431127545984731,
+            15.423122917662717,
+            15.423566829125607
+          ],
+          "monitor_seconds": 45.000248184,
+          "sample_count": 46,
+          "first_time": 1792387252.4207346,
+          "last_time": 1792387297.4209826,
+          "selected_nic": "eth1",
+          "rx_mbps": 19085.207876728186,
+          "tx_mbps": 319.5314903421467,
+          "nic_errors_drops": {
+            "rx_errors": 0,
+            "rx_dropped": 0,
+            "tx_errors": 0,
+            "tx_dropped": 0
+          },
+          "tcp_retrans": 0,
+          "tcp_outsegs": 26252963
+        },
+        "client": {
+          "path": "client/observations/lavik-set-c80/monitor.jsonl",
+          "sha256": "5d3cc63adf51606fdec3f97423bf61c42cdb9a1705961edda6f66baaff598beb",
+          "cpu_cores": 5.375983933453883,
+          "cpu_cores_by_monitor_10_seconds": [
+            5.3219310873787355,
+            5.341983737933105,
+            5.383001512085125,
+            5.439002567753112,
+            5.412019390183071
+          ],
+          "monitor_seconds": 45.000134486,
+          "sample_count": 46,
+          "first_time": 1792387251.9747233,
+          "last_time": 1792387296.9748576,
+          "selected_nic": "eth0",
+          "rx_mbps": 253.94486613268296,
+          "tx_mbps": 19089.6430701836,
+          "nic_errors_drops": {
+            "rx_errors": 0,
+            "rx_dropped": 0,
+            "tx_errors": 0,
+            "tx_dropped": 0
+          },
+          "tcp_retrans": 186,
+          "tcp_outsegs": 77550236
+        }
+      },
+      "stack_observations": {
+        "server": {
+          "path": "server/observations/lavik-set-c80/monitor.jsonl",
+          "sha256": "f1aa64baadb26fe32fa0888b5f3b36906b2567ec44c16cf9bf90b36199489e95",
+          "cpu_cores": 15.4123118369134,
+          "cpu_cores_by_monitor_10_seconds": [
+            15.42363946008871,
+            15.418045918024355,
+            15.398020428553702,
+            15.418739444889615,
+            15.393915379647156
+          ],
+          "monitor_seconds": 45.00038718,
+          "sample_count": 46,
+          "first_time": 1792403258.1467414,
+          "last_time": 1792403303.147128,
+          "selected_nic": "eth1",
+          "rx_mbps": 19089.904598460835,
+          "tx_mbps": 319.96950920456504,
+          "nic_errors_drops": {
+            "rx_errors": 0,
+            "rx_dropped": 0,
+            "tx_errors": 0,
+            "tx_dropped": 0
+          },
+          "tcp_retrans": 0,
+          "tcp_outsegs": 26288716
+        },
+        "client": {
+          "path": "client/observations/lavik-set-c80/monitor.jsonl",
+          "sha256": "8d287febb56e6397eec66786d6d4e35aa7cf7ea5c067d8e072844151643423e1",
+          "cpu_cores": 5.3315208710503335,
+          "cpu_cores_by_monitor_10_seconds": [
+            5.344887983975587,
+            5.3509928879953526,
+            5.330000634803076,
+            5.304011304969695,
+            5.323901627075296
+          ],
+          "monitor_seconds": 45.00029275,
+          "sample_count": 46,
+          "first_time": 1792403257.6822782,
+          "last_time": 1792403302.6825705,
+          "selected_nic": "eth0",
+          "rx_mbps": 254.23992238361606,
+          "tx_mbps": 19089.98844848626,
+          "nic_errors_drops": {
+            "rx_errors": 0,
+            "rx_dropped": 0,
+            "tx_errors": 0,
+            "tx_dropped": 0
+          },
+          "tcp_retrans": 160,
+          "tcp_outsegs": 77555011
+        }
+      },
+      "server_cpu_change_percent": -0.10689071722541632
+    },
+    {
+      "op": "setrange",
+      "unit": "ops/s",
+      "baseline": {
+        "count": 6349206,
+        "qps": 105816.625575,
+        "avg_ms": 0.754725,
+        "p50_ms": 0.354,
+        "p99_ms": 5.375,
+        "p999_ms": 8.854,
+        "max_ms": 33.172
+      },
+      "stack": {
+        "count": 6526464,
+        "qps": 108760.597927,
+        "avg_ms": 0.734142,
+        "p50_ms": 0.218,
+        "p99_ms": 7.717,
+        "p999_ms": 9.4,
+        "max_ms": 204.021
+      },
+      "change_percent": {
+        "qps": 2.78214537271686,
+        "avg_ms": -2.7272185233031876,
+        "p999_ms": 6.166704314434157
+      },
+      "formal_10_second_mean": [
+        106983.4,
+        109352.6,
+        108978.4,
+        109979.2,
+        108161.1,
+        109183.7
+      ],
+      "baseline_formal_10_second_mean": [
+        105262.9,
+        106224.4,
+        106012.5,
+        105527.6,
+        105944.3,
+        105940.9
+      ],
+      "warm_final_20_seconds_10_second_mean": [
+        105459.2,
+        109067.8
+      ],
+      "formal_bucket_tail_completions": 80,
+      "formal_10_second_max_to_min_percent": 2.800247515035048,
+      "formal_second_min": 101398,
+      "formal_second_max": 115783,
+      "phases": [
+        {
+          "phase": "load",
+          "count": 8192,
+          "command_counts": {
+            "SET": 8192
+          },
+          "tx_commit_transactions": 0,
+          "raw_sha256": "9c76d5f185c6e8cc622e3b84709de0e729fd3f19e25aeef33bb774a5364de8c6"
+        },
+        {
+          "phase": "warm",
+          "count": 9776894,
+          "command_counts": {
+            "SETRANGE": 9776894
+          },
+          "tx_commit_transactions": 0,
+          "raw_sha256": "3949b49ecbbb004e6e2c875600744c4de3e793225eac0a18d41aa22a02a759da"
+        },
+        {
+          "phase": "run",
+          "count": 6526464,
+          "command_counts": {
+            "SETRANGE": 6526464
+          },
+          "tx_commit_transactions": 0,
+          "raw_sha256": "101899a693af32205dea51c6d3c743311064e3a8fd1dc79827022ddb5fdd34f1"
+        }
+      ],
+      "baseline_observations": {
+        "server": {
+          "path": "server/observations/lavik-setrange-c80/monitor.jsonl",
+          "sha256": "c71a6c124f7f5b31ed1041821a21f9c4e8a09dbdd186ca9f4fb413df3cd4aa5d",
+          "cpu_cores": 13.472822036147152,
+          "cpu_cores_by_monitor_10_seconds": [
+            13.453684045611663,
+            13.508778342561445,
+            13.525270763747946,
+            13.389949233346478,
+            13.500036074796398
+          ],
+          "monitor_seconds": 45.000223292,
+          "sample_count": 46,
+          "first_time": 1792387417.070981,
+          "last_time": 1792387462.0712044,
+          "selected_nic": "eth1",
+          "rx_mbps": 316.17219860616507,
+          "tx_mbps": 61.758160753261535,
+          "nic_errors_drops": {
+            "rx_errors": 0,
+            "rx_dropped": 0,
+            "tx_errors": 0,
+            "tx_dropped": 0
+          },
+          "tcp_retrans": 0,
+          "tcp_outsegs": 4758973
+        },
+        "client": {
+          "path": "client/observations/lavik-setrange-c80/monitor.jsonl",
+          "sha256": "9664e79ab05a9f7234edb928b75ff4b71527bf07f8505c214b839a09fc17bcb8",
+          "cpu_cores": 1.7477704971484769,
+          "cpu_cores_by_monitor_10_seconds": [
+            1.7419667570031963,
+            1.7539846910462178,
+            1.7590059756951006,
+            1.7350149695356558,
+            1.7499896439112852
+          ],
+          "monitor_seconds": 45.000187455,
+          "sample_count": 46,
+          "first_time": 1792387416.715815,
+          "last_time": 1792387461.7160022,
+          "selected_nic": "eth0",
+          "rx_mbps": 49.9113620414584,
+          "tx_mbps": 327.97596958365824,
+          "nic_errors_drops": {
+            "rx_errors": 0,
+            "rx_dropped": 0,
+            "tx_errors": 0,
+            "tx_dropped": 0
+          },
+          "tcp_retrans": 0,
+          "tcp_outsegs": 4758197
+        }
+      },
+      "stack_observations": {
+        "server": {
+          "path": "server/observations/lavik-setrange-c80/monitor.jsonl",
+          "sha256": "9a656c3e99ebb47ab30b3cd6784af71c93d84cdf83f31f6b897915811bea0255",
+          "cpu_cores": 11.024623904355467,
+          "cpu_cores_by_monitor_10_seconds": [
+            11.009762344371008,
+            10.977074994278654,
+            11.065005385338122,
+            11.063938199054007,
+            10.990052719282895
+          ],
+          "monitor_seconds": 45.000174546,
+          "sample_count": 46,
+          "first_time": 1792403422.8685234,
+          "last_time": 1792403467.8686976,
+          "selected_nic": "eth1",
+          "rx_mbps": 325.79877522504404,
+          "tx_mbps": 63.63860951411698,
+          "nic_errors_drops": {
+            "rx_errors": 0,
+            "rx_dropped": 0,
+            "tx_errors": 0,
+            "tx_dropped": 0
+          },
+          "tcp_retrans": 0,
+          "tcp_outsegs": 4903882
+        },
+        "client": {
+          "path": "client/observations/lavik-setrange-c80/monitor.jsonl",
+          "sha256": "e59dfd8eae854aff949878eb4bbebe7859421734a3175ad819e2401d1f22b3b7",
+          "cpu_cores": 1.784216427047618,
+          "cpu_cores_by_monitor_10_seconds": [
+            1.7799786664216894,
+            1.7640011467771455,
+            1.7919992484355152,
+            1.8040008657400153,
+            1.7779881180610049
+          ],
+          "monitor_seconds": 45.000146161,
+          "sample_count": 46,
+          "first_time": 1792403422.5121012,
+          "last_time": 1792403467.5122473,
+          "selected_nic": "eth0",
+          "rx_mbps": 51.46042023318929,
+          "tx_mbps": 338.1405634008247,
+          "nic_errors_drops": {
+            "rx_errors": 0,
+            "rx_dropped": 0,
+            "tx_errors": 0,
+            "tx_dropped": 0
+          },
+          "tcp_retrans": 0,
+          "tcp_outsegs": 4905699
+        }
+      },
+      "server_cpu_change_percent": -18.171383287207743
+    },
+    {
+      "op": "hash",
+      "unit": "ops/s",
+      "baseline": {
+        "count": 6147085,
+        "qps": 102442.385145,
+        "avg_ms": 0.779464,
+        "p50_ms": 0.23,
+        "p99_ms": 8.18,
+        "p999_ms": 9.635,
+        "max_ms": 24.71
+      },
+      "stack": {
+        "count": 6209567,
+        "qps": 103491.394896,
+        "avg_ms": 0.771675,
+        "p50_ms": 0.224,
+        "p99_ms": 8.133,
+        "p999_ms": 9.563,
+        "max_ms": 21.246
+      },
+      "change_percent": {
+        "qps": 1.0239997336211948,
+        "avg_ms": -0.999276425851614,
+        "p999_ms": -0.7472755578619483
+      },
+      "formal_10_second_mean": [
+        104251.8,
+        102884.5,
+        102883.9,
+        104653.6,
+        103137.3,
+        103137.6
+      ],
+      "baseline_formal_10_second_mean": [
+        102566.1,
+        101109.4,
+        103598.9,
+        103221.5,
+        101606.4,
+        102598.2
+      ],
+      "warm_final_20_seconds_10_second_mean": [
+        104170.0,
+        102342.9
+      ],
+      "formal_bucket_tail_completions": 80,
+      "formal_10_second_max_to_min_percent": 1.7200942032718602,
+      "formal_second_min": 97498,
+      "formal_second_max": 109237,
+      "phases": [
+        {
+          "phase": "load",
+          "count": 8192,
+          "command_counts": {
+            "HSET": 8192
+          },
+          "tx_commit_transactions": 0,
+          "raw_sha256": "534e3c156d81bed6873b0832e3fc4b922fc62f68ba7eab08ccd875daecf302e8"
+        },
+        {
+          "phase": "warm",
+          "count": 9253231,
+          "command_counts": {
+            "HSET": 9253231
+          },
+          "tx_commit_transactions": 0,
+          "raw_sha256": "4b95174cc2af202c8be89779e971c40a7e166fd92984123b4481e870b2615433"
+        },
+        {
+          "phase": "run",
+          "count": 6209567,
+          "command_counts": {
+            "HSET": 6209567
+          },
+          "tx_commit_transactions": 0,
+          "raw_sha256": "cbab69655b45b46f8a3db48b38fa4163ff57b31bc06ba19948edbdfefa85df25"
+        }
+      ],
+      "baseline_observations": {
+        "server": {
+          "path": "server/observations/lavik-hash-c80/monitor.jsonl",
+          "sha256": "70d453bd2e8ae5aaa208db5d48392956edf51cf10b579187c86de6fcec3d455e",
+          "cpu_cores": 10.874405722860548,
+          "cpu_cores_by_monitor_10_seconds": [
+            10.891804837373382,
+            10.78112866055675,
+            10.952907006943372,
+            10.88994828799156,
+            10.838100889713562
+          ],
+          "monitor_seconds": 45.000160236,
+          "sample_count": 46,
+          "first_time": 1792387581.427204,
+          "last_time": 1792387626.4273639,
+          "selected_nic": "eth1",
+          "rx_mbps": 298.871121379711,
+          "tx_mbps": 57.388110319083445,
+          "nic_errors_drops": {
+            "rx_errors": 0,
+            "rx_dropped": 0,
+            "tx_errors": 0,
+            "tx_dropped": 0
+          },
+          "tcp_retrans": 2,
+          "tcp_outsegs": 4612554
+        },
+        "client": {
+          "path": "client/observations/lavik-hash-c80/monitor.jsonl",
+          "sha256": "8f8fa4bb33ef74e7c0479df7641ed1faa0eafd0908cb886e6a90986502e39539",
+          "cpu_cores": 1.719105361162106,
+          "cpu_cores_by_monitor_10_seconds": [
+            1.7289674392207008,
+            1.6960004083968985,
+            1.7360046057938194,
+            1.7190008632822336,
+            1.7120013185834155
+          ],
+          "monitor_seconds": 45.000150513,
+          "sample_count": 46,
+          "first_time": 1792387581.0962436,
+          "last_time": 1792387626.0963938,
+          "selected_nic": "eth0",
+          "rx_mbps": 45.93469880512619,
+          "tx_mbps": 310.78248762656534,
+          "nic_errors_drops": {
+            "rx_errors": 0,
+            "rx_dropped": 0,
+            "tx_errors": 0,
+            "tx_dropped": 0
+          },
+          "tcp_retrans": 2,
+          "tcp_outsegs": 4614494
+        }
+      },
+      "stack_observations": {
+        "server": {
+          "path": "server/observations/lavik-hash-c80/monitor.jsonl",
+          "sha256": "bd0dae992056e781c2ef8950998c3c08784fe5ac979b5b5e11b43d0d78d7ed0e",
+          "cpu_cores": 10.88101769999216,
+          "cpu_cores_by_monitor_10_seconds": [
+            10.84974994472805,
+            10.885008887609757,
+            10.83899632016075,
+            10.973343112637256,
+            10.834949156715057
+          ],
+          "monitor_seconds": 45.000386315,
+          "sample_count": 46,
+          "first_time": 1792403587.3956249,
+          "last_time": 1792403632.396011,
+          "selected_nic": "eth1",
+          "rx_mbps": 301.6125696564478,
+          "tx_mbps": 57.91482725852239,
+          "nic_errors_drops": {
+            "rx_errors": 0,
+            "rx_dropped": 0,
+            "tx_errors": 0,
+            "tx_dropped": 0
+          },
+          "tcp_retrans": 0,
+          "tcp_outsegs": 4654106
+        },
+        "client": {
+          "path": "client/observations/lavik-hash-c80/monitor.jsonl",
+          "sha256": "8731ce62f5ee1c955823e062989bce99bba88c089379619c0cee0551ff14a2df",
+          "cpu_cores": 1.695326891693928,
+          "cpu_cores_by_monitor_10_seconds": [
+            1.7019666162652152,
+            1.6869990304816573,
+            1.6890004342420115,
+            1.7080098658065868,
+            1.6859900789599793
+          ],
+          "monitor_seconds": 45.000170984,
+          "sample_count": 46,
+          "first_time": 1792403587.0639834,
+          "last_time": 1792403632.0641537,
+          "selected_nic": "eth0",
+          "rx_mbps": 46.33860881865132,
+          "tx_mbps": 313.20663712614123,
+          "nic_errors_drops": {
+            "rx_errors": 0,
+            "rx_dropped": 0,
+            "tx_errors": 0,
+            "tx_dropped": 0
+          },
+          "tcp_retrans": 0,
+          "tcp_outsegs": 4654065
+        }
+      },
+      "server_cpu_change_percent": 0.06080311237341984
+    },
+    {
+      "op": "list",
+      "unit": "pairs/s",
+      "baseline": {
+        "count": 3726258,
+        "qps": 62099.113668,
+        "avg_ms": 1.287422,
+        "p50_ms": 0.395,
+        "p99_ms": 8.928,
+        "p999_ms": 10.194,
+        "max_ms": 28.127
+      },
+      "stack": {
+        "count": 3719495,
+        "qps": 61985.739676,
+        "avg_ms": 1.289777,
+        "p50_ms": 0.388,
+        "p99_ms": 8.943,
+        "p999_ms": 10.197,
+        "max_ms": 22.724
+      },
+      "change_percent": {
+        "qps": -0.18256942056553704,
+        "avg_ms": 0.18292370333892194,
+        "p999_ms": 0.029429075927001058
+      },
+      "formal_10_second_mean": [
+        62053.3,
+        61829.4,
+        62545.4,
+        62175.4,
+        61805.0,
+        61533.0
+      ],
+      "baseline_formal_10_second_mean": [
+        61514.0,
+        62163.8,
+        62106.6,
+        62775.2,
+        61868.6,
+        62189.6
+      ],
+      "warm_final_20_seconds_10_second_mean": [
+        62328.4,
+        62736.6
+      ],
+      "formal_bucket_tail_completions": 80,
+      "formal_10_second_max_to_min_percent": 1.6452960200217692,
+      "formal_second_min": 59055,
+      "formal_second_max": 64165,
+      "phases": [
+        {
+          "phase": "load",
+          "count": 8192,
+          "command_counts": {
+            "RPUSH": 8192
+          },
+          "tx_commit_transactions": 0,
+          "raw_sha256": "3cf85e95c58ead85dc0d1499ed88279abbfffff3ba54b8699fa2a07d0304aa5d"
+        },
+        {
+          "phase": "warm",
+          "count": 5602208,
+          "command_counts": {
+            "LPUSH": 5602208,
+            "RPOP": 5602208
+          },
+          "tx_commit_transactions": 0,
+          "raw_sha256": "93589c88ed58da68eb1b2ceac5b6c61f8b5c553086aa929c82db7934f8e6f6a9"
+        },
+        {
+          "phase": "run",
+          "count": 3719495,
+          "command_counts": {
+            "LPUSH": 3719495,
+            "RPOP": 3719495
+          },
+          "tx_commit_transactions": 0,
+          "raw_sha256": "1e7eab7ec83350f8909911b64410a46236c1ae368a0ebf88cbd505ef1c58cd78"
+        }
+      ],
+      "baseline_observations": {
+        "server": {
+          "path": "server/observations/lavik-list-c80/monitor.jsonl",
+          "sha256": "e939f17610bbc252796526f6c7b70517c850d82fa9813a1414d10517270954d0",
+          "cpu_cores": 12.038172405322145,
+          "cpu_cores_by_monitor_10_seconds": [
+            11.991786160070836,
+            12.037009766829724,
+            12.039762072629873,
+            12.08423478459763,
+            12.037969459671482
+          ],
+          "monitor_seconds": 45.000186221,
+          "sample_count": 46,
+          "first_time": 1792387745.7078843,
+          "last_time": 1792387790.70807,
+          "selected_nic": "eth1",
+          "rx_mbps": 223.07861675726465,
+          "tx_mbps": 199.35073628236754,
+          "nic_errors_drops": {
+            "rx_errors": 0,
+            "rx_dropped": 0,
+            "tx_errors": 0,
+            "tx_dropped": 0
+          },
+          "tcp_retrans": 0,
+          "tcp_outsegs": 5592998
+        },
+        "client": {
+          "path": "client/observations/lavik-list-c80/monitor.jsonl",
+          "sha256": "51f24ab5ab44d8ca6e243ff04252431a29da324ed258820061cdfb1fe8c6e97a",
+          "cpu_cores": 1.9906594266825688,
+          "cpu_cores_by_monitor_10_seconds": [
+            1.9769696596443302,
+            1.9929967769256123,
+            1.9859994367705596,
+            2.0180022068872137,
+            1.967999164387555
+          ],
+          "monitor_seconds": 45.000163664,
+          "sample_count": 46,
+          "first_time": 1792387745.3712025,
+          "last_time": 1792387790.3713658,
+          "selected_nic": "eth0",
+          "rx_mbps": 185.28402657055724,
+          "tx_mbps": 236.81671950285377,
+          "nic_errors_drops": {
+            "rx_errors": 0,
+            "rx_dropped": 0,
+            "tx_errors": 0,
+            "tx_dropped": 0
+          },
+          "tcp_retrans": 0,
+          "tcp_outsegs": 5588368
+        }
+      },
+      "stack_observations": {
+        "server": {
+          "path": "server/observations/lavik-list-c80/monitor.jsonl",
+          "sha256": "a3779eeadb6feed103cfc2f7863bb4f17fd9a430af939079b6eff7226648259f",
+          "cpu_cores": 11.996191599410636,
+          "cpu_cores_by_monitor_10_seconds": [
+            11.936770147941386,
+            11.984879321853132,
+            12.077040223790169,
+            12.015018411814214,
+            11.938309794363839
+          ],
+          "monitor_seconds": 45.000114872,
+          "sample_count": 46,
+          "first_time": 1792403751.9907331,
+          "last_time": 1792403796.990848,
+          "selected_nic": "eth1",
+          "rx_mbps": 222.95275851046057,
+          "tx_mbps": 199.2383530909312,
+          "nic_errors_drops": {
+            "rx_errors": 0,
+            "rx_dropped": 0,
+            "tx_errors": 0,
+            "tx_dropped": 0
+          },
+          "tcp_retrans": 0,
+          "tcp_outsegs": 5591839
+        },
+        "client": {
+          "path": "client/observations/lavik-list-c80/monitor.jsonl",
+          "sha256": "5ea524c0a6e0204b166baaf130f2d336790e17c1176681c5d84154e378fe5e1f",
+          "cpu_cores": 1.9415479226834889,
+          "cpu_cores_by_monitor_10_seconds": [
+            1.9389694179926489,
+            1.9340000713646026,
+            1.9649979432366529,
+            1.942002693169335,
+            1.913991212100749
+          ],
+          "monitor_seconds": 45.00017691,
+          "sample_count": 46,
+          "first_time": 1792403751.6669164,
+          "last_time": 1792403796.667093,
+          "selected_nic": "eth0",
+          "rx_mbps": 185.2311450390696,
+          "tx_mbps": 236.74710109045213,
+          "nic_errors_drops": {
+            "rx_errors": 0,
+            "rx_dropped": 0,
+            "tx_errors": 0,
+            "tx_dropped": 0
+          },
+          "tcp_retrans": 0,
+          "tcp_outsegs": 5586764
+        }
+      },
+      "server_cpu_change_percent": -0.34873072504717495
+    },
+    {
+      "op": "zincr",
+      "unit": "ops/s",
+      "baseline": {
+        "count": 4923710,
+        "qps": 82055.037591,
+        "avg_ms": 0.973539,
+        "p50_ms": 0.373,
+        "p99_ms": 8.068,
+        "p999_ms": 9.587,
+        "max_ms": 17.855
+      },
+      "stack": {
+        "count": 4981296,
+        "qps": 83016.560301,
+        "avg_ms": 0.962199,
+        "p50_ms": 0.272,
+        "p99_ms": 8.49,
+        "p999_ms": 9.738,
+        "max_ms": 20.591
+      },
+      "change_percent": {
+        "qps": 1.1718021686769164,
+        "avg_ms": -1.1648223645894018,
+        "p999_ms": 1.575049546260554
+      },
+      "formal_10_second_mean": [
+        82190.5,
+        82828.1,
+        83757.5,
+        82187.3,
+        83641.8,
+        83516.4
+      ],
+      "baseline_formal_10_second_mean": [
+        81553.3,
+        81834.4,
+        82356.0,
+        83118.4,
+        82774.8,
+        80726.1
+      ],
+      "warm_final_20_seconds_10_second_mean": [
+        83323.2,
+        84078.7
+      ],
+      "formal_bucket_tail_completions": 80,
+      "formal_10_second_max_to_min_percent": 1.9105141548633409,
+      "formal_second_min": 75280,
+      "formal_second_max": 86732,
+      "phases": [
+        {
+          "phase": "load",
+          "count": 16384,
+          "command_counts": {
+            "ZADD": 16384
+          },
+          "tx_commit_transactions": 0,
+          "raw_sha256": "0bda6d9183ef458295dd682ba69e9866fdcc3443bfbca9f89402dfbf10506557"
+        },
+        {
+          "phase": "warm",
+          "count": 7530240,
+          "command_counts": {
+            "ZINCRBY": 7530240
+          },
+          "tx_commit_transactions": 0,
+          "raw_sha256": "3e3d17f5d902e8f65687628223351b236d607ff258897a55e34faa77af9b544c"
+        },
+        {
+          "phase": "run",
+          "count": 4981296,
+          "command_counts": {
+            "ZINCRBY": 4981296
+          },
+          "tx_commit_transactions": 0,
+          "raw_sha256": "5ee72ca99713b1d9806cf59bbb6b4da630c15dd219543e1da3329b2defead37a"
+        }
+      ],
+      "baseline_observations": {
+        "server": {
+          "path": "server/observations/lavik-zincr-c80/monitor.jsonl",
+          "sha256": "a46db4d20353b87b1d5f9c3008ace3b963e222e6a7a0629387c6de226dbd3b28",
+          "cpu_cores": 12.265265748175763,
+          "cpu_cores_by_monitor_10_seconds": [
+            12.240914604222501,
+            12.204889463052334,
+            12.263909947335648,
+            12.33602756855441,
+            12.295904182937065
+          ],
+          "monitor_seconds": 45.000247963,
+          "sample_count": 46,
+          "first_time": 1792387910.2043443,
+          "last_time": 1792387955.2045922,
+          "selected_nic": "eth1",
+          "rx_mbps": 96.52054761056561,
+          "tx_mbps": 50.865094829744244,
+          "nic_errors_drops": {
+            "rx_errors": 0,
+            "rx_dropped": 0,
+            "tx_errors": 0,
+            "tx_dropped": 0
+          },
+          "tcp_retrans": 0,
+          "tcp_outsegs": 3709614
+        },
+        "client": {
+          "path": "client/observations/lavik-zincr-c80/monitor.jsonl",
+          "sha256": "b4bc460352cc53563fc7ae84a81b4987c3f004c98dc62113f3c90cf16e5438be",
+          "cpu_cores": 1.3911062958739515,
+          "cpu_cores_by_monitor_10_seconds": [
+            1.3879771264145522,
+            1.3830033355274447,
+            1.3869969798140762,
+            1.4070039730978194,
+            1.3899940096818157
+          ],
+          "monitor_seconds": 45.000155765,
+          "sample_count": 46,
+          "first_time": 1792387909.8647537,
+          "last_time": 1792387954.8649094,
+          "selected_nic": "eth0",
+          "rx_mbps": 41.60549349600679,
+          "tx_mbps": 105.68151045598941,
+          "nic_errors_drops": {
+            "rx_errors": 0,
+            "rx_dropped": 0,
+            "tx_errors": 0,
+            "tx_dropped": 0
+          },
+          "tcp_retrans": 0,
+          "tcp_outsegs": 3706686
+        }
+      },
+      "stack_observations": {
+        "server": {
+          "path": "server/observations/lavik-zincr-c80/monitor.jsonl",
+          "sha256": "7f24430b76b8ca7f17f053af4f202d259af2cdac27d7c0ebb7624a982c9ac037",
+          "cpu_cores": 11.120382422612,
+          "cpu_cores_by_monitor_10_seconds": [
+            11.097697682068596,
+            11.111020013169247,
+            11.139994015595216,
+            11.070073753259374,
+            11.24586993476668
+          ],
+          "monitor_seconds": 45.000250979,
+          "sample_count": 46,
+          "first_time": 1792403916.410201,
+          "last_time": 1792403961.410452,
+          "selected_nic": "eth1",
+          "rx_mbps": 97.18587574191315,
+          "tx_mbps": 51.220142951549825,
+          "nic_errors_drops": {
+            "rx_errors": 0,
+            "rx_dropped": 0,
+            "tx_errors": 0,
+            "tx_dropped": 0
+          },
+          "tcp_retrans": 0,
+          "tcp_outsegs": 3735244
+        },
+        "client": {
+          "path": "client/observations/lavik-zincr-c80/monitor.jsonl",
+          "sha256": "980fd481b8ffef928fba5e0db37e6340de602ec27cc22c61e909f34e845e8686",
+          "cpu_cores": 1.4351035225707043,
+          "cpu_cores_by_monitor_10_seconds": [
+            1.4309651376825439,
+            1.4360025342572724,
+            1.441000584469837,
+            1.4189986340719147,
+            1.4619981283499959
+          ],
+          "monitor_seconds": 45.000237951,
+          "sample_count": 46,
+          "first_time": 1792403916.0907526,
+          "last_time": 1792403961.0909903,
+          "selected_nic": "eth0",
+          "rx_mbps": 41.93307231074468,
+          "tx_mbps": 106.50345034216637,
+          "nic_errors_drops": {
+            "rx_errors": 0,
+            "rx_dropped": 0,
+            "tx_errors": 0,
+            "tx_dropped": 0
+          },
+          "tcp_retrans": 0,
+          "tcp_outsegs": 3735436
+        }
+      },
+      "server_cpu_change_percent": -9.334354012949486
+    },
+    {
+      "op": "zswap",
+      "unit": "pairs/s",
+      "baseline": {
+        "count": 2838214,
+        "qps": 47292.171156,
+        "avg_ms": 1.690372,
+        "p50_ms": 0.638,
+        "p99_ms": 9.403,
+        "p999_ms": 11.241,
+        "max_ms": 26.643
+      },
+      "stack": {
+        "count": 2888467,
+        "qps": 48136.442135,
+        "avg_ms": 1.660918,
+        "p50_ms": 0.498,
+        "p99_ms": 9.399,
+        "p999_ms": 10.694,
+        "max_ms": 22.391
+      },
+      "change_percent": {
+        "qps": 1.7852235546874207,
+        "avg_ms": -1.7424566900066996,
+        "p999_ms": -4.866115114313663
+      },
+      "formal_10_second_mean": [
+        48288.5,
+        48316.1,
+        48070.6,
+        48061.7,
+        48141.0,
+        47960.8
+      ],
+      "baseline_formal_10_second_mean": [
+        46911.5,
+        47415.7,
+        47394.3,
+        47193.7,
+        47538.4,
+        47359.8
+      ],
+      "warm_final_20_seconds_10_second_mean": [
+        47918.4,
+        48061.8
+      ],
+      "formal_bucket_tail_completions": 80,
+      "formal_10_second_max_to_min_percent": 0.7408133308868914,
+      "formal_second_min": 47042,
+      "formal_second_max": 49648,
+      "phases": [
+        {
+          "phase": "load",
+          "count": 16384,
+          "command_counts": {
+            "ZADD": 16384
+          },
+          "tx_commit_transactions": 0,
+          "raw_sha256": "f15fff8778e57056c4914321e0b0d550387e5e5140a1c9cfb00fa42fd3dbbe2c"
+        },
+        {
+          "phase": "warm",
+          "count": 4330407,
+          "command_counts": {
+            "ZREM": 4330407,
+            "ZADD": 4330407
+          },
+          "tx_commit_transactions": 0,
+          "raw_sha256": "133860576d1f4f10de2366e7043406082a72d5e73e26c34133ef3304fa97403a"
+        },
+        {
+          "phase": "run",
+          "count": 2888467,
+          "command_counts": {
+            "ZREM": 2888467,
+            "ZADD": 2888467
+          },
+          "tx_commit_transactions": 0,
+          "raw_sha256": "6c0f17aaccd05084de80d2c1b7eab09f7f368fb4560dd32bfc58dd41fc678cb6"
+        }
+      ],
+      "baseline_observations": {
+        "server": {
+          "path": "server/observations/lavik-zswap-c80/monitor.jsonl",
+          "sha256": "e15d3bc13ea1996495471514ff8e2c331b41912fc9bba998401ccf53a0b7a50c",
+          "cpu_cores": 12.847940390695761,
+          "cpu_cores_by_monitor_10_seconds": [
+            12.85879679114843,
+            12.82494159906344,
+            12.848068878497257,
+            12.84995420019324,
+            12.867940339081413
+          ],
+          "monitor_seconds": 45.000208782,
+          "sample_count": 46,
+          "first_time": 1792388077.3707914,
+          "last_time": 1792388122.3709998,
+          "selected_nic": "eth1",
+          "rx_mbps": 103.99411057559124,
+          "tx_mbps": 53.051602750672764,
+          "nic_errors_drops": {
+            "rx_errors": 0,
+            "rx_dropped": 0,
+            "tx_errors": 0,
+            "tx_dropped": 0
+          },
+          "tcp_retrans": 0,
+          "tcp_outsegs": 4263284
+        },
+        "client": {
+          "path": "client/observations/lavik-zswap-c80/monitor.jsonl",
+          "sha256": "f2f663831ff5e1b60d57d8477c9c17ef0abee4328504b2332e32045d808a30d7",
+          "cpu_cores": 1.5504395611455484,
+          "cpu_cores_by_monitor_10_seconds": [
+            1.5429767593754549,
+            1.555002082458789,
+            1.5499993438852777,
+            1.5430014268134193,
+            1.5719970078608954
+          ],
+          "monitor_seconds": 45.000141733,
+          "sample_count": 46,
+          "first_time": 1792388077.0247355,
+          "last_time": 1792388122.024877,
+          "selected_nic": "eth0",
+          "rx_mbps": 42.4344533697249,
+          "tx_mbps": 114.58025582659113,
+          "nic_errors_drops": {
+            "rx_errors": 0,
+            "rx_dropped": 0,
+            "tx_errors": 0,
+            "tx_dropped": 0
+          },
+          "tcp_retrans": 0,
+          "tcp_outsegs": 4262015
+        }
+      },
+      "stack_observations": {
+        "server": {
+          "path": "server/observations/lavik-zswap-c80/monitor.jsonl",
+          "sha256": "19c28782384292a1ec807ad9051cf33ed10cd76757f658733074ead1f6c0b260",
+          "cpu_cores": 12.283966809813588,
+          "cpu_cores_by_monitor_10_seconds": [
+            12.324856923200949,
+            12.275863109395296,
+            12.282072431065746,
+            12.274958392801032,
+            12.240198136983324
+          ],
+          "monitor_seconds": 45.000121586,
+          "sample_count": 46,
+          "first_time": 1792404083.996353,
+          "last_time": 1792404128.9964743,
+          "selected_nic": "eth1",
+          "rx_mbps": 105.71644254134705,
+          "tx_mbps": 53.928638289613,
+          "nic_errors_drops": {
+            "rx_errors": 0,
+            "rx_dropped": 0,
+            "tx_errors": 0,
+            "tx_dropped": 0
+          },
+          "tcp_retrans": 0,
+          "tcp_outsegs": 4333760
+        },
+        "client": {
+          "path": "client/observations/lavik-zswap-c80/monitor.jsonl",
+          "sha256": "5ebb1e1636da90ba591c898fd69d5aa3e3972c4ce67ab2a4a6ef171c43744335",
+          "cpu_cores": 1.5742147894796374,
+          "cpu_cores_by_monitor_10_seconds": [
+            1.5729675534544945,
+            1.5760032749348052,
+            1.5710038148685637,
+            1.5769903554423843,
+            1.574003116840972
+          ],
+          "monitor_seconds": 45.00021247,
+          "sample_count": 46,
+          "first_time": 1792404083.6909368,
+          "last_time": 1792404128.6911492,
+          "selected_nic": "eth0",
+          "rx_mbps": 43.15897808915389,
+          "tx_mbps": 116.5367235431633,
+          "nic_errors_drops": {
+            "rx_errors": 0,
+            "rx_dropped": 0,
+            "tx_errors": 0,
+            "tx_dropped": 0
+          },
+          "tcp_retrans": 0,
+          "tcp_outsegs": 4334664
+        }
+      },
+      "server_cpu_change_percent": -4.389603031553547
+    },
+    {
+      "op": "stream",
+      "unit": "ops/s",
+      "baseline": {
+        "count": 5751560,
+        "qps": 95850.532454,
+        "avg_ms": 0.833021,
+        "p50_ms": 0.392,
+        "p99_ms": 5.646,
+        "p999_ms": 9.143,
+        "max_ms": 54.031
+      },
+      "stack": {
+        "count": 5744143,
+        "qps": 95729.897323,
+        "avg_ms": 0.834037,
+        "p50_ms": 0.392,
+        "p99_ms": 5.669,
+        "p999_ms": 9.521,
+        "max_ms": 36.48
+      },
+      "change_percent": {
+        "qps": -0.12585754915643843,
+        "avg_ms": 0.12196571274913914,
+        "p999_ms": 4.1343104013999765
+      },
+      "formal_10_second_mean": [
+        94660.5,
+        95660.5,
+        96054.3,
+        96330.5,
+        96064.0,
+        95636.5
+      ],
+      "baseline_formal_10_second_mean": [
+        96499.8,
+        96258.6,
+        96548.0,
+        95524.1,
+        95814.6,
+        94502.9
+      ],
+      "warm_final_20_seconds_10_second_mean": [
+        96201.1,
+        96230.5
+      ],
+      "formal_bucket_tail_completions": 80,
+      "formal_10_second_max_to_min_percent": 1.7641994284838924,
+      "formal_second_min": 83343,
+      "formal_second_max": 99831,
+      "phases": [
+        {
+          "phase": "load",
+          "count": 262144,
+          "command_counts": {
+            "XADD": 262144
+          },
+          "tx_commit_transactions": 0,
+          "raw_sha256": "5d3ee44ee6d214316e2d1fb64c76202c07f1bc2ff1b7047f31ef36103584e851"
+        },
+        {
+          "phase": "warm",
+          "count": 8653308,
+          "command_counts": {
+            "XADD": 8653308
+          },
+          "tx_commit_transactions": 0,
+          "raw_sha256": "d680fa899f5a3562d503ecb568a58fe444715bd33c695c950bafe8f046e535a1"
+        },
+        {
+          "phase": "run",
+          "count": 5744143,
+          "command_counts": {
+            "XADD": 5744143
+          },
+          "tx_commit_transactions": 0,
+          "raw_sha256": "d66822ce22b8b0bf0c0f1f18f91f2544d508d9679f8dc10425bace6e4b07a5d5"
+        }
+      ],
+      "baseline_observations": {
+        "server": {
+          "path": "server/observations/lavik-stream-c80/monitor.jsonl",
+          "sha256": "3368f5c579feda78ab0065b64cf663fea9d24a28b5ce22b3171768413c95dae3",
+          "cpu_cores": 13.568605966452541,
+          "cpu_cores_by_monitor_10_seconds": [
+            13.60338885279206,
+            13.600290367559376,
+            13.576027818638604,
+            13.542548251738184,
+            13.472936463394761
+          ],
+          "monitor_seconds": 45.000201311,
+          "sample_count": 46,
+          "first_time": 1792388243.4508426,
+          "last_time": 1792388288.451044,
+          "selected_nic": "eth1",
+          "rx_mbps": 311.7017657556852,
+          "tx_mbps": 67.75041975767219,
+          "nic_errors_drops": {
+            "rx_errors": 0,
+            "rx_dropped": 0,
+            "tx_errors": 0,
+            "tx_dropped": 0
+          },
+          "tcp_retrans": 0,
+          "tcp_outsegs": 4330839
+        },
+        "client": {
+          "path": "client/observations/lavik-stream-c80/monitor.jsonl",
+          "sha256": "06e8e25a9392fda6ba7132ede84b53aa3c2f098bc6d9d7459cd43c5aa5187624",
+          "cpu_cores": 1.641993439907809,
+          "cpu_cores_by_monitor_10_seconds": [
+            1.652970707871383,
+            1.6490021394153755,
+            1.634999388019729,
+            1.6399993774562363,
+            1.6239973983561675
+          ],
+          "monitor_seconds": 45.000179784,
+          "sample_count": 46,
+          "first_time": 1792388243.095904,
+          "last_time": 1792388288.0960836,
+          "selected_nic": "eth0",
+          "rx_mbps": 56.94240148149538,
+          "tx_mbps": 322.285073117787,
+          "nic_errors_drops": {
+            "rx_errors": 0,
+            "rx_dropped": 0,
+            "tx_errors": 0,
+            "tx_dropped": 0
+          },
+          "tcp_retrans": 0,
+          "tcp_outsegs": 4328071
+        }
+      },
+      "stack_observations": {
+        "server": {
+          "path": "server/observations/lavik-stream-c80/monitor.jsonl",
+          "sha256": "1619793a092fc149c5ea21a90cadc88078fcf0f2aa36731baa5771c77072b1fe",
+          "cpu_cores": 13.530613261035445,
+          "cpu_cores_by_monitor_10_seconds": [
+            13.4693156203268,
+            13.556412515824652,
+            13.533904365371582,
+            13.5347424176101,
+            13.586793294817465
+          ],
+          "monitor_seconds": 45.000177616,
+          "sample_count": 46,
+          "first_time": 1792404250.3130558,
+          "last_time": 1792404295.3132334,
+          "selected_nic": "eth1",
+          "rx_mbps": 310.11264460072255,
+          "tx_mbps": 67.40482408499477,
+          "nic_errors_drops": {
+            "rx_errors": 0,
+            "rx_dropped": 0,
+            "tx_errors": 0,
+            "tx_dropped": 0
+          },
+          "tcp_retrans": 0,
+          "tcp_outsegs": 4308736
+        },
+        "client": {
+          "path": "client/observations/lavik-stream-c80/monitor.jsonl",
+          "sha256": "a2cd867966d476beaa04b484b25d7646afbeea432384f68e98470d77f41e12fc",
+          "cpu_cores": 1.6475500194945925,
+          "cpu_cores_by_monitor_10_seconds": [
+            1.6309725686723673,
+            1.6520043416326102,
+            1.6499946408174067,
+            1.6520030120970919,
+            1.6580016407584235
+          ],
+          "monitor_seconds": 45.000151208,
+          "sample_count": 46,
+          "first_time": 1792404249.9487293,
+          "last_time": 1792404294.9488802,
+          "selected_nic": "eth0",
+          "rx_mbps": 56.65943005868666,
+          "tx_mbps": 320.68378164548324,
+          "nic_errors_drops": {
+            "rx_errors": 0,
+            "rx_dropped": 0,
+            "tx_errors": 0,
+            "tx_dropped": 0
+          },
+          "tcp_retrans": 1,
+          "tcp_outsegs": 4306564
+        }
+      },
+      "server_cpu_change_percent": -0.28000448617220286
+    },
+    {
+      "op": "sswap",
+      "unit": "pairs/s",
+      "baseline": {
+        "count": 3138028,
+        "qps": 52292.219717,
+        "avg_ms": 1.528682,
+        "p50_ms": 0.572,
+        "p99_ms": 9.094,
+        "p999_ms": 10.662,
+        "max_ms": 28.642
+      },
+      "stack": {
+        "count": 3190583,
+        "qps": 53172.141279,
+        "avg_ms": 1.503546,
+        "p50_ms": 0.423,
+        "p99_ms": 9.152,
+        "p999_ms": 10.299,
+        "max_ms": 38.207
+      },
+      "change_percent": {
+        "qps": 1.682700728257558,
+        "avg_ms": -1.6442922726898068,
+        "p999_ms": -3.4046145188520116
+      },
+      "formal_10_second_mean": [
+        52974.0,
+        53463.7,
+        53082.8,
+        53134.3,
+        53188.9,
+        53206.6
+      ],
+      "baseline_formal_10_second_mean": [
+        52200.3,
+        52532.3,
+        52403.5,
+        52309.2,
+        52411.5,
+        51938.0
+      ],
+      "warm_final_20_seconds_10_second_mean": [
+        53169.3,
+        52890.9
+      ],
+      "formal_bucket_tail_completions": 80,
+      "formal_10_second_max_to_min_percent": 0.9244157511231865,
+      "formal_second_min": 51177,
+      "formal_second_max": 55020,
+      "phases": [
+        {
+          "phase": "load",
+          "count": 16384,
+          "command_counts": {
+            "SADD": 16384
+          },
+          "tx_commit_transactions": 0,
+          "raw_sha256": "6a74ad4d8cfc3051919fb3afd6bb95702a83e41da9ead75948e56f24fa6ef63f"
+        },
+        {
+          "phase": "warm",
+          "count": 4782966,
+          "command_counts": {
+            "SADD": 4782966,
+            "SREM": 4782966
+          },
+          "tx_commit_transactions": 0,
+          "raw_sha256": "9c871f30857cbab2753d681fea10abbf85f2dd40e6f3f226a216f4ee14066731"
+        },
+        {
+          "phase": "run",
+          "count": 3190583,
+          "command_counts": {
+            "SADD": 3190583,
+            "SREM": 3190583
+          },
+          "tx_commit_transactions": 0,
+          "raw_sha256": "36f56d9f652eca18e3a6d5f73fec1ec625e0c7c8f9291425c8f2e5649573f920"
+        }
+      ],
+      "baseline_observations": {
+        "server": {
+          "path": "server/observations/lavik-sswap-c80/monitor.jsonl",
+          "sha256": "7c2e571af6a0e9542e3bb7381873d48b6fa781fba98b16063ceb279643041e30",
+          "cpu_cores": 12.930369490253268,
+          "cpu_cores_by_monitor_10_seconds": [
+            12.986692920555209,
+            12.92709196074679,
+            12.912916582558877,
+            12.910050056137083,
+            12.899820155867316
+          ],
+          "monitor_seconds": 45.000260854,
+          "sample_count": 46,
+          "first_time": 1792388410.941518,
+          "last_time": 1792388455.9417787,
+          "selected_nic": "eth1",
+          "rx_mbps": 110.7931316259654,
+          "tx_mbps": 58.81428129021041,
+          "nic_errors_drops": {
+            "rx_errors": 0,
+            "rx_dropped": 0,
+            "tx_errors": 0,
+            "tx_dropped": 0
+          },
+          "tcp_retrans": 0,
+          "tcp_outsegs": 4726400
+        },
+        "client": {
+          "path": "client/observations/lavik-sswap-c80/monitor.jsonl",
+          "sha256": "7c3d232edaed815bdc30603268c8afdc62ceb3bd7a7a69033428e8debaf6fcb8",
+          "cpu_cores": 1.7153262209809275,
+          "cpu_cores_by_monitor_10_seconds": [
+            1.7209707748184964,
+            1.7149991224349488,
+            1.7139950494680987,
+            1.7110084068687061,
+            1.715989051303457
+          ],
+          "monitor_seconds": 45.000186586,
+          "sample_count": 46,
+          "first_time": 1792388410.5918083,
+          "last_time": 1792388455.5919948,
+          "selected_nic": "eth0",
+          "rx_mbps": 47.03477511043225,
+          "tx_mbps": 122.50800581602726,
+          "nic_errors_drops": {
+            "rx_errors": 0,
+            "rx_dropped": 0,
+            "tx_errors": 0,
+            "tx_dropped": 0
+          },
+          "tcp_retrans": 0,
+          "tcp_outsegs": 4724016
+        }
+      },
+      "stack_observations": {
+        "server": {
+          "path": "server/observations/lavik-sswap-c80/monitor.jsonl",
+          "sha256": "8a14d96f7c36b17b1af6edb26ba2534d61c6c30da507b01414cbd964f30b9cfe",
+          "cpu_cores": 12.168620551650983,
+          "cpu_cores_by_monitor_10_seconds": [
+            12.127354749537727,
+            12.191392219032192,
+            12.172039618771755,
+            12.166025461058084,
+            12.203966639236794
+          ],
+          "monitor_seconds": 45.000170535,
+          "sample_count": 46,
+          "first_time": 1792404417.8410249,
+          "last_time": 1792404462.8411953,
+          "selected_nic": "eth1",
+          "rx_mbps": 112.1545708826723,
+          "tx_mbps": 59.53658504285488,
+          "nic_errors_drops": {
+            "rx_errors": 0,
+            "rx_dropped": 0,
+            "tx_errors": 0,
+            "tx_dropped": 0
+          },
+          "tcp_retrans": 0,
+          "tcp_outsegs": 4784331
+        },
+        "client": {
+          "path": "client/observations/lavik-sswap-c80/monitor.jsonl",
+          "sha256": "898026b719b370cbbc77789d516fa91044db09605d854921dab7e31d9957ff27",
+          "cpu_cores": 1.6886595121540455,
+          "cpu_cores_by_monitor_10_seconds": [
+            1.681969808305547,
+            1.6940008165083935,
+            1.6859938506746284,
+            1.6950081631593137,
+            1.6839906838267389
+          ],
+          "monitor_seconds": 45.000190656,
+          "sample_count": 46,
+          "first_time": 1792404417.5072458,
+          "last_time": 1792404462.5074363,
+          "selected_nic": "eth0",
+          "rx_mbps": 47.61387382509493,
+          "tx_mbps": 124.01653838895237,
+          "nic_errors_drops": {
+            "rx_errors": 0,
+            "rx_dropped": 0,
+            "tx_errors": 0,
+            "tx_dropped": 0
+          },
+          "tcp_retrans": 0,
+          "tcp_outsegs": 4782214
+        }
+      },
+      "server_cpu_change_percent": -5.8911614179044225
+    }
+  ],
+  "interpretation_limits": [
+    "Single round per command, compared with the earlier fixed main 684894d run; no randomized alternation or repeated-run uncertainty estimate. Small throughput/tail differences are observations, not proof of stable improvement or regression.",
+    "The measured candidate is the combined optimization stack d0084f4, including PR357 48ca16c and prior ZSet changes; this experiment does not isolate the marginal effect of each patch.",
+    "Each family recovered the preceding checkpoint, then explicitly FLUSHDB and freshly loaded 8192 keys. This removes the previous crossover experiment’s second-namespace logical dataset confound, but physical device history was not reset.",
+    "CPU is process user+system ticks divided by the actual 45-second monotonic interval and includes storage polling and waiting implementation costs. Lower process CPU is measurable; it is not a direct measure of useful-copy CPU or proof of a particular causal mechanism.",
+    "Formal client timing is approximately 60 seconds; CPU/NIC observations cover an interior approximately 45-second interval beginning about 3–4 seconds after launch. Ten-second throughput bins and monitor bins are not treated as exactly synchronized windows. No CPU/NIC trace was captured during warm-up.",
+    "TCP counters are host-wide. Accelerated VF and synthetic NIC counters are not added. Rare retransmissions and zero selected-NIC drops/errors do not prove the absence of every possible network disturbance.",
+    "Zero grouped transaction admission for load, warm and formal supports the intended compact ZSet path together with the pinned code and 11272-byte encoded page under the 16KiB promotion threshold. It must not be generalized as proof that all structures, including Stream, use the same physical encoding.",
+    "For LPUSH/RPOP, ZREM/ZADD and SADD/SREM, reported operation throughput is pairs/s and latency is the measured entire pair. Child command p99.9 values cannot be added.",
+    "Every formal 60-second bucket total is 80 lower than the total completed operations because each connection finishes its final in-flight operation after the timing cutoff; QPS uses completed count divided by measured elapsed time."
+  ],
+  "findings": [
+    "All 14 completed formal points and all 42 load/warm/formal phases have zero client errors, matching exact server command counts and zero failed/rejected command deltas; recovery/clean-stop generations are 8→9 through 21→22, with every new checkpoint containing 8192 entries.",
+    "No abrupt throughput collapse appears in the six 10-second formal means. The largest within-point 10-second max/min spread is approximately 2.800%.",
+    "Measured throughput differences range from -1.695% to 2.782%; latency p99.9 increases remain visible for SETRANGE (+6.17%), Stream (+4.13%), and smaller changes in HKEYS/SET/ZINCRBY.",
+    "Raw process ticks confirm server CPU reductions in SETRANGE, ZINCRBY, ZREM/ZADD and SADD/SREM. Their networks carry only approximately 50–326 Mbps per direction, with no retransmissions or selected-NIC drops/errors in these four formal observations.",
+    "High-volume full reads and SET retain roughly 18–20 Gbps transfer volumes. Formal retransmissions are limited to SMEMBERS server 3, LRANGE server 2, ZRANGE server 6, SET client 160 and Stream client 1; all other observed sides have zero."
+  ]
+}

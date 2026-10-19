@@ -1,0 +1,207 @@
+{
+  "experiment": "compact-pr357-stack-20261019",
+  "phase": "lavik",
+  "sequence": [
+    [
+      "lavik",
+      "hgetall"
+    ],
+    [
+      "lavik",
+      "hkeys"
+    ],
+    [
+      "lavik",
+      "hvals"
+    ],
+    [
+      "lavik",
+      "smembers"
+    ],
+    [
+      "lavik",
+      "lrange"
+    ],
+    [
+      "lavik",
+      "zrange"
+    ],
+    [
+      "lavik",
+      "set"
+    ],
+    [
+      "lavik",
+      "setrange"
+    ],
+    [
+      "lavik",
+      "hash"
+    ],
+    [
+      "lavik",
+      "list"
+    ],
+    [
+      "lavik",
+      "zincr"
+    ],
+    [
+      "lavik",
+      "zswap"
+    ],
+    [
+      "lavik",
+      "stream"
+    ],
+    [
+      "lavik",
+      "sswap"
+    ]
+  ],
+  "keys": 8192,
+  "connections": 80,
+  "client_threads": 16,
+  "pipeline": 1,
+  "shapes": {
+    "string_bytes": 8192,
+    "hash_fields": 32,
+    "hash_value_bytes": 256,
+    "list_elements": 32,
+    "list_element_bytes": 256,
+    "set_members": 256,
+    "zset_members": 256,
+    "member_bytes": 32,
+    "stream_entries": 32,
+    "stream_payload_bytes": 256
+  },
+  "warm_seconds": 90,
+  "formal_seconds": 60,
+  "observation_seconds": 45,
+  "seeds": {
+    "load": 101,
+    "validate": 101,
+    "warm": 10180,
+    "run": 20180
+  },
+  "client_manifest": {
+    "status": "complete",
+    "started_at": 1792385967.4937427,
+    "completed_at": 1792385986.9321911,
+    "compiler": "/usr/bin/g++-13",
+    "compiler_version": "g++-13 (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0\nCopyright (C) 2023 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.  There is NO\nwarranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n\n",
+    "flags": [
+      "-O3",
+      "-std=c++17",
+      "-pthread"
+    ],
+    "clients": {
+      "bench": {
+        "binary": "/opt/benchmark/objects8k-fourdb-20261019/clients/bench",
+        "source": "/opt/benchmark/objects8k-fourdb-20261019/clients/bench.cpp",
+        "binary_sha256": "849d1cb8ce4374cc05abbb250257eb5447910e0caf04c4b83fd4468d222290a5",
+        "source_sha256": "9c8eac9e8a3a15f283a95d59aafab53f6d080b88a55573377562df5da9ca5013",
+        "build_command": [
+          "/usr/bin/g++-13",
+          "-O3",
+          "-std=c++17",
+          "-pthread",
+          "/opt/benchmark/objects8k-fourdb-20261019/clients/bench.cpp",
+          "-o",
+          "/opt/benchmark/objects8k-fourdb-20261019/clients/bench"
+        ]
+      },
+      "bench_sswap": {
+        "binary": "/opt/benchmark/objects8k-fourdb-20261019/clients/bench_sswap",
+        "source": "/opt/benchmark/objects8k-fourdb-20261019/clients/bench_sswap.cpp",
+        "binary_sha256": "de5d99e500dcbfb6645141fc4221ecde82a2697c922c071ec8936a4047589968",
+        "source_sha256": "cd7e8ad848f58a802d2e7960c7d5227ea47bb8abea23c7475f35c0f6a0f3cf0d",
+        "build_command": [
+          "/usr/bin/g++-13",
+          "-O3",
+          "-std=c++17",
+          "-pthread",
+          "/opt/benchmark/objects8k-fourdb-20261019/clients/bench_sswap.cpp",
+          "-o",
+          "/opt/benchmark/objects8k-fourdb-20261019/clients/bench_sswap"
+        ]
+      },
+      "bench_hash": {
+        "binary": "/opt/benchmark/objects8k-fourdb-20261019/clients/bench_hash",
+        "source": "/opt/benchmark/objects8k-fourdb-20261019/clients/bench_hash.cpp",
+        "binary_sha256": "34d5a9df39b6a8f8c5754b4911ba5a7dd775538f60c66e498161c5a9c7e0dcbe",
+        "source_sha256": "d850123fe5215d490184227b6d7b41d922dea3d464dd4cec7733e4f13a43bc93",
+        "build_command": [
+          "/usr/bin/g++-13",
+          "-O3",
+          "-std=c++17",
+          "-pthread",
+          "/opt/benchmark/objects8k-fourdb-20261019/clients/bench_hash.cpp",
+          "-o",
+          "/opt/benchmark/objects8k-fourdb-20261019/clients/bench_hash"
+        ]
+      },
+      "bench_lrange": {
+        "binary": "/opt/benchmark/objects8k-fourdb-20261019/clients/bench_lrange",
+        "source": "/opt/benchmark/objects8k-fourdb-20261019/clients/bench_lrange.cpp",
+        "binary_sha256": "bd68a2736e8cc1123f9f1c22d73154c8ca8456728c188b9fe39dda6a68b46a06",
+        "source_sha256": "be90e105f995d1682a99560c3f0c32d4f5bde9cdca3fb5ca6454c1b45afd65da",
+        "build_command": [
+          "/usr/bin/g++-13",
+          "-O3",
+          "-std=c++17",
+          "-pthread",
+          "/opt/benchmark/objects8k-fourdb-20261019/clients/bench_lrange.cpp",
+          "-o",
+          "/opt/benchmark/objects8k-fourdb-20261019/clients/bench_lrange"
+        ]
+      },
+      "bench_workdist": {
+        "binary": "/opt/benchmark/objects8k-fourdb-20261019/clients/bench_workdist",
+        "source": "/opt/benchmark/objects8k-fourdb-20261019/clients/bench_workdist.cpp",
+        "binary_sha256": "2a928f06748ff3ab6aa4c396cc24d32006bfc1b1fd935de1b905b3548050b15f",
+        "source_sha256": "a9899779d12d91d801d45c6b3960173c150994a96dc9648c742b3e2019952cc9",
+        "build_command": [
+          "/usr/bin/g++-13",
+          "-O3",
+          "-std=c++17",
+          "-pthread",
+          "/opt/benchmark/objects8k-fourdb-20261019/clients/bench_workdist.cpp",
+          "-o",
+          "/opt/benchmark/objects8k-fourdb-20261019/clients/bench_workdist"
+        ]
+      }
+    },
+    "shared_headers": {
+      "bench8k.h": "05a60abfbcc1b3eb9b519e89780a741fa8d31d2e069c438a5c786e417c3ac50a"
+    },
+    "interface_sha256": "4660c45bf0b250f1db9e68af5e7d914e60ecdbbc990850fdd411a3446ae2bc85",
+    "test_script_sha256": "4c312b6c49875aca8afe2d8ad69edf0a79f9dfae404c8e8b4e27e2101d5c5136",
+    "linux_test_receipt": {
+      "path": "/opt/benchmark/objects8k-fourdb-20261019/linux-client-tests.json",
+      "sha256": "4088253e867b6ed111abe079e2b986cc96e5777660e7a7535e83cd39d1ff1212"
+    }
+  },
+  "profiled": false,
+  "fresh_service_and_data_per_operation": true,
+  "runs_per_point": 1,
+  "stack_manifest": {
+    "product": "lavik",
+    "revision": "d0084f4a9a869e38ab91ecef6291a89483940123",
+    "base_revision": "001442e89129468d974cef8c30f8b70ad249f80a",
+    "pr357_revision": "48ca16c10680899a81b31a6e6c16c54a2d21a666",
+    "bycorf_revision": "86d686724ddd1c5617fb1b62f8131e05571e8423",
+    "binary": "/mnt/dev/benchmark/compact-pr357-stack-20261019/sources/candidate/build-gcc13/lavik",
+    "binary_sha256": "49305cb502f9c973e3b8f64e838ab6877fe736312ed4635e8e66dc998cef9dfe",
+    "build_root": "/mnt/dev/benchmark/compact-pr357-stack-20261019",
+    "build_variant": "candidate",
+    "build_manifest_path": "/mnt/dev/benchmark/compact-pr357-stack-20261019/build-manifest.json",
+    "build_manifest_sha256": "1412170fa4635a6de08f155305edd2fcaee6aa0e76e393a2f1c9bff98ed66bf7",
+    "source_manifest_path": "/mnt/dev/benchmark/compact-pr357-stack-20261019/source-manifest.json",
+    "source_manifest_sha256": "9a2a6358d121533015d7ab962e0039bac6cfe84258dc2c7ac22a256c6b55db08"
+  },
+  "initial_checkpoint": {
+    "generation": 8,
+    "entries": 16384
+  }
+}

@@ -1,0 +1,78 @@
+Note: Google Test filter = GroupedSortedSetWriteE2e.*:GroupedDemotionE2e.StringListSetSortedSetGeoAndStreamRecoverCompact-GroupedSortedSetWriteE2e.AggregateAbove512MiBRemainsBoundedAndRecovers
+[==========] Running 33 tests from 2 test suites.
+[----------] Global test environment set-up.
+[----------] 1 test from GroupedDemotionE2e
+[ RUN      ] GroupedDemotionE2e.StringListSetSortedSetGeoAndStreamRecoverCompact
+[       OK ] GroupedDemotionE2e.StringListSetSortedSetGeoAndStreamRecoverCompact (4602 ms)
+[----------] 1 test from GroupedDemotionE2e (4602 ms total)
+
+[----------] 32 tests from GroupedSortedSetWriteE2e
+[ RUN      ] GroupedSortedSetWriteE2e.TypedChangesDoNotRereadOrderedMemberDiff
+[       OK ] GroupedSortedSetWriteE2e.TypedChangesDoNotRereadOrderedMemberDiff (6661 ms)
+[ RUN      ] GroupedSortedSetWriteE2e.SourceAndPopPagesAvoidSecondPlanRead
+[       OK ] GroupedSortedSetWriteE2e.SourceAndPopPagesAvoidSecondPlanRead (6797 ms)
+[ RUN      ] GroupedSortedSetWriteE2e.DensePointSourceAvoidsSecondPlanRead
+[       OK ] GroupedSortedSetWriteE2e.DensePointSourceAvoidsSecondPlanRead (6972 ms)
+[ RUN      ] GroupedSortedSetWriteE2e.DensePointDestinationBoundaryAvoidsSecondPlanRead
+[       OK ] GroupedSortedSetWriteE2e.DensePointDestinationBoundaryAvoidsSecondPlanRead (6852 ms)
+[ RUN      ] GroupedSortedSetWriteE2e.DensePointProbeRetentionFallsBackWithoutOOM
+[       OK ] GroupedSortedSetWriteE2e.DensePointProbeRetentionFallsBackWithoutOOM (8944 ms)
+[ RUN      ] GroupedSortedSetWriteE2e.PointWritesReuseMemberLeafAndKeepBatchFailureAtomic
+[       OK ] GroupedSortedSetWriteE2e.PointWritesReuseMemberLeafAndKeepBatchFailureAtomic (7052 ms)
+[ RUN      ] GroupedSortedSetWriteE2e.EncodedMemberEditsKeepBinaryOrderingAndExecFailureAtomic
+[       OK ] GroupedSortedSetWriteE2e.EncodedMemberEditsKeepBinaryOrderingAndExecFailureAtomic (7492 ms)
+[ RUN      ] GroupedSortedSetWriteE2e.EncodedMemberInsertionsKeepFlagsBinaryOrderAndRecovery
+[       OK ] GroupedSortedSetWriteE2e.EncodedMemberInsertionsKeepFlagsBinaryOrderAndRecovery (9253 ms)
+[ RUN      ] GroupedSortedSetWriteE2e.EncodedMemberInsertionOverflowUsesDecodedSplitAndRecovers
+[       OK ] GroupedSortedSetWriteE2e.EncodedMemberInsertionOverflowUsesDecodedSplitAndRecovers (11677 ms)
+[ RUN      ] GroupedSortedSetWriteE2e.DuplicateMemberInputsKeepSequentialConditions
+[       OK ] GroupedSortedSetWriteE2e.DuplicateMemberInputsKeepSequentialConditions (4484 ms)
+[ RUN      ] GroupedSortedSetWriteE2e.AdjacentScoreMovesReusePagesAcrossRecovery
+[       OK ] GroupedSortedSetWriteE2e.AdjacentScoreMovesReusePagesAcrossRecovery (6415 ms)
+[ RUN      ] GroupedSortedSetWriteE2e.HeadInsertionsReuseNeighborCapacityAndRecover
+[       OK ] GroupedSortedSetWriteE2e.HeadInsertionsReuseNeighborCapacityAndRecover (10494 ms)
+[ RUN      ] GroupedSortedSetWriteE2e.OverflowNeighborReadFailureKeepsBothIndexes
+[       OK ] GroupedSortedSetWriteE2e.OverflowNeighborReadFailureKeepsBothIndexes (9284 ms)
+[ RUN      ] GroupedSortedSetWriteE2e.PlannerSkipsUnchangedNeighborButChecksNewLinks
+[       OK ] GroupedSortedSetWriteE2e.PlannerSkipsUnchangedNeighborButChecksNewLinks (8014 ms)
+[ RUN      ] GroupedSortedSetWriteE2e.BatchedMemberIndexChangesMatchOrderedPages
+[       OK ] GroupedSortedSetWriteE2e.BatchedMemberIndexChangesMatchOrderedPages (4881 ms)
+[ RUN      ] GroupedSortedSetWriteE2e.MemberScoresUsePrefixPagesWithoutOrderedReads
+[       OK ] GroupedSortedSetWriteE2e.MemberScoresUsePrefixPagesWithoutOrderedReads (4454 ms)
+[ RUN      ] GroupedSortedSetWriteE2e.MemberRanksSkipUnrelatedPagesAfterRecovery
+[       OK ] GroupedSortedSetWriteE2e.MemberRanksSkipUnrelatedPagesAfterRecovery (6893 ms)
+[ RUN      ] GroupedSortedSetWriteE2e.ScoreBoundsSkipUnrelatedPagesAfterRecovery
+[       OK ] GroupedSortedSetWriteE2e.ScoreBoundsSkipUnrelatedPagesAfterRecovery (4818 ms)
+[ RUN      ] GroupedSortedSetWriteE2e.ScoreBoundsHandleLongTieRunsAndMixedBatchMoves
+[       OK ] GroupedSortedSetWriteE2e.ScoreBoundsHandleLongTieRunsAndMixedBatchMoves (19331 ms)
+[ RUN      ] GroupedSortedSetWriteE2e.ScoreBoundsRecoverAfterMultiExtentParentKey
+[       OK ] GroupedSortedSetWriteE2e.ScoreBoundsRecoverAfterMultiExtentParentKey (13700 ms)
+[ RUN      ] GroupedSortedSetWriteE2e.FailedMemberWriteCannotCommitOrderedHalf
+[       OK ] GroupedSortedSetWriteE2e.FailedMemberWriteCannotCommitOrderedHalf (7702 ms)
+[ RUN      ] GroupedSortedSetWriteE2e.PointFlagsDuplicatesScoresAndAtomicNan
+[       OK ] GroupedSortedSetWriteE2e.PointFlagsDuplicatesScoresAndAtomicNan (1913 ms)
+[ RUN      ] GroupedSortedSetWriteE2e.PointScoreMovesRewriteOnlyEndpointPages
+[       OK ] GroupedSortedSetWriteE2e.PointScoreMovesRewriteOnlyEndpointPages (6397 ms)
+[ RUN      ] GroupedSortedSetWriteE2e.BoundedRangeAliasesRanksBoundsAndMixedScoreLex
+[       OK ] GroupedSortedSetWriteE2e.BoundedRangeAliasesRanksBoundsAndMixedScoreLex (1860 ms)
+[ RUN      ] GroupedSortedSetWriteE2e.PageScanRepliesOwnBinaryMembersAcrossRecovery
+[       OK ] GroupedSortedSetWriteE2e.PageScanRepliesOwnBinaryMembersAcrossRecovery (4243 ms)
+[ RUN      ] GroupedSortedSetWriteE2e.ScanCursorsAndAllPopEntryPointsRecover
+[       OK ] GroupedSortedSetWriteE2e.ScanCursorsAndAllPopEntryPointsRecover (4070 ms)
+[ RUN      ] GroupedSortedSetWriteE2e.FullImageAndRandomReplyOomAreAtomic
+[       OK ] GroupedSortedSetWriteE2e.FullImageAndRandomReplyOomAreAtomic (8724 ms)
+[ RUN      ] GroupedSortedSetWriteE2e.RangeRemovalFitsSelectedPagesAndRecovers
+[       OK ] GroupedSortedSetWriteE2e.RangeRemovalFitsSelectedPagesAndRecovers (9064 ms)
+[ RUN      ] GroupedSortedSetWriteE2e.FailedRangeRemovalPreservesExecPrefixAndRecovery
+[       OK ] GroupedSortedSetWriteE2e.FailedRangeRemovalPreservesExecPrefixAndRecovery (9938 ms)
+[ RUN      ] GroupedSortedSetWriteE2e.RandomAndRangeRemovalPreserveSemantics
+[       OK ] GroupedSortedSetWriteE2e.RandomAndRangeRemovalPreserveSemantics (1898 ms)
+[ RUN      ] GroupedSortedSetWriteE2e.GeoPointReadsPreserveRepliesAndExecVisibility
+[       OK ] GroupedSortedSetWriteE2e.GeoPointReadsPreserveRepliesAndExecVisibility (4421 ms)
+[ RUN      ] GroupedSortedSetWriteE2e.MultiKeyAggregateOomPreservesStoreAndExecPrefix
+[       OK ] GroupedSortedSetWriteE2e.MultiKeyAggregateOomPreservesStoreAndExecPrefix (8001 ms)
+[----------] 32 tests from GroupedSortedSetWriteE2e (232718 ms total)
+
+[----------] Global test environment tear-down
+[==========] 33 tests from 2 test suites ran. (237320 ms total)
+[  PASSED  ] 33 tests.

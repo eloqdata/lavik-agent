@@ -1,0 +1,284 @@
+Running main() from /mnt/dev/benchmark/pr342-packed-20261017/test-deps/googletest/googletest/src/gtest_main.cc
+Note: Google Test filter = GroupedCollectionTest.*:GroupedSortedRewriteTest.*:GroupedHashTest.*:HashGroupPointProbe.*:HashGroupEdits.*:CompactHashEdit.*:OrderedCompactCodecTest.*
+[==========] Running 128 tests from 7 test suites.
+[----------] Global test environment set-up.
+[----------] 4 tests from HashGroupPointProbe
+[ RUN      ] HashGroupPointProbe.OwnsValidatedBytesAcrossMovesAndKeepsWireFormat
+[       OK ] HashGroupPointProbe.OwnsValidatedBytesAcrossMovesAndKeepsWireFormat (0 ms)
+[ RUN      ] HashGroupPointProbe.RejectsUnrelatedCorruptionBeforeCertifyingMatch
+[       OK ] HashGroupPointProbe.RejectsUnrelatedCorruptionBeforeCertifyingMatch (0 ms)
+[ RUN      ] HashGroupPointProbe.MissingAndOversizedLeavesRequireCheckedFallback
+[       OK ] HashGroupPointProbe.MissingAndOversizedLeavesRequireCheckedFallback (0 ms)
+[ RUN      ] HashGroupPointProbe.BoundsOwnedCopyAndRejectsGrowingReplacement
+[       OK ] HashGroupPointProbe.BoundsOwnedCopyAndRejectsGrowingReplacement (0 ms)
+[----------] 4 tests from HashGroupPointProbe (0 ms total)
+
+[----------] 5 tests from CompactHashEdit
+[ RUN      ] CompactHashEdit.MatchesSequentialOwnedUpdates
+[       OK ] CompactHashEdit.MatchesSequentialOwnedUpdates (77 ms)
+[ RUN      ] CompactHashEdit.NoopTransientChangesBinaryAndBorrowedInputs
+[       OK ] CompactHashEdit.NoopTransientChangesBinaryAndBorrowedInputs (0 ms)
+[ RUN      ] CompactHashEdit.ValidatesPastMatchesAndChecksCounts
+[       OK ] CompactHashEdit.ValidatesPastMatchesAndChecksCounts (0 ms)
+[ RUN      ] CompactHashEdit.DeletePlanMatchesSequentialSetRemoval
+[       OK ] CompactHashEdit.DeletePlanMatchesSequentialSetRemoval (120 ms)
+[ RUN      ] CompactHashEdit.DeleteValidatesNoopTailAndLastMember
+[       OK ] CompactHashEdit.DeleteValidatesNoopTailAndLastMember (0 ms)
+[----------] 5 tests from CompactHashEdit (198 ms total)
+
+[----------] 5 tests from HashGroupEdits
+[ RUN      ] HashGroupEdits.OrderedDuplicatesOwnTheirBytesAndKeepWireFormat
+[       OK ] HashGroupEdits.OrderedDuplicatesOwnTheirBytesAndKeepWireFormat (0 ms)
+[ RUN      ] HashGroupEdits.NxNoopsRepeatedRemovalAndEmptyLeaf
+[       OK ] HashGroupEdits.NxNoopsRepeatedRemovalAndEmptyLeaf (0 ms)
+[ RUN      ] HashGroupEdits.PointEditsMatchBatchEncodingAcrossEmptySplitAndBinaryData
+[       OK ] HashGroupEdits.PointEditsMatchBatchEncodingAcrossEmptySplitAndBinaryData (83 ms)
+[ RUN      ] HashGroupEdits.SplitsAndOversizedValuesKeepOwnedStreamingPath
+[       OK ] HashGroupEdits.SplitsAndOversizedValuesKeepOwnedStreamingPath (1 ms)
+[ RUN      ] HashGroupEdits.RejectsCorruptionBeforeApplyingEvenANoop
+[       OK ] HashGroupEdits.RejectsCorruptionBeforeApplyingEvenANoop (0 ms)
+[----------] 5 tests from HashGroupEdits (85 ms total)
+
+[----------] 42 tests from GroupedHashTest
+[ RUN      ] GroupedHashTest.PrefixBoundsIncludeZeroAndFullWidth
+[       OK ] GroupedHashTest.PrefixBoundsIncludeZeroAndFullWidth (0 ms)
+[ RUN      ] GroupedHashTest.CompactPayloadHasAnExplicitLittleEndianHeader
+[       OK ] GroupedHashTest.CompactPayloadHasAnExplicitLittleEndianHeader (0 ms)
+[ RUN      ] GroupedHashTest.CompactEncodingMatchesAppendReferenceAtUnalignedLengths
+[       OK ] GroupedHashTest.CompactEncodingMatchesAppendReferenceAtUnalignedLengths (0 ms)
+[ RUN      ] GroupedHashTest.CompactReaderPreservesBinaryViewsAndCopiedPosition
+[       OK ] GroupedHashTest.CompactReaderPreservesBinaryViewsAndCopiedPosition (0 ms)
+[ RUN      ] GroupedHashTest.CompactReaderRejectsMalformedUnselectedBytes
+[       OK ] GroupedHashTest.CompactReaderRejectsMalformedUnselectedBytes (0 ms)
+[ RUN      ] GroupedHashTest.RootRoundTripsAndRejectsMalformedEnvelopes
+[       OK ] GroupedHashTest.RootRoundTripsAndRejectsMalformedEnvelopes (0 ms)
+[ RUN      ] GroupedHashTest.RejectsInnerCountBeforeDecodingEntryStorage
+[       OK ] GroupedHashTest.RejectsInnerCountBeforeDecodingEntryStorage (0 ms)
+[ RUN      ] GroupedHashTest.ReplayCommandSequenceIsIndependentOfGroupRevision
+[       OK ] GroupedHashTest.ReplayCommandSequenceIsIndependentOfGroupRevision (0 ms)
+[ RUN      ] GroupedHashTest.DirectoryReplacementAndSplitPreserveSnapshotsAndCoverage
+[       OK ] GroupedHashTest.DirectoryReplacementAndSplitPreserveSnapshotsAndCoverage (0 ms)
+[ RUN      ] GroupedHashTest.CompleteSnapshotsAreBinarySafeAndNotMutationLogs
+[       OK ] GroupedHashTest.CompleteSnapshotsAreBinarySafeAndNotMutationLogs (0 ms)
+[ RUN      ] GroupedHashTest.PointLookupDistinguishesMissingEmptyAndBinaryValues
+[       OK ] GroupedHashTest.PointLookupDistinguishesMissingEmptyAndBinaryValues (0 ms)
+[ RUN      ] GroupedHashTest.PointLookupStopsAtMatchAndChecksTraversedEncoding
+[       OK ] GroupedHashTest.PointLookupStopsAtMatchAndChecksTraversedEncoding (0 ms)
+[ RUN      ] GroupedHashTest.PersistedVisitorBorrowsEmptyAndBinaryFields
+[       OK ] GroupedHashTest.PersistedVisitorBorrowsEmptyAndBinaryFields (0 ms)
+[ RUN      ] GroupedHashTest.PersistedVisitorKeepsFramingChecksAndVisitorErrors
+[       OK ] GroupedHashTest.PersistedVisitorKeepsFramingChecksAndVisitorErrors (0 ms)
+[ RUN      ] GroupedHashTest.PersistedVisitorTrustsPublishedUniquenessAndRoutes
+[       OK ] GroupedHashTest.PersistedVisitorTrustsPublishedUniquenessAndRoutes (0 ms)
+[ RUN      ] GroupedHashTest.PointLookupLeavesUnrelatedDuplicateValidationToFullDecode
+[       OK ] GroupedHashTest.PointLookupLeavesUnrelatedDuplicateValidationToFullDecode (0 ms)
+[ RUN      ] GroupedHashTest.BorrowedVisitorChecksUnrelatedRouteAndPropagatesFailure
+[       OK ] GroupedHashTest.BorrowedVisitorChecksUnrelatedRouteAndPropagatesFailure (0 ms)
+[ RUN      ] GroupedHashTest.MultiLookupPreservesRepeatedOperandsAndStopsAfterAllMatches
+[       OK ] GroupedHashTest.MultiLookupPreservesRepeatedOperandsAndStopsAfterAllMatches (0 ms)
+[ RUN      ] GroupedHashTest.RankLookupPreservesDrawPositionsAndSkipsUnusedTail
+[       OK ] GroupedHashTest.RankLookupPreservesDrawPositionsAndSkipsUnusedTail (0 ms)
+[ RUN      ] GroupedHashTest.EmptyLeafAndRetiredLeafAreDifferentStates
+[       OK ] GroupedHashTest.EmptyLeafAndRetiredLeafAreDifferentStates (0 ms)
+[ RUN      ] GroupedHashTest.DuplicateFieldsAreRejectedBeforePublication
+[       OK ] GroupedHashTest.DuplicateFieldsAreRejectedBeforePublication (0 ms)
+[ RUN      ] GroupedHashTest.PromotionRoutesEveryFieldToOneBoundedGroup
+[       OK ] GroupedHashTest.PromotionRoutesEveryFieldToOneBoundedGroup (123 ms)
+[ RUN      ] GroupedHashTest.LargeIndivisibleFieldDoesNotCauseRecursiveExplosion
+[       OK ] GroupedHashTest.LargeIndivisibleFieldDoesNotCauseRecursiveExplosion (0 ms)
+[ RUN      ] GroupedHashTest.MaximalIndividualValueLeavesRoomForGroupFraming
+[       OK ] GroupedHashTest.MaximalIndividualValueLeavesRoomForGroupFraming (0 ms)
+[ RUN      ] GroupedHashTest.StreamingEncoderBorrowsTheLargeValueAndMatchesCodec
+[       OK ] GroupedHashTest.StreamingEncoderBorrowsTheLargeValueAndMatchesCodec (19 ms)
+[ RUN      ] GroupedHashTest.StreamingEncoderDistinguishesEmptySpansFromEnd
+[       OK ] GroupedHashTest.StreamingEncoderDistinguishesEmptySpansFromEnd (0 ms)
+[ RUN      ] GroupedHashTest.StreamingEncoderValidatesBeforeEmittingAnyBytes
+[       OK ] GroupedHashTest.StreamingEncoderValidatesBeforeEmittingAnyBytes (0 ms)
+[ RUN      ] GroupedHashTest.LogicalEncodingSizeCanExceedStringAndRecordLimits
+[       OK ] GroupedHashTest.LogicalEncodingSizeCanExceedStringAndRecordLimits (0 ms)
+[ RUN      ] GroupedHashTest.LargeLogicalValueRoundTripsBeyondRecordLimit
+[       OK ] GroupedHashTest.LargeLogicalValueRoundTripsBeyondRecordLimit (6023 ms)
+[ RUN      ] GroupedHashTest.RejectsFieldsOutsideTheLeafBeingUpdated
+[       OK ] GroupedHashTest.RejectsFieldsOutsideTheLeafBeingUpdated (0 ms)
+[ RUN      ] GroupedHashTest.DurableRoutingDoesNotDependOnProcessLookupSeed
+[       OK ] GroupedHashTest.DurableRoutingDoesNotDependOnProcessLookupSeed (0 ms)
+[ RUN      ] GroupedHashTest.RecoverySelectsEachGroupSequenceIndependently
+[       OK ] GroupedHashTest.RecoverySelectsEachGroupSequenceIndependently (0 ms)
+[ RUN      ] GroupedHashTest.RecoveryFiltersUncommittedFutureAndOtherIncarnations
+[       OK ] GroupedHashTest.RecoveryFiltersUncommittedFutureAndOtherIncarnations (0 ms)
+[ RUN      ] GroupedHashTest.SplitRecoveryIsOldOrNewAndNeverAPartialDirectory
+[       OK ] GroupedHashTest.SplitRecoveryIsOldOrNewAndNeverAPartialDirectory (0 ms)
+[ RUN      ] GroupedHashTest.EmptyLeafRemainsRoutableAfterDeletingItsLastField
+[       OK ] GroupedHashTest.EmptyLeafRemainsRoutableAfterDeletingItsLastField (0 ms)
+[ RUN      ] GroupedHashTest.RelocationUsesLsnOnlyWithinTheSameLogicalVersion
+[       OK ] GroupedHashTest.RelocationUsesLsnOnlyWithinTheSameLogicalVersion (0 ms)
+[ RUN      ] GroupedHashTest.RejectsCountsGapsOverlapsAndMalformedIdentities
+[       OK ] GroupedHashTest.RejectsCountsGapsOverlapsAndMalformedIdentities (0 ms)
+[ RUN      ] GroupedHashTest.SingleFieldUpdateWritesOnlyItsGroup
+[       OK ] GroupedHashTest.SingleFieldUpdateWritesOnlyItsGroup (4 ms)
+[ RUN      ] GroupedHashTest.DuplicateMutationOperandsPreserveRedisCounts
+[       OK ] GroupedHashTest.DuplicateMutationOperandsPreserveRedisCounts (0 ms)
+[ RUN      ] GroupedHashTest.NoopAndSetIfAbsentDoNotRewriteGroups
+[       OK ] GroupedHashTest.NoopAndSetIfAbsentDoNotRewriteGroups (0 ms)
+[ RUN      ] GroupedHashTest.MutationSplitIncludesOldLeafRetirement
+[       OK ] GroupedHashTest.MutationSplitIncludesOldLeafRetirement (0 ms)
+[ RUN      ] GroupedHashTest.RandomizedPartialWritesRecoverAgainstReferenceHash
+[       OK ] GroupedHashTest.RandomizedPartialWritesRecoverAgainstReferenceHash (2349 ms)
+[----------] 42 tests from GroupedHashTest (8524 ms total)
+
+[----------] 60 tests from GroupedCollectionTest
+[ RUN      ] GroupedCollectionTest.RootAndPageRoundTripBothKinds
+[       OK ] GroupedCollectionTest.RootAndPageRoundTripBothKinds (0 ms)
+[ RUN      ] GroupedCollectionTest.ListRangeOwnsOnlySelectedValues
+[       OK ] GroupedCollectionTest.ListRangeOwnsOnlySelectedValues (0 ms)
+[ RUN      ] GroupedCollectionTest.ListRangeValidatesUnselectedEntriesAndEnvelope
+[       OK ] GroupedCollectionTest.ListRangeValidatesUnselectedEntriesAndEnvelope (0 ms)
+[ RUN      ] GroupedCollectionTest.SortedSetViewsBorrowBinaryMembersAndKeepScores
+[       OK ] GroupedCollectionTest.SortedSetViewsBorrowBinaryMembersAndKeepScores (0 ms)
+[ RUN      ] GroupedCollectionTest.SortedSetViewsMatchOwnedDecoderCorruptionChecks
+[       OK ] GroupedCollectionTest.SortedSetViewsMatchOwnedDecoderCorruptionChecks (2 ms)
+[ RUN      ] GroupedCollectionTest.SortedSetStoredReadsTrustMemberUniqueness
+[       OK ] GroupedCollectionTest.SortedSetStoredReadsTrustMemberUniqueness (0 ms)
+[ RUN      ] GroupedCollectionTest.SortedSetStoredReadsKeepStructuralValidation
+[       OK ] GroupedCollectionTest.SortedSetStoredReadsKeepStructuralValidation (0 ms)
+[ RUN      ] GroupedCollectionTest.StringAndStreamHaveDistinctDurableKinds
+[       OK ] GroupedCollectionTest.StringAndStreamHaveDistinctDurableKinds (0 ms)
+[ RUN      ] GroupedCollectionTest.StringSegmentBoundariesDoNotOrderPayloadBytes
+[       OK ] GroupedCollectionTest.StringSegmentBoundariesDoNotOrderPayloadBytes (0 ms)
+[ RUN      ] GroupedCollectionTest.SortedSetRebalancePreservesOrderAndActiveIds
+[       OK ] GroupedCollectionTest.SortedSetRebalancePreservesOrderAndActiveIds (7 ms)
+[ RUN      ] GroupedCollectionTest.SortedSetRebalanceFallbackDoesNotMutatePages
+[       OK ] GroupedCollectionTest.SortedSetRebalanceFallbackDoesNotMutatePages (0 ms)
+[ RUN      ] GroupedCollectionTest.SortedSetRebalanceRejectsInvalidOrdering
+[       OK ] GroupedCollectionTest.SortedSetRebalanceRejectsInvalidOrdering (0 ms)
+[ RUN      ] GroupedCollectionTest.StringSegmentsValidateLengthsAndDirectPositions
+[       OK ] GroupedCollectionTest.StringSegmentsValidateLengthsAndDirectPositions (0 ms)
+[ RUN      ] GroupedCollectionTest.BorrowedStringSegmentsPreserveWireAndDecodeOwnership
+[       OK ] GroupedCollectionTest.BorrowedStringSegmentsPreserveWireAndDecodeOwnership (0 ms)
+[ RUN      ] GroupedCollectionTest.BorrowedStringSegmentsRejectInvalidRepresentations
+[       OK ] GroupedCollectionTest.BorrowedStringSegmentsRejectInvalidRepresentations (0 ms)
+[ RUN      ] GroupedCollectionTest.BorrowedStringSegmentsPreserveBoundaryChecks
+[       OK ] GroupedCollectionTest.BorrowedStringSegmentsPreserveBoundaryChecks (0 ms)
+[ RUN      ] GroupedCollectionTest.StringPointUpdatesShareUntouchedDirectoryChunks
+[       OK ] GroupedCollectionTest.StringPointUpdatesShareUntouchedDirectoryChunks (0 ms)
+[ RUN      ] GroupedCollectionTest.StringGrowthPreservesPrefixAndChecksTailBoundary
+[       OK ] GroupedCollectionTest.StringGrowthPreservesPrefixAndChecksTailBoundary (16 ms)
+[ RUN      ] GroupedCollectionTest.StringUpdatesRejectMalformedDuplicateAndMissingPages
+[       OK ] GroupedCollectionTest.StringUpdatesRejectMalformedDuplicateAndMissingPages (0 ms)
+[ RUN      ] GroupedCollectionTest.StringByteDeltasCheckFinalTotalWithoutIntermediateOverflow
+[       OK ] GroupedCollectionTest.StringByteDeltasCheckFinalTotalWithoutIntermediateOverflow (0 ms)
+[ RUN      ] GroupedCollectionTest.SortedSetRootChecksMemberIndexPresence
+[       OK ] GroupedCollectionTest.SortedSetRootChecksMemberIndexPresence (0 ms)
+[ RUN      ] GroupedCollectionTest.MemberScoresAreExactAndRejectMalformedValues
+[       OK ] GroupedCollectionTest.MemberScoresAreExactAndRejectMalformedValues (0 ms)
+[ RUN      ] GroupedCollectionTest.CodecsRejectTruncationReservedBitsAndInvalidIdentity
+[       OK ] GroupedCollectionTest.CodecsRejectTruncationReservedBitsAndInvalidIdentity (0 ms)
+[ RUN      ] GroupedCollectionTest.SortedSetChecksOrderBinaryTiesNanAndDuplicateMembers
+[       OK ] GroupedCollectionTest.SortedSetChecksOrderBinaryTiesNanAndDuplicateMembers (0 ms)
+[ RUN      ] GroupedCollectionTest.ExtentEncoderBorrowsOversizedItemAndPreservesEmptyItem
+[       OK ] GroupedCollectionTest.ExtentEncoderBorrowsOversizedItemAndPreservesEmptyItem (23 ms)
+[ RUN      ] GroupedCollectionTest.UnsplitPagePreservesStorageAndIdentity
+[       OK ] GroupedCollectionTest.UnsplitPagePreservesStorageAndIdentity (0 ms)
+[ RUN      ] GroupedCollectionTest.CheckedSortedSetSplitOwnsImmutableEntries
+[       OK ] GroupedCollectionTest.CheckedSortedSetSplitOwnsImmutableEntries (1 ms)
+[ RUN      ] GroupedCollectionTest.CheckedSortedSetSplitMatchesOrdinarySplit
+[       OK ] GroupedCollectionTest.CheckedSortedSetSplitMatchesOrdinarySplit (0 ms)
+[ RUN      ] GroupedCollectionTest.CheckedSortedSetBoundariesRejectOverlap
+[       OK ] GroupedCollectionTest.CheckedSortedSetBoundariesRejectOverlap (0 ms)
+[ RUN      ] GroupedCollectionTest.CheckedSortedSetSplitRejectsUnverifiedAfterimages
+[       OK ] GroupedCollectionTest.CheckedSortedSetSplitRejectsUnverifiedAfterimages (0 ms)
+[ RUN      ] GroupedCollectionTest.CheckedSortedSetEntriesKeepEncoderGuards
+[       OK ] GroupedCollectionTest.CheckedSortedSetEntriesKeepEncoderGuards (0 ms)
+[ RUN      ] GroupedCollectionTest.UnsplitOversizedMemberPreservesStorageAndIdentity
+[       OK ] GroupedCollectionTest.UnsplitOversizedMemberPreservesStorageAndIdentity (0 ms)
+[ RUN      ] GroupedCollectionTest.UnsplitPageStillValidatesIdentityAndEntries
+[       OK ] GroupedCollectionTest.UnsplitPageStillValidatesIdentityAndEntries (0 ms)
+[ RUN      ] GroupedCollectionTest.SplitPreservesOrderIdsAndNeighbourLinks
+[       OK ] GroupedCollectionTest.SplitPreservesOrderIdsAndNeighbourLinks (0 ms)
+[ RUN      ] GroupedCollectionTest.DirectoryRecoversCommittedSequenceBeforeRelocationLsn
+[       OK ] GroupedCollectionTest.DirectoryRecoversCommittedSequenceBeforeRelocationLsn (0 ms)
+[ RUN      ] GroupedCollectionTest.SparseSameTopologyUpdateMatchesFullRecovery
+[       OK ] GroupedCollectionTest.SparseSameTopologyUpdateMatchesFullRecovery (4 ms)
+[ RUN      ] GroupedCollectionTest.RankUpdatesPreserveViewsAcrossOrderedKinds
+[       OK ] GroupedCollectionTest.RankUpdatesPreserveViewsAcrossOrderedKinds (0 ms)
+[ RUN      ] GroupedCollectionTest.PageLookupHandlesContiguousAndSparseIds
+[       OK ] GroupedCollectionTest.PageLookupHandlesContiguousAndSparseIds (0 ms)
+[ RUN      ] GroupedCollectionTest.DirectoryRejectsMissingCyclesDisconnectedAndWrongCounts
+[       OK ] GroupedCollectionTest.DirectoryRejectsMissingCyclesDisconnectedAndWrongCounts (0 ms)
+[ RUN      ] GroupedCollectionTest.EveryListSpliceMatchesVectorAndReplaysOnlyWithCommit
+[       OK ] GroupedCollectionTest.EveryListSpliceMatchesVectorAndReplaysOnlyWithCommit (25 ms)
+[ RUN      ] GroupedCollectionTest.SameSizeListReplacementNeedsOnlyItsOwnPage
+[       OK ] GroupedCollectionTest.SameSizeListReplacementNeedsOnlyItsOwnPage (0 ms)
+[ RUN      ] GroupedCollectionTest.SpliceRejectsStaleMissingDuplicateAndInvalidInput
+[       OK ] GroupedCollectionTest.SpliceRejectsStaleMissingDuplicateAndInvalidInput (0 ms)
+[ RUN      ] GroupedCollectionTest.SortedSetSpliceChecksBoundsAndRepositionsCompleteEntries
+[       OK ] GroupedCollectionTest.SortedSetSpliceChecksBoundsAndRepositionsCompleteEntries (0 ms)
+[ RUN      ] GroupedCollectionTest.EveryPartialStructuralBatchKeepsOldRootRecoverable
+[       OK ] GroupedCollectionTest.EveryPartialStructuralBatchKeepsOldRootRecoverable (0 ms)
+[ RUN      ] GroupedCollectionTest.RecoveryFindsRetiredPagesFromUnorderedCandidates
+[       OK ] GroupedCollectionTest.RecoveryFindsRetiredPagesFromUnorderedCandidates (1 ms)
+[ RUN      ] GroupedCollectionTest.ResidentEntriesDropOnlyAdjudicatedTransactionTags
+[       OK ] GroupedCollectionTest.ResidentEntriesDropOnlyAdjudicatedTransactionTags (0 ms)
+[ RUN      ] GroupedCollectionTest.SmallOrderedDirectoryKeepsRetainedMemoryBounded
+[       OK ] GroupedCollectionTest.SmallOrderedDirectoryKeepsRetainedMemoryBounded (0 ms)
+[ RUN      ] GroupedCollectionTest.RetirementEvidenceCannotDisappearBeforeOlderPage
+[       OK ] GroupedCollectionTest.RetirementEvidenceCannotDisappearBeforeOlderPage (0 ms)
+[ RUN      ] GroupedCollectionTest.EnvelopeOnlyDecodeAndDualDecisionRetirement
+[       OK ] GroupedCollectionTest.EnvelopeOnlyDecodeAndDualDecisionRetirement (0 ms)
+[ RUN      ] GroupedCollectionTest.StreamRanksMatchCountsAcrossSparseUpdatesAndSnapshots
+[       OK ] GroupedCollectionTest.StreamRanksMatchCountsAcrossSparseUpdatesAndSnapshots (2621 ms)
+[ RUN      ] GroupedCollectionTest.StructuralUpdatesMatchRecoveryAcrossSplices
+[       OK ] GroupedCollectionTest.StructuralUpdatesMatchRecoveryAcrossSplices (131 ms)
+[ RUN      ] GroupedCollectionTest.TailAppendsAndRetirementsPreservePinnedDirectories
+[       OK ] GroupedCollectionTest.TailAppendsAndRetirementsPreservePinnedDirectories (7 ms)
+[ RUN      ] GroupedCollectionTest.StreamTailAppendRanksMatchRecoveryAndPinOldViews
+[       OK ] GroupedCollectionTest.StreamTailAppendRanksMatchRecoveryAndPinOldViews (139 ms)
+[ RUN      ] GroupedCollectionTest.StreamTailAppendRejectsBrokenLinksAndKeepsGeneralOrder
+[       OK ] GroupedCollectionTest.StreamTailAppendRejectsBrokenLinksAndKeepsGeneralOrder (0 ms)
+[ RUN      ] GroupedCollectionTest.StreamSuffixInsertMatchesRecoveryAcrossShiftedRanks
+[       OK ] GroupedCollectionTest.StreamSuffixInsertMatchesRecoveryAcrossShiftedRanks (139 ms)
+[ RUN      ] GroupedCollectionTest.StructuralUpdatesRejectDisconnectedOrInvalidPages
+[       OK ] GroupedCollectionTest.StructuralUpdatesRejectDisconnectedOrInvalidPages (0 ms)
+[ RUN      ] GroupedCollectionTest.StreamingMetadataRebuildsBoundsAcrossAnyFraming
+[       OK ] GroupedCollectionTest.StreamingMetadataRebuildsBoundsAcrossAnyFraming (16 ms)
+[ RUN      ] GroupedCollectionTest.StreamingMetadataRejectsTruncationAndInvalidScores
+[       OK ] GroupedCollectionTest.StreamingMetadataRejectsTruncationAndInvalidScores (0 ms)
+[ RUN      ] GroupedCollectionTest.ScoreBoundsSeekGapsTiesInfinitiesAndExclusiveEnds
+[       OK ] GroupedCollectionTest.ScoreBoundsSeekGapsTiesInfinitiesAndExclusiveEnds (0 ms)
+[ RUN      ] GroupedCollectionTest.RecoveryRejectsInvalidAndNonMonotoneScoreBounds
+[       OK ] GroupedCollectionTest.RecoveryRejectsInvalidAndNonMonotoneScoreBounds (0 ms)
+[----------] 60 tests from GroupedCollectionTest (3276 ms total)
+
+[----------] 4 tests from GroupedSortedRewriteTest
+[ RUN      ] GroupedSortedRewriteTest.ScoreMovingAcrossWholeSetTouchesOnlyEnds
+[       OK ] GroupedSortedRewriteTest.ScoreMovingAcrossWholeSetTouchesOnlyEnds (0 ms)
+[ RUN      ] GroupedSortedRewriteTest.EmptyPageRetiresAndUpdatesBothNeighbours
+[       OK ] GroupedSortedRewriteTest.EmptyPageRetiresAndUpdatesBothNeighbours (0 ms)
+[ RUN      ] GroupedSortedRewriteTest.SplitAndDisjointEditsPreserveUntouchedPages
+[       OK ] GroupedSortedRewriteTest.SplitAndDisjointEditsPreserveUntouchedPages (16 ms)
+[ RUN      ] GroupedSortedRewriteTest.NoopDeletionAndInvalidOrder
+[       OK ] GroupedSortedRewriteTest.NoopDeletionAndInvalidOrder (0 ms)
+[----------] 4 tests from GroupedSortedRewriteTest (17 ms total)
+
+[----------] 8 tests from OrderedCompactCodecTest
+[ RUN      ] OrderedCompactCodecTest.ListUsesExistingLogicalWireImage
+[       OK ] OrderedCompactCodecTest.ListUsesExistingLogicalWireImage (0 ms)
+[ RUN      ] OrderedCompactCodecTest.SortedScoresRetainInfinityAndNegativeZero
+[       OK ] OrderedCompactCodecTest.SortedScoresRetainInfinityAndNegativeZero (0 ms)
+[ RUN      ] OrderedCompactCodecTest.BoundsAndFramingFailClosed
+[       OK ] OrderedCompactCodecTest.BoundsAndFramingFailClosed (0 ms)
+[ RUN      ] OrderedCompactCodecTest.BorrowedReaderChecksEveryTruncatedBoundary
+[       OK ] OrderedCompactCodecTest.BorrowedReaderChecksEveryTruncatedBoundary (0 ms)
+[ RUN      ] OrderedCompactCodecTest.LargeItemAndInvalidScore
+[       OK ] OrderedCompactCodecTest.LargeItemAndInvalidScore (6 ms)
+[ RUN      ] OrderedCompactCodecTest.SizingSeparatesItemsFromAggregateCapacity
+[       OK ] OrderedCompactCodecTest.SizingSeparatesItemsFromAggregateCapacity (0 ms)
+[ RUN      ] OrderedCompactCodecTest.LargeListRoundTripsBeyondRecordLimit
+[       OK ] OrderedCompactCodecTest.LargeListRoundTripsBeyondRecordLimit (6017 ms)
+[ RUN      ] OrderedCompactCodecTest.LargeSortedSetRoundTripsBeyondRecordLimit
+[       OK ] OrderedCompactCodecTest.LargeSortedSetRoundTripsBeyondRecordLimit (6020 ms)
+[----------] 8 tests from OrderedCompactCodecTest (12044 ms total)
+
+[----------] Global test environment tear-down
+[==========] 128 tests from 7 test suites ran. (24147 ms total)
+[  PASSED  ] 128 tests.

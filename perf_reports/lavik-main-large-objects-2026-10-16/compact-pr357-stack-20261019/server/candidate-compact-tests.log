@@ -1,0 +1,41 @@
+Note: Google Test filter = CompactStringWriteE2e.*:CompactPointWriteE2e.*:SmallTypes/CompactCollectionWriteE2e.*
+[==========] Running 13 tests from 3 test suites.
+[----------] Global test environment set-up.
+[----------] 1 test from CompactStringWriteE2e
+[ RUN      ] CompactStringWriteE2e.ColdRangeWriteYieldsStateAndRetainsKey
+[       OK ] CompactStringWriteE2e.ColdRangeWriteYieldsStateAndRetainsKey (7795 ms)
+[----------] 1 test from CompactStringWriteE2e (7795 ms total)
+
+[----------] 3 tests from CompactPointWriteE2e
+[ RUN      ] CompactPointWriteE2e.MixedEightKiBEditsMatchModelsAndRecover
+[       OK ] CompactPointWriteE2e.MixedEightKiBEditsMatchModelsAndRecover (4461 ms)
+[ RUN      ] CompactPointWriteE2e.FailedInlineEncodingKeepsValueAndWatch
+[       OK ] CompactPointWriteE2e.FailedInlineEncodingKeepsValueAndWatch (50611 ms)
+[ RUN      ] CompactPointWriteE2e.SingleReadSlotUsesOwnedFallback
+[       OK ] CompactPointWriteE2e.SingleReadSlotUsesOwnedFallback (2921 ms)
+[----------] 3 tests from CompactPointWriteE2e (57994 ms total)
+
+[----------] 9 tests from SmallTypes/CompactCollectionWriteE2e
+[ RUN      ] SmallTypes/CompactCollectionWriteE2e.ColdPauseReleasesStateButSerializesSameKey/Set
+[       OK ] SmallTypes/CompactCollectionWriteE2e.ColdPauseReleasesStateButSerializesSameKey/Set (8313 ms)
+[ RUN      ] SmallTypes/CompactCollectionWriteE2e.ColdPauseReleasesStateButSerializesSameKey/List
+[       OK ] SmallTypes/CompactCollectionWriteE2e.ColdPauseReleasesStateButSerializesSameKey/List (8015 ms)
+[ RUN      ] SmallTypes/CompactCollectionWriteE2e.ColdPauseReleasesStateButSerializesSameKey/SortedSet
+[       OK ] SmallTypes/CompactCollectionWriteE2e.ColdPauseReleasesStateButSerializesSameKey/SortedSet (7878 ms)
+[ RUN      ] SmallTypes/CompactCollectionWriteE2e.ConditionsErrorsTtlWatchAndDeleteRecover/Set
+[       OK ] SmallTypes/CompactCollectionWriteE2e.ConditionsErrorsTtlWatchAndDeleteRecover/Set (7887 ms)
+[ RUN      ] SmallTypes/CompactCollectionWriteE2e.ConditionsErrorsTtlWatchAndDeleteRecover/List
+[       OK ] SmallTypes/CompactCollectionWriteE2e.ConditionsErrorsTtlWatchAndDeleteRecover/List (7853 ms)
+[ RUN      ] SmallTypes/CompactCollectionWriteE2e.ConditionsErrorsTtlWatchAndDeleteRecover/SortedSet
+[       OK ] SmallTypes/CompactCollectionWriteE2e.ConditionsErrorsTtlWatchAndDeleteRecover/SortedSet (8077 ms)
+[ RUN      ] SmallTypes/CompactCollectionWriteE2e.ColdCompactPromotionPreservesContentsAndTtl/Set
+[       OK ] SmallTypes/CompactCollectionWriteE2e.ColdCompactPromotionPreservesContentsAndTtl/Set (7830 ms)
+[ RUN      ] SmallTypes/CompactCollectionWriteE2e.ColdCompactPromotionPreservesContentsAndTtl/List
+[       OK ] SmallTypes/CompactCollectionWriteE2e.ColdCompactPromotionPreservesContentsAndTtl/List (7843 ms)
+[ RUN      ] SmallTypes/CompactCollectionWriteE2e.ColdCompactPromotionPreservesContentsAndTtl/SortedSet
+[       OK ] SmallTypes/CompactCollectionWriteE2e.ColdCompactPromotionPreservesContentsAndTtl/SortedSet (8135 ms)
+[----------] 9 tests from SmallTypes/CompactCollectionWriteE2e (71833 ms total)
+
+[----------] Global test environment tear-down
+[==========] 13 tests from 3 test suites ran. (137623 ms total)
+[  PASSED  ] 13 tests.

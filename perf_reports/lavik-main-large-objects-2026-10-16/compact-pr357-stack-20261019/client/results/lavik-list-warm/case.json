@@ -1,0 +1,91 @@
+{
+  "label": "lavik-list-warm",
+  "product": "lavik",
+  "op": "list",
+  "phase": "warm",
+  "keys": 8192,
+  "connections": 80,
+  "client_threads": 16,
+  "seconds": 90,
+  "shape": {
+    "structure": "list",
+    "logical_payload_bytes": 8192,
+    "items_per_key": 32,
+    "item_bytes": 256
+  },
+  "pipeline": 1,
+  "revision": "d0084f4a9a869e38ab91ecef6291a89483940123",
+  "binary_sha256": "49305cb502f9c973e3b8f64e838ab6877fe736312ed4635e8e66dc998cef9dfe",
+  "active": {
+    "revision": "d0084f4a9a869e38ab91ecef6291a89483940123",
+    "version": "d0084f4a9a869e38ab91ecef6291a89483940123",
+    "binary": "/mnt/dev/benchmark/compact-pr357-stack-20261019/sources/candidate/build-gcc13/lavik",
+    "binary_sha256": "49305cb502f9c973e3b8f64e838ab6877fe736312ed4635e8e66dc998cef9dfe",
+    "root": "/mnt/dev/benchmark/compact-pr357-stack-20261019",
+    "product": "lavik",
+    "label": "session-lavik-list",
+    "owner_token": "a0b6793ba3226650948a3afbfb21da92",
+    "args": [
+      "/mnt/dev/benchmark/compact-pr357-stack-20261019/sources/candidate/build-gcc13/lavik",
+      "--storage=spdk",
+      "--alsologtostderr",
+      "--bind=10.84.1.4",
+      "--threads=16",
+      "--pin-workers",
+      "--metrics-port=0",
+      "--spdk-max-completions-per-poll=16",
+      "--log-dir=/mnt/dev/benchmark/compact-pr357-stack-20261019/session-lavik-list/logs",
+      "--shutdown-checkpoint",
+      "--data-file=spdk://2401:00:00.0/1",
+      "--data-file=spdk://221c:00:00.0/1",
+      "--data-file=spdk://7f10:00:00.0/1",
+      "--data-file=spdk://399c:00:00.0/1",
+      "--data-file=spdk://c0ef:00:00.0/1",
+      "--data-file=spdk://6319:00:00.0/1"
+    ],
+    "cpu_affinity": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15
+    ],
+    "environment": {
+      "LC_ALL": "C",
+      "BYCORF_EAL_ARGS": "-a 2401:00:00.0 -a 221c:00:00.0 -a 7f10:00:00.0 -a 399c:00:00.0 -a c0ef:00:00.0 -a 6319:00:00.0",
+      "BYCORF_DPDK_MEMORY_MB": "8192"
+    },
+    "time": 1792403648.1614978,
+    "manifest_sha256": "cd772ac8fdca4c40139203f9798aa8c9a414d1e4f0548887c71637101d85b9e9",
+    "data_dir": null,
+    "config_sha256": null,
+    "spdk_ready_sha256": "84e72f2ed542bed0a8ac8b0956ada8a2d9e05b8b4b638b454f1f8fbd9df96b3e",
+    "expected_recovery": {
+      "mode": "checkpoint",
+      "checkpoint": {
+        "generation": 17,
+        "entries": 8192
+      }
+    },
+    "previous_stop_sha256": "57201fcc516ef501dc6c06890dbb09d44d397b99348d98dbc1cfe2e559005853",
+    "pid": 2318071,
+    "start_ticks": "70732261",
+    "supervisor_pid": 2318070
+  },
+  "profiled": false,
+  "observed": false,
+  "observation_seconds": 0,
+  "client_binary_sha256": "849d1cb8ce4374cc05abbb250257eb5447910e0caf04c4b83fd4468d222290a5",
+  "state_path": null
+}

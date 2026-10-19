@@ -1,0 +1,27 @@
+{
+  "args": [
+    "cmake",
+    "-S",
+    "/mnt/dev/benchmark/compact-pr357-stack-20261019/sources/test",
+    "-B",
+    "/mnt/dev/benchmark/compact-pr357-stack-20261019/sources/test/build-test",
+    "-G",
+    "Ninja",
+    "-DCMAKE_C_COMPILER=/usr/bin/gcc-13",
+    "-DCMAKE_CXX_COMPILER=/usr/bin/g++-13",
+    "-DLAVIK_MARCH=x86-64-v2",
+    "-DCMAKE_BUILD_TYPE=Debug",
+    "-DLAVIK_ENABLE_OPT=OFF",
+    "-DLAVIK_KERNEL_BYPASS=OFF",
+    "-DBUILD_TESTING=ON",
+    "-DFETCHCONTENT_SOURCE_DIR_GOOGLETEST=/mnt/dev/benchmark/pr342-packed-20261017/test-deps/googletest"
+  ],
+  "started": "2026-10-19T09:15:29Z",
+  "cwd": "/mnt/dev/benchmark/compact-pr357-stack-20261019",
+  "environment": {
+    "GOPATH": "/home/azureuser/go",
+    "GOCACHE": "/mnt/dev/benchmark/go-build-cache",
+    "TARGET_ARCHITECTURE": "x86-64-v2",
+    "LAVIK_TEST_DATA_DIR": "/mnt/dev/benchmark/compact-pr357-stack-20261019/test-data"
+  }
+}

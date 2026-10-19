@@ -1,0 +1,33 @@
+{
+  "args": [
+    "cmake",
+    "-S",
+    "/mnt/dev/benchmark/compact-pr357-stack-20261019/sources/candidate",
+    "-B",
+    "/mnt/dev/benchmark/compact-pr357-stack-20261019/sources/candidate/build-gcc13",
+    "-G",
+    "Ninja",
+    "-DCMAKE_C_COMPILER=/usr/bin/gcc-13",
+    "-DCMAKE_CXX_COMPILER=/usr/bin/g++-13",
+    "-DLAVIK_MARCH=x86-64-v2",
+    "-DCMAKE_BUILD_TYPE=Release",
+    "-DLAVIK_ENABLE_OPT=ON",
+    "-DLAVIK_KERNEL_BYPASS=ON",
+    "-DBUILD_TESTING=OFF",
+    "-DBYCORF_SPDK_C_COMPILER=/usr/bin/gcc-13",
+    "-DBYCORF_SPDK_CXX_COMPILER=/usr/bin/g++-13"
+  ],
+  "started": "2026-10-19T09:15:29Z",
+  "cwd": "/mnt/dev/benchmark/compact-pr357-stack-20261019",
+  "environment": {
+    "GOPATH": "/home/azureuser/go",
+    "GOCACHE": "/mnt/dev/benchmark/go-build-cache",
+    "TARGET_ARCHITECTURE": "x86-64-v2",
+    "LAVIK_TEST_DATA_DIR": "/mnt/dev/benchmark/compact-pr357-stack-20261019/test-data"
+  },
+  "pid": 2268347,
+  "returncode": 0,
+  "ended": "2026-10-19T09:17:47Z",
+  "log": "/mnt/dev/benchmark/compact-pr357-stack-20261019/candidate-configure.log",
+  "log_sha256": "2cbc4e3c6a7956474249dca65f32a968202c4ef3a3450e2b7358609ccfa23ff0"
+}
