@@ -31,7 +31,7 @@ Redis 8.10.2、Valkey 9.1.2、Apache Kvrocks 2.17.0。每格为 **吞吐 / Avg m
 | XADD MAXLEN = 4096 | 80 | 58,377.6 / 1.369 / 18.879 | 184,642.9 / 0.432 / 0.868 | 249,042.5 / 0.320 / 0.572 | 436.3 / 182.842 / 380.228 |
 | SADD/SREM | 80 | 45,319.6 / 1.764 / 19.647 | 151,480.1 / 0.527 / 1.089 | 273,871.4 / 0.291 / 0.640 | 82,922.4 / 0.964 / 2.924 |
 
-两项 1 MiB ZSet 更新结果测于 #358 candidate `32bdd6b`（2026-10-19），未在最新 main 上重跑。ZINCRBY 的 60 秒窗口内吞吐有明显下降，表中为整窗汇总；测试顺序、共享数据及逐段吞吐见下文「ZSet 点更新优化」。
+两项 1 MiB ZSet 更新结果测于 #358 candidate `32bdd6b`（2026-10-19），未在最新 main 上重跑。ZINCRBY 的 60 秒窗口内吞吐有明显下降，表中为整窗汇总。
 
 竞品写入除 SADD/SREM 外采用既有三轮测试各指标的中位数；其余表格结果均为单轮。操作对按完整一对统计，子命令指标保留在原始 JSON 中。测量日期（UTC）和原文件路径见 [SOURCE.json](SOURCE.json) 与 [formal-points.json](formal-points.json)。
 
@@ -39,7 +39,7 @@ Redis 8.10.2、Valkey 9.1.2、Apache Kvrocks 2.17.0。每格为 **吞吐 / Avg m
 
 - String 为 1 MiB；Hash/List 为 4,096 × 256 B；Set/ZSet 为 32,768 × 32 B；Stream 为 4,096 条 entry，每条含一个 256 B payload。HKEYS 只返回字段名，整读返回的协议字节数并不相同。
 - main 与本轮 peer 整读预热 60 秒、正式 60 秒；main 写入预热 90 秒、正式 60 秒。80 连接用 16 个客户端线程，1 连接用 1 个线程，pipeline 1，各一轮。正式 CPU/NIC 观察窗口为其中 45 秒。
-- main 整读在装载后干净重启；peer 每个数据类型重新启动空库，装载和测量保持同一个进程。Redis/Valkey 关闭周期 RDB 和 AOF，Kvrocks 保持后台 compaction。原 1 MiB main 写入每项独立装载，在同一进程内预热和测量；更新的两项 ZSet 使用下文所述的共享数据交叉测试。
+- main 整读在装载后干净重启；peer 每个数据类型重新启动空库，装载和测量保持同一个进程。Redis/Valkey 关闭周期 RDB 和 AOF，Kvrocks 保持后台 compaction。原 1 MiB main 写入每项独立装载，在同一进程内预热和测量；更新的两项 ZSet 使用共享数据交叉测试。
 - 历史 peer HGETALL/ZRANGE/SMEMBERS 的 80 连接结果、Redis LRANGE 的 1 连接结果来自 10 月 16 日，预热 90 秒。历史 Hash 数据编码/客户端与新整读不同；Redis LRANGE 沿用相同客户端源码但二进制不同，且其 warm/formal seed 为 10180/20180；新 1 连接使用 10101/20101。各点的原命令和客户端 SHA 已保留。
 - 整读延迟包含网络接收、RESP 解析与完整回复校验，不是纯服务端 CPU 时间。跨日期和客户端口径差异应与性能数值一并阅读。
 
@@ -110,33 +110,3 @@ sudo python3 run.py peers
 - [当前 56 个对照点](main-report-refresh-20261019/objects8k-reviewed-rows.json)：14 个 Lavik 点来自 [本轮实测](compact-pr357-stack-20261019/)，42 个竞品点来自 [四库归档](objects8k-fourdb-20261019/)。原始命令、配置与日志一并保留。
 - [客户端源码](objects8k-fourdb-20261019/client/clients/)、[编译身份](objects8k-fourdb-20261019/client/client-build-manifest.json)、[41 项 Linux fake RESP 验证](objects8k-fourdb-20261019/client/linux-client-tests.json)。
 - [当前选点与版本对应](main-report-refresh-20261019/selection.json)及[图表数值校验](main-report-refresh-20261019/chart-receipt.json)；[formal-points.json](formal-points.json) 保留全部历史点及 `current_report_selection`。
-
-## ZSet 点更新优化（历史对照）：8 KiB 与 1 MiB 对照（2026-10-19）
-
-本节独立比较 main `684894d` 与包含两项 ZSet 点更新优化的 candidate `32bdd6b`；两版 Bycorf 均为 `86d6867`。候选版通过 125 项单元测试和 33 项端到端测试。前面的 1 MiB 主表采用本节 candidate 的两项结果；8 KiB 主表采用后续 #358 + #357 的独立测量。
-
-两档各 8,192 个 key，member 均为 32 B：8 KiB 每 key 有 256 个 member，1 MiB 有 32,768 个 member。每档只装载一次，后续操作及版本切换共用数据；ZREM/ZADD 的 member 状态连续保存。每点 80 个连接，预热 90 秒、正式测量 60 秒，各一轮。
-
-ZINCRBY 随机选择现存 member，以 ±32,768 更新 score；ZREM/ZADD 为每个连接保留一个 member 槽，先删除再添加，score 按序列号取模 32,768。ZREM/ZADD 的吞吐单位为 **pairs/s**，延迟是完成一整对命令的耗时；ZINCRBY 使用 **ops/s**。表格延迟单位均为 **ms**，变化按 `(candidate / main − 1) × 100%` 计算。
-
-| 每 key 数据量 | 命令 | main：吞吐 / Avg / p99.9 | candidate：吞吐 / Avg / p99.9 | 吞吐变化 | Avg 变化 | p99.9 变化 |
-|---|---|---:|---:|---:|---:|---:|
-| 8 KiB | ZINCRBY | 84,548.0 / 0.945 / 9.417 | 79,827.8 / 1.001 / 9.699 | -5.6% | +5.9% | +3.0% |
-| 8 KiB | ZREM/ZADD | 48,248.3 / 1.657 / 10.996 | 46,692.8 / 1.712 / 11.368 | -3.2% | +3.3% | +3.4% |
-| 1 MiB | ZINCRBY | 26,066.5 / 3.068 / 29.292 | 33,428.9 / 2.392 / 27.017 | +28.2% | -22.0% | -7.8% |
-| 1 MiB | ZREM/ZADD | 19,701.8 / 4.058 / 34.721 | 20,293.9 / 3.940 / 34.061 | +3.0% | -2.9% | -1.9% |
-
-![ZSet 点更新吞吐与 p99.9 延迟](zset-opt-crossover.svg)
-
-1 MiB ZINCRBY 的候选版在六个连续 10 秒窗口中的平均吞吐依次为 **38,321.0、36,691.6、35,864.2、35,460.7、27,381.7、26,859.4 ops/s**；前 40 秒平均 36,584.4 ops/s，后 20 秒平均 27,120.5 ops/s，后段相对前段变化 -25.9%。main 的六段均值为 25,142.4–27,425.2 ops/s。因此表中的 **+28.2%** 仅是整个固定 60 秒窗口的汇总差异，不能表述为稳定吞吐提升，也不能据此确认因果关系。逐秒计数见 [candidate 原始结果](zset-opt-crossover-20261019/client/results/candidate-grouped-zincr-c80/result.json) 和 [main 原始结果](zset-opt-crossover-20261019/client/results/main-grouped-zincr-c80/result.json)。
-
-测试顺序固定为 main 的 8 KiB 两项、装载 1 MiB 数据、main 的 1 MiB 两项，然后 candidate 的同样四项。因此 main 的 8 KiB 测量时只有 compact 命名空间，candidate 的 8 KiB 测量时两个命名空间均已存在，总驻留数据量不同；两版 1 MiB 测量时均已有两个命名空间。数据、score 和替换状态持续变化，切换版本时以干净停止和 checkpoint 恢复保持连续。结果表示这一次固定顺序下的观测差异，尤其不能把 compact 的小幅波动单独归因于代码优化，也不能据此估计重复运行的波动范围。
-
-原始结果、命令和观测记录见 [zset-opt-crossover-20261019](zset-opt-crossover-20261019/)，逐点身份及变化比例见 [comparison.json](zset-opt-crossover-20261019/comparison.json) 与 [summary.json](zset-opt-crossover-20261019/summary.json)。
-
-运行入口（须先按归档准备二进制、六块专用盘及客户端；每个新实验只执行一次）：
-
-```sh
-cd /opt/benchmark/zset-opt-crossover-20261019
-sudo python3 run.py
-```
