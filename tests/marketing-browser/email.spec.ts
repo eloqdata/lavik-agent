@@ -147,10 +147,19 @@ test("email workspace supports draft A/B editing, previews, lifecycle and mobile
   await page.getByRole("button", { name: "Pause", exact: true }).click();
   await expect(page.locator("#email-jobs .badge")).toHaveText("paused");
   await page.setViewportSize({ width: 375, height: 900 });
-  expect(
-    await page.evaluate(
-      () => document.documentElement.scrollWidth <= innerWidth,
-    ),
-  ).toBe(true);
+  const layout = await page.evaluate(() => ({
+    width: document.documentElement.scrollWidth,
+    viewport: innerWidth,
+    overflowing: [...document.querySelectorAll("#tab-email *")]
+      .filter(
+        (e) =>
+          !e.closest(".table-scroll") &&
+          e.getBoundingClientRect().right > innerWidth,
+      )
+      .map((e) => ({ tag: e.tagName, id: e.id, className: e.className })),
+  }));
+  expect(layout.width, JSON.stringify(layout)).toBeLessThanOrEqual(
+    layout.viewport,
+  );
   expect(errors).toEqual([]);
 });

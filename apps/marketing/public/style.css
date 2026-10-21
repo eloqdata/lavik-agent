@@ -639,3 +639,22 @@ td small {
     grid-template-columns: 1fr;
   }
 }
+
+/* Job controls and the sender header wrap instead of widening small screens. */
+#tab-email header {
+  flex-wrap: wrap;
+}
+#tab-email header > div {
+  flex: 1 1 260px;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+#tab-email .cell-actions {
+  flex-wrap: wrap;
+}
+.email-form {
+  grid-template-columns: minmax(0, 1fr);
+}
+.email-form > * {
+  min-width: 0;
+}
