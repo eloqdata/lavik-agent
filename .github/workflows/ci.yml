@@ -26,6 +26,12 @@ jobs:
       # CI validates its own platform without changing reviewed publication receipts.
       - run: npm run verify:examples -- --output-dir .cache/ci-verification
       - run: npm run check
+      # fs.cpSync preserves mkdtemp's 0700 root; the container's _apt user
+      # needs to traverse this public, checksum-verified repository.
+      - name: Make staged public APT files readable to the installer
+        run: |
+          find apps/web/out/apt -type d -exec chmod 0755 {} +
+          find apps/web/out/apt -type f -exec chmod 0644 {} +
       - name: Verify signed APT installation on native AMD64
         run: python3 scripts/verify-apt.py apps/web/out/apt .cache/ci-verification/apt.json
       - run: npx playwright install --with-deps chromium
