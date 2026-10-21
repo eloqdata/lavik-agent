@@ -83,7 +83,7 @@ export function renderMessage(
     subject: apply(template.subject).replace(/[\r\n\u0000]/g, " "),
     body:
       apply(template.body) +
-      `\n\nHubert Zhang | EloqData\n${address}\n\nTo stop receiving these emails: ${unsubscribe}`,
+      `\n\nHubert Zhang | EloqData\n${address.trim() ? address.trim() + "\n" : ""}\nTo stop receiving these emails: ${unsubscribe}`,
   };
 }
 export function retryAt(header: string | null, now = Date.now()) {

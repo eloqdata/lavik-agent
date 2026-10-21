@@ -8,7 +8,7 @@ public website assets, model prompts, or traffic events.
 ## Start a job
 
 1. Open Cold email → Mailbox settings. Connect Outlook using the steps below,
-   enter EloqData's postal address and choose the mailbox-wide rate limits.
+   choose the mailbox-wide rate limits. The mailing-address field is optional.
 2. Search contacts by name/email and exact email domain. The imported CRM fields
    contain names and addresses; they do not verify job title or current interest.
 3. Create a draft, choose a published landing page, installation guide, download
@@ -16,7 +16,8 @@ public website assets, model prompts, or traffic events.
 4. Write a subject and plain-text message for A, and optionally B. Supported
    substitutions are `{{first_name}}`, `{{last_name}}`, `{{link}}`, and
    `{{unsubscribe}}`. Each variant must contain `{{link}}`. Missing first names
-   become “there”. A signature, postal address and unsubscribe link are appended.
+   become “there”. A signature and unsubscribe link are appended, together with
+   the mailing address if provided.
 5. Save and preview. The preview uses fictional Alex Example; it sends no email.
    Enable scheduled sending, then Start job. An optional date/time delays its
    earliest send; all rate limits still apply. The browser shows local time.
@@ -79,7 +80,7 @@ An EloqData Microsoft 365/Exchange administrator must perform the following setu
    This uses authenticated Wrangler and passes values through stdin. It does not
    read `.env`, use Azure model keys, or put secrets in GitHub or the browser.
 
-7. Enter the postal address in the console. Begin with a small, relevant audience
+7. Manage sending from the console. Begin with a small, relevant audience
    and inspect Sent Items and delivery failures before increasing the rate.
    Configure the sender domain's SPF, DKIM and DMARC with the Microsoft 365 admin.
 

@@ -51,7 +51,7 @@ BEGIN
  WHERE status='sending' AND attempt_at < now()-interval '10 minutes';
  UPDATE lavik_email.jobs SET status='completed' WHERE status='running'
  AND NOT EXISTS(SELECT 1 FROM lavik_email.recipients WHERE job_id=lavik_email.jobs.id AND status IN ('pending','sending'));
- IF NOT cfg.enabled OR length(trim(cfg.postal_address))<10 OR cfg.next_send_at>now() THEN RETURN NULL; END IF;
+ IF NOT cfg.enabled OR cfg.next_send_at>now() THEN RETURN NULL; END IF;
  IF (SELECT count(*) FROM lavik_email.attempts WHERE started_at>now()-interval '24 hours')>=cfg.daily_limit THEN RETURN NULL; END IF;
  UPDATE lavik_email.recipients r0 SET status='suppressed',last_error='Suppressed, archived or contacted in the last 30 days'
  WHERE r0.status='pending' AND EXISTS(SELECT 1 FROM lavik_email.jobs WHERE id=r0.job_id AND status='running')

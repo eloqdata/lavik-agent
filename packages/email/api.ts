@@ -73,11 +73,10 @@ export async function emailApi(request: Request, env: EmailEnv, store: Store) {
     }
     if (path === "settings" && request.method === "POST") {
       const s = settingsSchema.parse(await request.json());
-      if (s.enabled && (!configured(env) || s.postal_address.length < 10))
+      if (s.enabled && !configured(env))
         return json(
           {
-            error:
-              "Connect Outlook and enter a company postal address before enabling sending",
+            error: "Connect Outlook before enabling sending",
           },
           400,
         );
@@ -192,7 +191,7 @@ export async function emailApi(request: Request, env: EmailEnv, store: Store) {
               job.links[key]?.url ??
                 "https://lavik.dev/go/[generated-on-start]",
               "https://marketing.lavik.dev/email/unsubscribe/[personal-token]",
-              s.postal_address || "[Company postal address]",
+              s.postal_address,
             ),
           ]),
         ),
@@ -201,10 +200,10 @@ export async function emailApi(request: Request, env: EmailEnv, store: Store) {
     if (action === "start" && request.method === "POST") {
       const [s] =
         await sql`SELECT enabled,postal_address FROM lavik_email.settings WHERE id=true`;
-      if (!configured(env) || !s.enabled || s.postal_address.length < 10)
+      if (!configured(env) || !s.enabled)
         return json(
           {
-            error: "Configure Outlook, postal address and enable sending first",
+            error: "Connect Outlook and enable sending first",
           },
           400,
         );

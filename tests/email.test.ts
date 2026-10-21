@@ -74,6 +74,15 @@ test("templates require a tracked destination and support only approved fields",
   assert.equal(out.subject, "Hello there");
   assert.match(out.body, /Company address/);
   assert.match(out.body, /unsubscribe/);
+  const noAddress = renderMessage(
+    job.content.a,
+    { first_name: "", last_name: "" },
+    "https://lavik.dev/go/abc",
+    message.unsubscribe,
+    "",
+  );
+  assert.match(noAddress.body, /Hubert Zhang \| EloqData\n\nTo stop receiving/);
+  assert.ok(!noAddress.body.includes("[Company postal address]"));
 });
 test("email jobs use existing registered share-link attribution without recipient identifiers", () => {
   const url = campaignUrl("/en/", "email", "landing", ["landing"]);

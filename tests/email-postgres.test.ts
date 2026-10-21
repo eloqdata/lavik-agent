@@ -110,7 +110,7 @@ test(
       );
       assert.equal(q("SELECT lavik_email.claim()"), ""); // disabled by default
       q(
-        `UPDATE lavik_email.settings SET enabled=true,postal_address='Test Company, Test City',daily_limit=2,interval_seconds=120`,
+        `UPDATE lavik_email.settings SET enabled=true,postal_address='',daily_limit=2,interval_seconds=120`,
       );
       const run = promisify(execFile);
       const claims = await Promise.all(

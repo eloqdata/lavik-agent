@@ -139,7 +139,7 @@ test("email workspace supports draft A/B editing, previews, lifecycle and mobile
   await page
     .getByText("Mailbox settings & sending limits", { exact: true })
     .click();
-  await page.locator("#email-address").fill("EloqData, example postal address");
+  await expect(page.locator("#email-address")).toHaveValue("");
   await page.locator("#email-enabled").check();
   await page.getByRole("button", { name: "Save mailbox settings" }).click();
   await page.getByRole("button", { name: "Start job", exact: true }).click();

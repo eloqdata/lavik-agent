@@ -340,11 +340,11 @@
             <form id="email-settings" class="email-form">
               <p id="email-connection"></p>
               <label
-                >Company postal address<textarea
+                >Company postal address (optional)<textarea
                   id="email-address"
                   rows="3"
                   maxlength="500"
-                  placeholder="EloqData's mailing address, included in every email"
+                  placeholder="Optional mailing address for the email footer"
                 ></textarea>
               </label>
               <div class="email-columns">
@@ -491,9 +491,9 @@
               <p class="hint">
                 Use {{first_name}}, {{last_name}}, and {{link}}. Each message
                 must contain {{link}}; it becomes the variant's tracked share
-                link. Your signature, postal address and personal unsubscribe
-                link are added automatically. Optional {{unsubscribe}} inserts
-                that link in the body too.
+                link. Your signature and personal unsubscribe link are added
+                automatically, along with the mailing address if provided.
+                Optional {{unsubscribe}} inserts that link in the body too.
               </p>
               <div class="actions">
                 <button type="submit">Save draft</button
