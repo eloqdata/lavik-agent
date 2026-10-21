@@ -1,0 +1,142 @@
+{
+  "id": "lavik-benchmark-traffic-and-application-load",
+  "locale": "en",
+  "version": "0.1.0",
+  "kind": "blog",
+  "slug": "lavik-benchmark-traffic-and-application-load",
+  "title": "Six cache reads per page: turning benchmark QPS into an application load plan",
+  "summary": "A hypothetical page-rendering service shows how command fan-out, response bytes, independent arrivals, and background refreshes change the meaning of Lavik’s benchmark throughput.",
+  "updatedAt": "2026-10-21",
+  "sourceRevision": "471f4864357f4a5034c64e7d4972ec0e55b82d94",
+  "topics": [
+    "use-case",
+    "benchmark",
+    "best-practise"
+  ],
+  "blocks": [
+    {
+      "type": "paragraph",
+      "text": "A page-rendering service can outgrow its cache’s memory capacity without needing more page-serving compute. Imagine a catalog whose pages assemble several independently cached objects, including objects from a long tail of rarely visited items. Lavik 0.1.0 offers a concrete reason to keep more of that catalog directly addressable through a Redis-compatible interface: its key index stays in DRAM while values live on NVMe. The deployment decision then needs an application load model that counts pages, cache commands, and bytes separately.",
+      "sources": [
+        "current-010-readme",
+        "current-010-storage"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "Start with one page’s work"
+    },
+    {
+      "type": "paragraph",
+      "text": "Consider a hypothetical service receiving 10,000 page requests per second. Each page needs six distinct cached objects, each exactly 1 KiB, fetched with separate GETs. Assume every lookup hits and there are no retries or shared local-cache hits. That means 60,000 GET commands per second and 61,440,000 returned value bytes per second, about 58.6 MiB/s. RESP framing, keys in requests, transport overhead, and the final HTTP response are additional. These are application-planning assumptions and arithmetic, not Lavik measurements.",
+      "sources": [
+        "current-010-compact",
+        "current-010-requests"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "The choice of six separate GETs matters. Launching them concurrently lets a page wait for its slowest object; issuing them sequentially adds their waits. Either way, the page still needs six values. Replacing them with one MGET changes the command count and execution path, but leaves the six-object payload requirement. Lavik coordinates MGET through a shared-lock transaction and submits eligible local disk reads in buffer-paced waves. A pure GET benchmark does not measure that MGET path, and Cluster mode requires all keys in a multi-key request to share a hash slot.",
+      "sources": [
+        "current-010-requests",
+        "current-010-storage"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "Use the benchmark as a traffic specification"
+    },
+    {
+      "type": "paragraph",
+      "text": "The October 13 small-machine report provides a useful reference point. With 100 million keys and 1,024-byte values, Lavik recorded 132,749 GET operations/s and client-observed p99.9 latency of 1.039 ms at 80 connections. This was uniform-random, pure GET traffic from memtier 2.5.1, with 16 client threads, independent client seeds, pipeline depth 1, and no rate limit. Each point ran once for 30 seconds after a 10-second GET warmup per configuration. The server was an Azure L2aos_v5 with nominal 16 GiB RAM and two vCPUs—two SMT threads of one physical core—using two Lavik workers, kernel TCP, and a dedicated local NVMe namespace through SPDK. Defrag stayed enabled.",
+      "sources": [
+        "current-010-compact"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "Pipeline depth 1 makes each benchmark connection a one-outstanding-request loop: it waits for a response before sending the next request. When responses slow, those connections generate less traffic. The page service’s arrivals can continue independently while earlier pages are still waiting. Its 60,000 GET/s baseline therefore cannot be certified by placing it below the benchmark’s 132,749 GET/s result. Nor does dividing that result by six establish page throughput: the application introduces fan-out, scheduling, other work, and a different arrival process.",
+      "sources": [
+        "current-010-compact",
+        "current-010-requests"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "Measure page completion separately from command latency. A page that fetches six objects concurrently finishes its cache phase only after all six return, including any application queue wait. The benchmark’s 1.039 ms p99.9 is a command percentile over its measurement window; it is neither a page p99 nor a page p99.9. Shared storage or scheduling delays can affect several object reads together, so an application model should not assume independent latency samples.",
+      "sources": [
+        "current-010-compact",
+        "current-010-requests",
+        "current-010-storage"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "Give bursts an explicit queue budget"
+    },
+    {
+      "type": "paragraph",
+      "text": "Now suppose arrivals reach 40,000 pages/s for a quarter-second. Those 10,000 pages create 60,000 object reads during the burst, equivalent to an arrival rate of 240,000 GET/s, and demand about 58.6 MiB of value responses. For illustration, an application dispatch allowance of 60,000 GET/s could release only 15,000 reads during that quarter-second, leaving 45,000 waiting if all were admitted. This is queue arithmetic under a chosen allowance, not a prediction of Lavik capacity. If normal arrivals immediately resume at 60,000 GET/s, that allowance has no spare dispatch capacity to drain the backlog.",
+      "sources": [
+        "current-010-compact",
+        "current-010-requests"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "Make admission a page-level decision before launching six reads. Give the renderer a bounded waiting queue and a deadline; when the allowance is exhausted, serve an application-approved stale page, omit optional content, or reject the page before creating more cache work. Keep arrival timestamps through completion so queue time remains visible. Lavik’s connection and request-buffer limits protect server resources, but they do not decide whether a waiting page is still useful to its reader.",
+      "sources": [
+        "current-010-requests"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "Budget refreshes independently"
+    },
+    {
+      "type": "paragraph",
+      "text": "Suppose background workers also replace 5,000 cached objects per second. With the same hypothetical 1 KiB objects, that adds 5,000 SET commands/s and about 4.9 MiB/s of incoming value payload. The resulting plan is 60,000 reads plus 5,000 writes each second; it is not represented by either pure-command curve. At 80 connections the same 100M-key benchmark recorded 133,977 SET operations/s with 3.423 ms p99.9, in a separate uniform-random overwriting SET window under the same benchmark method. The GET and SET rates cannot be added into a mixed-workload capacity figure.",
+      "sources": [
+        "current-010-compact"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "Give refresh workers their own dispatch allowance and a maximum acceptable object age. During a page burst, defer refreshes whose freshness deadlines permit it, then resume within a bounded catch-up budget. Separate allowances control demand, but reads and writes still share server resources. Lavik appends replacement versions and reclaims obsolete storage in the background, so sustained refresh work also needs storage headroom and observation of dirty bytes, pending flushes, and reclamation. For this design, keep the origin authoritative and the cache rebuildable: an ordinary successful write reply is not a synchronous crash-durability fence.",
+      "sources": [
+        "current-010-storage",
+        "current-010-requests"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "Adopt for retained capacity, validate for page arrivals"
+    },
+    {
+      "type": "paragraph",
+      "text": "The same small-machine benchmark held 100 million keys containing 95.37 GiB of logical value payload on a nominal 16 GiB host. That supports the application’s capacity argument: a larger catalog can remain in an NVMe-backed Redis-compatible store. It does not make RAM irrelevant. The report observed 5,697.3–5,733.6 MiB of process RSS for that dataset, approximately 5.6 GiB, and separately reserved 2 GiB of hugepages; keys, indexes, and other overhead also matter. Moving value capacity to NVMe changes which resource must grow, without establishing a measured total-cost reduction or equivalent SLA.",
+      "sources": [
+        "current-010-compact",
+        "current-010-storage"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "The practical next step is one application rehearsal on stable 0.1.0: retain the intended catalog size, schedule page arrivals independently of completions, fetch the actual six objects, and run refresh workers alongside them. Include the quarter-second burst and the period afterward. Record scheduled and admitted pages, completed pages, queue age, page latency, per-command latency, returned bytes, and refresh age. Use those results to set the page admission and refresh allowances. Lavik is open source under Apache 2.0; follow the tested 0.1.0 manual linked in the publication footer for setup.",
+      "sources": [
+        "current-010-readme",
+        "current-010-compact",
+        "current-010-requests",
+        "current-010-storage"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "Publication references — Current 0.1.0 installation, compatibility notes, and manual entry point: https://github.com/eloqdata/lavik/blob/471f4864357f4a5034c64e7d4972ec0e55b82d94/README.md . October benchmark and full methodology: https://github.com/eloqdata/lavik/blob/471f4864357f4a5034c64e7d4972ec0e55b82d94/perf_reports/lavik-v0.1.0-2vcpu-latest-capacity-2026-10-13/README.md .",
+      "sources": [
+        "current-010-readme",
+        "current-010-compact"
+      ]
+    }
+  ]
+}
