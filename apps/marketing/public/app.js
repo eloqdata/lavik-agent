@@ -11,6 +11,7 @@ const platforms = [
   "discord",
   "slack",
   "newsletter",
+  "email",
 ];
 let session,
   placements = [],

@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="/style.css" />
     <script src="/qr.js" defer></script>
     <script src="/app.js" defer></script>
+    <script src="/email.js" defer></script>
   </head>
   <body>
     <div id="notice" role="status" aria-live="polite" hidden></div>
@@ -121,6 +122,7 @@
           <button data-tab="overview" aria-current="page">Overview</button
           ><button data-tab="placements">Groups & placements</button
           ><button data-tab="links">Share links</button
+          ><button data-tab="email">Cold email</button
           ><button data-tab="settings">Account</button>
         </nav>
         <div class="sidebar-bottom">
@@ -318,6 +320,211 @@
                 placeholder="Group, article, or platform"
             /></label>
             <div id="link-table" class="table-scroll"></div>
+          </section>
+        </section>
+        <section id="tab-email" class="tab" hidden>
+          <header>
+            <div>
+              <p class="eyebrow">PERSONAL OUTREACH</p>
+              <h1>Email jobs</h1>
+              <p class="muted">
+                Send from hubertzhang@eloqdata.com. Compare messages by the
+                visits and adoption interest they generate.
+              </p>
+            </div>
+            <button id="email-refresh" class="secondary">Refresh email</button>
+          </header>
+          <p id="email-status" role="status">Loading email workspace…</p>
+          <details class="panel">
+            <summary>Mailbox settings & sending limits</summary>
+            <form id="email-settings" class="email-form">
+              <p id="email-connection"></p>
+              <label
+                >Company postal address<textarea
+                  id="email-address"
+                  rows="3"
+                  maxlength="500"
+                  placeholder="EloqData's mailing address, included in every email"
+                ></textarea>
+              </label>
+              <div class="email-columns">
+                <label
+                  >Maximum attempts per rolling 24 hours<input
+                    id="email-limit"
+                    type="number"
+                    min="1"
+                    max="500"
+                    value="50"
+                    required /></label
+                ><label
+                  >Minimum seconds between messages<input
+                    id="email-interval"
+                    type="number"
+                    min="60"
+                    max="86400"
+                    value="120"
+                    required
+                /></label>
+              </div>
+              <label class="email-check"
+                ><input id="email-enabled" type="checkbox" /> Enable scheduled
+                sending</label
+              >
+              <button type="submit">Save mailbox settings</button>
+              <p class="hint">
+                Limits are shared across every job. Other mail sent through
+                Outlook also consumes Microsoft's mailbox and tenant allowance.
+                Pausing stops new sends; an in-flight message may complete.
+              </p>
+              <p class="hint">
+                Outlook setup instructions: docs/cold-email.md in the
+                lavik-agent repository.
+              </p>
+            </form>
+          </details>
+          <section class="panel">
+            <div class="section-heading">
+              <h2>Contact audience</h2>
+              <span id="email-contact-page"></span>
+            </div>
+            <form id="email-contact-search" class="email-columns">
+              <label
+                >Find by name or email<input
+                  id="email-contact-q"
+                  type="search"
+                  maxlength="100" /></label
+              ><label
+                >Email domain<input
+                  id="email-contact-domain"
+                  placeholder="example.com"
+                  maxlength="253" /></label
+              ><button type="submit">Find contacts</button>
+            </form>
+            <p class="hint">
+              Imported names and email addresses do not establish a person's
+              role or interest. Choose a relevant audience before starting a
+              job. Archived, suppressed and recently contacted addresses are
+              excluded from sending.
+            </p>
+            <div id="email-contacts" class="table-scroll"></div>
+            <div class="actions">
+              <button id="email-contacts-prev" class="secondary">
+                Previous</button
+              ><button id="email-contacts-next" class="secondary">Next</button>
+            </div>
+          </section>
+          <details id="email-editor-panel" class="panel">
+            <summary>Create or edit a draft</summary>
+            <form id="email-job-form" class="email-form">
+              <input id="email-job-id" type="hidden" />
+              <label
+                >Job name<input
+                  id="email-job-name"
+                  required
+                  maxlength="90"
+                  placeholder="NVMe architecture · infrastructure teams"
+              /></label>
+              <label
+                >Tracked destination<select id="email-target" required></select
+              ></label>
+              <div class="email-columns">
+                <label
+                  >Audience domain (blank means any)<input
+                    id="email-job-domain"
+                    maxlength="253"
+                    placeholder="example.com" /></label
+                ><label
+                  >Audience name/email contains<input
+                    id="email-job-search"
+                    maxlength="100" /></label
+                ><label
+                  >Maximum recipients<input
+                    id="email-job-limit"
+                    type="number"
+                    min="1"
+                    max="1000"
+                    value="100"
+                    required /></label
+                ><label
+                  >Start no earlier than (your local time)<input
+                    id="email-job-schedule"
+                    type="datetime-local"
+                /></label>
+              </div>
+              <p class="hint">
+                The audience is selected when you start the job and stays fixed.
+                Contacts are split evenly between A and B using a stable
+                randomized order. A recipient gets one variant only.
+              </p>
+              <div class="email-columns">
+                <fieldset>
+                  <legend>Variant A</legend>
+                  <label
+                    >Subject<input
+                      id="email-subject-a"
+                      maxlength="180"
+                      required /></label
+                  ><label
+                    >Plain-text message<textarea
+                      id="email-body-a"
+                      rows="12"
+                      maxlength="10000"
+                      required
+                    ></textarea>
+                  </label>
+                </fieldset>
+                <fieldset>
+                  <legend>Variant B (optional)</legend>
+                  <label
+                    >Subject<input
+                      id="email-subject-b"
+                      maxlength="180" /></label
+                  ><label
+                    >Plain-text message<textarea
+                      id="email-body-b"
+                      rows="12"
+                      maxlength="10000"
+                    ></textarea>
+                  </label>
+                </fieldset>
+              </div>
+              <p class="hint">
+                Use {{first_name}}, {{last_name}}, and {{link}}. Each message
+                must contain {{link}}; it becomes the variant's tracked share
+                link. Your signature, postal address and personal unsubscribe
+                link are added automatically. Optional {{unsubscribe}} inserts
+                that link in the body too.
+              </p>
+              <div class="actions">
+                <button type="submit">Save draft</button
+                ><button id="email-new" type="button" class="secondary">
+                  Clear / new job
+                </button>
+              </div>
+            </form>
+          </details>
+          <section class="panel">
+            <h2>Jobs & A/B results</h2>
+            <p class="hint">
+              Sending totals cover the lifetime of a job. Website results below
+              cover the last 30 days, through now. “Accepted” means Outlook
+              accepted the message, not confirmed delivery. Visits are browser
+              sessions, not unique recipients or email opens. Mail scanners,
+              forwarding and tracking opt-outs can affect attribution.
+            </p>
+            <div id="email-jobs"></div>
+          </section>
+          <section id="email-detail" class="panel" hidden>
+            <h2 id="email-detail-title"></h2>
+            <div id="email-preview" class="email-columns"></div>
+            <div id="email-recipients" class="table-scroll"></div>
+            <div class="actions">
+              <button id="email-recipients-prev" class="secondary">
+                Previous recipients</button
+              ><button id="email-recipients-next" class="secondary">
+                Next recipients
+              </button>
+            </div>
           </section>
         </section>
         <section id="tab-settings" class="tab" hidden>

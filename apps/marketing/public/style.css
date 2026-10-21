@@ -574,3 +574,68 @@ td small {
 #page-table table {
   min-width: 640px;
 }
+/* Email jobs share the console's typography, panels and table treatment. */
+.email-form {
+  display: grid;
+  gap: 18px;
+  margin-top: 20px;
+}
+.email-columns {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+.email-columns > *,
+.email-job {
+  min-width: 0;
+}
+.email-columns fieldset {
+  border: 1px solid #d9ddd2;
+  border-radius: 12px;
+  padding: 18px;
+  display: grid;
+  gap: 15px;
+}
+.email-check {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.email-check input {
+  width: auto;
+}
+.email-job {
+  padding: 24px 0;
+  border-top: 1px solid #d9ddd2;
+}
+.email-message {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font: inherit;
+  line-height: 1.65;
+  background: #f4f3ed;
+  padding: 16px;
+  border-radius: 10px;
+}
+#email-job-form textarea {
+  min-height: 220px;
+}
+#tab-email summary {
+  font-weight: 650;
+  cursor: pointer;
+}
+#email-status {
+  padding: 16px;
+  background: #eef2e7;
+  border-radius: 10px;
+}
+#email-jobs table,
+#email-contacts table,
+#email-recipients table {
+  min-width: 640px;
+}
+@media (max-width: 700px) {
+  .email-columns {
+    grid-template-columns: 1fr;
+  }
+}

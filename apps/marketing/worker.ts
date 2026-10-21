@@ -1,7 +1,11 @@
 import { json } from "../../packages/admin/store";
 import { platformOrigin } from "../../packages/marketing/platform-auth";
 
-type Env = {
+import { emailApi, unsubscribe } from "../../packages/email/api";
+import { tickEmail } from "../../packages/email/sender";
+import type { EmailEnv } from "../../packages/email/model";
+
+type Env = EmailEnv & {
   ASSETS: { fetch(request: Request): Promise<Response> };
   ANALYTICS_STORE: {
     idFromName(name: string): unknown;
@@ -23,6 +27,15 @@ const headers = {
   "Permissions-Policy": "camera=(), microphone=(), geolocation=()",
 };
 export default {
+  async scheduled(_event: unknown, env: Env) {
+    try {
+      await tickEmail(env);
+    } catch {
+      console.error(
+        "Email tick incomplete; durable queue will reconcile its state.",
+      );
+    }
+  },
   async fetch(request: Request, env: Env): Promise<Response> {
     const url = new URL(request.url),
       local =
@@ -35,7 +48,7 @@ export default {
       const endpoint = url.pathname.slice(5);
       // The internal bootstrap route can never be reached from this public console.
       if (
-        !/^(session|login|logout|password|recover|report|catalogue|placements(?:\/[a-z0-9-]+)?|links(?:\/[a-f0-9]+)?)$/.test(
+        !/^(session|login|logout|password|recover|report|catalogue|placements(?:\/[a-z0-9-]+)?|links(?:\/[a-f0-9]+)?|email\/(?:status|settings|contacts|suppress|jobs(?:\/[a-f0-9-]+(?:\/(?:start|pause|cancel|preview|recipients))?)?))$/.test(
           endpoint,
         )
       )
@@ -74,18 +87,41 @@ export default {
           if (body && new TextEncoder().encode(body).length > 16384)
             response = json({ error: "Request too large" }, 413);
           else {
-            url.pathname = `/platform/${endpoint}`;
-            response = await env.ANALYTICS_STORE.get(
-              env.ANALYTICS_STORE.idFromName("lavik-marketing-v1"),
-            ).fetch(
-              new Request(url, {
-                method: request.method,
-                headers: request.headers,
-                body,
-              }),
-            );
+            if (endpoint.startsWith("email/")) {
+              response = await emailApi(
+                new Request(request.url, {
+                  method: request.method,
+                  headers: request.headers,
+                  body,
+                }),
+                env,
+                env.ANALYTICS_STORE.get(
+                  env.ANALYTICS_STORE.idFromName("lavik-marketing-v1"),
+                ),
+              );
+            } else {
+              url.pathname = `/platform/${endpoint}`;
+              response = await env.ANALYTICS_STORE.get(
+                env.ANALYTICS_STORE.idFromName("lavik-marketing-v1"),
+              ).fetch(
+                new Request(url, {
+                  method: request.method,
+                  headers: request.headers,
+                  body,
+                }),
+              );
+            }
           }
         }
+      }
+    } else if (url.pathname.startsWith("/email/unsubscribe/")) {
+      try {
+        response = await unsubscribe(request, env);
+      } catch {
+        response = json(
+          { error: "Unsubscribe temporarily unavailable; please retry." },
+          503,
+        );
       }
     } else if (url.pathname === "/robots.txt")
       response = new Response("User-agent: *\nDisallow: /\n", {
@@ -96,6 +132,7 @@ export default {
         "/",
         "/index.html",
         "/app.js",
+        "/email.js",
         "/style.css",
         "/qr.js",
         "/logo.svg",

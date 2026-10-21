@@ -8,6 +8,7 @@ export const campaignSources = [
   "discord",
   "slack",
   "newsletter",
+  "email",
 ] as const;
 export type Attribution = {
   source: string;
@@ -196,7 +197,7 @@ export function campaignUrl(
   url.searchParams.set("utm_source", source);
   url.searchParams.set(
     "utm_medium",
-    source === "newsletter"
+    ["newsletter", "email"].includes(source)
       ? "email"
       : ["medium", "github"].includes(source)
         ? "referral"

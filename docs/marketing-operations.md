@@ -270,3 +270,13 @@ artifact, not described as successful indexing. Retry notifications with the sam
 build and previous manifest; this makes no model calls. IndexNow can improve change
 discovery for participating engines; it does not guarantee indexing or AI citations.
 `llms.txt` is maintained for agent convenience and is not a Google ranking mechanism.
+
+## Outlook email jobs
+
+The private marketing console includes **Cold email**: contacts in Neon, editable
+A/B drafts, audience snapshots, paced scheduled sends, pause/resume, global
+suppression and per-variant share links. See [Cold email](cold-email.md) for the
+Microsoft mailbox setup, import commands, sending limits and delivery-status meanings.
+Email job IDs are placements (`em-<job>-a` / `-b`) under the existing website
+campaigns, so the existing weekly placement report includes them without a second
+tracking system. Contact addresses and names are not sent to website analytics.

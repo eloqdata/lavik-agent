@@ -30,6 +30,9 @@ for (let attempt = 0; attempt < 12; attempt++) {
       "/api/placements",
       "/api/links",
       "/api/catalogue",
+      "/api/email/status",
+      "/api/email/contacts",
+      "/api/email/jobs",
     ])
       assert.equal((await get(path)).status, 401);
     assert.equal((await get("/api/bootstrap")).status, 404);

@@ -3,7 +3,7 @@ import { execFileSync } from "node:child_process";
 import { createHash } from "node:crypto";
 const out = "apps/marketing/out";
 await fs.mkdir(out, { recursive: true });
-for (const file of ["index.html", "app.js", "style.css"])
+for (const file of ["index.html", "app.js", "email.js", "style.css"])
   await fs.copyFile(`apps/marketing/public/${file}`, `${out}/${file}`);
 await fs.copyFile(
   "apps/web/public/logo/lavik-logo-black.svg",
@@ -17,7 +17,14 @@ await fs.copyFile(
 for (const file of ["campaign-links.json", "discovery-manifest.json"])
   await fs.copyFile(`apps/web/out/${file}`, `${out}/${file}`);
 const files: Record<string, string> = {};
-for (const file of ["index.html", "app.js", "style.css", "qr.js", "logo.svg"])
+for (const file of [
+  "index.html",
+  "app.js",
+  "email.js",
+  "style.css",
+  "qr.js",
+  "logo.svg",
+])
   files[file] = createHash("sha256")
     .update(await fs.readFile(`${out}/${file}`))
     .digest("hex");
