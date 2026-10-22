@@ -3,7 +3,10 @@ import "./manual.css";
 import { useId } from "react";
 import { useRouter } from "next/navigation";
 import type { Locale } from "../../../packages/content/schema";
-import type { DocVersion } from "../../../packages/docs/versions";
+import {
+  defaultDocVersion,
+  type DocVersion,
+} from "../../../packages/docs/versions";
 
 export function DocVersionSelect({
   locale,
@@ -33,13 +36,17 @@ export function DocVersionSelect({
         {options.map((option) => (
           <option key={option.version} value={option.version}>
             {option.version}
-            {option.version === "0.1.0"
+            {option.version === defaultDocVersion
               ? zh
                 ? "（默认 · 稳定版）"
                 : " (Default · Stable)"
-              : zh
-                ? "（历史 Beta）"
-                : " (Archived Beta)"}
+              : option.version === "0.1.0-beta.1"
+                ? zh
+                  ? "（历史 Beta）"
+                  : " (Archived Beta)"
+                : zh
+                  ? "（历史稳定版）"
+                  : " (Archived Stable)"}
           </option>
         ))}
       </select>

@@ -1,4 +1,9 @@
 import {
+  docVersionForRoute,
+  isStableDocVersion,
+  defaultDocVersion,
+} from "../../../../packages/docs/versions";
+import {
   benchmarkReports,
   benchmarkRoute,
 } from "../../../../packages/benchmarks/catalog";
@@ -38,6 +43,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
       "about/",
       "privacy/",
       "docs/0.1.0/",
+      "docs/0.2.0/",
+      "download/0.1.0/",
+      "releases/0-2-0/",
       "docs/0.1.0-beta.1/",
       "download/0.1.0-beta.1/",
       "releases/0-1-0/",
@@ -84,20 +92,20 @@ export default function sitemap(): MetadataRoute.Sitemap {
       parts = url.pathname.split("/").filter(Boolean),
       locale = parts[0],
       route = parts.slice(1).join("/");
-    const stableDocs =
-      route === "docs/0.1.0" || route.startsWith("docs/0.1.0/");
+    const docVersion = docVersionForRoute(route);
+    const stableDocs = !!docVersion && isStableDocVersion(docVersion);
     const source = route.startsWith("benchmarks")
       ? "packages/benchmarks/catalog.ts"
       : stableDocs
         ? route.includes("/commands")
-          ? "content/docs/0.1.0/catalog.json"
+          ? `content/docs/${docVersion}/catalog.json`
           : route.includes("/clients")
-            ? "evidence/docs/0.1.0/clients.json"
-            : "content/docs/0.1.0/guides.json"
+            ? `evidence/docs/${docVersion}/clients.json`
+            : `content/docs/${docVersion}/guides.json`
         : route === "download"
-          ? "content/docs/0.1.0/downloads.json"
-          : route === "releases/0-1-0"
-            ? "content/docs/0.1.0/release-notes.json"
+          ? `content/docs/${defaultDocVersion}/downloads.json`
+          : route === "releases/0-1-0" || route === "releases/0-2-0"
+            ? `content/docs/${route === "releases/0-1-0" ? "0.1.0" : "0.2.0"}/release-notes.json`
             : route.startsWith("compare")
               ? "packages/comparisons/content.ts"
               : route.startsWith("docs/0.1.0/commands")

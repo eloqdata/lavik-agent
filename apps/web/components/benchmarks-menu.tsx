@@ -94,7 +94,7 @@ export function BenchmarksMenu({ locale }: { locale: Locale }) {
             <p className="eyebrow">
               {zh ? "NVMe SSD · 实测结果" : "NVMe SSD · MEASURED RESULTS"}
             </p>
-            <strong>0.1.0</strong>
+            <strong>0.2.0</strong>
             <h2>{zh ? "四个角度，看清性能" : "Four views of performance"}</h2>
             <p>
               {zh

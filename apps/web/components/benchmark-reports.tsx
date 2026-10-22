@@ -38,7 +38,7 @@ export function BenchmarksHome({ locale }: { locale: Locale }) {
     <main id="main" className="container benchmark-home">
       <header className="benchmark-hero">
         <p className="eyebrow">
-          LAVIK 0.1.0 · {zh ? "公开基准测试" : "PUBLISHED BENCHMARKS"}
+          LAVIK 0.2.0 · {zh ? "公开基准测试" : "PUBLISHED BENCHMARKS"}
         </p>
         <h1>
           {zh
@@ -51,8 +51,8 @@ export function BenchmarksHome({ locale }: { locale: Locale }) {
             : "From a 2-vCPU instance to a billion-key dataset: explore throughput, tail latency, and complete reproduction procedures. Choose the experiment that matches your workload."}
         </p>
         <div className="benchmark-hero-facts">
-          <span>4 {zh ? "份报告" : "reports"}</span>
-          <span>2026-10-13 / 14</span>
+          <span>4 {zh ? "个主题 · 3 份报告" : "topics · 3 reports"}</span>
+          <span>2026-10-21 / 22</span>
           <span>NVMe SSD · SPDK / io_uring</span>
         </div>
       </header>
@@ -131,7 +131,7 @@ export function BenchmarkReportPage({
         <span>{r.label[locale]}</span>
       </nav>
       <header className="benchmark-report-hero">
-        <p className="eyebrow">LAVIK 0.1.0 · {r.date}</p>
+        <p className="eyebrow">LAVIK 0.2.0 · {r.date}</p>
         <h1>{r.title[locale]}</h1>
         <p className="page-lead">{r.summary[locale]}</p>
         <p className="benchmark-scope">{r.scope[locale]}</p>
@@ -284,7 +284,7 @@ export function BenchmarkReportPage({
                 : "Data, charts and commands come from the published report linked on this page. The report is pinned to a source commit so its versions, measurement conditions and reproduction procedure can be inspected."}
             </p>
             <Link href={"/" + locale + "/download/"}>
-              {zh ? "下载 Lavik 0.1.0" : "Download Lavik 0.1.0"} →
+              {zh ? "下载 Lavik 0.2.0" : "Download Lavik 0.2.0"} →
             </Link>
           </footer>
         </div>

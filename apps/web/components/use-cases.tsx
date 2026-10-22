@@ -60,7 +60,7 @@ export function UseCasesHome({ locale }: { locale: Locale }) {
       data-manual-hash={publication.bundleHash}
     >
       <section className="container solution-hero">
-        <p className="eyebrow">LAVIK 0.1.0 / {zh ? "使用场景" : "USE CASES"}</p>
+        <p className="eyebrow">LAVIK 0.2.0 / {zh ? "使用场景" : "USE CASES"}</p>
         <h1>
           {zh ? "让有价值的数据留在线上。" : "Keep more useful data online."}
           <em>
@@ -80,7 +80,7 @@ export function UseCasesHome({ locale }: { locale: Locale }) {
           </a>
           <Link
             className="button secondary"
-            href={`/${locale}/docs/0.1.0/quick-start/`}
+            href={`/${locale}/docs/0.2.0/quick-start/`}
           >
             {zh ? "开始使用" : "Start with Lavik"} →
           </Link>
@@ -93,13 +93,13 @@ export function UseCasesHome({ locale }: { locale: Locale }) {
             <span>{zh ? "个键 × 1 KiB 值" : "keys × 1 KiB values"}</span>
           </div>
           <div>
-            <strong>385,514</strong>
+            <strong>652,881</strong>
             <span>
-              {zh ? "80 个连接下的 GET QPS" : "GET QPS at 80 connections"}
+              {zh ? "320 个连接下的 GET QPS" : "GET QPS at 320 connections"}
             </span>
           </div>
           <div>
-            <strong>0.439 ms</strong>
+            <strong>0.943 ms</strong>
             <span>
               {zh ? "同一测量点的 GET p99.9" : "GET p99.9 at that same point"}
             </span>
@@ -107,8 +107,8 @@ export function UseCasesHome({ locale }: { locale: Locale }) {
         </div>
         <p className="solution-proof-caption">
           {zh
-            ? "Lavik 0.1.0 · 2026-10-14 · 16 vCPU · 六块 NVMe SSD。"
-            : "Lavik 0.1.0 · October 14, 2026 · 16 vCPUs · six NVMe SSDs."}{" "}
+            ? "Lavik 0.2.0 · 2026-10-21 · 16 vCPU · 六块 NVMe SSD。"
+            : "Lavik 0.2.0 · October 21, 2026 · 16 vCPUs · six NVMe SSDs."}{" "}
           <Link href={`/${locale}/benchmarks/1tb-storage/`}>
             {zh ? "完整基准与复现步骤" : "Full benchmark and reproduction"} →
           </Link>
@@ -201,13 +201,13 @@ export function UseCasesHome({ locale }: { locale: Locale }) {
           </h2>
           <p>
             {zh
-              ? "安装 0.1.0、连接现有客户端，再用 RedisShake 演练迁移。"
-              : "Install 0.1.0, connect your existing client, then rehearse migration with RedisShake."}
+              ? "安装 0.2.0、连接现有客户端，再用 RedisShake 演练迁移。"
+              : "Install 0.2.0, connect your existing client, then rehearse migration with RedisShake."}
           </p>
         </div>
         <Link
           className="button primary"
-          href={`/${locale}/docs/0.1.0/quick-start/`}
+          href={`/${locale}/docs/0.2.0/quick-start/`}
         >
           {zh ? "开始使用" : "Get started"} →
         </Link>
@@ -267,19 +267,19 @@ export function UseCasePage({
         <div className="button-row">
           <Link
             className="button primary"
-            href={`/${locale}/docs/0.1.0/quick-start/`}
+            href={`/${locale}/docs/0.2.0/quick-start/`}
           >
             {zh ? "开始使用 Lavik" : "Try Lavik"} →
           </Link>
           <Link
             className="button secondary"
-            href={`/${locale}/docs/0.1.0/migrate-redis/`}
+            href={`/${locale}/docs/0.2.0/migrate-redis/`}
           >
             {zh ? "规划迁移" : "Plan your migration"} →
           </Link>
         </div>
         <div className="solution-tags">
-          <span>Lavik 0.1.0</span>
+          <span>Lavik 0.2.0</span>
           <span>Redis / Valkey</span>
           <span>NVMe SSD</span>
         </div>
@@ -359,14 +359,14 @@ export function UseCasePage({
             </div>
             <p>
               {zh
-                ? "先按快速入门启动 Lavik 0.1.0，再用这些示例键尝试场景中的基本操作。命令参考提供选项与返回值说明。"
-                : "Start Lavik 0.1.0 with the quick start, then use these example keys to try the basic operations. Each command links to its options and return values."}
+                ? "先按快速入门启动 Lavik 0.2.0，再用这些示例键尝试场景中的基本操作。命令参考提供选项与返回值说明。"
+                : "Start Lavik 0.2.0 with the quick start, then use these example keys to try the basic operations. Each command links to its options and return values."}
             </p>
             <div className="solution-command-links">
               {entry.commands.map((name) => (
                 <Link
                   key={name}
-                  href={`/${locale}/docs/0.1.0/commands/${name.toLowerCase()}/`}
+                  href={`/${locale}/docs/0.2.0/commands/${name.toLowerCase()}/`}
                 >
                   {name}
                 </Link>
@@ -381,7 +381,7 @@ export function UseCasePage({
 
             <Link
               className="text-link"
-              href={`/${locale}/docs/0.1.0/quick-start/`}
+              href={`/${locale}/docs/0.2.0/quick-start/`}
             >
               {zh ? "启动本地实例" : "Start a local instance"} →
             </Link>
@@ -456,7 +456,7 @@ export function UseCasePage({
                 {zh ? "查看吞吐量与尾延迟" : "See throughput and tail latency"}{" "}
                 →
               </Link>
-              <Link href={`/${locale}/docs/0.1.0/clients/`}>
+              <Link href={`/${locale}/docs/0.2.0/clients/`}>
                 {zh ? "已测试的客户端" : "Tested clients"} →
               </Link>
             </div>

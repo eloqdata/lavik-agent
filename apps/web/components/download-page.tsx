@@ -1,12 +1,13 @@
 import {
   defaultDocVersion,
+  isStableDocVersion,
   docVersions,
   downloadPath,
   type DocVersion,
 } from "../../../packages/docs/versions";
 import {
-  stableRelease,
-  stableDownloads,
+  stableReleaseFor,
+  stableDownloadsFor,
   stablePackages,
 } from "../../../packages/docs/stable";
 import { requireStableDocs } from "../../../packages/docs/gate";
@@ -27,11 +28,11 @@ export function DownloadPage({
   locale: Locale;
   version?: DocVersion;
 }) {
-  const stable = version === "0.1.0";
-  if (stable) requireStableDocs();
-  const release = stable ? stableRelease : betaRelease;
-  const downloadRelease = stable ? stableDownloads : betaDownloads;
-  const downloadPackages = stable ? stablePackages() : betaPackages;
+  const stable = isStableDocVersion(version);
+  if (stable) requireStableDocs(version);
+  const release = stable ? stableReleaseFor(version) : betaRelease;
+  const downloadRelease = stable ? stableDownloadsFor(version) : betaDownloads;
+  const downloadPackages = stable ? stablePackages(version) : betaPackages;
   const zh = locale === "zh-CN";
   const source = `https://github.com/eloqdata/lavik/blob/${release.commit}`;
   return (
@@ -56,8 +57,12 @@ export function DownloadPage({
           <span className="eyebrow">
             {stable
               ? zh
-                ? "当前稳定版本"
-                : "CURRENT STABLE RELEASE"
+                ? version === defaultDocVersion
+                  ? "当前稳定版本"
+                  : "历史稳定版本"
+                : version === defaultDocVersion
+                  ? "CURRENT STABLE RELEASE"
+                  : "ARCHIVED STABLE RELEASE"
               : zh
                 ? "历史 Beta"
                 : "ARCHIVED BETA"}
@@ -82,13 +87,13 @@ export function DownloadPage({
           </Link>
           <a
             className="button secondary"
-            href={`/${locale}/releases/${stable ? "0-1-0" : "0-1-0-beta-1"}/`}
+            href={`/${locale}/releases/${stable ? version.replaceAll(".", "-") : "0-1-0-beta-1"}/`}
           >
             {zh ? "版本说明" : "Release notes"} ↗
           </a>
         </div>
       </div>
-      {stable ? (
+      {version === "0.1.0" ? (
         <section className="download-requirements">
           <h2>{zh ? "更多安装方式" : "More Ways To Install"}</h2>
           <p>

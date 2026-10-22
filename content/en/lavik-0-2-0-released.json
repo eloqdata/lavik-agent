@@ -1,0 +1,161 @@
+{
+  "id": "lavik-0-2-0-released",
+  "locale": "en",
+  "version": "0.2.0",
+  "kind": "blog",
+  "slug": "lavik-0-2-0-released",
+  "title": "Lavik 0.2.0 Released: Less Work per Request, More Room for Your Data",
+  "summary": "Leaner String and collection paths, queued I/O, replication fixes, and new benchmarks from 2 vCPUs to a billion keys. Start with the 0.2.0 packages and versioned docs.",
+  "updatedAt": "2026-10-22",
+  "publishedAt": "2026-10-22",
+  "sourceRevision": "2908f86f2770e9c6e8acc6585b3bedb4b44d1cd5",
+  "topics": [
+    "news",
+    "benchmark"
+  ],
+  "featured": false,
+  "technical": {
+    "sources": [
+      {
+        "id": "release",
+        "title": "Lavik 0.2.0 release",
+        "file": "evidence/docs/0.2.0/github-release.json",
+        "url": "https://github.com/eloqdata/lavik/releases/tag/v0.2.0",
+        "sha256": "17e3de43a70832c82f097f0d5d650d7ed7cb07b48331e19d53e529610d936a53"
+      },
+      {
+        "id": "changes",
+        "title": "47 commits from 0.1.0 to 0.2.0",
+        "file": "evidence/docs/0.2.0/commits.json",
+        "url": "https://github.com/eloqdata/lavik/compare/v0.1.0...v0.2.0",
+        "sha256": "73843b124653a9f846de52cb44d363ae6c908efcb73cb1e9227f99058c6b1b02"
+      },
+      {
+        "id": "overview",
+        "title": "Lavik 0.2.0 README",
+        "file": "evidence/docs/0.2.0/sources/README.md",
+        "url": "https://github.com/eloqdata/lavik/blob/2908f86f2770e9c6e8acc6585b3bedb4b44d1cd5/README.md",
+        "sha256": "ec6f4352e39da4115d875de16baa3a490851d106fb6f2f3d508f29d726f310c3"
+      },
+      {
+        "id": "storage",
+        "title": "Storage and recovery at 0.2.0",
+        "file": "evidence/docs/0.2.0/sources/docs_architecture_04-storage-and-recovery.md",
+        "url": "https://github.com/eloqdata/lavik/blob/2908f86f2770e9c6e8acc6585b3bedb4b44d1cd5/docs/architecture/04-storage-and-recovery.md",
+        "sha256": "79b2bf3dbe629fae7f65a702e13cee4c4a33b9b18e763d4ee72a953dc5257b1b"
+      },
+      {
+        "id": "memory-benchmark",
+        "title": "0.2.0 memory-database comparison",
+        "file": "evidence/benchmarks/0.2.0/lavik-v0.2.0-vs-memory-databases-2026-10-21/README.md",
+        "url": "https://github.com/eloqdata/lavik/blob/089dbdfd87001c86ad3343ddf2554464720346e9/perf_reports/lavik-v0.2.0-vs-memory-databases-2026-10-21/README.md",
+        "sha256": "5e8bc4ce332ad9e8b62cf4f90d59cbab44dd4a8ad065388820dd5cad09530af9"
+      },
+      {
+        "id": "storage-benchmark",
+        "title": "0.2.0 billion-key storage comparison",
+        "file": "evidence/benchmarks/0.2.0/lavik-v0.2.0-storage-peers-1tb-2026-10-21/README.md",
+        "url": "https://github.com/eloqdata/lavik/blob/089dbdfd87001c86ad3343ddf2554464720346e9/perf_reports/lavik-v0.2.0-storage-peers-1tb-2026-10-21/README.md",
+        "sha256": "49f10ed9a8bae3788c12233cc8428ddf4b7d2af2d22dba7056f9d13ce48b9e7e"
+      },
+      {
+        "id": "ycsb",
+        "title": "0.2.0 Aerospike YCSB comparison",
+        "file": "evidence/benchmarks/0.2.0/lavik-v0.2.0-aerospike-ycsb-2026-10-21/README.md",
+        "url": "https://github.com/eloqdata/lavik/blob/089dbdfd87001c86ad3343ddf2554464720346e9/perf_reports/lavik-v0.2.0-aerospike-ycsb-2026-10-21/README.md",
+        "sha256": "db9b1655a679f5cfd398d620e9dad923981776f9df462952db9cc2bbcd97d442"
+      }
+    ],
+    "visuals": []
+  },
+  "blocks": [
+    {
+      "type": "heading",
+      "text": "Lavik 0.2.0 is here"
+    },
+    {
+      "type": "paragraph",
+      "text": "Lavik 0.2.0 is available for Linux x86-64 and ARM64. This release focuses on the work between a Redis command and an NVMe value: copying fewer bytes, allocating less temporary state, and submitting storage work more efficiently. You keep the Redis-compatible interface while giving growing catalogs, application caches and online state room beyond DRAM.",
+      "sources": [
+        "release",
+        "changes",
+        "overview"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "Do less work for each object"
+    },
+    {
+      "type": "paragraph",
+      "text": "The 47 commits since 0.1.0 improve both large objects and small point operations. Large String paths remove intermediate receive, staging and read copies. Hash and Set reads avoid decoding whole compact objects, while compact writes splice affected bytes. Sorted Set mutations reuse page capacity and edit encoded pages with fewer per-member allocations. Collection responses use packed, owned byte blocks and batched replies.",
+      "sources": [
+        "changes"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "The io_uring and SPDK paths now use queued submissions. Grouped reads parallelize work per physical owner, while transaction cleanup is separated from writes and flushes are batched. These changes reduce work in the request path; their value to an application depends on its object sizes, command mix and concurrency.",
+      "sources": [
+        "changes"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "Current measurements, from compact instances to a billion keys"
+    },
+    {
+      "type": "paragraph",
+      "text": "In the October 21 16-vCPU SPDK comparison, Lavik 0.2.0 reaches 1,156,956 GET QPS at 7.103 ms p99.9 and 945,384 SET QPS at 10.175 ms p99.9. Both points use 1,280 connections, 10 million 1 KiB values, pipeline depth 1 and 30-second windows. The measured Redis 8.10.2 and Valkey 9.1.2 controls use DRAM and disable AOF and scheduled snapshots. The full connection sweep shows the throughput and latency tradeoffs.",
+      "sources": [
+        "memory-benchmark"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "For capacity, the 2-vCPU experiment retains 100 million keys containing 95.37 GiB of logical value payload on a nominal 16 GiB host. GET and SET peaks are 215,644 and 231,361 ops/s. On the separate 16-vCPU billion-key experiment, Lavik reaches 1,129,597 GET QPS and 910,356 SET QPS using 32 client threads and 60-second windows. It has the highest full-sweep peaks among the six storage-backed systems; Garnet leads GET at 160 connections. Keys, indexes, replicas and storage headroom remain additional sizing inputs.",
+      "sources": [
+        "memory-benchmark",
+        "storage-benchmark"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "The refreshed Aerospike YCSB matrix covers 100 million ten-field records and four workload mixes. Lavik has 9.06%–24.08% higher unlimited total throughput, with higher p99.9 in four of seven unlimited operation cells. CPU/IRQ policies and persistence differ. These are results for the recorded deployments, rather than a guarantee for another application or an isolated before/after version comparison.",
+      "sources": [
+        "ycsb"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "Integrity policy and correctness fixes"
+    },
+    {
+      "type": "paragraph",
+      "text": "Data-record and value/key extent CRC generation is now disabled by default and selectable at startup with record-crc. Each object keeps its policy, and existing CRCs are still checked. Metadata, checkpoints, function catalogs and replication retain their checks. Older readers cannot consume objects written with the new no-CRC flags; include that format boundary in upgrade and recovery planning.",
+      "sources": [
+        "overview",
+        "storage"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "Replication V2 handles wide argument counts, and admitted writes are preserved under memory pressure. The release also retains accepted Admin mutation results and refreshes Stream range locations before pinning. Together with the collection and I/O changes, these fixes make 0.2.0 a useful release to rehearse with a representative cache or online-state dataset.",
+      "sources": [
+        "changes"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "Start with your application"
+    },
+    {
+      "type": "paragraph",
+      "text": "Download the 0.2.0 archive, verify its SHA-256, and follow the current quick start. Minimal uses kernel TCP/io_uring; Standard includes DPDK/SPDK. Both require Linux 6.1+ with io_uring enabled and Ubuntu 24.04-compatible glibc. The release includes Lavik Admin and its Node.js runtime. Keep your application command mix, retention target and page-level latency budget in the rehearsal, then use the new benchmark reports to understand the matching storage path.",
+      "sources": [
+        "release",
+        "overview"
+      ]
+    }
+  ]
+}

@@ -187,8 +187,8 @@ export function BlogIndex({
         </header>
         {!topic && (
           <p className="blog-current-release">
-            <Link href={`/${locale}/blog/lavik-0-1-0-released/`}>
-              {zh ? "Lavik 0.1.0 已发布" : "Lavik 0.1.0 is here"} →
+            <Link href={`/${locale}/blog/lavik-0-2-0-released/`}>
+              {zh ? "Lavik 0.2.0 已发布" : "Lavik 0.2.0 is here"} →
             </Link>
             {" · "}
             <Link href={`/${locale}/benchmarks/`}>

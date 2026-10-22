@@ -3,7 +3,7 @@ import path from "node:path";
 import { createHash } from "node:crypto";
 import { benchmarkReports, type BenchmarkReport } from "./catalog";
 import type { Locale } from "../content/schema";
-export const benchmarkRoot = "evidence/benchmarks/0.1.0";
+export const benchmarkRoot = "evidence/benchmarks/0.2.0";
 export const benchmarkSources = JSON.parse(
   fs.readFileSync(benchmarkRoot + "/sources.json", "utf8"),
 ) as {
@@ -32,7 +32,7 @@ export function sourceFile(report: BenchmarkReport, file: string) {
 export const reportSourceUrl = (r: BenchmarkReport, locale: Locale = "en") =>
   sourceFile(r, locale === "en" ? "README.md" : "README.zh-CN.md").entry.url;
 export const assetUrl = (r: BenchmarkReport, file: string) =>
-  "/benchmark-assets/0.1.0/" + r.id + "/" + file;
+  "/benchmark-assets/0.2.0/" + r.id + "/" + file;
 export function reportMarkdown(r: BenchmarkReport, locale: Locale) {
   const original = sourceFile(
     r,

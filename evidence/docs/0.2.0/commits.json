@@ -1,0 +1,242 @@
+{
+  "base": "feb61224e414c5653fd09560e20c9d214db1e3ac",
+  "head": "2908f86f2770e9c6e8acc6585b3bedb4b44d1cd5",
+  "total": 47,
+  "commits": [
+    {
+      "sha": "b3653366e5276652544bc3948f84c0feccfcfaf5",
+      "message": "Handle managed FLUSH recovery reconnects and bump version to 0.1.1 (#322)",
+      "url": "https://github.com/eloqdata/lavik/commit/b3653366e5276652544bc3948f84c0feccfcfaf5"
+    },
+    {
+      "sha": "4d478a00b6c2a2f68cf4bd8d2281cf0cf591e050",
+      "message": "docs(perf): replace Aerospike YCSB report with v0.1.0 measurements (#324)\n\n* docs(perf): replace Aerospike YCSB report with v0.1.0 measurements\n\n* docs(perf): keep Aerospike report and runnable commands only",
+      "url": "https://github.com/eloqdata/lavik/commit/4d478a00b6c2a2f68cf4bd8d2281cf0cf591e050"
+    },
+    {
+      "sha": "e994cee66869133ab43a5c869a4d60976a9799c0",
+      "message": "docs(perf): add 2-vCPU Redis/Valkey comparison and Lavik 100M-key benchmark (#325)",
+      "url": "https://github.com/eloqdata/lavik/commit/e994cee66869133ab43a5c869a4d60976a9799c0"
+    },
+    {
+      "sha": "f9c249f16d2b66e13e73b868a9b91bb2a7848583",
+      "message": "docs: omit default parameters from test reports (#326)",
+      "url": "https://github.com/eloqdata/lavik/commit/f9c249f16d2b66e13e73b868a9b91bb2a7848583"
+    },
+    {
+      "sha": "eba885bdf3d49c1251b383c5feee0892e09ac7f2",
+      "message": "docs(perf): benchmark Lavik v0.1.0 against Redis and Valkey (#323)",
+      "url": "https://github.com/eloqdata/lavik/commit/eba885bdf3d49c1251b383c5feee0892e09ac7f2"
+    },
+    {
+      "sha": "da1375a64363257a631134c42ab668a59d3d9eff",
+      "message": "docs(perf): use throughput lines and simplify chart annotations (#327)",
+      "url": "https://github.com/eloqdata/lavik/commit/da1375a64363257a631134c42ab668a59d3d9eff"
+    },
+    {
+      "sha": "6a8ef62f6ee37c5af3c855ae40151fd6ffe89b78",
+      "message": "docs: unify and compact README benchmark charts (#328)\n\n* docs: align 2-vCPU README charts with 16-vCPU style\n\n* docs: remove benchmark chart generation script\n\n* docs: combine throughput and latency charts with shared x axes",
+      "url": "https://github.com/eloqdata/lavik/commit/6a8ef62f6ee37c5af3c855ae40151fd6ffe89b78"
+    },
+    {
+      "sha": "79707becac6e2cedc753a10f76fb0a35b8424840",
+      "message": "docs: prioritize benchmarks and release installation in README (#329)",
+      "url": "https://github.com/eloqdata/lavik/commit/79707becac6e2cedc753a10f76fb0a35b8424840"
+    },
+    {
+      "sha": "6e6362e35231516ca4c38fb31ffb34d096b9fb30",
+      "message": "refactor(meta): share command decoding envelope (#330)\n\nCentralize shared header decoding and trailing-byte checks while retaining explicit command dispatch and field readers. Keep all writers unchanged to preserve validation order, and cover all 35 command envelopes with fixed wire bytes and malformed-input checks.",
+      "url": "https://github.com/eloqdata/lavik/commit/6e6362e35231516ca4c38fb31ffb34d096b9fb30"
+    },
+    {
+      "sha": "33a524e6293f129abbe9dbd7c256ec187d28035e",
+      "message": "fix(meta): preserve accepted Admin mutation results (#331)",
+      "url": "https://github.com/eloqdata/lavik/commit/33a524e6293f129abbe9dbd7c256ec187d28035e"
+    },
+    {
+      "sha": "d72ec7acb9af1b56e226b4cf7984f4fd17fd0c6d",
+      "message": "docs: replace storage comparisons with 1TB benchmark report (#333)\n\n* docs: show 80-connection throughput and tail latency on homepage\n\n* docs: compact homepage benchmark bars into shared-label panels\n\n* docs: publish 1TB storage comparison and concise homepage tables\n\n* docs: simplify Lavik label in storage comparison\n\n* docs: keep storage throughput and latency on one line\n\n* docs: sort storage comparison by GET throughput\n\n* docs: restore memory curves and rank storage throughput at 80 connections\n\n* docs: pair opposing throughput and tail latency bars\n\n* docs: stack storage comparison panels with thinner bars\n\n* docs: tighten and polish storage comparison chart",
+      "url": "https://github.com/eloqdata/lavik/commit/d72ec7acb9af1b56e226b4cf7984f4fd17fd0c6d"
+    },
+    {
+      "sha": "277c3c2e57dc2636137081717d3789dcc4caeda4",
+      "message": "refactor(meta): remove unused GroupRecord codec (#332)",
+      "url": "https://github.com/eloqdata/lavik/commit/277c3c2e57dc2636137081717d3789dcc4caeda4"
+    },
+    {
+      "sha": "ca5289a8ad2b632e346ca0f82c310f607db94a13",
+      "message": "fix(replication): support wide argument counts with V2 encoding (#334)\n\nKeep V1 bytes for commands within the legacy count range and accept both formats on replay. Validate length-table size before allocation and cover large committed writes without invalidating replication history.",
+      "url": "https://github.com/eloqdata/lavik/commit/ca5289a8ad2b632e346ca0f82c310f607db94a13"
+    },
+    {
+      "sha": "4b0936ffe261e89b05ae82878019a9db9b56d9b7",
+      "message": "test(storage): release collection write pauses explicitly (#336)",
+      "url": "https://github.com/eloqdata/lavik/commit/4b0936ffe261e89b05ae82878019a9db9b56d9b7"
+    },
+    {
+      "sha": "471f4864357f4a5034c64e7d4972ec0e55b82d94",
+      "message": "refactor(meta): centralize operation state predicates (#335)",
+      "url": "https://github.com/eloqdata/lavik/commit/471f4864357f4a5034c64e7d4972ec0e55b82d94"
+    },
+    {
+      "sha": "6354646e913ed3f256d91a26e6efb37faf011bfb",
+      "message": "fix(replication): preserve admitted writes under memory pressure (#337)\n\n* fix(replication): preserve admitted writes under memory pressure\n\n* refactor(replication): remove obsolete preallocation framework\n\n* fix(replication): keep replies independent of memory reclamation\n\n* fix(replication): preserve backlog size checks at command admission\n\n* test(replication): reconnect while waiting for flush authority recovery\n\n* fix(replication): remove aggregate native event size cap",
+      "url": "https://github.com/eloqdata/lavik/commit/6354646e913ed3f256d91a26e6efb37faf011bfb"
+    },
+    {
+      "sha": "045df0bd3849f1311866e8efbb8f54eba20b0c67",
+      "message": "perf(storage): bound grouped List and String updates (#338)",
+      "url": "https://github.com/eloqdata/lavik/commit/045df0bd3849f1311866e8efbb8f54eba20b0c67"
+    },
+    {
+      "sha": "430ef7308c76a1ea7700e10215331eb34dc039ae",
+      "message": "perf(storage): release worker store state during grouped String and Stream preparation (#340)\n\n* perf(storage): prepare grouped String and Stream writes outside store state\n\n* build: update Bycorf to merged buffered-read support",
+      "url": "https://github.com/eloqdata/lavik/commit/430ef7308c76a1ea7700e10215331eb34dc039ae"
+    },
+    {
+      "sha": "1af1404966190ea7563cc9a23dbe6ca88cd31666",
+      "message": "feat(storage): make record CRC opt-in with persistent per-object flags (#341)",
+      "url": "https://github.com/eloqdata/lavik/commit/1af1404966190ea7563cc9a23dbe6ca88cd31666"
+    },
+    {
+      "sha": "1df56c9d689b60ad64cd056287c685f1a16160c5",
+      "message": "perf(redis): reduce large String receive and segment copies (#339)\n\n* perf(storage): move grouped String payloads into pages\n\n* perf(redis): receive large bulk arguments into final storage\n\n* test: use buffered receive fixture compatible with older kernels",
+      "url": "https://github.com/eloqdata/lavik/commit/1df56c9d689b60ad64cd056287c685f1a16160c5"
+    },
+    {
+      "sha": "3cebc9086b6f93d60354fc75b71721fbe2f30317",
+      "message": "test: fix CRC opt-in and blocking waiter order assumptions (#345)",
+      "url": "https://github.com/eloqdata/lavik/commit/3cebc9086b6f93d60354fc75b71721fbe2f30317"
+    },
+    {
+      "sha": "90668dadd3f29cf217a745214eb96d51f3d78b57",
+      "message": "Avoid redundant work in grouped ZSET point writes (#344)",
+      "url": "https://github.com/eloqdata/lavik/commit/90668dadd3f29cf217a745214eb96d51f3d78b57"
+    },
+    {
+      "sha": "8206e8a0ab26266f39f2f7e8f61003c06c85e480",
+      "message": "Reuse neighboring ZSET page capacity before splitting (#343)",
+      "url": "https://github.com/eloqdata/lavik/commit/8206e8a0ab26266f39f2f7e8f61003c06c85e480"
+    },
+    {
+      "sha": "918cd30fa2d25090bb4cdd9b37d55f3fa4114777",
+      "message": "perf(storage): decouple Tx cleanup from writes and batch flushes (#346)\n\n* perf(storage): wake Tx backlog admissions on progress\n\nPark pressured admissions on worker-local notifications instead of request\npolling and awaiting a complete cleaner round. Last-lease release and each\nTx block retirement wake waiters to recheck the existing global predicate.\nCoalesce cleaner work into one background driver, preserve pressure retries\nand error delivery, and join queued as well as running work during shutdown.\n\nAdd 11 deterministic runtime tests for progress races, threshold rechecks,\nworker stop, shutdown, retryable maintenance and fatal maintenance errors.\nUpdate the transaction and storage architecture for the changed flow.\n\nValidation:\n- Debug build, lavik_tx_backlog_admission and lavik_multikey_e2e pass.\n- Release build and pre-commit pass.\n- Local diagnostic build, 100 preloaded 1 MiB keys, 80 connections, three\n  interleaved 20-second runs per version: median QPS 337.35 -> 351.52,\n  average latency 236.725 -> 228.059 ms, p99 790.527 -> 684.031 ms,\n  p99.9 942.079 -> 950.271 ms. The notification change does not remove\n  sustained admission pressure; its threshold and lease lifetime are unchanged.\n\n* perf(storage): pipeline writes independently of Tx cleanup\n\nRemove the fixed sealed-Tx admission gate and synchronous grouped-write cleanup. Drive coalesced cleaning from sealed blocks and lease completion, retrying independently of foreground waiters, and release completed queue receipts without retaining their writer leases for the remaining batch.\n\nPreserve allocator and commit-queue capacity limits, cleaner failure handling, and shutdown joins. Cover active-lease independence, autonomous cleanup progress, low-capacity recovery, and crash windows.\n\n* perf(storage): batch ready flush data and avoid unchanged Tx rescans\n\nTreat the configured 128 KiB size as a dirty-byte trigger and submit already available snapshots in writes up to 1 MiB. Continue threshold-sized tails accumulated during in-flight flushes while preserving sealed stream ordering and the data/header durability protocol.\n\nRemember successful Tx promotion scans until accounting, dependencies or inverse publication invalidate them, while continuing destination fences and retirement checks. Cover flush triggers, batching, crash recovery and scan invalidation with deterministic tests.\n\n* fix(storage): back off failed cleaner rounds and stabilize recovery tests\n\n* fix(storage): await active transaction reclamation before reporting full",
+      "url": "https://github.com/eloqdata/lavik/commit/918cd30fa2d25090bb4cdd9b37d55f3fa4114777"
+    },
+    {
+      "sha": "07e0f2ac656b62f0f9091f44c6a68d89b40b9934",
+      "message": "perf(storage): avoid grouped String staging and read copies (#347)",
+      "url": "https://github.com/eloqdata/lavik/commit/07e0f2ac656b62f0f9091f44c6a68d89b40b9934"
+    },
+    {
+      "sha": "cd6d1736f938b8c27a0b1189fa36797d69c2be69",
+      "message": "Adopt queued io_uring and SPDK submissions (#348)",
+      "url": "https://github.com/eloqdata/lavik/commit/cd6d1736f938b8c27a0b1189fa36797d69c2be69"
+    },
+    {
+      "sha": "c720539314debb8738c72a22bb0ed5af138cde77",
+      "message": "perf(storage): parallelize grouped reads per physical owner (#349)\n\n* perf(storage): parallelize grouped reads per physical owner\n\nShare bounded read windows across whole String reads, full Hash/Set reads, and List ranges. Decode each completed group before releasing its page lease, join all started tasks, and fall back to serial reads when optional concurrency admission fails.\n\nKeep external-group assembly outputs in overflow storage to avoid exhausting the fixed slots needed by extent reads. Cover owner limits, relocation, failures, constrained buffers, and cold recovery.\n\n* perf(storage): parallelize zset and stream ranges\n\nReuse routing hashes for full Hash and Set replies, preserve bounded window admission and error joins, and initialize standalone read tests explicitly.\n\n* perf(storage): move decoded zset members into range replies\n\n* perf(storage): avoid redundant validation on collection reads\n\n* perf(storage): remove explicit yields from zset reads",
+      "url": "https://github.com/eloqdata/lavik/commit/c720539314debb8738c72a22bb0ed5af138cde77"
+    },
+    {
+      "sha": "52e23a7d95b7ecf0a9da1d4bcc014ef0bbc0e7d8",
+      "message": "perf: avoid full Hash/Set decoding on reads and splice compact Hash writes (#342)\n\n* perf(storage): edit and read compact hashes without materializing fields\n\n* Remove one-off compact hash benchmark harnesses from tests\n\n* test: wait for replica reads before checking flush rejection\n\nMeta cluster readiness can race the replica's local serving gate. Wait until the replica reads the DB0 seed before asserting READONLY, so a valid transient LOADING response is not mistaken for a FLUSH semantics failure.\n\n* test: focus compact hash coverage on ownership and cold recovery\n\n* perf(storage): stop hash point reads once requested fields are found\n\nTrust published field uniqueness on read paths and leave byte-integrity checks to the persisted record CRC policy. Keep header/count and traversed-entry bounds checks, preserve repeated HMGET result positions, and document that unvisited tails are not scanned.\n\n* perf(storage): use direct point lookup for compact Set membership\n\n* perf: project Hash and Set reads without full deserialization\n\n* perf: read Set aggregation pages without cursor sorting\n\n* perf: avoid redundant metadata reads for Set union\n\n* docs: clarify grouped Hash mutation fallback\n\n* perf: skip sorting unordered Set aggregate results\n\n* test: update Hash OOM expectations for direct read projections",
+      "url": "https://github.com/eloqdata/lavik/commit/52e23a7d95b7ecf0a9da1d4bcc014ef0bbc0e7d8"
+    },
+    {
+      "sha": "2ae16e9b86ce274a7705542d29c63e3c7a79fb2f",
+      "message": "perf: pack collection read replies into owned byte blocks (#350)\n\n* Pack collection read replies into owned byte blocks\n\nOpt SMEMBERS, Hash full projections, LRANGE, and sorted-set ranges into immutable block-and-offset results while preserving owned defaults for internal consumers. Retain buffers and admission across worker hops, EXEC, Lua, and source replacement.\n\nValidated on Linux with 104 focused unit and end-to-end tests, including range ordering, recovery, protocol variants, and bounded read ownership.\n\n* Fix Clang 18 crash in grouped ZSet read iteration",
+      "url": "https://github.com/eloqdata/lavik/commit/2ae16e9b86ce274a7705542d29c63e3c7a79fb2f"
+    },
+    {
+      "sha": "cb6a004894ec017ef4ba3e98b5dd504af5c6a916",
+      "message": "Simplify command dispatch and fix GCC coroutine test compilation (#352)",
+      "url": "https://github.com/eloqdata/lavik/commit/cb6a004894ec017ef4ba3e98b5dd504af5c6a916"
+    },
+    {
+      "sha": "9c68079a7dd775db647cf55fe578a6cd43426a82",
+      "message": "perf: batch collection RESP replies and inline point operands (#351)\n\n* perf: batch collection replies and inline point operands\n\nCollection replies append each bulk element separately even when the complete\nresult is already available. Size and encode bulk elements in one buffer\ngrowth, projecting the existing packed results directly without temporary\nview arrays. Preserve nullable Hash slots and RESP2/RESP3 container semantics.\n\nFormat sorted-set scores in caller-owned stack buffers and reserve scored\nreplies once. Inline the common single Hash/List operand while retaining\nnormal growth for batches. Cover nullable/binary replies, score spellings,\nand Set aggregation source replacement and recovery.\n\n* perf(redis): inline single ZSET command operands\n\nSortedSetOperation already borrows spans, but ZADD/ZINCRBY/GEOADD and\nmember lookup/removal handlers allocate descriptor vectors for one member.\nInline one descriptor in each command-local owner while preserving batch\nreservation, request order and existing input admission. Construct spans\nafter filling their owner and retain the owner across the awaited call.\n\nValidate point and batched inputs, GEO replies, compact operations, recovery\nand grouped writes suspended across preparation with four existing E2E cases.\n\n* perf(redis): reduce Stream operand and reply allocations\n\nKeep single Stream ID selections inline in delete, acknowledgement and group\naccess descriptors and in callback-local delete/claim lists. Move access\nowners into the by-value storage calls so batches and consumer names are not\ncopied again across coroutine boundaries.\n\nReserve the complete XADD field/value count before copying request strings,\nand encode materialized entry fields with the bulk reply batch writer.\nRetain existing input admission, decoded entry layout and paged reply flow.\n\n* fix(redis): avoid over-reserving scored range replies\n\nThe scored-range prepass reserves the maximum formatted score width for every\nmember, requesting substantially more space than short scores need. Let the\nreply grow with the actual encoded values and remove the extra accessor pass.\nKeep stack-based score formatting, plain bulk batching and the flattened-count\noverflow guard, and update the surrounding sizing comments.\n\nValidation: protocol/packed-read suites and random-reply/OOM cases passed.\nReview: https://github.com/eloqdata/lavik/pull/351#discussion_r4305668494",
+      "url": "https://github.com/eloqdata/lavik/commit/9c68079a7dd775db647cf55fe578a6cd43426a82"
+    },
+    {
+      "sha": "301048c6891afe07c2720d592b42d5d7fca65627",
+      "message": "perf(format): use memcpy to replace per bit operation (#353)",
+      "url": "https://github.com/eloqdata/lavik/commit/301048c6891afe07c2720d592b42d5d7fca65627"
+    },
+    {
+      "sha": "6b7de97884c064171dbabf2200cddea58677de28",
+      "message": "refactor: simplify connection moves and replication prefix checks (#354)",
+      "url": "https://github.com/eloqdata/lavik/commit/6b7de97884c064171dbabf2200cddea58677de28"
+    },
+    {
+      "sha": "ba11a9a7a169887f61f49c29e73a70f9615230a6",
+      "message": "perf: reuse dense sorted-set pages during point mutations (#356)",
+      "url": "https://github.com/eloqdata/lavik/commit/ba11a9a7a169887f61f49c29e73a70f9615230a6"
+    },
+    {
+      "sha": "684894d973878ca0e0649b54404ce77521f1695f",
+      "message": "update (#317)",
+      "url": "https://github.com/eloqdata/lavik/commit/684894d973878ca0e0649b54404ce77521f1695f"
+    },
+    {
+      "sha": "3c3c2f17c7fc023b8a9807c1fb2e823e52e0f74c",
+      "message": "perf: reduce allocation and copying in compact point writes (#357)\n\nSplice compact collection edits and encode bounded after-images directly into staging. Release worker state while preparing compact String updates, with retained key intent, snapshot validation, and read-pool pressure fallbacks.",
+      "url": "https://github.com/eloqdata/lavik/commit/3c3c2f17c7fc023b8a9807c1fb2e823e52e0f74c"
+    },
+    {
+      "sha": "6a3d186ce3ea1c1d8b06eeed7da09dc2a91cdb65",
+      "message": "perf: streamline grouped sorted-set validation and point insertion (#358)\n\n* perf: streamline sorted-set validation and point insertion\n\n* Clarify absent-member validation paths",
+      "url": "https://github.com/eloqdata/lavik/commit/6a3d186ce3ea1c1d8b06eeed7da09dc2a91cdb65"
+    },
+    {
+      "sha": "6e09bed577811a024a381c5b8014d3ae1b527743",
+      "message": "perf: edit grouped ZSet pages without per-member allocations (#359)\n\n* perf: edit grouped sorted-set point writes in encoded pages\n\n* deps: update Bycorf receive ring and clarify ZSet page ownership\n\n* perf: keep encoded ZSet page ownership worker-local",
+      "url": "https://github.com/eloqdata/lavik/commit/6e09bed577811a024a381c5b8014d3ae1b527743"
+    },
+    {
+      "sha": "bd78f9fe979398394713a9d573c434da187910bd",
+      "message": "refactor: separate encoded ZSet page loading and update Bycorf (#360)",
+      "url": "https://github.com/eloqdata/lavik/commit/bd78f9fe979398394713a9d573c434da187910bd"
+    },
+    {
+      "sha": "8f78861881c0572e4be53305ad98a90f4ae8b327",
+      "message": "test: preserve Stream concurrency failure logs (#361)",
+      "url": "https://github.com/eloqdata/lavik/commit/8f78861881c0572e4be53305ad98a90f4ae8b327"
+    },
+    {
+      "sha": "2d8a293dcbb08e96e5eb0c5208b205712bd436c3",
+      "message": "test: wait for replica readability in native handoff gate (#362)",
+      "url": "https://github.com/eloqdata/lavik/commit/2d8a293dcbb08e96e5eb0c5208b205712bd436c3"
+    },
+    {
+      "sha": "7ef96dd64304d7f7a12373679ae6c2fdc1be5a75",
+      "message": "test: tolerate closed sockets in lease policy proxy (#364)",
+      "url": "https://github.com/eloqdata/lavik/commit/7ef96dd64304d7f7a12373679ae6c2fdc1be5a75"
+    },
+    {
+      "sha": "12f869ddf7cf31ce90c72dd81399535c6896fdc1",
+      "message": "fix: refresh Stream range locations before pinning (#365)",
+      "url": "https://github.com/eloqdata/lavik/commit/12f869ddf7cf31ce90c72dd81399535c6896fdc1"
+    },
+    {
+      "sha": "91f0c8945587dc9b17e815b3d64fa173a36ac4d1",
+      "message": "perf: reduce ScanHashMap entry span allocation overhead (#366)\n\n* perf: reduce ScanHashMap entry span allocation overhead\n\nRequest 960 KiB for sixteen-page entry spans and use mi_expand to confirm the full MiB is usable. Fall back to the full-size allocation for Debug padding and direct OS allocations, releasing the temporary retained charge before retrying.\n\nCover span capacity, final-byte access, page reuse, retained accounting, and admission rejection with regression tests.\n\n* perf: mark entry span expansion fallback unlikely\n\n* test: isolate span accounting and verify admission bounds",
+      "url": "https://github.com/eloqdata/lavik/commit/91f0c8945587dc9b17e815b3d64fa173a36ac4d1"
+    },
+    {
+      "sha": "3d9d347d09db16333d63c78dc9ea22ade6cacfb4",
+      "message": "Default to immediate online mimalloc purging (#367)",
+      "url": "https://github.com/eloqdata/lavik/commit/3d9d347d09db16333d63c78dc9ea22ade6cacfb4"
+    },
+    {
+      "sha": "3d3ddcc182dd6f894cec35be2e3326eb807cdb55",
+      "message": "chore: bump version to 0.2.0 (#368)",
+      "url": "https://github.com/eloqdata/lavik/commit/3d3ddcc182dd6f894cec35be2e3326eb807cdb55"
+    },
+    {
+      "sha": "2908f86f2770e9c6e8acc6585b3bedb4b44d1cd5",
+      "message": "chore: pin bycorf to latest main (#369)",
+      "url": "https://github.com/eloqdata/lavik/commit/2908f86f2770e9c6e8acc6585b3bedb4b44d1cd5"
+    }
+  ]
+}

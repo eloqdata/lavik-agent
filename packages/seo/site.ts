@@ -5,7 +5,11 @@ import {
   benchmarkForRoute,
 } from "../benchmarks/catalog";
 import { reportSourceUrl } from "../benchmarks/repository";
-import { docVersionForRoute } from "../docs/versions";
+import {
+  docVersionForRoute,
+  defaultDocVersion,
+  isStableDocVersion,
+} from "../docs/versions";
 import {
   stableRelease,
   stableGuides,
@@ -37,7 +41,7 @@ import { blogPresentation } from "../blog/presentation";
 export const siteOrigin = "https://lavik.dev";
 export const canonicalRoute = (route: string) =>
   route === "docs"
-    ? "docs/0.1.0"
+    ? `docs/${defaultDocVersion}`
     : route === "use-cases/datasets-beyond-memory"
       ? "use-cases/large-application-caches"
       : route.replace(/^\/+|\/+$/g, "");
@@ -51,8 +55,8 @@ const pairs: Record<string, [string, string, string, string]> = {
   "faq/evaluation": [
     "Lavik FAQ: Performance, Cost and Migration",
     "Lavik 常见问题：性能、成本与迁移",
-    "Answers about Lavik 0.1.0, Redis compatibility, NVMe SSD capacity costs, installation and RedisShake migration.",
-    "了解 Lavik 0.1.0、Redis 兼容性、NVMe SSD 容量成本、安装与 RedisShake 迁移。",
+    "Answers about Lavik 0.2.0, Redis compatibility, NVMe SSD capacity costs, installation and RedisShake migration.",
+    "了解 Lavik 0.2.0、Redis 兼容性、NVMe SSD 容量成本、安装与 RedisShake 迁移。",
   ],
   compare: [
     "Compare Lavik: Redis, Valkey and SSD-backed Alternatives",
@@ -61,10 +65,10 @@ const pairs: Record<string, [string, string, string, string]> = {
     "比较 Lavik 与 Redis、Valkey、DragonflyDB、Garnet、Pika、Apache Kvrocks、Tendis 的实测 NVMe SSD 性能、存储架构与成本。",
   ],
   benchmarks: [
-    "Lavik 0.1.0 Benchmarks: NVMe SSD Capacity, Throughput and Tail Latency",
-    "Lavik 0.1.0 基准测试：NVMe SSD 容量、吞吐量与尾延迟",
-    "Four published Lavik 0.1.0 studies: 2-vCPU capacity, Redis/Valkey SPDK performance, 1 TB storage peers and Aerospike YCSB. Charts, numbers and reproduction commands.",
-    "四份 Lavik 0.1.0 实测报告：2 vCPU 容量、Redis/Valkey SPDK 性能、1 TB 存储对比及 Aerospike YCSB，包含图表、数值与复现命令。",
+    "Lavik 0.2.0 Benchmarks: NVMe SSD Capacity, Throughput and Tail Latency",
+    "Lavik 0.2.0 基准测试：NVMe SSD 容量、吞吐量与尾延迟",
+    "Four benchmark topics from three published Lavik 0.2.0 studies: 2-vCPU capacity, Redis/Valkey SPDK performance, 1 TB storage peers and Aerospike YCSB. Charts, numbers and reproduction commands.",
+    "三份报告中的四个主题： Lavik 0.2.0 实测报告：2 vCPU 容量、Redis/Valkey SPDK 性能、1 TB 存储对比及 Aerospike YCSB，包含图表、数值与复现命令。",
   ],
   cost: [
     "Redis Capacity Cost: DRAM vs NVMe SSD",
@@ -123,8 +127,8 @@ const pairs: Record<string, [string, string, string, string]> = {
   about: [
     "About Lavik",
     "关于 Lavik",
-    "Lavik is an Apache 2.0 Redis-compatible key-value store from EloqData, using a memory index and NVMe SSD value storage. Start with Lavik 0.1.0.",
-    "Lavik 是 EloqData 的 Apache 2.0 开源 Redis 兼容键值存储，使用内存索引和 NVMe SSD 值存储。开始使用 Lavik 0.1.0。",
+    "Lavik is an Apache 2.0 Redis-compatible key-value store from EloqData, using a memory index and NVMe SSD value storage. Start with Lavik 0.2.0.",
+    "Lavik 是 EloqData 的 Apache 2.0 开源 Redis 兼容键值存储，使用内存索引和 NVMe SSD 值存储。开始使用 Lavik 0.2.0。",
   ],
   privacy: [
     "Website Analytics and Privacy",
@@ -137,24 +141,34 @@ export function pageInfo(locale: Locale, input: string) {
   const route = canonicalRoute(input),
     zh = locale === "zh-CN";
   const docVersion = docVersionForRoute(route);
-  const stable = docVersion === "0.1.0";
-  const lookupRoute = route.replace("docs/0.1.0-beta.1", "docs/0.1.0");
+  const stable = !!docVersion && isStableDocVersion(docVersion);
+  const lookupRoute = route.replace(/^docs\/[^/]+/, "docs/0.1.0");
   const stableNote =
-    route === "releases/0-1-0" ? stableReleaseNotes() : undefined;
-  const archivedDownload = route === "download/0.1.0-beta.1";
+    route === "releases/0-1-0"
+      ? stableReleaseNotes("0.1.0")
+      : route === "releases/0-2-0"
+        ? stableReleaseNotes("0.2.0")
+        : undefined;
+  const downloadVersion = route.startsWith("download/")
+    ? route.slice(9)
+    : defaultDocVersion;
+  const archivedDownload = route.startsWith("download/");
   const article =
     route === "faq/evaluation"
       ? undefined
       : articles().find((a) => articlePath(a) === `/${locale}/${route}/`);
   const guide = (
-    stable ? stableGuides() : [...operationsGuides, ...userGuides]
+    stable
+      ? stableGuides(docVersion as "0.1.0" | "0.2.0")
+      : [...operationsGuides, ...userGuides]
   ).find((g) => lookupRoute === `docs/0.1.0/${g.id}`);
   const useCase = useCases.find((c) => route === `use-cases/${c.slug}`);
   const topic = blogTopics.find((t) => route === `blog/topic/${t.id}`);
   const command = lookupRoute.startsWith("docs/0.1.0/commands/")
-    ? (stable ? stableCatalog() : manualCatalog()).commands.find(
-        (c) => c.name.toLowerCase() === route.split("/").at(-1),
-      )
+    ? (stable
+        ? stableCatalog(docVersion as "0.1.0" | "0.2.0")
+        : manualCatalog()
+      ).commands.find((c) => c.name.toLowerCase() === route.split("/").at(-1))
     : undefined;
   const client = lookupRoute.startsWith("docs/0.1.0/clients/")
     ? manualClients().find((c) => c.id === route.split("/").at(-1))
@@ -215,13 +229,15 @@ export function pageInfo(locale: Locale, input: string) {
   return {
     route,
     title: docVersion
-      ? `${title} · ${docVersion}`
+      ? `${title.replace(/Lavik 0\.1\.0(?!-beta\.1)/g, `Lavik ${docVersion}`)} · ${docVersion}`
       : archivedDownload
-        ? `${title} · 0.1.0-beta.1`
+        ? `${title} · ${downloadVersion}`
         : title,
     description:
-      stable || route === "download"
-        ? description.replaceAll("0.1.0-beta.1", "0.1.0")
+      stable || route === "download" || archivedDownload
+        ? description
+            .replaceAll("0.1.0-beta.1", docVersion ?? downloadVersion)
+            .replace(/0\.1\.0(?!-beta\.1)/g, docVersion ?? downloadVersion)
         : docVersion === "0.1.0-beta.1"
           ? description.replace(/0\.1\.0(?!-beta\.1)/g, "0.1.0-beta.1")
           : description,
@@ -327,7 +343,7 @@ export function pageStructuredData(locale: Locale, route: string) {
       author,
       publisher: { "@id": `${siteOrigin}/#publisher` },
       citation: [reportSourceUrl(p.benchmark, locale)],
-      about: { "@type": "SoftwareApplication", name: "Lavik 0.1.0" },
+      about: { "@type": "SoftwareApplication", name: "Lavik 0.2.0" },
     });
   const graph: Record<string, unknown>[] = [page];
   if (p.route === "benchmarks")

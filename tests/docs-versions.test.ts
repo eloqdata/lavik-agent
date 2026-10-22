@@ -32,13 +32,15 @@ import { userGuideRoutes } from "../packages/docs/repository.ts";
 
 test("stable migration has one canonical guide with both source configurations; beta keeps its routes", () => {
   assert.deepEqual(
-    stableGuideRoutes().filter((route) => route.includes("migrate-")),
+    stableGuideRoutes("0.1.0").filter((route) => route.includes("migrate-")),
     ["docs/0.1.0/migrate-redis"],
   );
   assert.ok(
     userGuideRoutes().includes("docs/0.1.0-beta.1/migrate-redis-cluster"),
   );
-  const guide = stableGuides().find((guide) => guide.id === "migrate-redis")!;
+  const guide = stableGuides("0.1.0").find(
+    (guide) => guide.id === "migrate-redis",
+  )!;
   for (const locale of ["en", "zh-CN"] as const)
     assert.match(guide.summary[locale], /RedisShake/);
   assert.ok(guide.sections.some((section) => section.id === "redis-cluster"));
@@ -70,28 +72,28 @@ test("stable migration has one canonical guide with both source configurations; 
 });
 
 test("stable docs/download are defaults; historical release and benchmark locks remain beta", () => {
-  assert.equal(defaultDocVersion, "0.1.0");
-  assert.deepEqual(docVersions, ["0.1.0", "0.1.0-beta.1"]);
-  assert.equal(docVersionForRoute("docs"), "0.1.0");
+  assert.equal(defaultDocVersion, "0.2.0");
+  assert.deepEqual(docVersions, ["0.2.0", "0.1.0", "0.1.0-beta.1"]);
+  assert.equal(docVersionForRoute("docs"), "0.2.0");
   assert.equal(
     docVersionForRoute("docs/0.1.0-beta.1/commands/get"),
     "0.1.0-beta.1",
   );
   assert.equal(docVersionForRoute("docs/unknown"), undefined);
-  assert.equal(downloadPath("en", "0.1.0"), "/en/download/");
+  assert.equal(downloadPath("en", "0.2.0"), "/en/download/");
   assert.equal(
     downloadPath("en", "0.1.0-beta.1"),
     "/en/download/0.1.0-beta.1/",
   );
   assert.equal(
     stableRelease.commit,
-    "feb61224e414c5653fd09560e20c9d214db1e3ac",
+    "2908f86f2770e9c6e8acc6585b3bedb4b44d1cd5",
   );
   assert.equal(release.release, "0.1.0-beta.1");
   assert.equal(stablePackages().length, 4);
   assert.ok(
     stablePackages().every(
-      (pkg) => pkg.url.includes("/v0.1.0/") && !pkg.url.includes("beta"),
+      (pkg) => pkg.url.includes("/v0.2.0/") && !pkg.url.includes("beta"),
     ),
   );
   assert.ok(
@@ -106,7 +108,9 @@ test("both command inventories and corresponding routes are preserved independen
     manualRoutes().every((route) => route.startsWith("docs/0.1.0-beta.1/")),
   );
   assert.ok(
-    stableManualRoutes().every((route) => route.startsWith("docs/0.1.0/")),
+    stableManualRoutes("0.1.0").every((route) =>
+      route.startsWith("docs/0.1.0/"),
+    ),
   );
   const routes = [
     ...manualRoutes(),
@@ -168,7 +172,7 @@ test("a stable receipt cannot claim a fabricated reply as passed", (t) => {
     ...args: unknown[]
   ) => {
     const result = Reflect.apply(original, fs, [file, ...args]);
-    if (String(file).endsWith("evidence/docs/0.1.0/commands.json")) {
+    if (String(file).endsWith("evidence/docs/0.2.0/commands.json")) {
       const report = JSON.parse(String(result));
       report.commands
         .find((c: { name: string }) => c.name === "GET")

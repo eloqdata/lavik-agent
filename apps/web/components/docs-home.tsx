@@ -1,9 +1,10 @@
+import { isStableDocVersion } from "../../../packages/docs/versions";
 import {
   defaultDocVersion,
   type DocVersion,
 } from "../../../packages/docs/versions";
 import {
-  stableRelease,
+  stableReleaseFor,
   stableCases,
   stableGuides,
 } from "../../../packages/docs/stable";
@@ -26,10 +27,12 @@ export function DocsHome({
   locale: Locale;
   version?: DocVersion;
 }) {
-  const stable = version === "0.1.0";
-  const release = stable ? stableRelease : betaRelease;
+  const stable = isStableDocVersion(version);
+  const release = stable ? stableReleaseFor(version) : betaRelease;
   const zh = locale === "zh-CN";
-  const publication = stable ? requireStableDocs() : requireReviewedManual();
+  const publication = stable
+    ? requireStableDocs(version)
+    : requireReviewedManual();
   const root = `/${locale}/docs/${version}`;
   const clients = manualClients();
   const cards = [
@@ -93,14 +96,18 @@ export function DocsHome({
           <span>
             {zh
               ? stable
-                ? "当前稳定版本"
+                ? version === defaultDocVersion
+                  ? "当前稳定版本"
+                  : "历史稳定版本"
                 : "历史 Beta 文档"
               : stable
-                ? "Current stable release"
+                ? version === defaultDocVersion
+                  ? "Current stable release"
+                  : "Archived stable release"
                 : "Archived beta documentation"}
           </span>
           <Link
-            href={`/${locale}/releases/${stable ? "0-1-0" : "0-1-0-beta-1"}/`}
+            href={`/${locale}/releases/${stable ? version.replaceAll(".", "-") : "0-1-0-beta-1"}/`}
           >
             {zh ? "版本说明" : "Release notes"} →
           </Link>
@@ -130,7 +137,14 @@ export function DocsHome({
               <span className="eyebrow">
                 {zh ? "命令参考" : "COMMAND REFERENCE"}
               </span>
-              <strong>{(stable ? stableCases() : manualCases()).length}</strong>
+              <strong>
+                {
+                  (stable
+                    ? stableCases(version as "0.1.0" | "0.2.0")
+                    : manualCases()
+                  ).length
+                }
+              </strong>
               <h3>{zh ? "已收录命令" : "documented commands"} →</h3>
               <p>
                 {zh
@@ -223,7 +237,9 @@ export function DocsHome({
           </h2>
           <div className="docs-guide-list">
             {(stable
-              ? stableGuides().filter((g) => g.id.startsWith("lavik-ctl"))
+              ? stableGuides(version as "0.1.0" | "0.2.0").filter((g) =>
+                  g.id.startsWith("lavik-ctl"),
+                )
               : operationsGuides
             ).map((guide) => (
               <Link key={guide.id} href={`${root}/${guide.id}/`}>

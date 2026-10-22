@@ -9,7 +9,7 @@ test("search readers receive all current benchmark reports and metadata without 
   await page.goto(`${baseURL}/en/benchmarks/`);
   await expect(page.locator(".benchmark-card")).toHaveCount(4);
   await expect(page.locator("main")).toContainText("95.37 GiB");
-  await expect(page.locator("main")).toContainText("1,145,772");
+  await expect(page.locator("main")).toContainText("1,156,956");
   await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
     "href",
     "https://lavik.dev/en/benchmarks/",

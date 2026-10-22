@@ -1,0 +1,566 @@
+{
+  "status": "passed",
+  "sourceCommit": "2908f86f2770e9c6e8acc6585b3bedb4b44d1cd5",
+  "fileHashes": {
+    "scripts/verify-020-migration.py": "b799fb1eb7634211f7355a17f4741bf0cd7d79e24cb8cabc6c8905cca31473d3",
+    "verification/docs/0.2.0/migration/install.sh": "2978eeb007fd0e5a29af55e5eecb4c417f82c129098b6093ab6fd3ed76fc7bbf",
+    "verification/docs/0.2.0/migration/prepare.sh": "1ab4003fb2f9b996861d078f44d74aaa1148beb05abd14b26c9a271c34041697",
+    "verification/docs/0.2.0/migration/redis-cluster.toml": "4b5f3ed3cdd9bbeb67fb1d0b3925ddf90339a65ef7ec1fb842178ca959214a9f",
+    "verification/docs/0.2.0/migration/redis-single.toml": "5708d0f324240cea2d1f304f6f063774b2d45c48d4e5428f0c85689d33ee5c78",
+    "verification/docs/0.2.0/migration/replica-barrier.sh": "431db9742802d68c409c1e024f7ff9d25ce9f4abe934af9b07ea750f28c0714e",
+    "verification/docs/0.2.0/migration/run.py": "a615aaad10fde46701427193a9d2ef5f2a80921ce8ff9139e5af324c721894f7",
+    "verification/docs/0.2.0/migration/source-tail.sh": "2fa5f64411871f60093184243622e1c41ff95af59a96ac0c17e7a23da9be3483",
+    "verification/docs/0.2.0/migration/start.sh": "2ce6a679370d309cdd59d9137c2792635d5458b508b3b3608918680bb73587cd",
+    "verification/docs/0.2.0/migration/status.sh": "a64cb95346daf0c00bf90bcb6185a08e16370757110812872ce7ee6f7be6d5bf"
+  },
+  "imageId": "sha256:718b1fee4c76a51d9ae05fce4641109f1c27b9111b1256c9e4a269dda67203f2",
+  "lavikArchiveSha256": "8357fd2e61f1826a8ae521ea1f60989669e5809b704ff118915dd272e8aa874a",
+  "redisImage": "redis@sha256:f0707c78ea880b293ccdeb410c9c0a8ccae93fe7128799b751333a698b0a39a7",
+  "redisShakeArchiveSha256": "5fc2b7a393f159f8981c1e8d712b63c0866628b99ad030ed3e46c9869c22ff04",
+  "fixtureBinaryHashes": {
+    "redis-shake": "f8f43436e9e4a0595e4cb890dbf4705af439a2b5817d4ddf1a46cabcb6289756",
+    "redis-server": "3e4cd48913911b40594ff7216f67b0b02efbea7d15dcaaa6e964046d780c8c3f"
+  },
+  "limitations": [
+    "Loopback synthetic datasets; no production sizing, TLS tunnels, ACL users, function-catalog mapping, or failure recovery exercise.",
+    "ARM64 runtime; AMD64 installer checksum comes from the pinned upstream installer."
+  ],
+  "runs": [
+    {
+      "status": "passed",
+      "source": "single",
+      "target": "single",
+      "sourceCommit": "2908f86f2770e9c6e8acc6585b3bedb4b44d1cd5",
+      "redisVersion": "7.2.14",
+      "redisShakeVersion": "4.6.2",
+      "checks": [
+        {
+          "db": 0,
+          "keys": 24,
+          "completeKeysetsValuesAndReplicas": "passed",
+          "absoluteExpiryToleranceMs": 5000
+        },
+        {
+          "db": 1,
+          "keys": 1,
+          "completeKeysetsValuesAndReplicas": "passed",
+          "absoluteExpiryToleranceMs": 5000
+        },
+        {
+          "applicationWriteAfterToolStopped": "passed",
+          "sourceAndOwnerIdentityStable": "passed"
+        }
+      ],
+      "cutoverStatus": {
+        "start_time": "2026-10-22 10:16:57",
+        "consistent": true,
+        "total_entries_count": {
+          "read_count": 34,
+          "read_ops": 0,
+          "write_count": 34,
+          "write_ops": 0
+        },
+        "per_cmd_entries_count": {
+          "DEL": {
+            "read_count": 3,
+            "read_ops": 0,
+            "write_count": 3,
+            "write_ops": 0
+          },
+          "HSET": {
+            "read_count": 3,
+            "read_ops": 0,
+            "write_count": 3,
+            "write_ops": 0
+          },
+          "INCR": {
+            "read_count": 3,
+            "read_ops": 0,
+            "write_count": 3,
+            "write_ops": 0
+          },
+          "RESTORE": {
+            "read_count": 25,
+            "read_ops": 0,
+            "write_count": 25,
+            "write_ops": 0
+          }
+        },
+        "reader": {
+          "name": "reader_127.0.0.1_6379",
+          "address": "127.0.0.1:6379",
+          "dir": "/var/tmp/lavik-import-01/spool/reader_127.0.0.1_6379",
+          "status": "syncing aof",
+          "rdb_file_size_bytes": 1291,
+          "rdb_file_size_human": "1.3 KiB",
+          "rdb_received_bytes": 1291,
+          "rdb_received_human": "1.3 KiB",
+          "rdb_sent_bytes": 1291,
+          "rdb_sent_human": "1.3 KiB",
+          "aof_received_offset": 365,
+          "aof_sent_offset": 365,
+          "aof_received_bytes": 365,
+          "aof_received_human": "365 B"
+        },
+        "writer": {
+          "name": "writer_127.0.0.1_6371",
+          "unanswered_bytes": 0,
+          "unanswered_entries": 0
+        }
+      },
+      "sourceTails": [
+        {
+          "role": "master",
+          "connected_slaves": "1",
+          "slave0": "ip=127.0.0.1,port=18080,state=online,offset=0,lag=0",
+          "master_failover_state": "no-failover",
+          "master_replid": "b9f684e082c82ee12b50a632df4667a3bcd70948",
+          "master_replid2": "0000000000000000000000000000000000000000",
+          "master_repl_offset": "365",
+          "second_repl_offset": "-1",
+          "repl_backlog_active": "1",
+          "repl_backlog_size": "1048576",
+          "repl_backlog_first_byte_offset": "1",
+          "repl_backlog_histlen": "365",
+          "run_id": "de463284b398f160323107f37c471042d3389511",
+          "port": 6379
+        }
+      ],
+      "statusCommand": "{\n    \"start_time\": \"2026-10-22 10:16:57\",\n    \"consistent\": true,\n    \"total_entries_count\": {\n        \"read_count\": 34,\n        \"read_ops\": 0,\n        \"write_count\": 34,\n        \"write_ops\": 0\n    },\n    \"per_cmd_entries_count\": {\n        \"DEL\": {\n            \"read_count\": 3,\n            \"read_ops\": 0,\n            \"write_count\": 3,\n            \"write_ops\": 0\n        },\n        \"HSET\": {\n            \"read_count\": 3,\n            \"read_ops\": 0,\n            \"write_count\": 3,\n            \"write_ops\": 0\n        },\n        \"INCR\": {\n            \"read_count\": 3,\n            \"read_ops\": 0,\n            \"write_count\": 3,\n            \"write_ops\": 0\n        },\n        \"RESTORE\": {\n            \"read_count\": 25,\n            \"read_ops\": 0,\n            \"write_count\": 25,\n            \"write_ops\": 0\n        }\n    },\n    \"reader\": {\n        \"name\": \"reader_127.0.0.1_6379\",\n        \"address\": \"127.0.0.1:6379\",\n        \"dir\": \"/var/tmp/lavik-import-01/spool/reader_127.0.0.1_6379\",\n        \"status\": \"syncing aof\",\n        \"rdb_file_size_bytes\": 1291,\n        \"rdb_file_size_human\": \"1.3 KiB\",\n        \"rdb_received_bytes\": 1291,\n        \"rdb_received_human\": \"1.3 KiB\",\n        \"rdb_sent_bytes\": 1291,\n        \"rdb_sent_human\": \"1.3 KiB\",\n        \"aof_received_offset\": 365,\n        \"aof_sent_offset\": 365,\n        \"aof_received_bytes\": 365,\n        \"aof_received_human\": \"365 B\"\n    },\n    \"writer\": {\n        \"name\": \"writer_127.0.0.1_6371\",\n        \"unanswered_bytes\": 0,\n        \"unanswered_entries\": 0\n    }\n}\n"
+    },
+    {
+      "status": "passed",
+      "source": "single",
+      "target": "cluster",
+      "sourceCommit": "2908f86f2770e9c6e8acc6585b3bedb4b44d1cd5",
+      "redisVersion": "7.2.14",
+      "redisShakeVersion": "4.6.2",
+      "checks": [
+        {
+          "db": 0,
+          "keys": 24,
+          "completeKeysetsValuesAndReplicas": "passed",
+          "absoluteExpiryToleranceMs": 5000
+        },
+        {
+          "applicationWriteAfterToolStopped": "passed",
+          "sourceAndOwnerIdentityStable": "passed"
+        }
+      ],
+      "cutoverStatus": {
+        "start_time": "2026-10-22 10:17:01",
+        "consistent": true,
+        "total_entries_count": {
+          "read_count": 33,
+          "read_ops": 0,
+          "write_count": 33,
+          "write_ops": 0
+        },
+        "per_cmd_entries_count": {
+          "DEL": {
+            "read_count": 3,
+            "read_ops": 0,
+            "write_count": 3,
+            "write_ops": 0
+          },
+          "HSET": {
+            "read_count": 3,
+            "read_ops": 0,
+            "write_count": 3,
+            "write_ops": 0
+          },
+          "INCR": {
+            "read_count": 3,
+            "read_ops": 0,
+            "write_count": 3,
+            "write_ops": 0
+          },
+          "RESTORE": {
+            "read_count": 24,
+            "read_ops": 0,
+            "write_count": 24,
+            "write_ops": 0
+          }
+        },
+        "reader": {
+          "name": "reader_127.0.0.1_6379",
+          "address": "127.0.0.1:6379",
+          "dir": "/var/tmp/lavik-import-01/spool/reader_127.0.0.1_6379",
+          "status": "syncing aof",
+          "rdb_file_size_bytes": 1263,
+          "rdb_file_size_human": "1.2 KiB",
+          "rdb_received_bytes": 1263,
+          "rdb_received_human": "1.2 KiB",
+          "rdb_sent_bytes": 1263,
+          "rdb_sent_human": "1.2 KiB",
+          "aof_received_offset": 365,
+          "aof_sent_offset": 365,
+          "aof_received_bytes": 365,
+          "aof_received_human": "365 B"
+        },
+        "writer": [
+          {
+            "name": "writer_127.0.0.1_6371",
+            "unanswered_bytes": 0,
+            "unanswered_entries": 0
+          },
+          {
+            "name": "writer_127.0.0.1_6373",
+            "unanswered_bytes": 0,
+            "unanswered_entries": 0
+          }
+        ]
+      },
+      "sourceTails": [
+        {
+          "role": "master",
+          "connected_slaves": "1",
+          "slave0": "ip=127.0.0.1,port=18080,state=online,offset=0,lag=1",
+          "master_failover_state": "no-failover",
+          "master_replid": "161c264ef4498ca9a829485d4db8ff90fecc93b2",
+          "master_replid2": "0000000000000000000000000000000000000000",
+          "master_repl_offset": "365",
+          "second_repl_offset": "-1",
+          "repl_backlog_active": "1",
+          "repl_backlog_size": "1048576",
+          "repl_backlog_first_byte_offset": "1",
+          "repl_backlog_histlen": "365",
+          "run_id": "c18689ff81e436b0da5bc05cfdd306a4f7669dd4",
+          "port": 6379
+        }
+      ],
+      "statusCommand": "{\n    \"start_time\": \"2026-10-22 10:17:01\",\n    \"consistent\": true,\n    \"total_entries_count\": {\n        \"read_count\": 33,\n        \"read_ops\": 0,\n        \"write_count\": 33,\n        \"write_ops\": 0\n    },\n    \"per_cmd_entries_count\": {\n        \"DEL\": {\n            \"read_count\": 3,\n            \"read_ops\": 0,\n            \"write_count\": 3,\n            \"write_ops\": 0\n        },\n        \"HSET\": {\n            \"read_count\": 3,\n            \"read_ops\": 0,\n            \"write_count\": 3,\n            \"write_ops\": 0\n        },\n        \"INCR\": {\n            \"read_count\": 3,\n            \"read_ops\": 0,\n            \"write_count\": 3,\n            \"write_ops\": 0\n        },\n        \"RESTORE\": {\n            \"read_count\": 24,\n            \"read_ops\": 0,\n            \"write_count\": 24,\n            \"write_ops\": 0\n        }\n    },\n    \"reader\": {\n        \"name\": \"reader_127.0.0.1_6379\",\n        \"address\": \"127.0.0.1:6379\",\n        \"dir\": \"/var/tmp/lavik-import-01/spool/reader_127.0.0.1_6379\",\n        \"status\": \"syncing aof\",\n        \"rdb_file_size_bytes\": 1263,\n        \"rdb_file_size_human\": \"1.2 KiB\",\n        \"rdb_received_bytes\": 1263,\n        \"rdb_received_human\": \"1.2 KiB\",\n        \"rdb_sent_bytes\": 1263,\n        \"rdb_sent_human\": \"1.2 KiB\",\n        \"aof_received_offset\": 365,\n        \"aof_sent_offset\": 365,\n        \"aof_received_bytes\": 365,\n        \"aof_received_human\": \"365 B\"\n    },\n    \"writer\": [\n        {\n            \"name\": \"writer_127.0.0.1_6371\",\n            \"unanswered_bytes\": 0,\n            \"unanswered_entries\": 0\n        },\n        {\n            \"name\": \"writer_127.0.0.1_6373\",\n            \"unanswered_bytes\": 0,\n            \"unanswered_entries\": 0\n        }\n    ]\n}\n"
+    },
+    {
+      "status": "passed",
+      "source": "cluster",
+      "target": "single",
+      "sourceCommit": "2908f86f2770e9c6e8acc6585b3bedb4b44d1cd5",
+      "redisVersion": "7.2.14",
+      "redisShakeVersion": "4.6.2",
+      "checks": [
+        {
+          "db": 0,
+          "keys": 24,
+          "completeKeysetsValuesAndReplicas": "passed",
+          "absoluteExpiryToleranceMs": 5000
+        },
+        {
+          "applicationWriteAfterToolStopped": "passed",
+          "sourceAndOwnerIdentityStable": "passed"
+        }
+      ],
+      "cutoverStatus": {
+        "start_time": "2026-10-22 10:17:08",
+        "consistent": true,
+        "total_entries_count": {
+          "read_count": 33,
+          "read_ops": 0,
+          "write_count": 33,
+          "write_ops": 0
+        },
+        "per_cmd_entries_count": {
+          "DEL": {
+            "read_count": 3,
+            "read_ops": 0,
+            "write_count": 3,
+            "write_ops": 0
+          },
+          "HSET": {
+            "read_count": 3,
+            "read_ops": 0,
+            "write_count": 3,
+            "write_ops": 0
+          },
+          "INCR": {
+            "read_count": 3,
+            "read_ops": 0,
+            "write_count": 3,
+            "write_ops": 0
+          },
+          "RESTORE": {
+            "read_count": 24,
+            "read_ops": 0,
+            "write_count": 24,
+            "write_ops": 0
+          }
+        },
+        "reader": [
+          {
+            "name": "reader_127.0.0.1_7002",
+            "address": "127.0.0.1:7002",
+            "dir": "/var/tmp/lavik-import-01/spool/reader_127.0.0.1_7002",
+            "status": "syncing aof",
+            "rdb_file_size_bytes": 539,
+            "rdb_file_size_human": "539 B",
+            "rdb_received_bytes": 539,
+            "rdb_received_human": "539 B",
+            "rdb_sent_bytes": 539,
+            "rdb_sent_human": "539 B",
+            "aof_received_offset": 137,
+            "aof_sent_offset": 137,
+            "aof_received_bytes": 137,
+            "aof_received_human": "137 B"
+          },
+          {
+            "name": "reader_127.0.0.1_7000",
+            "address": "127.0.0.1:7000",
+            "dir": "/var/tmp/lavik-import-01/spool/reader_127.0.0.1_7000",
+            "status": "syncing aof",
+            "rdb_file_size_bytes": 539,
+            "rdb_file_size_human": "539 B",
+            "rdb_received_bytes": 539,
+            "rdb_received_human": "539 B",
+            "rdb_sent_bytes": 539,
+            "rdb_sent_human": "539 B",
+            "aof_received_offset": 137,
+            "aof_sent_offset": 137,
+            "aof_received_bytes": 137,
+            "aof_received_human": "137 B"
+          },
+          {
+            "name": "reader_127.0.0.1_7001",
+            "address": "127.0.0.1:7001",
+            "dir": "/var/tmp/lavik-import-01/spool/reader_127.0.0.1_7001",
+            "status": "syncing aof",
+            "rdb_file_size_bytes": 539,
+            "rdb_file_size_human": "539 B",
+            "rdb_received_bytes": 539,
+            "rdb_received_human": "539 B",
+            "rdb_sent_bytes": 539,
+            "rdb_sent_human": "539 B",
+            "aof_received_offset": 137,
+            "aof_sent_offset": 137,
+            "aof_received_bytes": 137,
+            "aof_received_human": "137 B"
+          }
+        ],
+        "writer": {
+          "name": "writer_127.0.0.1_6371",
+          "unanswered_bytes": 0,
+          "unanswered_entries": 0
+        }
+      },
+      "sourceTails": [
+        {
+          "role": "master",
+          "connected_slaves": "1",
+          "slave0": "ip=127.0.0.1,port=18080,state=online,offset=0,lag=1",
+          "master_failover_state": "no-failover",
+          "master_replid": "7ce78ac373e66f9a644fbe08e23447ab37fdcf8b",
+          "master_replid2": "0000000000000000000000000000000000000000",
+          "master_repl_offset": "137",
+          "second_repl_offset": "-1",
+          "repl_backlog_active": "1",
+          "repl_backlog_size": "1048576",
+          "repl_backlog_first_byte_offset": "1",
+          "repl_backlog_histlen": "137",
+          "run_id": "54d64eea6eb26f1d35a30bfa681f36c45af61d8b",
+          "port": 7000
+        },
+        {
+          "role": "master",
+          "connected_slaves": "1",
+          "slave0": "ip=127.0.0.1,port=18080,state=online,offset=0,lag=1",
+          "master_failover_state": "no-failover",
+          "master_replid": "15ce30b189045c59a47d9def2cf2c9998c136aae",
+          "master_replid2": "0000000000000000000000000000000000000000",
+          "master_repl_offset": "137",
+          "second_repl_offset": "-1",
+          "repl_backlog_active": "1",
+          "repl_backlog_size": "1048576",
+          "repl_backlog_first_byte_offset": "1",
+          "repl_backlog_histlen": "137",
+          "run_id": "8d06fecdc63004b32934eca030aa0ae6be7442e2",
+          "port": 7001
+        },
+        {
+          "role": "master",
+          "connected_slaves": "1",
+          "slave0": "ip=127.0.0.1,port=18080,state=online,offset=0,lag=1",
+          "master_failover_state": "no-failover",
+          "master_replid": "7b1a64897eb25ccae314c4e5da79f755ae0b58da",
+          "master_replid2": "0000000000000000000000000000000000000000",
+          "master_repl_offset": "137",
+          "second_repl_offset": "-1",
+          "repl_backlog_active": "1",
+          "repl_backlog_size": "1048576",
+          "repl_backlog_first_byte_offset": "1",
+          "repl_backlog_histlen": "137",
+          "run_id": "dfa35088c40566d276cb889d1fcd796d16e104ef",
+          "port": 7002
+        }
+      ],
+      "statusCommand": "{\n    \"start_time\": \"2026-10-22 10:17:08\",\n    \"consistent\": true,\n    \"total_entries_count\": {\n        \"read_count\": 33,\n        \"read_ops\": 0,\n        \"write_count\": 33,\n        \"write_ops\": 0\n    },\n    \"per_cmd_entries_count\": {\n        \"DEL\": {\n            \"read_count\": 3,\n            \"read_ops\": 0,\n            \"write_count\": 3,\n            \"write_ops\": 0\n        },\n        \"HSET\": {\n            \"read_count\": 3,\n            \"read_ops\": 0,\n            \"write_count\": 3,\n            \"write_ops\": 0\n        },\n        \"INCR\": {\n            \"read_count\": 3,\n            \"read_ops\": 0,\n            \"write_count\": 3,\n            \"write_ops\": 0\n        },\n        \"RESTORE\": {\n            \"read_count\": 24,\n            \"read_ops\": 0,\n            \"write_count\": 24,\n            \"write_ops\": 0\n        }\n    },\n    \"reader\": [\n        {\n            \"name\": \"reader_127.0.0.1_7002\",\n            \"address\": \"127.0.0.1:7002\",\n            \"dir\": \"/var/tmp/lavik-import-01/spool/reader_127.0.0.1_7002\",\n            \"status\": \"syncing aof\",\n            \"rdb_file_size_bytes\": 539,\n            \"rdb_file_size_human\": \"539 B\",\n            \"rdb_received_bytes\": 539,\n            \"rdb_received_human\": \"539 B\",\n            \"rdb_sent_bytes\": 539,\n            \"rdb_sent_human\": \"539 B\",\n            \"aof_received_offset\": 137,\n            \"aof_sent_offset\": 137,\n            \"aof_received_bytes\": 137,\n            \"aof_received_human\": \"137 B\"\n        },\n        {\n            \"name\": \"reader_127.0.0.1_7000\",\n            \"address\": \"127.0.0.1:7000\",\n            \"dir\": \"/var/tmp/lavik-import-01/spool/reader_127.0.0.1_7000\",\n            \"status\": \"syncing aof\",\n            \"rdb_file_size_bytes\": 539,\n            \"rdb_file_size_human\": \"539 B\",\n            \"rdb_received_bytes\": 539,\n            \"rdb_received_human\": \"539 B\",\n            \"rdb_sent_bytes\": 539,\n            \"rdb_sent_human\": \"539 B\",\n            \"aof_received_offset\": 137,\n            \"aof_sent_offset\": 137,\n            \"aof_received_bytes\": 137,\n            \"aof_received_human\": \"137 B\"\n        },\n        {\n            \"name\": \"reader_127.0.0.1_7001\",\n            \"address\": \"127.0.0.1:7001\",\n            \"dir\": \"/var/tmp/lavik-import-01/spool/reader_127.0.0.1_7001\",\n            \"status\": \"syncing aof\",\n            \"rdb_file_size_bytes\": 539,\n            \"rdb_file_size_human\": \"539 B\",\n            \"rdb_received_bytes\": 539,\n            \"rdb_received_human\": \"539 B\",\n            \"rdb_sent_bytes\": 539,\n            \"rdb_sent_human\": \"539 B\",\n            \"aof_received_offset\": 137,\n            \"aof_sent_offset\": 137,\n            \"aof_received_bytes\": 137,\n            \"aof_received_human\": \"137 B\"\n        }\n    ],\n    \"writer\": {\n        \"name\": \"writer_127.0.0.1_6371\",\n        \"unanswered_bytes\": 0,\n        \"unanswered_entries\": 0\n    }\n}\n"
+    },
+    {
+      "status": "passed",
+      "source": "cluster",
+      "target": "cluster",
+      "sourceCommit": "2908f86f2770e9c6e8acc6585b3bedb4b44d1cd5",
+      "redisVersion": "7.2.14",
+      "redisShakeVersion": "4.6.2",
+      "checks": [
+        {
+          "db": 0,
+          "keys": 24,
+          "completeKeysetsValuesAndReplicas": "passed",
+          "absoluteExpiryToleranceMs": 5000
+        },
+        {
+          "applicationWriteAfterToolStopped": "passed",
+          "sourceAndOwnerIdentityStable": "passed"
+        }
+      ],
+      "cutoverStatus": {
+        "start_time": "2026-10-22 10:17:15",
+        "consistent": true,
+        "total_entries_count": {
+          "read_count": 33,
+          "read_ops": 0,
+          "write_count": 33,
+          "write_ops": 0
+        },
+        "per_cmd_entries_count": {
+          "DEL": {
+            "read_count": 3,
+            "read_ops": 0,
+            "write_count": 3,
+            "write_ops": 0
+          },
+          "HSET": {
+            "read_count": 3,
+            "read_ops": 0,
+            "write_count": 3,
+            "write_ops": 0
+          },
+          "INCR": {
+            "read_count": 3,
+            "read_ops": 0,
+            "write_count": 3,
+            "write_ops": 0
+          },
+          "RESTORE": {
+            "read_count": 24,
+            "read_ops": 0,
+            "write_count": 24,
+            "write_ops": 0
+          }
+        },
+        "reader": [
+          {
+            "name": "reader_127.0.0.1_7000",
+            "address": "127.0.0.1:7000",
+            "dir": "/var/tmp/lavik-import-01/spool/reader_127.0.0.1_7000",
+            "status": "syncing aof",
+            "rdb_file_size_bytes": 539,
+            "rdb_file_size_human": "539 B",
+            "rdb_received_bytes": 539,
+            "rdb_received_human": "539 B",
+            "rdb_sent_bytes": 539,
+            "rdb_sent_human": "539 B",
+            "aof_received_offset": 137,
+            "aof_sent_offset": 137,
+            "aof_received_bytes": 137,
+            "aof_received_human": "137 B"
+          },
+          {
+            "name": "reader_127.0.0.1_7001",
+            "address": "127.0.0.1:7001",
+            "dir": "/var/tmp/lavik-import-01/spool/reader_127.0.0.1_7001",
+            "status": "syncing aof",
+            "rdb_file_size_bytes": 539,
+            "rdb_file_size_human": "539 B",
+            "rdb_received_bytes": 539,
+            "rdb_received_human": "539 B",
+            "rdb_sent_bytes": 539,
+            "rdb_sent_human": "539 B",
+            "aof_received_offset": 137,
+            "aof_sent_offset": 137,
+            "aof_received_bytes": 137,
+            "aof_received_human": "137 B"
+          },
+          {
+            "name": "reader_127.0.0.1_7002",
+            "address": "127.0.0.1:7002",
+            "dir": "/var/tmp/lavik-import-01/spool/reader_127.0.0.1_7002",
+            "status": "syncing aof",
+            "rdb_file_size_bytes": 539,
+            "rdb_file_size_human": "539 B",
+            "rdb_received_bytes": 539,
+            "rdb_received_human": "539 B",
+            "rdb_sent_bytes": 539,
+            "rdb_sent_human": "539 B",
+            "aof_received_offset": 137,
+            "aof_sent_offset": 137,
+            "aof_received_bytes": 137,
+            "aof_received_human": "137 B"
+          }
+        ],
+        "writer": [
+          {
+            "name": "writer_127.0.0.1_6371",
+            "unanswered_bytes": 0,
+            "unanswered_entries": 0
+          },
+          {
+            "name": "writer_127.0.0.1_6373",
+            "unanswered_bytes": 0,
+            "unanswered_entries": 0
+          }
+        ]
+      },
+      "sourceTails": [
+        {
+          "role": "master",
+          "connected_slaves": "1",
+          "slave0": "ip=127.0.0.1,port=18080,state=online,offset=0,lag=0",
+          "master_failover_state": "no-failover",
+          "master_replid": "5c0f5860db6dc6519d3534099541050bf04a61d4",
+          "master_replid2": "0000000000000000000000000000000000000000",
+          "master_repl_offset": "137",
+          "second_repl_offset": "-1",
+          "repl_backlog_active": "1",
+          "repl_backlog_size": "1048576",
+          "repl_backlog_first_byte_offset": "1",
+          "repl_backlog_histlen": "137",
+          "run_id": "98aae28ec8c2d829acf5641391de139d7b532ebc",
+          "port": 7000
+        },
+        {
+          "role": "master",
+          "connected_slaves": "1",
+          "slave0": "ip=127.0.0.1,port=18080,state=online,offset=0,lag=0",
+          "master_failover_state": "no-failover",
+          "master_replid": "b22a48a83034b3cf06f030175122cb42b0585174",
+          "master_replid2": "0000000000000000000000000000000000000000",
+          "master_repl_offset": "137",
+          "second_repl_offset": "-1",
+          "repl_backlog_active": "1",
+          "repl_backlog_size": "1048576",
+          "repl_backlog_first_byte_offset": "1",
+          "repl_backlog_histlen": "137",
+          "run_id": "e967889cc92de54dfe9c18af32a05ef11821a2d9",
+          "port": 7001
+        },
+        {
+          "role": "master",
+          "connected_slaves": "1",
+          "slave0": "ip=127.0.0.1,port=18080,state=online,offset=0,lag=0",
+          "master_failover_state": "no-failover",
+          "master_replid": "3d89245318c09f313fbe3389976dd526ccdccc2f",
+          "master_replid2": "0000000000000000000000000000000000000000",
+          "master_repl_offset": "137",
+          "second_repl_offset": "-1",
+          "repl_backlog_active": "1",
+          "repl_backlog_size": "1048576",
+          "repl_backlog_first_byte_offset": "1",
+          "repl_backlog_histlen": "137",
+          "run_id": "937af27725467e6e21d5a61f6129c60ee443f9ad",
+          "port": 7002
+        }
+      ],
+      "statusCommand": "{\n    \"start_time\": \"2026-10-22 10:17:15\",\n    \"consistent\": true,\n    \"total_entries_count\": {\n        \"read_count\": 33,\n        \"read_ops\": 0,\n        \"write_count\": 33,\n        \"write_ops\": 0\n    },\n    \"per_cmd_entries_count\": {\n        \"DEL\": {\n            \"read_count\": 3,\n            \"read_ops\": 0,\n            \"write_count\": 3,\n            \"write_ops\": 0\n        },\n        \"HSET\": {\n            \"read_count\": 3,\n            \"read_ops\": 0,\n            \"write_count\": 3,\n            \"write_ops\": 0\n        },\n        \"INCR\": {\n            \"read_count\": 3,\n            \"read_ops\": 0,\n            \"write_count\": 3,\n            \"write_ops\": 0\n        },\n        \"RESTORE\": {\n            \"read_count\": 24,\n            \"read_ops\": 0,\n            \"write_count\": 24,\n            \"write_ops\": 0\n        }\n    },\n    \"reader\": [\n        {\n            \"name\": \"reader_127.0.0.1_7000\",\n            \"address\": \"127.0.0.1:7000\",\n            \"dir\": \"/var/tmp/lavik-import-01/spool/reader_127.0.0.1_7000\",\n            \"status\": \"syncing aof\",\n            \"rdb_file_size_bytes\": 539,\n            \"rdb_file_size_human\": \"539 B\",\n            \"rdb_received_bytes\": 539,\n            \"rdb_received_human\": \"539 B\",\n            \"rdb_sent_bytes\": 539,\n            \"rdb_sent_human\": \"539 B\",\n            \"aof_received_offset\": 137,\n            \"aof_sent_offset\": 137,\n            \"aof_received_bytes\": 137,\n            \"aof_received_human\": \"137 B\"\n        },\n        {\n            \"name\": \"reader_127.0.0.1_7001\",\n            \"address\": \"127.0.0.1:7001\",\n            \"dir\": \"/var/tmp/lavik-import-01/spool/reader_127.0.0.1_7001\",\n            \"status\": \"syncing aof\",\n            \"rdb_file_size_bytes\": 539,\n            \"rdb_file_size_human\": \"539 B\",\n            \"rdb_received_bytes\": 539,\n            \"rdb_received_human\": \"539 B\",\n            \"rdb_sent_bytes\": 539,\n            \"rdb_sent_human\": \"539 B\",\n            \"aof_received_offset\": 137,\n            \"aof_sent_offset\": 137,\n            \"aof_received_bytes\": 137,\n            \"aof_received_human\": \"137 B\"\n        },\n        {\n            \"name\": \"reader_127.0.0.1_7002\",\n            \"address\": \"127.0.0.1:7002\",\n            \"dir\": \"/var/tmp/lavik-import-01/spool/reader_127.0.0.1_7002\",\n            \"status\": \"syncing aof\",\n            \"rdb_file_size_bytes\": 539,\n            \"rdb_file_size_human\": \"539 B\",\n            \"rdb_received_bytes\": 539,\n            \"rdb_received_human\": \"539 B\",\n            \"rdb_sent_bytes\": 539,\n            \"rdb_sent_human\": \"539 B\",\n            \"aof_received_offset\": 137,\n            \"aof_sent_offset\": 137,\n            \"aof_received_bytes\": 137,\n            \"aof_received_human\": \"137 B\"\n        }\n    ],\n    \"writer\": [\n        {\n            \"name\": \"writer_127.0.0.1_6371\",\n            \"unanswered_bytes\": 0,\n            \"unanswered_entries\": 0\n        },\n        {\n            \"name\": \"writer_127.0.0.1_6373\",\n            \"unanswered_bytes\": 0,\n            \"unanswered_entries\": 0\n        }\n    ]\n}\n"
+    }
+  ]
+}

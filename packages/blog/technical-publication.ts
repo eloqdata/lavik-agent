@@ -61,6 +61,7 @@ export function technicalFileHashes(article: Article) {
   const files = [
     `content/${article.locale}/${article.id}.json`,
     "packages/content/schema.ts",
+    "packages/docs/versions.ts",
     "packages/content/gate.ts",
     "packages/blog/technical-schema.ts",
     "packages/blog/technical-publication.ts",

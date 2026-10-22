@@ -1,6 +1,10 @@
+import {
+  isStableDocVersion,
+  defaultDocVersion,
+} from "../../../packages/docs/versions";
 import { type DocVersion } from "../../../packages/docs/versions";
 import {
-  stableRelease,
+  stableReleaseFor,
   stableCatalog,
   stableCases,
   stableCommandReport,
@@ -30,10 +34,10 @@ import { DocsSidebar } from "./docs-sidebar";
 export function ManualLinks({ locale }: { locale: Locale }) {
   return (
     <>
-      <Link href={`/${locale}/docs/0.1.0/commands/`}>
+      <Link href={`/${locale}/docs/${defaultDocVersion}/commands/`}>
         {locale === "en" ? "Command reference" : "命令参考"}
       </Link>
-      <Link href={`/${locale}/docs/0.1.0/clients/`}>
+      <Link href={`/${locale}/docs/${defaultDocVersion}/clients/`}>
         {locale === "en" ? "Client libraries" : "客户端库"}
       </Link>
     </>
@@ -90,21 +94,29 @@ export function ManualPage({
   route: string;
   locale: Locale;
 }) {
-  const stable = version === "0.1.0";
-  const release = stable ? stableRelease : betaRelease;
-  const publication = stable ? requireStableDocs() : requireReviewedManual();
+  const stable = isStableDocVersion(version);
+  const release = stable ? stableReleaseFor(version) : betaRelease;
+  const publication = stable
+    ? requireStableDocs(version)
+    : requireReviewedManual();
   const normalizedRoute = route.replace(`docs/${version}`, "docs/0.1.0");
   const zh = locale === "zh-CN",
     title =
       normalizedRoute.endsWith("/commands/lavik.replicaof") && stable
         ? "LAVIK.REPLICAOF"
-        : manualTitle(route, locale);
+        : manualTitle(normalizedRoute, locale);
   if (!title) notFound();
-  const catalog = stable ? stableCatalog() : manualCatalog(),
-    cases = stable ? stableCases() : manualCases(),
+  const catalog = stable
+      ? stableCatalog(version as "0.1.0" | "0.2.0")
+      : manualCatalog(),
+    cases = stable ? stableCases(version as "0.1.0" | "0.2.0") : manualCases(),
     clients = manualClients();
-  const commands = stable ? stableCommandReport() : commandReport(),
-    clientResults = stable ? stableClientReport() : clientReport();
+  const commands = stable
+      ? stableCommandReport(version as "0.1.0" | "0.2.0")
+      : commandReport(),
+    clientResults = stable
+      ? stableClientReport(version as "0.1.0" | "0.2.0")
+      : clientReport();
   const commandName = normalizedRoute.startsWith("docs/0.1.0/commands/")
     ? route.split("/").at(-1)!.toUpperCase()
     : undefined;
@@ -406,8 +418,8 @@ export function ManualPage({
             {client.id === "valkey-go" ? (
               <div className="manual-scope">
                 {zh
-                  ? "必须禁用客户端缓存：DisableCache: true。Lavik 0.1.0 的 CLIENT TRACKING ON 返回不支持的子命令错误。"
-                  : "Disable client-side caching with DisableCache: true. CLIENT TRACKING ON returns an unsupported-subcommand error in Lavik 0.1.0."}
+                  ? `必须禁用客户端缓存：DisableCache: true。Lavik ${version} 的 CLIENT TRACKING ON 返回不支持的子命令错误。`
+                  : `Disable client-side caching with DisableCache: true. CLIENT TRACKING ON returns an unsupported-subcommand error in Lavik ${version}.`}
               </div>
             ) : null}
             {shutdownProbe?.outcome === "timeout" ? (

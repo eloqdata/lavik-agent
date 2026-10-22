@@ -68,5 +68,5 @@ test("current homepage cost bars use equal DRAM prices and stable structured dat
   const graphs = json.flatMap((t) => JSON.parse(t)["@graph"] ?? []);
   expect(
     graphs.find((x: any) => x["@type"] === "SoftwareSourceCode").version,
-  ).toBe("0.1.0");
+  ).toBe("0.2.0");
 });

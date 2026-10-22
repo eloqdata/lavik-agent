@@ -42,7 +42,7 @@ test("Docs default to stable and version switching preserves page and language",
   for (const locale of ["en", "zh-CN"]) {
     await page.goto(`/${locale}/docs/`);
     await expect(page.locator(".doc-version-select select")).toHaveValue(
-      "0.1.0",
+      "0.2.0",
     );
     await page.goto(`/${locale}/docs/0.1.0/commands/get/`);
     await expect(page.locator("article .article-meta")).toHaveText("v0.1.0");
@@ -80,11 +80,11 @@ test("Download defaults to four stable archives and switches to intact beta asse
   for (const locale of ["en", "zh-CN"]) {
     await page.goto(`/${locale}/download/`);
     await expect(page.locator(".doc-version-select select")).toHaveValue(
-      "0.1.0",
+      "0.2.0",
     );
     await expect(page.locator(".download-card")).toHaveCount(4);
     for (const link of await page.locator(".download-card a.button").all())
-      await expect(link).toHaveAttribute("href", /\/v0\.1\.0\/lavik-v0\.1\.0-/);
+      await expect(link).toHaveAttribute("href", /\/v0\.2\.0\/lavik-v0\.2\.0-/);
     await page
       .locator(".doc-version-select select")
       .selectOption("0.1.0-beta.1");
@@ -97,7 +97,7 @@ test("Download defaults to four stable archives and switches to intact beta asse
       page.locator(".release-banner a.button").first(),
     ).toHaveAttribute("href", `/${locale}/docs/0.1.0-beta.1/quick-start/`);
     await page.locator(".doc-version-select select").selectOption("0.1.0");
-    await expect(page).toHaveURL(new RegExp(`/${locale}/download/$`));
+    await expect(page).toHaveURL(new RegExp(`/${locale}/download/0\\.1\\.0/$`));
   }
 });
 test("stable guides expose release-specific startup, packages and release notes", async ({
@@ -136,9 +136,9 @@ test("stable guides expose release-specific startup, packages and release notes"
     await page.goto(`/${locale}/releases/`);
     await expect(page.locator(".article-list-item").first()).toHaveAttribute(
       "href",
-      `/${locale}/releases/0-1-0/`,
+      `/${locale}/releases/0-2-0/`,
     );
-    await page.locator(".article-list-item").first().click();
+    await page.goto(`/${locale}/releases/0-1-0/`);
     await expect(page.locator("h1")).toHaveText("Lavik 0.1.0");
     await expect(page.locator("article")).toContainText("135");
     await expect(page.locator("#upgrade")).toContainText("--meta-seed");

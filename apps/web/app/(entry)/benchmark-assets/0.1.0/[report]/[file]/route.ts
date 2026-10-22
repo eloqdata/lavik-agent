@@ -1,27 +1,19 @@
-import { benchmarkReports } from "../../../../../../../../packages/benchmarks/catalog";
 import {
-  sourceFile,
-  reportAssets,
-} from "../../../../../../../../packages/benchmarks/repository";
-import { assertBenchmarkPublication } from "../../../../../../../../packages/benchmarks/gate";
+  historicalAssets,
+  historicalAsset,
+} from "../../../../../../../../packages/benchmarks/historical";
 export const dynamic = "force-static";
 export const dynamicParams = false;
 export function generateStaticParams() {
-  return reportAssets();
+  return historicalAssets();
 }
 export async function GET(
   _request: Request,
   { params }: { params: Promise<{ report: string; file: string }> },
 ) {
   const p = await params,
-    r = benchmarkReports.find((r) => r.id === p.report);
-  if (
-    !r ||
-    !reportAssets().some((a) => a.report === p.report && a.file === p.file)
-  )
-    return new Response("Not found", { status: 404 });
-  assertBenchmarkPublication();
-  const { data } = sourceFile(r, p.file);
+    data = historicalAsset(p.report, p.file);
+  if (!data) return new Response("Not found", { status: 404 });
   return new Response(new Uint8Array(data), {
     headers: {
       "Content-Type": p.file.endsWith(".svg")

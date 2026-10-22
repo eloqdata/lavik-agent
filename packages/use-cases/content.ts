@@ -520,9 +520,9 @@ export const useCases = useCaseSchema.array().parse([
       },
     ],
     fit: {
-      en: "Use ZADD, ZINCRBY and rank/range reads to build the same leaderboard patterns your Redis application uses. Lavik 0.1.0 groups large collections so operations can work on relevant portions of the stored object. Size by members, boards and retained seasons; measure rank updates and range reads with your actual board sizes.",
+      en: "Use ZADD, ZINCRBY and rank/range reads to build the same leaderboard patterns your Redis application uses. Lavik 0.2.0 groups large collections so operations can work on relevant portions of the stored object. Size by members, boards and retained seasons; measure rank updates and range reads with your actual board sizes.",
       "zh-CN":
-        "使用 ZADD、ZINCRBY 与排名、范围读取，沿用 Redis 应用的榜单模式。Lavik 0.1.0 将大型集合分组，使操作可以处理存储对象的相关部分。按成员数、榜单数与保留赛季规划容量，并用实际榜单大小测量排名更新与范围读取。",
+        "使用 ZADD、ZINCRBY 与排名、范围读取，沿用 Redis 应用的榜单模式。Lavik 0.2.0 将大型集合分组，使操作可以处理存储对象的相关部分。按成员数、榜单数与保留赛季规划容量，并用实际榜单大小测量排名更新与范围读取。",
     },
     valueDriver: {
       en: "Members × boards × retained seasons",
@@ -809,9 +809,9 @@ export const useCases = useCaseSchema.array().parse([
       },
     ],
     fit: {
-      en: "Use Lavik for profile payloads, campaign snapshots and enrichment records on the decision path. Its billion-key SPDK benchmark delivers 385,514 GET QPS at 0.439 ms p99.9 with 80 connections. That is a concrete starting point for a load test using your own fan-out, record sizes and decision deadline.",
+      en: "Use Lavik for profile payloads, campaign snapshots and enrichment records on the decision path. Its billion-key SPDK benchmark delivers 652,881 GET QPS at 0.943 ms p99.9 with 320 connections. That is a concrete starting point for a load test using your own fan-out, record sizes and decision deadline.",
       "zh-CN":
-        "使用 Lavik 保存决策链路上的画像值、活动快照与信息补全记录。在十亿键 SPDK 基准中，80 个连接下 GET 为 385,514 QPS、p99.9 为 0.439 ms。可据此用实际扇出、记录大小与决策截止时间设计负载测试。",
+        "使用 Lavik 保存决策链路上的画像值、活动快照与信息补全记录。在十亿键 SPDK 基准中，320 个连接下 GET 为 652,881 QPS、p99.9 为 0.943 ms。可据此用实际扇出、记录大小与决策截止时间设计负载测试。",
     },
     valueDriver: {
       en: "Reachable identities × context width × retention",

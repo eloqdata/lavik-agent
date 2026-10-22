@@ -1,6 +1,6 @@
 import { homepageBenchmarkRows } from "../benchmarks/homepage";
 import exactData from "../benchmarks/exact-data.json";
-const storage80Rows = exactData.storageRows;
+const storage320Rows = exactData.storageRows;
 import fs from "node:fs";
 import path from "node:path";
 import type { ComparisonProduct, ProductId } from "./catalog";
@@ -26,8 +26,8 @@ export function comparisonSource(id: string) {
   if (!source) throw new Error(`Missing comparison source ${id}`);
   return source;
 }
-// The current comparison uses October 0.1.0 results only. Storage peers
-// share an exact 80-connection point; DRAM peers use their raw 1280-connection peaks.
+// The current comparison uses October 0.2.0 results only. Storage peers
+// share an exact 320-connection point; DRAM peers use their raw 1280-connection peaks.
 export function comparisonMeasurements(product: ComparisonProduct): {
   lavik: Measurement[];
   peer: Measurement[];
@@ -57,14 +57,16 @@ export function comparisonMeasurements(product: ComparisonProduct): {
     kvrocks: "Apache Kvrocks",
     tendis: "Tendis",
   };
-  const peer = storage80Rows.find((r) => r.name.startsWith(names[product.id]))!;
-  const convert = (row: (typeof storage80Rows)[number]): Measurement[] =>
+  const peer = storage320Rows.find((r) =>
+    r.name.startsWith(names[product.id]),
+  )!;
+  const convert = (row: (typeof storage320Rows)[number]): Measurement[] =>
     (["GET", "SET"] as const).map((workload) => ({
       system: row.name,
       workload,
       qps: workload === "GET" ? row.get : row.set,
       p999: workload === "GET" ? row.getP999 : row.setP999,
-      connections: 80,
+      connections: 320,
     }));
-  return { lavik: convert(storage80Rows[0]), peer: convert(peer) };
+  return { lavik: convert(storage320Rows[0]), peer: convert(peer) };
 }

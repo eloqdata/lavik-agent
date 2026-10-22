@@ -27,10 +27,10 @@ import { comparisonFaq } from "../packages/comparisons/content";
 const product = (id: string) => comparisonProducts.find((p) => p.id === id)!;
 test("current comparisons pair QPS with p99.9 at the same concurrency", () => {
   const redis = comparisonMeasurements(product("redis"));
-  assert.equal(bestPoint(redis.lavik, "GET")!.qps, 1145772.35);
-  assert.equal(bestPoint(redis.peer, "GET")!.qps, 1018735.36);
+  assert.equal(bestPoint(redis.lavik, "GET")!.qps, 1156955.76);
+  assert.equal(bestPoint(redis.peer, "GET")!.qps, 976086.75);
   assert.equal(bestPoint(redis.peer, "GET")!.approximate, false);
-  assert.equal(bestPoint(redis.lavik, "GET")!.p999, 7.135);
+  assert.equal(bestPoint(redis.lavik, "GET")!.p999, 7.103);
   assert.ok(
     [...redis.lavik, ...redis.peer].every((p) => p.connections === 1280),
   );
@@ -39,31 +39,31 @@ test("current comparisons pair QPS with p99.9 at the same concurrency", () => {
     8,
   );
   const garnet = comparisonMeasurements(product("garnet"));
-  assert.equal(bestPoint(garnet.lavik, "GET")!.qps, 385514.4);
-  assert.equal(bestPoint(garnet.peer, "SET", 5)!.qps, 421152.19);
-  assert.equal(bestPoint(garnet.lavik, "SET", 2), undefined);
+  assert.equal(bestPoint(garnet.lavik, "GET")!.qps, 652881.2);
+  assert.equal(bestPoint(garnet.peer, "SET", 5)!.qps, 668406.32);
+  assert.equal(bestPoint(garnet.lavik, "SET", 0.5), undefined);
   assert.equal(
     bestPoint(comparisonMeasurements(product("dragonfly")).peer, "GET", 1),
     undefined,
   );
   assert.equal(
     bestPoint(comparisonMeasurements(product("dragonfly")).peer, "GET")!.p999,
-    11.071,
+    17.023,
   );
 });
-test("all current SSD comparisons share exact 80-connection data", () => {
+test("all current SSD comparisons share exact 320-connection data", () => {
   for (const p of comparisonProducts.filter((p) => p.group === "storage")) {
     const { lavik, peer } = comparisonMeasurements(p);
     assert.equal(lavik.length, 2);
     assert.equal(peer.length, 2);
-    assert.equal(bestPoint(lavik, "GET")!.qps, 385514.4);
+    assert.equal(bestPoint(lavik, "GET")!.qps, 652881.2);
     assert.ok(
-      [...lavik, ...peer].every((p) => p.connections === 80 && !p.approximate),
+      [...lavik, ...peer].every((p) => p.connections === 320 && !p.approximate),
     );
   }
   const tendis = comparisonMeasurements(product("tendis"));
-  assert.equal(bestPoint(tendis.peer, "SET", 2)!.qps, 266801.93);
-  assert.equal(bestPoint(tendis.lavik, "SET", 2), undefined);
+  assert.equal(bestPoint(tendis.peer, "SET", 10)!.qps, 137470.63);
+  assert.equal(bestPoint(tendis.lavik, "SET", 0.5), undefined);
 });
 test("cost model honors both constraints, replicas, prices, and invalid input", () => {
   const base = {

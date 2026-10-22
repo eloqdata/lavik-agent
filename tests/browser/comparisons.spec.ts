@@ -68,10 +68,10 @@ test("cost calculator uses matched observations and refuses unsampled deadlines"
   await calculator.getByLabel(/^Workload/).selectOption("SET");
   await calculator.getByLabel("Observed p99.9 ceiling").selectOption("5");
   await expect(calculator.locator(".comparison-result")).toContainText(
-    "421,152",
+    "701,241",
   );
   await expect(calculator.locator(".comparison-result")).toContainText(
-    "425,907",
+    "668,406",
   );
   await calculator
     .getByLabel("Total copies (including primary)", { exact: true })

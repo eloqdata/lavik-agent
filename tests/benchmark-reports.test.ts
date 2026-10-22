@@ -16,7 +16,7 @@ import {
   benchmarkFileHashes,
   validateBenchmarkPublication,
 } from "../packages/benchmarks/gate.ts";
-import { storage80Rows } from "../packages/benchmarks/storage-data.ts";
+import { storage320Rows } from "../packages/benchmarks/storage-data.ts";
 test("reports preserve every published code block and resolve source links to the pinned revision", () => {
   assert.deepEqual(benchmarkEvidenceErrors(), []);
   for (const r of benchmarkReports)
@@ -42,14 +42,14 @@ test("reports preserve every published code block and resolve source links to th
       assert.equal(reportLink(r, "//untrusted.test", locale), "");
     }
 });
-test("80-connection numbers retain product/operation pairing from the original ranked chart", () => {
+test("320-connection numbers retain product/operation pairing from the original ranked chart", () => {
   const r = benchmarkReports.find((r) => r.id === "1tb-storage")!;
-  const svg = sourceFile(r, "ranked-80.svg").data.toString();
+  const svg = sourceFile(r, "ranked-320.svg").data.toString();
   const labels = [...svg.matchAll(/<text\b[^>]*>([^<]*)<\/text>/g)].map(
     (m) => m[1],
   );
   for (const op of ["get", "set"] as const) {
-    const sorted = [...storage80Rows].sort((a, b) => b[op] - a[op]);
+    const sorted = [...storage320Rows].sort((a, b) => b[op] - a[op]);
     for (const row of sorted) {
       assert.ok(labels.includes(Math.round(row[op]).toLocaleString("en-US")));
       assert.ok(
@@ -72,12 +72,12 @@ test("80-connection numbers retain product/operation pairing from the original r
     );
   }
   assert.ok(
-    storage80Rows.find((r) => r.name.startsWith("Tendis"))!.setP999 <
-      storage80Rows[0].setP999,
+    storage320Rows.find((r) => r.name.startsWith("Tendis"))!.setP999 >
+      storage320Rows[0].setP999,
   );
   assert.equal(
-    reportLink(r, "ranked-80.svg", "en"),
-    assetUrl(r, "ranked-80.svg"),
+    reportLink(r, "ranked-320.svg", "en"),
+    assetUrl(r, "ranked-320.svg"),
   );
 });
 test("benchmark approval binds bytes and rejects missing/changed review evidence", () => {

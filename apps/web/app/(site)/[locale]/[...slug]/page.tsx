@@ -1,3 +1,8 @@
+import {
+  stableDocVersions,
+  isStableDocVersion,
+  defaultDocVersion,
+} from "../../../../../../packages/docs/versions";
 import { TechnicalArticleBody } from "../../../../components/technical-article";
 import { AdoptionFaq } from "../../../../components/adoption-faq";
 import {
@@ -77,6 +82,10 @@ const indexRoutes = [
   "community",
   "docs",
   "docs/0.1.0",
+  "docs/0.2.0",
+  "download/0.1.0",
+  "download/0.2.0",
+  "releases/0-2-0",
   "docs/0.1.0-beta.1",
   "download/0.1.0-beta.1",
   "releases/0-1-0",
@@ -155,14 +164,21 @@ async function PageContent({
     return (
       <DownloadPage
         locale={locale}
-        version={route.slice(9) as "0.1.0-beta.1"}
+        version={
+          route.slice(
+            9,
+          ) as import("../../../../../../packages/docs/versions").DocVersion
+        }
       />
     );
-  if (route === "releases/0-1-0")
+  if (route === "releases/0-1-0" || route === "releases/0-2-0")
     return (
       <StableGuidePage
         locale={locale}
-        guide={stableReleaseNotes()}
+        guide={stableReleaseNotes(
+          route === "releases/0-1-0" ? "0.1.0" : "0.2.0",
+        )}
+        version={route === "releases/0-1-0" ? "0.1.0" : "0.2.0"}
         releaseNote
       />
     );
@@ -170,17 +186,23 @@ async function PageContent({
   const docVersion = docVersionForRoute(route);
   if (docVersion && (route === "docs" || route.split("/").length === 2))
     return <DocsHome locale={locale} version={docVersion} />;
-  if (docVersion === "0.1.0") {
-    const stableGuide = stableGuides().find(
-      (guide) => route === `docs/0.1.0/${guide.id}`,
+  if (docVersion && isStableDocVersion(docVersion)) {
+    const stableGuide = stableGuides(docVersion).find(
+      (guide) => route === `docs/${docVersion}/${guide.id}`,
     );
     if (stableGuide)
-      return <StableGuidePage locale={locale} guide={stableGuide} />;
+      return (
+        <StableGuidePage
+          locale={locale}
+          guide={stableGuide}
+          version={docVersion}
+        />
+      );
     if (
-      manualTitle(route, locale) ||
-      route === "docs/0.1.0/commands/lavik.replicaof"
+      manualTitle(route.replace(`docs/${docVersion}`, "docs/0.1.0"), locale) ||
+      route === `docs/${docVersion}/commands/lavik.replicaof`
     )
-      return <ManualPage route={route} locale={locale} version="0.1.0" />;
+      return <ManualPage route={route} locale={locale} version={docVersion} />;
     notFound();
   }
   const operatorGuide = [...operationsGuides, ...userGuides].find(
@@ -269,8 +291,8 @@ async function PageContent({
                   {zh
                     ? `本文记录 ${article.updatedAt} 的工程实践与产品版本。`
                     : `Engineering article from ${article.updatedAt}; examples and measurements describe that release or source snapshot.`}{" "}
-                  <Link href={`/${locale}/docs/0.1.0/`}>
-                    {zh ? "当前 0.1.0 文档" : "Current 0.1.0 documentation"}
+                  <Link href={`/${locale}/docs/${defaultDocVersion}/`}>
+                    {zh ? "当前 0.2.0 文档" : "Current 0.2.0 documentation"}
                   </Link>
                   {" · "}
                   <Link href={`/${locale}/benchmarks/`}>
@@ -409,19 +431,21 @@ async function PageContent({
             : "What changed, how to upgrade, and where to get each release."}
       </p>
       <div className="article-list">
-        {kind === "release" && (
-          <Link
-            href={`/${locale}/releases/0-1-0/`}
-            className="article-list-item"
-          >
-            <time>2026-10-13</time>
-            <div>
-              <h2>{stableReleaseNotes().title[locale]}</h2>
-              <p>{stableReleaseNotes().summary[locale]}</p>
-            </div>
-            <span>↗</span>
-          </Link>
-        )}
+        {kind === "release" &&
+          stableDocVersions.map((version) => (
+            <Link
+              href={`/${locale}/releases/${version.replaceAll(".", "-")}/`}
+              className="article-list-item"
+              key={version}
+            >
+              <time>{version === "0.2.0" ? "2026-10-21" : "2026-10-13"}</time>
+              <div>
+                <h2>{stableReleaseNotes(version).title[locale]}</h2>
+                <p>{stableReleaseNotes(version).summary[locale]}</p>
+              </div>
+              <span>↗</span>
+            </Link>
+          ))}
         {pages
           .filter((a) => a.kind === kind)
           .sort(

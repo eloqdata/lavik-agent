@@ -26,11 +26,11 @@ function Start({ locale }: { locale: Locale }) {
     <div className="comparison-actions">
       <Link
         className="button primary"
-        href={`/${locale}/docs/0.1.0/quick-start/`}
+        href={`/${locale}/docs/0.2.0/quick-start/`}
       >
-        {zh ? "开始使用 Lavik 0.1.0" : "Start with Lavik 0.1.0"} →
+        {zh ? "开始使用 Lavik 0.2.0" : "Start with Lavik 0.2.0"} →
       </Link>
-      <Link href={`/${locale}/docs/0.1.0/migrate-redis/`}>
+      <Link href={`/${locale}/docs/0.2.0/migrate-redis/`}>
         {zh ? "使用 RedisShake 迁移" : "Migrate with RedisShake"} →
       </Link>
     </div>
@@ -40,7 +40,7 @@ function Approach({ locale }: { locale: Locale }) {
   const zh = locale === "zh-CN";
   return (
     <section className="comparison-section" id="architecture">
-      <p className="eyebrow">LAVIK 0.1.0</p>
+      <p className="eyebrow">LAVIK 0.2.0</p>
       <h2>
         {zh
           ? "应用继续使用 Redis，容量转向 NVMe SSD。"
@@ -48,8 +48,8 @@ function Approach({ locale }: { locale: Locale }) {
       </h2>
       <p>
         {zh
-          ? "Lavik 将紧凑键索引留在 DRAM，值数据存于 NVMe SSD。工作线程拥有本地状态，协程与异步 I/O 重叠执行请求。0.1.0 还为大字符串和集合提供分组存储，让局部读取和更新聚焦相关数据。"
-          : "Lavik keeps a compact key index in DRAM and values on NVMe SSD. Worker-owned state, coroutines and asynchronous I/O keep requests moving while storage operations complete. Version 0.1.0 adds grouped storage for large strings and collections, so partial reads and updates can focus on the relevant data."}
+          ? "Lavik 将紧凑键索引留在 DRAM，值数据存于 NVMe SSD。工作线程拥有本地状态，协程与异步 I/O 重叠执行请求。0.2.0 为大字符串和集合提供分组存储，让局部读取和更新聚焦相关数据。"
+          : "Lavik keeps a compact key index in DRAM and values on NVMe SSD. Worker-owned state, coroutines and asynchronous I/O keep requests moving while storage operations complete. Version 0.2.0 supports grouped storage for large strings and collections, so partial reads and updates can focus on the relevant data."}
       </p>
       <div className="comparison-flow">
         {(zh
@@ -68,7 +68,7 @@ function Approach({ locale }: { locale: Locale }) {
         ))}
       </div>
       <p>
-        <Link href={`/${locale}/docs/0.1.0/storage/`}>
+        <Link href={`/${locale}/docs/0.2.0/storage/`}>
           {zh ? "了解存储设计" : "Explore the storage design"} →
         </Link>
       </p>
@@ -89,8 +89,8 @@ export function CompareHome({ locale }: { locale: Locale }) {
         </h1>
         <p className="comparison-lead">
           {zh
-            ? "Lavik 0.1.0 在 NVMe SSD 上实现超越内存 Redis 与 Valkey 的峰值吞吐量。对比你正在使用的数据库，看看容量、读取延迟和每节点吞吐量如何改变部署成本。"
-            : "Lavik 0.1.0 delivers higher peak throughput on NVMe SSD than the tested Redis and Valkey configurations in DRAM. Compare your current database and see how capacity, read latency and throughput per node change the cost of serving your data."}
+            ? "Lavik 0.2.0 在 NVMe SSD 上实现超越内存 Redis 与 Valkey 的峰值吞吐量。对比你正在使用的数据库，看看容量、读取延迟和每节点吞吐量如何改变部署成本。"
+            : "Lavik 0.2.0 delivers higher peak throughput on NVMe SSD than the tested Redis and Valkey configurations in DRAM. Compare your current database and see how capacity, read latency and throughput per node change the cost of serving your data."}
         </p>
         <Start locale={locale} />
       </header>
@@ -140,8 +140,8 @@ export function CompareHome({ locale }: { locale: Locale }) {
                           ? "1,000 万键 · 1,280 连接 · 原始实测结果"
                           : "10M keys · 1,280 connections · raw measurements"
                         : zh
-                          ? "十亿键 · 同为 80 个连接"
-                          : "1B keys · same 80 connections"}
+                          ? "十亿键 · 同为 320 个连接"
+                          : "1B keys · same 320 connections"}
                     </p>
                   </>
                 ) : (
@@ -165,13 +165,13 @@ export function CompareHome({ locale }: { locale: Locale }) {
         </h2>
         <p>
           {zh
-            ? "10 月报告使用 Lavik 0.1.0，覆盖小型实例、16 vCPU 内存数据库对照、十亿键 SSD 数据库及 Aerospike。按 20:1 的 DRAM/SSD 每 GiB 单价计算，值容量介质成本降低 95%；完整部署再计入 CPU、索引内存与副本。"
-            : "The October reports use Lavik 0.1.0 across compact instances, 16-vCPU DRAM comparisons, billion-key SSD databases and Aerospike. At a 20:1 DRAM/SSD price per GiB, value-capacity media cost falls by 95%; include CPU, index memory and replicas when sizing the complete deployment."}
+            ? "10 月报告使用 Lavik 0.2.0，覆盖小型实例、16 vCPU 内存数据库对照、十亿键 SSD 数据库及 Aerospike。按 20:1 的 DRAM/SSD 每 GiB 单价计算，值容量介质成本降低 95%；完整部署再计入 CPU、索引内存与副本。"
+            : "The October reports use Lavik 0.2.0 across compact instances, 16-vCPU DRAM comparisons, billion-key SSD databases and Aerospike. At a 20:1 DRAM/SSD price per GiB, value-capacity media cost falls by 95%; include CPU, index memory and replicas when sizing the complete deployment."}
         </p>
         <Link href={`/${locale}/benchmarks/`}>
           {zh
-            ? "查看所有 0.1.0 基准与复现步骤"
-            : "See all 0.1.0 benchmarks and reproduction steps"}{" "}
+            ? "查看所有 0.2.0 基准与复现步骤"
+            : "See all 0.2.0 benchmarks and reproduction steps"}{" "}
           →
         </Link>
       </section>
@@ -200,7 +200,7 @@ export function ComparisonPage({
         <Link className="comparison-back" href={`/${locale}/compare/`}>
           ← {zh ? "全部产品对比" : "All comparisons"}
         </Link>
-        <p className="eyebrow">LAVIK 0.1.0</p>
+        <p className="eyebrow">LAVIK 0.2.0</p>
         <h1>Lavik vs {p.name}</h1>
         <p className="comparison-headline">{c.angle[locale]}</p>
         <p className="comparison-lead">{c.summary[locale]}</p>
@@ -226,9 +226,9 @@ export function ComparisonPage({
         <p className="eyebrow">
           {measured
             ? memory
-              ? "OCTOBER 13, 2026"
-              : "OCTOBER 14, 2026"
-            : "LAVIK 0.1.0"}
+              ? "OCTOBER 21, 2026"
+              : "OCTOBER 21–22, 2026"
+            : "LAVIK 0.2.0"}
         </p>
         <h2>
           {zh
@@ -270,8 +270,8 @@ export function ComparisonPage({
                       ? "1,000 万键 · 1,280 个连接 · 1 KiB 值"
                       : "10M keys · 1,280 connections · 1 KiB values"
                     : zh
-                      ? "十亿键 · 同为 80 个连接 · 1 KiB 值"
-                      : "1B keys · same 80 connections · 1 KiB values"}
+                      ? "十亿键 · 同为 320 个连接 · 1 KiB 值"
+                      : "1B keys · same 320 connections · 1 KiB values"}
                 </caption>
                 <thead>
                   <tr>
@@ -316,8 +316,8 @@ export function ComparisonPage({
                   ? "数值来自原始测量结果；QPS 四舍五入为整数，p99.9 保留三位小数。"
                   : "Values come from raw measurements; QPS is rounded to whole operations and p99.9 retains three decimal places."
                 : zh
-                  ? "同连接数比较；完整报告还展示 80–1,280 连接的吞吐量与尾延迟曲线。"
-                  : "Matched-concurrency comparison. The full report also plots throughput and tail latency across 80–1,280 connections."}
+                  ? "同连接数比较；完整报告还展示 160–1,280 连接的吞吐量与尾延迟曲线。"
+                  : "Matched-concurrency comparison. The full report also plots throughput and tail latency across 160–1,280 connections."}
             </p>
             <details className="comparison-sweep">
               <summary>
@@ -328,8 +328,8 @@ export function ComparisonPage({
                 <a
                   href={rawArchiveUrl(
                     memory
-                      ? "lavik-v0.1.0-spdk-vs-latest-2026-10-13"
-                      : "lavik-v0.1.0-storage-peers-1tb-2026-10-14",
+                      ? "lavik-v0.2.0-vs-memory-databases-2026-10-21"
+                      : "lavik-v0.2.0-storage-peers-1tb-2026-10-21",
                   )}
                 >
                   {zh ? "原始测量数据与校验和" : "Raw measurements & checksums"}{" "}
@@ -355,8 +355,8 @@ export function ComparisonPage({
             <p className="comparison-small">{c.nuance[locale]}</p>
             <Link href={`/${locale}/benchmarks/`}>
               {zh
-                ? "查看 Lavik 0.1.0 实测结果"
-                : "Explore measured Lavik 0.1.0 results"}{" "}
+                ? "查看 Lavik 0.2.0 实测结果"
+                : "Explore measured Lavik 0.2.0 results"}{" "}
               →
             </Link>
           </>
@@ -368,7 +368,7 @@ export function ComparisonPage({
         </h2>
         <p>{c.design[locale]}</p>
         <p>{c.choose[locale]}</p>
-        <Link href={`/${locale}/docs/0.1.0/storage/`}>
+        <Link href={`/${locale}/docs/0.2.0/storage/`}>
           {zh
             ? "Lavik 存储与大对象设计"
             : "Lavik storage and large-object design"}{" "}
@@ -425,17 +425,17 @@ export function ComparisonPage({
         )}
         <ol>
           <li>
-            <Link href={`/${locale}/docs/0.1.0/quick-start/`}>
-              {zh ? "安装并启动 Lavik 0.1.0" : "Install and start Lavik 0.1.0"}
+            <Link href={`/${locale}/docs/0.2.0/quick-start/`}>
+              {zh ? "安装并启动 Lavik 0.2.0" : "Install and start Lavik 0.2.0"}
             </Link>
           </li>
           <li>
-            <Link href={`/${locale}/docs/0.1.0/clients/`}>
+            <Link href={`/${locale}/docs/0.2.0/clients/`}>
               {zh ? "连接你的客户端" : "Connect your client"}
             </Link>
           </li>
           <li>
-            <Link href={`/${locale}/docs/0.1.0/migrate-redis/`}>
+            <Link href={`/${locale}/docs/0.2.0/migrate-redis/`}>
               {zh
                 ? "使用 RedisShake 查看 RedisShake 的源端要求与切流步骤"
                 : "Check RedisShake source requirements and cutover steps"}
@@ -462,8 +462,8 @@ export function ComparisonPage({
               <a href={comparisonSource(id).url}>
                 {id.startsWith("stable-")
                   ? zh
-                    ? "Lavik 0.1.0 资料"
-                    : "Lavik 0.1.0 source"
+                    ? "Lavik 0.2.0 资料"
+                    : "Lavik 0.2.0 source"
                   : p.name + " documentation"}{" "}
                 ↗
               </a>

@@ -25,7 +25,7 @@ export const metadata: Metadata = {
     template: "%s · Lavik",
   },
   description:
-    "An open-source Redis-compatible key-value store built around NVMe SSD storage. Explore the benchmarks and evaluate Lavik 0.1.0.",
+    "An open-source Redis-compatible key-value store built around NVMe SSD storage. Explore the benchmarks and evaluate Lavik 0.2.0.",
   icons: { icon: "/icon.svg" },
 };
 export default async function Layout({

@@ -51,7 +51,7 @@ export function Homepage({
               : `Lavik delivers higher peak throughput than in-memory Redis and Valkey in published tests. Our capacity cost is just 1/${capacityRatio} of Redis.`}
           </p>
           <div className="dual-actions">
-            <Link href={`/${locale}/docs/0.1.0/quick-start/`}>
+            <Link href={`/${locale}/docs/0.2.0/quick-start/`}>
               {zh ? "开始使用 Lavik" : "Start with Lavik"}{" "}
               <span aria-hidden="true">→</span>
             </Link>
@@ -61,7 +61,7 @@ export function Homepage({
             </Link>
           </div>
           <p className="dual-compatible">
-            <Link href={`/${locale}/docs/0.1.0/compatibility/`}>
+            <Link href={`/${locale}/docs/0.2.0/compatibility/`}>
               Redis clients <span>·</span> RESP2 / RESP3
             </Link>{" "}
             <span>·</span> Apache 2.0

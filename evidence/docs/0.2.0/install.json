@@ -1,0 +1,220 @@
+{
+  "sourceCommit": "2908f86f2770e9c6e8acc6585b3bedb4b44d1cd5",
+  "release": "0.2.0",
+  "status": "passed",
+  "fileHashes": {
+    "scripts/verify-020-install.py": "da7be99d290e1e523eee021ca3df7c3ba65e2b60e3105ef5be7861f7da4e180f",
+    "verification/docs/0.2.0/install-run.py": "0c2716c990b19d74ebbb144055719ccd683fbad0e3b438a491ef2e6d4c00c0dd",
+    "verification/docs/0.2.0/binary-start.sh": "f5b2f4f757919e83f43d28ecdf2016ab98e3a653cb0320363a537e018d6d6e9b",
+    "verification/docs/0.2.0/binary-client.sh": "5eefcc2502a5fb393436c14f4a711ce891c04f6cb3645755cde1c86a907327a7",
+    "verification/recipes.json": "0f6e8e46cf50adc283221878de8d78163a5923841c692b226e5f747bc8ed403a",
+    "content/docs/0.2.0/downloads.json": "17e3de43a70832c82f097f0d5d650d7ed7cb07b48331e19d53e529610d936a53"
+  },
+  "packages": [
+    {
+      "filename": "lavik-v0.2.0-linux-aarch64-minimal.tar.gz",
+      "sha256": "8357fd2e61f1826a8ae521ea1f60989669e5809b704ff118915dd272e8aa874a",
+      "status": "passed",
+      "imageId": "sha256:9bc84ef3805ef7bbac5e11dead02fb19cd15bdafbfed1d13e2502fb09679b20b",
+      "architecture": "aarch64",
+      "runtime": {
+        "recipeId": "basic-commands",
+        "platform": "Linux-7.0.12-linuxkit-aarch64-with-glibc2.39",
+        "steps": [
+          {
+            "argv": [
+              "redis-cli",
+              "-h",
+              "127.0.0.1",
+              "-p",
+              "6379",
+              "--raw",
+              "PING"
+            ],
+            "expected": "PONG",
+            "actual": "PONG"
+          },
+          {
+            "argv": [
+              "redis-cli",
+              "-h",
+              "127.0.0.1",
+              "-p",
+              "6379",
+              "--raw",
+              "SET",
+              "greeting",
+              "hello from Lavik"
+            ],
+            "expected": "OK",
+            "actual": "OK"
+          },
+          {
+            "argv": [
+              "redis-cli",
+              "-h",
+              "127.0.0.1",
+              "-p",
+              "6379",
+              "--raw",
+              "GET",
+              "greeting"
+            ],
+            "expected": "hello from Lavik",
+            "actual": "hello from Lavik"
+          },
+          {
+            "argv": [
+              "redis-cli",
+              "-h",
+              "127.0.0.1",
+              "-p",
+              "6379",
+              "--raw",
+              "HSET",
+              "user:42",
+              "name",
+              "Ada"
+            ],
+            "expected": "1",
+            "actual": "1"
+          },
+          {
+            "argv": [
+              "redis-cli",
+              "-h",
+              "127.0.0.1",
+              "-p",
+              "6379",
+              "--raw",
+              "HGET",
+              "user:42",
+              "name"
+            ],
+            "expected": "Ada",
+            "actual": "Ada"
+          }
+        ],
+        "status": "passed",
+        "binaryVersion": "lavik 0.2.0",
+        "executableOnPath": false,
+        "workingDirectory": "/tmp/package",
+        "sourceCommit": "2908f86f2770e9c6e8acc6585b3bedb4b44d1cd5",
+        "packageVersion": "v0.2.0",
+        "publishedClientOutput": "PONG\nOK\nhello from Lavik",
+        "gracefulRestart": "passed"
+      }
+    },
+    {
+      "filename": "lavik-v0.2.0-linux-aarch64.tar.gz",
+      "sha256": "45c2f5ae4962de6ec7bd2156a688f8acdb1f6ba48adc148317ab805231ce0aac",
+      "status": "passed",
+      "imageId": "sha256:9bc84ef3805ef7bbac5e11dead02fb19cd15bdafbfed1d13e2502fb09679b20b",
+      "architecture": "aarch64",
+      "runtime": {
+        "recipeId": "basic-commands",
+        "platform": "Linux-7.0.12-linuxkit-aarch64-with-glibc2.39",
+        "steps": [
+          {
+            "argv": [
+              "redis-cli",
+              "-h",
+              "127.0.0.1",
+              "-p",
+              "6379",
+              "--raw",
+              "PING"
+            ],
+            "expected": "PONG",
+            "actual": "PONG"
+          },
+          {
+            "argv": [
+              "redis-cli",
+              "-h",
+              "127.0.0.1",
+              "-p",
+              "6379",
+              "--raw",
+              "SET",
+              "greeting",
+              "hello from Lavik"
+            ],
+            "expected": "OK",
+            "actual": "OK"
+          },
+          {
+            "argv": [
+              "redis-cli",
+              "-h",
+              "127.0.0.1",
+              "-p",
+              "6379",
+              "--raw",
+              "GET",
+              "greeting"
+            ],
+            "expected": "hello from Lavik",
+            "actual": "hello from Lavik"
+          },
+          {
+            "argv": [
+              "redis-cli",
+              "-h",
+              "127.0.0.1",
+              "-p",
+              "6379",
+              "--raw",
+              "HSET",
+              "user:42",
+              "name",
+              "Ada"
+            ],
+            "expected": "1",
+            "actual": "1"
+          },
+          {
+            "argv": [
+              "redis-cli",
+              "-h",
+              "127.0.0.1",
+              "-p",
+              "6379",
+              "--raw",
+              "HGET",
+              "user:42",
+              "name"
+            ],
+            "expected": "Ada",
+            "actual": "Ada"
+          }
+        ],
+        "status": "passed",
+        "binaryVersion": "lavik 0.2.0",
+        "executableOnPath": false,
+        "workingDirectory": "/tmp/package",
+        "sourceCommit": "2908f86f2770e9c6e8acc6585b3bedb4b44d1cd5",
+        "packageVersion": "v0.2.0",
+        "publishedClientOutput": "PONG\nOK\nhello from Lavik",
+        "gracefulRestart": "passed"
+      }
+    },
+    {
+      "filename": "lavik-v0.2.0-linux-x86_64-minimal.tar.gz",
+      "sha256": "688b0b56320e96042a2b48d26408877171bba1920d286c8bdf73ab5a6089deef",
+      "status": "passed",
+      "imageId": "sha256:4a7efbde81cd403a97edcac7fc27785f269ee443a6b7e55597d790cf3d93a9fd",
+      "architecture": "x86_64",
+      "runtime": null
+    },
+    {
+      "filename": "lavik-v0.2.0-linux-x86_64.tar.gz",
+      "sha256": "b24b71034ae879e20e74a2727917df2066ea0a328172d83cc2b4484bdf217817",
+      "status": "passed",
+      "imageId": "sha256:4a7efbde81cd403a97edcac7fc27785f269ee443a6b7e55597d790cf3d93a9fd",
+      "architecture": "x86_64",
+      "runtime": null
+    }
+  ],
+  "scope": "All four archives: checksum, extraction and binary version. Native ARM64 Minimal and Standard: exact ./lavik startup, client examples, graceful restart. AMD64 version check uses emulation; native AMD64 server and image tests are recorded in release-artifacts CI. No SPDK device or performance test."
+}

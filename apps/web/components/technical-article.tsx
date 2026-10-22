@@ -3,6 +3,7 @@ import Link from "next/link";
 import type { Article } from "../../../packages/content/schema";
 import { technicalPublicationErrors } from "../../../packages/blog/technical-publication";
 import "./technical-article.css";
+import { defaultDocVersion } from "../../../packages/docs/versions";
 
 export function TechnicalArticleBody({ article }: { article: Article }) {
   const errors = technicalPublicationErrors(article);
@@ -129,17 +130,19 @@ export function TechnicalArticleBody({ article }: { article: Article }) {
         <h2>{zh ? "从自己的数据集开始" : "Start with your dataset"}</h2>
         <p>
           {zh
-            ? "安装 Lavik 0.1.0，回放真实负载，再用 RedisShake 规划迁移。"
-            : "Install Lavik 0.1.0, replay your workload, and plan the migration with RedisShake."}
+            ? `安装 Lavik ${defaultDocVersion}，回放真实负载，再用 RedisShake 规划迁移。`
+            : `Install Lavik ${defaultDocVersion}, replay your workload, and plan the migration with RedisShake.`}
         </p>
         <div>
           <Link
             className="button primary"
-            href={`/${article.locale}/docs/0.1.0/quick-start/`}
+            href={`/${article.locale}/docs/${defaultDocVersion}/quick-start/`}
           >
             {zh ? "开始使用" : "Get started"} →
           </Link>
-          <Link href={`/${article.locale}/docs/0.1.0/migrate-redis/`}>
+          <Link
+            href={`/${article.locale}/docs/${defaultDocVersion}/migrate-redis/`}
+          >
             {zh ? "RedisShake 迁移指南" : "RedisShake migration guide"} →
           </Link>
           <Link href={`/${article.locale}/benchmarks/`}>

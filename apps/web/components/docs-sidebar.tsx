@@ -1,5 +1,6 @@
 import {
   docVersions,
+  isStableDocVersion,
   docVersionForRoute,
   defaultDocVersion,
 } from "../../../packages/docs/versions";
@@ -29,8 +30,12 @@ export function DocsSidebar({
   const zh = locale === "zh-CN";
   const version =
     docVersionForRoute(route) ??
-    (route === "releases/0-1-0-beta-1" ? "0.1.0-beta.1" : defaultDocVersion);
-  const stable = version === "0.1.0";
+    (route === "releases/0-1-0-beta-1"
+      ? "0.1.0-beta.1"
+      : route === "releases/0-1-0"
+        ? "0.1.0"
+        : defaultDocVersion);
+  const stable = isStableDocVersion(version);
   const root = `/${locale}/docs/${version}`;
   const groups = [
     {
@@ -145,7 +150,7 @@ export function DocsSidebar({
     for (const link of group.links)
       indexed.set(link.href, { ...link, kind: group.title });
   for (const guide of stable
-    ? stableGuides()
+    ? stableGuides(version as "0.1.0" | "0.2.0")
     : [...operationsGuides, ...userGuides]) {
     const href = `${root}/${guide.id}/`;
     indexed.set(href, {
@@ -171,7 +176,10 @@ export function DocsSidebar({
       kind: zh ? "指南" : "Guide",
     });
   }
-  for (const command of (stable ? stableCatalog() : manualCatalog()).commands) {
+  for (const command of (stable
+    ? stableCatalog(version as "0.1.0" | "0.2.0")
+    : manualCatalog()
+  ).commands) {
     const href = `${root}/commands/${command.name.toLowerCase()}/`;
     indexed.set(href, {
       title: command.name,

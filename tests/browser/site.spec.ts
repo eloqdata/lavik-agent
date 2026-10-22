@@ -16,17 +16,17 @@ test("both languages, homepage benchmark interaction, and real verification outp
         [
           "GET",
           [
-            ["Lavik 0.1.0 SPDK", "1,145,772", "7.135"],
-            ["Redis 8.10.2", "1,018,735", "7.103"],
-            ["Valkey 9.1.2", "970,288", "7.455"],
+            ["Lavik 0.2.0 SPDK", "1,156,956", "7.103"],
+            ["Redis 8.10.2", "976,087", "7.039"],
+            ["Valkey 9.1.2", "913,756", "7.743"],
           ],
         ],
         [
           "SET",
           [
-            ["Lavik 0.1.0 SPDK", "971,950", "7.199"],
-            ["Redis 8.10.2", "951,053", "7.231"],
-            ["Valkey 9.1.2", "808,103", "7.199"],
+            ["Lavik 0.2.0 SPDK", "945,384", "10.175"],
+            ["Redis 8.10.2", "863,860", "7.391"],
+            ["Valkey 9.1.2", "793,809", "7.743"],
           ],
         ],
       ] as const) {
@@ -74,10 +74,13 @@ test("both languages, homepage benchmark interaction, and real verification outp
         );
         await expect(
           page.locator(".dual-source-links a").first(),
-        ).toHaveAttribute("href", /lavik-v0\.1\.0-spdk-vs-latest-2026-10-13/);
+        ).toHaveAttribute(
+          "href",
+          /lavik-v0\.2\.0-vs-memory-databases-2026-10-21/,
+        );
         await expect(page.locator(".dual-actions a").first()).toHaveAttribute(
           "href",
-          `/${locale}/docs/0.1.0/quick-start/`,
+          `/${locale}/docs/0.2.0/quick-start/`,
         );
         await expect(page.locator(".prototype-switcher")).toHaveCount(0);
         await page.locator(".dual-method summary").click();
@@ -98,7 +101,7 @@ test("both languages, homepage benchmark interaction, and real verification outp
     path: ".cache/screenshots/home-en.png",
     fullPage: true,
   });
-  await page.goto("/en/docs/0.1.0/quick-start/");
+  await page.goto("/en/docs/0.2.0/quick-start/");
   await expect(
     page.locator(
       ".recipe .verification, .source-list, .quick-start-verification",
@@ -110,7 +113,7 @@ test("both languages, homepage benchmark interaction, and real verification outp
   await page
     .getByRole("link", { name: "Switch to Simplified Chinese" })
     .click();
-  await expect(page).toHaveURL(/\/zh-CN\/docs\/0.1.0\/quick-start\//);
+  await expect(page).toHaveURL(/\/zh-CN\/docs\/0.2.0\/quick-start\//);
   await expect(page.locator("html")).toHaveAttribute("lang", "zh-CN");
   await expect(page.locator("h1")).toContainText("使用二进制安装");
   expect(errors).toEqual([]);
@@ -140,7 +143,7 @@ test("all public pages and internal links resolve", async ({ request }) => {
         "use-cases/",
         "download/",
         "community/",
-        "docs/0.1.0/",
+        "docs/0.2.0/",
       ].map((section) => `/${locale}/${section}`),
     ),
   ];
@@ -161,7 +164,7 @@ test("English and Chinese pages fit a mobile viewport", async ({ page }) => {
   for (const locale of ["en", "zh-CN"])
     for (const route of [
       "",
-      "docs/0.1.0/quick-start/",
+      "docs/0.2.0/quick-start/",
       "benchmarks/",
       "cost/",
     ]) {
@@ -192,9 +195,9 @@ test("selected homepage is exported without JavaScript and preview queries canno
       await expect(page.locator("main")).toHaveAttribute("data-homepage", "G");
       await expect(page.locator("h1")).toContainText("Redis");
       await expect(page.locator(".chart-row").first()).toContainText(
-        "1,145,772",
+        "1,156,956",
       );
-      await expect(page.locator(".benchmark-data")).toContainText("971,950");
+      await expect(page.locator(".benchmark-data")).toContainText("945,384");
       await expect(page.locator(".dual-cost-row strong")).toHaveText([
         "5%",
         "100%",
@@ -229,7 +232,7 @@ test("selected homepage is exported without JavaScript and preview queries canno
         locale === "en" ? "not a measured migration" : "不是已完成的迁移案例",
       );
       await expect(page.locator(".home-scale-stats")).toContainText(
-        "1,069,126",
+        "1,129,597",
       );
       await expect(page.locator(".home-agent-result")).toContainText(
         "5.96 TiB",
@@ -256,7 +259,7 @@ test("homepage capacity scenario responds to input and links to current migratio
     await expect(page.locator(".home-agent-result")).toContainText("200×");
     await expect(page.locator(".home-tail-details a")).toHaveAttribute(
       "href",
-      `/${locale}/docs/0.1.0/migrate-redis/`,
+      `/${locale}/docs/0.2.0/migrate-redis/`,
     );
     await expect(page.locator(".home-scale-stats")).toContainText("1.024");
     await expect(page.locator(".home-sizing-note")).toContainText(
@@ -266,7 +269,7 @@ test("homepage capacity scenario responds to input and links to current migratio
     );
     await expect(page.locator(".home-final-cta a")).toHaveAttribute(
       "href",
-      `/${locale}/docs/0.1.0/quick-start/`,
+      `/${locale}/docs/0.2.0/quick-start/`,
     );
   }
 });
@@ -277,7 +280,7 @@ test("header has no release badge across page types and languages", async ({
   for (const locale of ["en", "zh-CN"])
     for (const route of [
       "",
-      "docs/0.1.0/",
+      "docs/0.2.0/",
       "docs/0.1.0-beta.1/",
       "download/",
       "benchmarks/",

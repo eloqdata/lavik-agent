@@ -1,10 +1,10 @@
 import { test, expect } from "@playwright/test";
 import fs from "node:fs";
 const reports = [
-  ["2vcpu-capacity", "lavik-v0.1.0-2vcpu-latest-capacity-2026-10-13"],
-  ["redis-valkey", "lavik-v0.1.0-spdk-vs-latest-2026-10-13"],
-  ["1tb-storage", "lavik-v0.1.0-storage-peers-1tb-2026-10-14"],
-  ["aerospike-ycsb", "lavik-v0.1.0-aerospike-ycsb-2026-10-13"],
+  ["2vcpu-capacity", "lavik-v0.2.0-vs-memory-databases-2026-10-21"],
+  ["redis-valkey", "lavik-v0.2.0-vs-memory-databases-2026-10-21"],
+  ["1tb-storage", "lavik-v0.2.0-storage-peers-1tb-2026-10-21"],
+  ["aerospike-ycsb", "lavik-v0.2.0-aerospike-ycsb-2026-10-21"],
 ];
 test("Benchmarks shares Compare menu styling, closes accessibly, and navigates to each topic", async ({
   page,
@@ -68,7 +68,7 @@ test("every benchmark renders complete source commands, original graphs, local a
         "https://lavik.dev" + route,
       );
       const original = fs.readFileSync(
-        "evidence/benchmarks/0.1.0/" +
+        "evidence/benchmarks/0.2.0/" +
           dir +
           "/" +
           (locale === "en" ? "README.md" : "README.zh-CN.md"),
@@ -91,7 +91,7 @@ test("every benchmark renders complete source commands, original graphs, local a
         .locator(".benchmark-original-chart img")
         .all()) {
         const src = await img.getAttribute("src");
-        expect(src).toMatch(/^\/benchmark-assets\/0\.1\.0\//);
+        expect(src).toMatch(/^\/benchmark-assets\/0\.2\.0\//);
         expect((await request.get(src!)).status()).toBe(200);
         await img.scrollIntoViewIfNeeded();
         await expect
@@ -129,11 +129,11 @@ test("matched-concurrency chart switches operation and latency, with all numbers
   const snapshot = page.locator(".benchmark-snapshot");
   await snapshot.getByRole("button", { name: "SET", exact: true }).click();
   await expect(snapshot.locator(".benchmark-bar-row").first()).toContainText(
-    "425,907",
+    "701,241",
   );
   await snapshot.getByRole("button", { name: "p99.9", exact: true }).click();
   await expect(snapshot.locator(".benchmark-bar-row").first()).toContainText(
-    "2.655",
+    "0.959",
   );
   await expect(snapshot.locator(".benchmark-axis")).toContainText(
     "lower is better",
@@ -142,12 +142,14 @@ test("matched-concurrency chart switches operation and latency, with all numbers
   const reader = await context.newPage();
   await reader.goto(baseURL + "/en/benchmarks/1tb-storage/");
   await expect(reader.locator(".benchmark-snapshot table")).toContainText(
-    "385,514",
+    "652,881",
   );
   await expect(reader.locator(".benchmark-snapshot table")).toContainText(
-    "425,907",
+    "701,241",
   );
-  await expect(reader.locator(".benchmark-context")).toContainText("900,794");
+  await expect(reader.locator(".benchmark-context")).toContainText(
+    "Garnet leads GET at 160 connections",
+  );
   expect(await reader.locator(".benchmark-code").count()).toBeGreaterThan(5);
   await context.close();
 });
@@ -160,15 +162,15 @@ test("high-throughput report presents raw peaks and exact paired latency in both
     const snapshot = page.locator(".benchmark-snapshot");
     await expect(snapshot.locator("table tbody tr")).toHaveCount(3);
     for (const value of [
-      "1,145,772",
-      "971,950",
-      "1,018,735",
-      "951,053",
-      "970,288",
-      "808,103",
+      "1,156,956",
+      "945,384",
+      "976,087",
+      "863,860",
+      "913,756",
+      "793,809",
       "7.103",
-      "7.231",
-      "7.455",
+      "7.391",
+      "7.743",
     ])
       await expect(snapshot.locator("table")).toContainText(value);
     await expect(snapshot).not.toContainText("≈");
@@ -177,7 +179,7 @@ test("high-throughput report presents raw peaks and exact paired latency in both
     ).toHaveCount(1);
     await snapshot.getByRole("button", { name: "SET", exact: true }).click();
     await expect(snapshot.locator(".benchmark-bar-row").first()).toContainText(
-      "971,950",
+      "945,384",
     );
   }
 });

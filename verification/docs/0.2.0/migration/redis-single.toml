@@ -1,0 +1,25 @@
+[sync_reader]
+address = "127.0.0.1:6379"
+username = ""
+password = "replace-source-password"
+cluster = false
+prefer_replica = false
+tls = false
+sync_rdb = true
+sync_aof = true
+
+[redis_writer]
+address = "127.0.0.1:6371"
+username = ""
+password = "replace-target-password"
+cluster = false
+tls = false
+off_reply = false
+
+[advanced]
+dir = "/var/tmp/lavik-import-01/spool"
+log_file = "/var/tmp/lavik-import-01/shake.log"
+status_port = 18080
+log_interval = 1
+rdb_restore_command_behavior = "panic"
+target_redis_proto_max_bulk_len = 512000000

@@ -70,7 +70,17 @@ export function codexInvocationBudget(
   additionalReviewReason?: string,
   additionalBatchReviewReason?: string,
   authorizedCorrectiveReviewReason?: string,
+  authorizedFinalReviewReason?: string,
 ) {
+  // A separate, explicit owner instruction is required for this sixth call.
+  // Existing corrective extensions retain their five-call cap.
+  if (authorizedFinalReviewReason?.trim()) {
+    if (role !== "reviewer" || authorizedFinalReviewReason.length > 120)
+      throw new Error(
+        "A final owner-authorized review requires a reviewer and a short recorded reason.",
+      );
+    return { roleLimit: 6, totalLimit: 6 };
+  }
   if (authorizedCorrectiveReviewReason?.trim()) {
     if (role !== "reviewer" || authorizedCorrectiveReviewReason.length > 120)
       throw new Error(
@@ -99,6 +109,7 @@ export async function runLocalCodex(options: {
   additionalReviewReason?: string;
   additionalBatchReviewReason?: string;
   authorizedCorrectiveReviewReason?: string;
+  authorizedFinalReviewReason?: string;
 }) {
   const task = path.resolve(options.taskDirectory);
   await fs.mkdir(task, { recursive: true, mode: 0o700 });
@@ -115,6 +126,7 @@ export async function runLocalCodex(options: {
     options.additionalReviewReason,
     options.additionalBatchReviewReason,
     options.authorizedCorrectiveReviewReason,
+    options.authorizedFinalReviewReason,
   );
   for (let attempt = 1; attempt <= limit; attempt++) {
     const candidate = path.join(task, `${options.role}-${attempt}`);
@@ -131,7 +143,7 @@ export async function runLocalCodex(options: {
       `Local task ${options.role} invocation budget exhausted (${limit}).`,
     );
   const attempts = (await fs.readdir(task)).filter((entry) =>
-    /^(writer|reviewer)-[1-5]$/.test(entry),
+    /^(writer|reviewer)-[1-6]$/.test(entry),
   );
   if (attempts.length > totalLimit)
     throw new Error(
@@ -223,6 +235,9 @@ export async function runLocalCodex(options: {
           authorizedCorrectiveReviewReason:
             options.authorizedCorrectiveReviewReason,
         }
+      : {}),
+    ...(options.authorizedFinalReviewReason
+      ? { authorizedFinalReviewReason: options.authorizedFinalReviewReason }
       : {}),
     startedAt,
     finishedAt: new Date().toISOString(),

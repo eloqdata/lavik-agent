@@ -1,0 +1,161 @@
+{
+  "id": "lavik-0-2-0-released",
+  "locale": "zh-CN",
+  "version": "0.2.0",
+  "kind": "blog",
+  "slug": "lavik-0-2-0-released",
+  "title": "Lavik 0.2.0 发布：减少请求开销，扩展数据容量",
+  "summary": "更精简的字符串与集合路径、队列化 I/O、复制修复，以及从 2 vCPU 到十亿键的新基准测试。开始使用 0.2.0 发布包与版本化文档。",
+  "updatedAt": "2026-10-22",
+  "publishedAt": "2026-10-22",
+  "sourceRevision": "2908f86f2770e9c6e8acc6585b3bedb4b44d1cd5",
+  "topics": [
+    "news",
+    "benchmark"
+  ],
+  "featured": false,
+  "technical": {
+    "sources": [
+      {
+        "id": "release",
+        "title": "Lavik 0.2.0 release",
+        "file": "evidence/docs/0.2.0/github-release.json",
+        "url": "https://github.com/eloqdata/lavik/releases/tag/v0.2.0",
+        "sha256": "17e3de43a70832c82f097f0d5d650d7ed7cb07b48331e19d53e529610d936a53"
+      },
+      {
+        "id": "changes",
+        "title": "47 commits from 0.1.0 to 0.2.0",
+        "file": "evidence/docs/0.2.0/commits.json",
+        "url": "https://github.com/eloqdata/lavik/compare/v0.1.0...v0.2.0",
+        "sha256": "73843b124653a9f846de52cb44d363ae6c908efcb73cb1e9227f99058c6b1b02"
+      },
+      {
+        "id": "overview",
+        "title": "Lavik 0.2.0 README",
+        "file": "evidence/docs/0.2.0/sources/README.md",
+        "url": "https://github.com/eloqdata/lavik/blob/2908f86f2770e9c6e8acc6585b3bedb4b44d1cd5/README.md",
+        "sha256": "ec6f4352e39da4115d875de16baa3a490851d106fb6f2f3d508f29d726f310c3"
+      },
+      {
+        "id": "storage",
+        "title": "Storage and recovery at 0.2.0",
+        "file": "evidence/docs/0.2.0/sources/docs_architecture_04-storage-and-recovery.md",
+        "url": "https://github.com/eloqdata/lavik/blob/2908f86f2770e9c6e8acc6585b3bedb4b44d1cd5/docs/architecture/04-storage-and-recovery.md",
+        "sha256": "79b2bf3dbe629fae7f65a702e13cee4c4a33b9b18e763d4ee72a953dc5257b1b"
+      },
+      {
+        "id": "memory-benchmark",
+        "title": "0.2.0 memory-database comparison",
+        "file": "evidence/benchmarks/0.2.0/lavik-v0.2.0-vs-memory-databases-2026-10-21/README.md",
+        "url": "https://github.com/eloqdata/lavik/blob/089dbdfd87001c86ad3343ddf2554464720346e9/perf_reports/lavik-v0.2.0-vs-memory-databases-2026-10-21/README.md",
+        "sha256": "5e8bc4ce332ad9e8b62cf4f90d59cbab44dd4a8ad065388820dd5cad09530af9"
+      },
+      {
+        "id": "storage-benchmark",
+        "title": "0.2.0 billion-key storage comparison",
+        "file": "evidence/benchmarks/0.2.0/lavik-v0.2.0-storage-peers-1tb-2026-10-21/README.md",
+        "url": "https://github.com/eloqdata/lavik/blob/089dbdfd87001c86ad3343ddf2554464720346e9/perf_reports/lavik-v0.2.0-storage-peers-1tb-2026-10-21/README.md",
+        "sha256": "49f10ed9a8bae3788c12233cc8428ddf4b7d2af2d22dba7056f9d13ce48b9e7e"
+      },
+      {
+        "id": "ycsb",
+        "title": "0.2.0 Aerospike YCSB comparison",
+        "file": "evidence/benchmarks/0.2.0/lavik-v0.2.0-aerospike-ycsb-2026-10-21/README.md",
+        "url": "https://github.com/eloqdata/lavik/blob/089dbdfd87001c86ad3343ddf2554464720346e9/perf_reports/lavik-v0.2.0-aerospike-ycsb-2026-10-21/README.md",
+        "sha256": "db9b1655a679f5cfd398d620e9dad923981776f9df462952db9cc2bbcd97d442"
+      }
+    ],
+    "visuals": []
+  },
+  "blocks": [
+    {
+      "type": "heading",
+      "text": "Lavik 0.2.0 已发布"
+    },
+    {
+      "type": "paragraph",
+      "text": "Lavik 0.2.0 已面向 Linux x86-64 与 ARM64 发布。本版聚焦 Redis 命令访问 NVMe 值时的执行开销：减少字节复制、临时状态分配，并提高存储操作提交效率。在保留 Redis 兼容接口的同时，为增长中的目录、应用缓存与在线状态提供超越 DRAM 的容量空间。",
+      "sources": [
+        "release",
+        "changes",
+        "overview"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "减少每个对象的处理开销"
+    },
+    {
+      "type": "paragraph",
+      "text": "0.1.0 以来的 47 次提交同时优化大对象与小型点操作。大字符串路径移除接收、暂存与读取中的中间复制；Hash、Set 读取避免完整解码紧凑对象，紧凑写入直接拼接受影响字节；Sorted Set 修改复用页面容量，以更少的逐成员分配编辑编码页。集合响应采用打包的自有字节块与批量输出。",
+      "sources": [
+        "changes"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "io_uring 与 SPDK 路径现在使用队列化提交；分组读取按物理 owner 并行，事务清理与写入分离，并批量执行刷新。这些改动减少请求路径中的工作量，其应用收益取决于对象大小、命令组合与并发。",
+      "sources": [
+        "changes"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "从小型实例到十亿键的最新实测"
+    },
+    {
+      "type": "paragraph",
+      "text": "10 月 21 日的 16 vCPU SPDK 对比中，Lavik 0.2.0 达到 1,156,956 GET QPS、p99.9 7.103 ms，以及 945,384 SET QPS、p99.9 10.175 ms。两点均使用 1,280 连接、1,000 万个 1 KiB 值、pipeline 深度 1 与 30 秒窗口。受测 Redis 8.10.2、Valkey 9.1.2 使用 DRAM，并关闭 AOF 与定时快照；完整连接数扫描展示吞吐量与延迟的取舍。",
+      "sources": [
+        "memory-benchmark"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "容量方面，2 vCPU 实验在标称 16 GiB 内存的主机上保留 1 亿个键、95.37 GiB 逻辑值负载，GET 与 SET 峰值为 215,644 和 231,361 ops/s。独立的 16 vCPU 十亿键实验使用 32 客户端线程与 60 秒窗口，Lavik 达到 1,129,597 GET QPS 与 910,356 SET QPS，在六种存储型系统中完整扫描峰值最高；160 连接时 Garnet GET 领先。键、索引、副本与存储余量仍需另行计入容量规划。",
+      "sources": [
+        "memory-benchmark",
+        "storage-benchmark"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "更新后的 Aerospike YCSB 矩阵覆盖 1 亿条十字段记录和四种负载组合。Lavik 不限速总吞吐量高出 9.06%–24.08%，但七个不限速操作单元中有四个 p99.9 更高。CPU/IRQ 策略与持久化条件不同。这些结果描述所记录的部署，不是其他应用的性能保证，也不是隔离条件下的版本前后对比。",
+      "sources": [
+        "ycsb"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "完整性策略与正确性修复"
+    },
+    {
+      "type": "paragraph",
+      "text": "数据记录及值/键 extent 的 CRC 生成现在默认关闭，可在启动时通过 record-crc 选择。每个对象保留自身策略，已有 CRC 仍被校验；元数据、检查点、函数目录与复制保留完整性检查。旧版读取程序无法消费带新 no-CRC 标志的对象，升级与恢复规划需考虑这一格式边界。",
+      "sources": [
+        "overview",
+        "storage"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "复制 V2 处理更大的参数数量，并在内存压力下保留已接纳写入。本版还保留 Admin 已接受的变更结果，在固定 Stream 范围位置前刷新地址。结合集合与 I/O 优化，可选择代表性的缓存或在线状态数据集演练 0.2.0。",
+      "sources": [
+        "changes"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "从你的应用开始"
+    },
+    {
+      "type": "paragraph",
+      "text": "下载 0.2.0 压缩包并验证 SHA-256，按当前快速入门启动。Minimal 使用内核 TCP/io_uring，Standard 包含 DPDK/SPDK；两者均要求启用 io_uring 的 Linux 6.1+ 与兼容 Ubuntu 24.04 的 glibc。发布包内含 Lavik Admin 及其 Node.js 运行时。演练时保留应用命令组合、数据保留目标与页面级延迟预算，再结合新基准报告理解相应存储路径。",
+      "sources": [
+        "release",
+        "overview"
+      ]
+    }
+  ]
+}

@@ -1,7 +1,13 @@
 // Public documentation versions are independent of historical benchmark locks.
-export const docVersions = ["0.1.0", "0.1.0-beta.1"] as const;
+export const docVersions = ["0.2.0", "0.1.0", "0.1.0-beta.1"] as const;
 export type DocVersion = (typeof docVersions)[number];
-export const defaultDocVersion: DocVersion = "0.1.0";
+export const defaultDocVersion = "0.2.0" as const;
+export const stableDocVersions = ["0.2.0", "0.1.0"] as const;
+export type StableDocVersion = (typeof stableDocVersions)[number];
+export const isStableDocVersion = (
+  version: string,
+): version is StableDocVersion =>
+  stableDocVersions.some((entry) => entry === version);
 export const betaDocVersion: DocVersion = "0.1.0-beta.1";
 export function isDocVersion(value: string): value is DocVersion {
   return docVersions.some((version) => version === value);

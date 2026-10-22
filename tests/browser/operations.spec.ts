@@ -80,7 +80,15 @@ test("docs navigation, search and manifest include the operator guides", async (
       ),
     ).toBeVisible();
   const manifest = await (await request.get("/manual-manifest.json")).json();
-  expect(manifest.operatorGuides).toHaveLength(4);
+  expect(manifest.operatorGuides).toEqual(
+    ["en", "zh-CN"].flatMap((locale) =>
+      ["0.2.0", "0.1.0"].flatMap((version) =>
+        operationsGuides.map(
+          (guide) => `/${locale}/docs/${version}/${guide.id}/`,
+        ),
+      ),
+    ),
+  );
   const sitemap = await (await request.get("/sitemap.xml")).text();
   for (const route of manifest.operatorGuides)
     expect(sitemap).toContain(`https://lavik.dev${route}`);

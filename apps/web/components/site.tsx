@@ -29,7 +29,7 @@ export function Header({ locale }: { locale: Locale }) {
         </Link>
         <nav aria-label={zh ? "主导航" : "Main navigation"}>
           <Link href={`/${locale}/download/`}>{zh ? "下载" : "Download"}</Link>
-          <Link href={`/${locale}/docs/0.1.0/`}>{zh ? "文档" : "Docs"}</Link>
+          <Link href={`/${locale}/docs/0.2.0/`}>{zh ? "文档" : "Docs"}</Link>
           <BenchmarksMenu locale={locale} />
           <CompareMenu locale={locale} />
           <UseCasesMenu

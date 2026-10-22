@@ -1,9 +1,15 @@
+import {
+  defaultDocVersion,
+  downloadPath,
+  type StableDocVersion,
+} from "../../../packages/docs/versions";
 import Link from "next/link";
 import type { Locale } from "../../../packages/content/schema";
 import { readText } from "../../../packages/content/repository";
 import { requireStableDocs } from "../../../packages/docs/gate";
 import {
   stablePackages,
+  stableReleaseFor,
   type StableGuide,
 } from "../../../packages/docs/stable";
 import { quickStartDependencies } from "../../../packages/quick-start/content";
@@ -32,41 +38,47 @@ export function StableGuidePage({
   locale,
   guide,
   releaseNote = false,
+  version = defaultDocVersion,
 }: {
   locale: Locale;
   guide: StableGuide;
   releaseNote?: boolean;
+  version?: StableDocVersion;
 }) {
-  const publication = requireStableDocs();
+  const publication = requireStableDocs(version);
+  const release = stableReleaseFor(version);
+  const releaseRoute = `releases/${version.replaceAll(".", "-")}`;
   const zh = locale === "zh-CN";
   return (
     <main
       id="main"
       className="container document-layout operations-guide"
-      data-doc-version="0.1.0"
+      data-doc-version={version}
       data-manual-hash={publication.bundleHash}
     >
       <DocsSidebar
         locale={locale}
-        route={releaseNote ? "releases/0-1-0" : `docs/0.1.0/${guide.id}`}
+        route={releaseNote ? releaseRoute : `docs/${version}/${guide.id}`}
       />
       <article className="document">
         <div className="breadcrumb">
-          <Link href={`/${locale}/${releaseNote ? "releases" : "docs/0.1.0"}/`}>
+          <Link
+            href={`/${locale}/${releaseNote ? "releases" : `docs/${version}`}/`}
+          >
             {releaseNote ? (zh ? "版本说明" : "Release Notes") : "Lavik Docs"}
           </Link>
           <span>/</span>
-          <span>0.1.0</span>
+          <span>{version}</span>
         </div>
         <h1>{guide.title[locale]}</h1>
         <p className="document-summary">{guide.summary[locale]}</p>
         <p className="article-meta">
-          v0.1.0 · {zh ? "稳定版" : "Stable"}
-          {releaseNote ? " · 2026-10-13" : ""}
+          v{version} · {zh ? "稳定版" : "Stable"}
+          {releaseNote ? ` · ${release.date}` : ""}
         </p>
         {(guide.id === "quick-start" || releaseNote) && (
           <div className="download-box">
-            <Link href={`/${locale}/download/`}>
+            <Link href={downloadPath(locale, version)}>
               {zh ? "发布包与校验和" : "Release Packages & Checksums"} →
             </Link>
           </div>
@@ -156,9 +168,9 @@ export function StableGuidePage({
               {guide.id === "quick-start" && index === 0 && (
                 <QuickStartInstaller
                   locale={locale}
-                  version="0.1.0"
+                  version={version}
                   dependencies={quickStartDependencies}
-                  packages={stablePackages().map((pkg) => ({
+                  packages={stablePackages(version).map((pkg) => ({
                     ...pkg,
                     directory: pkg.filename.slice(0, -7),
                     commands: `${pkg.commands} &&\ncd ${pkg.filename.slice(0, -7)} &&\n./lavik --version`,

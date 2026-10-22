@@ -4,7 +4,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { withBenchmarkNumberReviewLock } from "../packages/benchmarks/review-lock.ts";
-import { storage80Rows } from "../packages/benchmarks/storage-data.ts";
+import { storage320Rows } from "../packages/benchmarks/storage-data.ts";
 import { createHash } from "node:crypto";
 import exactData from "../packages/benchmarks/exact-data.json";
 import { comparisonFileHashes } from "../packages/comparisons/gate.ts";
@@ -15,7 +15,7 @@ const digest = (bytes: Buffer) =>
   createHash("sha256").update(bytes).digest("hex");
 
 test("all chart inputs bind original archive checksums and operation-specific raw measurements", () => {
-  assert.deepEqual(storage80Rows, exactData.storageRows);
+  assert.deepEqual(storage320Rows, exactData.storageRows);
   const benchmark = benchmarkFileHashes(),
     comparison = comparisonFileHashes();
   for (const [file, sha] of Object.entries(exactData.sourceFiles)) {
@@ -32,7 +32,7 @@ test("all chart inputs bind original archive checksums and operation-specific ra
   }
   for (const [rows, keys, connections, seconds] of [
     [exactData.memoryRows, 10_000_000, 1280, 30],
-    [exactData.storageRows, 1_000_000_000, 80, 60],
+    [exactData.storageRows, 1_000_000_000, 320, 60],
   ] as const) {
     for (const row of rows)
       for (const op of ["get", "set"] as const) {
@@ -58,7 +58,7 @@ test("all chart inputs bind original archive checksums and operation-specific ra
 
 test("memory peaks select the best measured I/O-thread configuration and retain paired latency", () => {
   const file =
-    "perf_reports/lavik-v0.1.0-spdk-vs-latest-2026-10-13/metadata/results.csv";
+    "perf_reports/lavik-v0.2.0-vs-memory-databases-2026-10-21/metadata/results.csv";
   const [header, ...lines] = fs
     .readFileSync(file, "utf8")
     .trim()
@@ -67,15 +67,15 @@ test("memory peaks select the best measured I/O-thread configuration and retain 
   const points = lines.map((line) =>
     Object.fromEntries(line.split(",").map((value, i) => [keys[i], value])),
   );
-  assert.equal(points.length, 120);
-  for (const [i, system] of ["lavik-spdk", "redis", "valkey"].entries()) {
+  assert.equal(points.length, 180);
+  for (const [i, system] of ["lavik-10m", "redis", "valkey"].entries()) {
     for (const op of ["get", "set"] as const) {
       const best = points
         .filter(
           (p) =>
-            p.group === "memory" &&
-            p.system === system &&
-            p.workload === op.toUpperCase(),
+            p.suite === "16vcpu-10m" &&
+            p.product === system &&
+            p.kind === op.toUpperCase(),
         )
         .sort((a, b) => Number(b.qps) - Number(a.qps))[0];
       const row = exactData.memoryRows[i];
@@ -86,7 +86,7 @@ test("memory peaks select the best measured I/O-thread configuration and retain 
       );
       assert.equal(
         row[op === "get" ? "getThreads" : "setThreads"],
-        Number(best.server_threads),
+        Number(best.threads),
       );
       assert.equal(best.connections, "1280");
     }

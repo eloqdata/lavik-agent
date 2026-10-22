@@ -29,7 +29,7 @@ export const articleSchema = z
   .object({
     id: identifier,
     locale: localeSchema,
-    version: z.literal("0.1.0"),
+    version: z.enum(["0.1.0", "0.2.0"]),
     kind: z.enum(["docs", "release", "use-case", "blog", "faq"]),
     slug: identifier,
     title: z.string().min(1).max(160),

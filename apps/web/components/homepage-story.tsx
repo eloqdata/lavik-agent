@@ -12,7 +12,7 @@ import "./homepage-story.css";
 export function HomepageStory({ locale }: { locale: Locale }) {
   const zh = locale === "zh-CN";
   const t = (en: string, cn: string) => (zh ? cn : en);
-  const docs = `/${locale}/docs/0.1.0`;
+  const docs = `/${locale}/docs/0.2.0`;
   const aggregate = capacityLabel(
     sizing.redisNodes * sizing.redisValueGiBPerNode * 2 ** 30,
   );
@@ -154,8 +154,8 @@ export function HomepageStory({ locale }: { locale: Locale }) {
             </h2>
             <p>
               {t(
-                "The published storage-tier experiment goes beyond the small in-memory comparison: one billion keys with 1 KiB values, on a host with approximately 126 GiB RAM.",
-                "已发布的存储层实验覆盖了比小数据集内存对照更大的规模：十亿个键、每个值 1 KiB，主机内存约 126 GiB。",
+                "The published storage-tier experiment goes beyond the small in-memory comparison: one billion keys with 1 KiB values, on a host with 128 GiB nominal RAM.",
+                "已发布的存储层实验覆盖了比小数据集内存对照更大的规模：十亿个键、每个值 1 KiB，主机标称内存 128 GiB。",
               )}
             </p>
             <a href={`/${locale}/benchmarks/1tb-storage/`}>
@@ -169,7 +169,7 @@ export function HomepageStory({ locale }: { locale: Locale }) {
               <span>{t("keys × 1 KiB values", "个键 × 1 KiB 值")}</span>
             </div>
             <div>
-              <strong>1,069,126</strong>
+              <strong>1,129,597</strong>
               <span>
                 {t("peak GET requests / second", "峰值 GET 请求 / 秒")}
               </span>
@@ -183,8 +183,8 @@ export function HomepageStory({ locale }: { locale: Locale }) {
           </div>
           <p className="home-scale-note">
             {t(
-              "Lavik 0.1.0 SPDK · October 14, 2026 · peak GET at 640 connections · pipeline=1 · 60-second measurement. One server, six NVMe SSDs.",
-              "Lavik 0.1.0 SPDK · 2026-10-14 · GET 峰值对应 640 个连接 · pipeline=1 · 60 秒测量。单台服务器，六块 NVMe SSD。",
+              "Lavik 0.2.0 SPDK · October 21, 2026 · peak GET at 1,280 connections · pipeline=1 · 60-second measurement. One server, six NVMe SSDs.",
+              "Lavik 0.2.0 SPDK · 2026-10-21 · GET 峰值对应 1,280 个连接 · pipeline=1 · 60 秒测量。单台服务器，六块 NVMe SSD。",
             )}
           </p>
         </div>
@@ -383,15 +383,15 @@ export function HomepageStory({ locale }: { locale: Locale }) {
           </p>
           <p>
             {t(
-              "Lavik 0.1.0 is available now. The code, benchmark procedures and architecture documents are public. Build with it, inspect how it works, and help us make it better.",
-              "Lavik 0.1.0 已发布。代码、基准测试步骤与架构文档全部公开。欢迎用它构建应用，深入了解实现，并参与改进。",
+              "Lavik 0.2.0 is available now. The code, benchmark procedures and architecture documents are public. Build with it, inspect how it works, and help us make it better.",
+              "Lavik 0.2.0 已发布。代码、基准测试步骤与架构文档全部公开。欢迎用它构建应用，深入了解实现，并参与改进。",
             )}
           </p>
           <div className="home-link-row">
             <a href="https://github.com/eloqdata/lavik">
               {t("Explore the source", "查看源码")} ↗
             </a>
-            <a href="https://github.com/eloqdata/lavik/blob/v0.1.0/LICENSE">
+            <a href="https://github.com/eloqdata/lavik/blob/v0.2.0/LICENSE">
               {t("Read the license", "阅读许可证")} ↗
             </a>
             <Link href={`/${locale}/community/`}>

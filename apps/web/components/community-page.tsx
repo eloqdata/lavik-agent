@@ -87,8 +87,8 @@ export function CommunityPage({ locale }: { locale: Locale }) {
             <h3>{zh ? "运行你的工作负载" : "Bring your workload"} →</h3>
             <p>
               {zh
-                ? "下载 Lavik 0.1.0，用真实应用评估兼容性与性能。"
-                : "Download Lavik 0.1.0 and evaluate compatibility and performance with your application."}
+                ? "下载 Lavik 0.2.0，用真实应用评估兼容性与性能。"
+                : "Download Lavik 0.2.0 and evaluate compatibility and performance with your application."}
             </p>
           </Link>
           <a
@@ -107,7 +107,7 @@ export function CommunityPage({ locale }: { locale: Locale }) {
                 : "Include your Lavik version, environment, commands, expected result, and actual result."}
             </p>
           </a>
-          <Link className="resource-card" href={`/${locale}/docs/0.1.0/`}>
+          <Link className="resource-card" href={`/${locale}/docs/0.2.0/`}>
             <span className="eyebrow">03 / {zh ? "学习" : "LEARN"}</span>
             <h3>{zh ? "从文档开始" : "Start with the docs"} →</h3>
             <p>

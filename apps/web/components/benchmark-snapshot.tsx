@@ -1,10 +1,10 @@
 "use client";
 import { useState } from "react";
 import type { Locale } from "../../../packages/content/schema";
-import { storage80Rows } from "../../../packages/benchmarks/storage-data";
+import { storage320Rows } from "../../../packages/benchmarks/storage-data";
 export function BenchmarkSnapshot({
   locale,
-  rows = storage80Rows,
+  rows = storage320Rows,
   scope = "storage",
 }: {
   locale: Locale;
@@ -18,7 +18,7 @@ export function BenchmarkSnapshot({
   scope?: "storage" | "memory";
 }) {
   const zh = locale === "zh-CN",
-    connections = scope === "memory" ? "1,280" : "80",
+    connections = scope === "memory" ? "1,280" : "320",
     [operation, setOperation] = useState<"get" | "set">("get"),
     [metric, setMetric] = useState<"qps" | "latency">("qps");
   const value = (r: (typeof rows)[number]) =>

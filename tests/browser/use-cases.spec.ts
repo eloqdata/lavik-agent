@@ -53,10 +53,10 @@ test("use-case overview shows current matched-concurrency evidence and stable ad
   for (const locale of ["en", "zh-CN"]) {
     await page.goto(`/${locale}/use-cases/`);
     await expect(page.locator(".solution-proof-strip")).toContainText(
-      "385,514",
+      "652,881",
     );
     await expect(page.locator(".solution-proof-strip")).toContainText(
-      "0.439 ms",
+      "0.943 ms",
     );
     await expect(page.locator("#main")).not.toContainText("0.1.0-beta.1");
     await expect(
@@ -66,7 +66,7 @@ test("use-case overview shows current matched-concurrency evidence and stable ad
     ).toBeVisible();
     await expect(
       page.locator(
-        `.solution-closing a[href='/${locale}/docs/0.1.0/quick-start/']`,
+        `.solution-closing a[href='/${locale}/docs/0.2.0/quick-start/']`,
       ),
     ).toBeVisible();
   }

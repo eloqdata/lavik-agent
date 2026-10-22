@@ -153,12 +153,12 @@ test("admin activates, tracks groups, generates share links and QR codes, export
   const destinations = [
     ["site-home/en", "/en/"],
     ["site-download/en", "/en/download/"],
-    ["install-binary/en", "/en/docs/0.1.0/quick-start/"],
-    ["install-packages/en", "/en/docs/0.1.0/install-packages/"],
-    ["install-docker/en", "/en/docs/0.1.0/install-docker/"],
-    ["install-docker-compose/en", "/en/docs/0.1.0/install-docker-compose/"],
+    ["install-binary/en", "/en/docs/0.2.0/quick-start/"],
+    ["install-packages/en", "/en/docs/0.2.0/install-packages/"],
+    ["install-docker/en", "/en/docs/0.2.0/install-docker/"],
+    ["install-docker-compose/en", "/en/docs/0.2.0/install-docker-compose/"],
     ["site-home/zh-CN", "/zh-CN/"],
-    ["install-docker/zh-CN", "/zh-CN/docs/0.1.0/install-docker/"],
+    ["install-docker/zh-CN", "/zh-CN/docs/0.2.0/install-docker/"],
   ];
   for (const [target, path] of destinations) {
     await page

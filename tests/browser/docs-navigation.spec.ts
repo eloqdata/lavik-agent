@@ -59,14 +59,17 @@ test("user documentation exposes complete guides without internal audit sections
   request,
 }) => {
   const manifest = await (await request.get("/manual-manifest.json")).json();
-  const stableGuides = JSON.parse(
-    fs.readFileSync("content/docs/0.1.0/guides.json", "utf8"),
-  ) as { id: string }[];
   expect(manifest.userGuides).toEqual(
     ["en", "zh-CN"].flatMap((locale) =>
-      stableGuides
-        .filter((guide) => !guide.id.startsWith("lavik-ctl-"))
-        .map((guide) => `/${locale}/docs/0.1.0/${guide.id}/`),
+      ["0.2.0", "0.1.0"].flatMap((version) =>
+        (
+          JSON.parse(
+            fs.readFileSync(`content/docs/${version}/guides.json`, "utf8"),
+          ) as { id: string }[]
+        )
+          .filter((guide) => !guide.id.startsWith("lavik-ctl-"))
+          .map((guide) => `/${locale}/docs/${version}/${guide.id}/`),
+      ),
     ),
   );
   for (const locale of ["en", "zh-CN"])

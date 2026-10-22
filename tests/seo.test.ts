@@ -7,10 +7,10 @@ import {
 } from "../packages/seo/site.ts";
 test("docs aliases and language alternatives identify the same canonical editions", () => {
   const m = pageMetadata("en", "docs");
-  assert.equal(m.alternates?.canonical, "https://lavik.dev/en/docs/0.1.0/");
+  assert.equal(m.alternates?.canonical, "https://lavik.dev/en/docs/0.2.0/");
   assert.equal(
     m.alternates?.languages?.["zh-CN"],
-    "https://lavik.dev/zh-CN/docs/0.1.0/",
+    "https://lavik.dev/zh-CN/docs/0.2.0/",
   );
 });
 test("previous metadata gaps have useful localized descriptions and complete previews", () => {
@@ -38,4 +38,17 @@ test("article markup matches visible metadata without inventing publication date
   assert.equal(structured.dateModified, p.article!.updatedAt);
   assert.equal(structured.datePublished, undefined);
   assert.equal(structured.aggregateRating, undefined);
+});
+
+test("documentation metadata identifies only its selected release", () => {
+  for (const locale of ["en", "zh-CN"] as const)
+    for (const version of ["0.2.0", "0.1.0", "0.1.0-beta.1"]) {
+      const info = pageInfo(locale, `docs/${version}`);
+      assert.ok(info.title.includes(`Lavik ${version}`), info.title);
+      assert.ok(
+        info.description.includes(`Lavik ${version}`),
+        info.description,
+      );
+      if (version === "0.2.0") assert.doesNotMatch(info.title, /0\.1\.0/);
+    }
 });

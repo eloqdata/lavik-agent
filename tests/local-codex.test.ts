@@ -7,6 +7,7 @@ import {
   codexArguments,
   subscriptionEnvironment,
   runLocalCodex,
+  codexInvocationBudget,
 } from "../packages/local/codex.ts";
 
 test("an explicit third review cannot exceed the four-call task budget", async () => {
@@ -92,5 +93,58 @@ test("writer and reviewer force ChatGPT and ignore global provider settings", ()
         `model_reasoning_effort="${role === "writer" ? "medium" : "high"}"`,
       ),
     );
+  }
+});
+
+test("a separately authorized final review permits six calls, never seven", async () => {
+  assert.deepEqual(
+    codexInvocationBudget(
+      "reviewer",
+      undefined,
+      undefined,
+      undefined,
+      "Owner explicitly authorized one final manifest review",
+    ),
+    { roleLimit: 6, totalLimit: 6 },
+  );
+  assert.deepEqual(
+    codexInvocationBudget(
+      "reviewer",
+      undefined,
+      undefined,
+      "Earlier corrective extension",
+    ),
+    { roleLimit: 5, totalLimit: 5 },
+  );
+  assert.throws(
+    () =>
+      codexInvocationBudget(
+        "writer",
+        undefined,
+        undefined,
+        undefined,
+        "Review-only authorization",
+      ),
+    /requires a reviewer/,
+  );
+  const directory = await fs.mkdtemp(
+    path.join(os.tmpdir(), "lavik-final-budget-"),
+  );
+  try {
+    for (let i = 1; i <= 6; i++)
+      await fs.mkdir(path.join(directory, `reviewer-${i}`));
+    await assert.rejects(
+      runLocalCodex({
+        role: "reviewer",
+        taskDirectory: directory,
+        prompt: "Never sent",
+        schema: {},
+        authorizedFinalReviewReason:
+          "Explicit final-review authorization fixture",
+      }),
+      /invocation budget exhausted \(6\)/,
+    );
+  } finally {
+    await fs.rm(directory, { recursive: true, force: true });
   }
 });

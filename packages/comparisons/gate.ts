@@ -50,7 +50,7 @@ export function comparisonFileHashes() {
     "packages/benchmarks/storage-data.ts",
     "packages/benchmarks/repository.ts",
     "packages/benchmarks/catalog.ts",
-    "evidence/benchmarks/0.1.0/sources.json",
+    "evidence/benchmarks/0.2.0/sources.json",
     ...benchmarkSources.files.map((s) => s.path),
     "packages/marketing/process-lock.ts",
     "tests/comparisons.test.ts",

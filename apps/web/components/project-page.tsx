@@ -55,8 +55,8 @@ export function ProjectPage({
       <div className="prose">
         <p>
           {zh
-            ? "Lavik 是 EloqData 的 Apache 2.0 开源 Redis 兼容键值存储。它将紧凑的键索引保存在 DRAM 中，将值存储在 NVMe SSD 上，让应用保留更多数据，而不必为每个值支付 DRAM 的价格。当前发布版本为 0.1.0。"
-            : "Lavik is an Apache 2.0 open-source, Redis-compatible key-value store from EloqData. It keeps a compact key index in DRAM and stores values on NVMe SSD, so applications can retain more data without paying DRAM prices for every value. The current release is 0.1.0."}
+            ? "Lavik 是 EloqData 的 Apache 2.0 开源 Redis 兼容键值存储。它将紧凑的键索引保存在 DRAM 中，将值存储在 NVMe SSD 上，让应用保留更多数据，而不必为每个值支付 DRAM 的价格。当前发布版本为 0.2.0。"
+            : "Lavik is an Apache 2.0 open-source, Redis-compatible key-value store from EloqData. It keeps a compact key index in DRAM and stores values on NVMe SSD, so applications can retain more data without paying DRAM prices for every value. The current release is 0.2.0."}
         </p>
         <h2>{zh ? "性能与容量成本" : "Performance and capacity cost"}</h2>
         <p>
@@ -76,22 +76,22 @@ export function ProjectPage({
         <h2>{zh ? "从你的应用开始评估" : "Evaluate your application"}</h2>
         <p>
           {zh
-            ? "Lavik 支持 RESP2 和 RESP3。选择你的安装方式，检查实际使用的命令和客户端，然后按照迁移指南验证数据、错误处理和运行行为。0.1.0 手册提供命令参考、客户端示例、RedisShake 迁移步骤，以及复制与监控指南。"
-            : "Lavik supports RESP2 and RESP3. Choose an installation method, check the commands and clients your application uses, then follow the migration guides to validate data, error handling, and operational behavior. The 0.1.0 manual includes command references, client examples, RedisShake migration steps, replication and monitoring guides."}
+            ? "Lavik 支持 RESP2 和 RESP3。选择你的安装方式，检查实际使用的命令和客户端，然后按照迁移指南验证数据、错误处理和运行行为。0.2.0 手册提供命令参考、客户端示例、RedisShake 迁移步骤，以及复制与监控指南。"
+            : "Lavik supports RESP2 and RESP3. Choose an installation method, check the commands and clients your application uses, then follow the migration guides to validate data, error handling, and operational behavior. The 0.2.0 manual includes command references, client examples, RedisShake migration steps, replication and monitoring guides."}
         </p>
         <ul>
           <li>
-            <Link href={`/${locale}/docs/0.1.0/`}>
+            <Link href={`/${locale}/docs/0.2.0/`}>
               {zh ? "安装与用户手册" : "Installation and user manual"}
             </Link>
           </li>
           <li>
-            <Link href={`/${locale}/docs/0.1.0/compatibility/`}>
+            <Link href={`/${locale}/docs/0.2.0/compatibility/`}>
               {zh ? "兼容性概览" : "Compatibility overview"}
             </Link>
           </li>
           <li>
-            <Link href={`/${locale}/docs/0.1.0/migrate-redis/`}>
+            <Link href={`/${locale}/docs/0.2.0/migrate-redis/`}>
               {zh ? "从 Redis 迁移" : "Migrate from Redis"}
             </Link>
           </li>

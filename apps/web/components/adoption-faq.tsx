@@ -5,7 +5,7 @@ export function AdoptionFaq({ locale }: { locale: Locale }) {
   const zh = locale === "zh-CN";
   return (
     <main id="main" className="container wide-page">
-      <p className="eyebrow">LAVIK 0.1.0 / FAQ</p>
+      <p className="eyebrow">LAVIK 0.2.0 / FAQ</p>
       <h1>
         {zh
           ? "开始使用 Lavik：常见问题"

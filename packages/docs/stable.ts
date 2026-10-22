@@ -7,10 +7,24 @@ import {
   type CommandReport,
   type ClientReport,
 } from "../manual/repository";
-import stableRelease from "../../content/docs/0.1.0/release.json";
-import stableDownloads from "../../content/docs/0.1.0/downloads.json";
+import {
+  defaultDocVersion,
+  stableDocVersions,
+  type StableDocVersion,
+} from "./versions";
+import currentRelease from "../../content/docs/0.2.0/release.json";
+import currentDownloads from "../../content/docs/0.2.0/downloads.json";
 
-export { stableRelease, stableDownloads };
+export const stableRelease = currentRelease;
+export const stableDownloads = currentDownloads;
+export const stableReleaseFor = (
+  version: StableDocVersion = defaultDocVersion,
+): typeof currentRelease =>
+  readJson(`content/docs/${version}/release.json`) as typeof currentRelease;
+export const stableDownloadsFor = (
+  version: StableDocVersion = defaultDocVersion,
+): typeof currentDownloads =>
+  readJson(`content/docs/${version}/downloads.json`) as typeof currentDownloads;
 const text = z
   .object({ en: z.string().min(1), "zh-CN": z.string().min(1) })
   .strict();
@@ -21,7 +35,7 @@ const block = z.discriminatedUnion("type", [
   z
     .object({
       type: z.literal("code"),
-      file: z.string().regex(/^verification\/docs\/0\.1\.0\/[a-z0-9./-]+$/),
+      file: z.string().regex(/^verification\/docs\/0\.[12]\.0\/[a-z0-9./-]+$/),
     })
     .strict(),
   z
@@ -52,34 +66,46 @@ const guide = z
   })
   .strict();
 export type StableGuide = z.infer<typeof guide>;
-export function stableGuides() {
-  return z.array(guide).parse(readJson("content/docs/0.1.0/guides.json"));
+export function stableGuides(version: StableDocVersion = defaultDocVersion) {
+  return z.array(guide).parse(readJson(`content/docs/${version}/guides.json`));
 }
-export function stableReleaseNotes() {
-  return guide.parse(readJson("content/docs/0.1.0/release-notes.json"));
+export function stableReleaseNotes(
+  version: StableDocVersion = defaultDocVersion,
+) {
+  return guide.parse(readJson(`content/docs/${version}/release-notes.json`));
 }
-export function stableCatalog() {
+export function stableCatalog(version: StableDocVersion = defaultDocVersion) {
   return catalogSchema
     .extend({ commands: z.array(catalogSchema.shape.commands.element).min(1) })
-    .parse(readJson("content/docs/0.1.0/catalog.json"));
+    .parse(readJson(`content/docs/${version}/catalog.json`));
 }
-export function stableCases() {
-  return z.array(caseSchema).parse(readJson("content/docs/0.1.0/cases.json"));
+export function stableCases(version: StableDocVersion = defaultDocVersion) {
+  return z
+    .array(caseSchema)
+    .parse(readJson(`content/docs/${version}/cases.json`));
 }
-export function stableCommandReport() {
-  return readJson("evidence/docs/0.1.0/commands.json") as CommandReport;
+export function stableCommandReport(
+  version: StableDocVersion = defaultDocVersion,
+) {
+  return readJson(`evidence/docs/${version}/commands.json`) as CommandReport;
 }
-export function stableClientReport() {
-  return readJson("evidence/docs/0.1.0/clients.json") as ClientReport;
+export function stableClientReport(
+  version: StableDocVersion = defaultDocVersion,
+) {
+  return readJson(`evidence/docs/${version}/clients.json`) as ClientReport;
 }
-export const stableGuideRoutes = () =>
-  stableGuides().map((guide) => `docs/0.1.0/${guide.id}`);
-export function stablePackages() {
+export const stableGuideRoutes = (version?: StableDocVersion): string[] =>
+  (version ? [version] : stableDocVersions).flatMap((v) =>
+    stableGuides(v).map((guide) => `docs/${v}/${guide.id}`),
+  );
+export function stablePackages(version: StableDocVersion = defaultDocVersion) {
+  const stableRelease = stableReleaseFor(version),
+    stableDownloads = stableDownloadsFor(version);
   if (
     stableDownloads.tag_name !== stableRelease.tag ||
     stableDownloads.prerelease
   )
-    throw new Error("Expected the stable v0.1.0 release");
+    throw new Error(`Expected the stable ${stableRelease.tag} release`);
   return (["minimal", "standard"] as const).flatMap((variant) =>
     (["x86_64", "aarch64"] as const).map((arch) => {
       const filename = `lavik-${stableRelease.tag}-linux-${arch}${variant === "minimal" ? "-minimal" : ""}.tar.gz`;
@@ -110,9 +136,10 @@ export function stablePackages() {
   );
 }
 
-export const stableManualRoutes = () => [
-  "docs/0.1.0/commands",
-  "docs/0.1.0/clients",
-  ...stableCases().map((c) => `docs/0.1.0/commands/${c.name.toLowerCase()}`),
-  ...manualClients().map((c) => `docs/0.1.0/clients/${c.id}`),
-];
+export const stableManualRoutes = (version?: StableDocVersion): string[] =>
+  (version ? [version] : stableDocVersions).flatMap((v) => [
+    `docs/${v}/commands`,
+    `docs/${v}/clients`,
+    ...stableCases(v).map((c) => `docs/${v}/commands/${c.name.toLowerCase()}`),
+    ...manualClients().map((c) => `docs/${v}/clients/${c.id}`),
+  ]);

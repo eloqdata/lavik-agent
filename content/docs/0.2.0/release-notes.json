@@ -1,0 +1,155 @@
+{
+  "id": "release-0-2-0-stable",
+  "title": {
+    "en": "Lavik 0.2.0",
+    "zh-CN": "Lavik 0.2.0"
+  },
+  "summary": {
+    "en": "A performance-focused release with leaner String and collection paths, queued I/O submissions, replication and recovery fixes, and opt-in data-record CRCs. Summarizes 47 commits since 0.1.0.",
+    "zh-CN": "以性能为重点的版本：更精简的字符串与集合路径、队列化 I/O 提交、复制和恢复修复，以及可选数据记录 CRC。总结 0.1.0 以来的 47 次提交。"
+  },
+  "sources": [
+    "commits",
+    "README.md",
+    "docs/architecture/04-storage-and-recovery.md",
+    "docs/architecture/09-grouped-collections.md"
+  ],
+  "sections": [
+    {
+      "id": "release",
+      "title": {
+        "en": "Release at a glance",
+        "zh-CN": "版本概览"
+      },
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "Released October 21, 2026. v0.2.0 identifies commit 2908f86f2770e9c6e8acc6585b3bedb4b44d1cd5. These notes group the 47 commits after v0.1.0 by their impact on applications and operations. Lavik remains Apache 2.0, with Minimal and Standard archives for Linux x86-64 and ARM64.",
+            "zh-CN": "发布于 2026 年 10 月 21 日。v0.2.0 对应提交 2908f86f2770e9c6e8acc6585b3bedb4b44d1cd5。本文按应用与运维影响归纳 v0.1.0 之后的 47 次提交。Lavik 继续采用 Apache 2.0 许可证，为 Linux x86-64 与 ARM64 提供 Minimal 和 Standard 发布包。"
+          }
+        },
+        {
+          "type": "link",
+          "text": {
+            "en": "Full 0.1.0 → 0.2.0 commit comparison",
+            "zh-CN": "完整 0.1.0 → 0.2.0 提交对比"
+          },
+          "href": "https://github.com/eloqdata/lavik/compare/v0.1.0...v0.2.0"
+        }
+      ]
+    },
+    {
+      "id": "storage",
+      "title": {
+        "en": "Less copying and allocation in the data path",
+        "zh-CN": "减少数据路径中的复制与分配"
+      },
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "Large String receive, staging, segment, and read paths remove intermediate copies. Grouped List updates bound prepend fragmentation and String directory rebuild work. Hash and Set point reads avoid decoding entire compact objects; compact writes splice the affected data. Sorted Set updates reuse neighboring and dense page capacity and edit encoded pages with fewer per-member allocations. Collection replies are packed and batched into owned byte blocks.",
+            "zh-CN": "大字符串接收、暂存、分段与读取路径减少中间复制。分组 List 更新限制头部插入碎片与 String 目录重建开销。Hash、Set 点读取避免完整解码紧凑对象，紧凑写入直接拼接受影响部分。Sorted Set 更新复用邻页和稠密页容量，以更少的逐成员分配编辑编码页；集合响应使用自有字节块打包并批量输出。"
+          }
+        }
+      ]
+    },
+    {
+      "id": "io",
+      "title": {
+        "en": "Queued storage work and memory release",
+        "zh-CN": "队列化存储操作与内存释放"
+      },
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "The io_uring and SPDK paths adopt queued submissions. Grouped reads are parallelized per physical owner; transaction cleanup is decoupled from writes and flushes are batched. String and Stream preparation release worker store state while work is prepared. The allocator defaults to immediate online mimalloc purging. These implementation changes target overhead; each published performance number still belongs to its recorded workload and configuration.",
+            "zh-CN": "io_uring 与 SPDK 路径采用队列化提交；分组读取按物理 owner 并行，事务清理与写入解耦，并批量提交刷新。String 与 Stream 准备过程释放 worker store 状态；分配器默认立即在线执行 mimalloc purging。这些改动针对运行开销，具体性能结果仍须结合各自工作负载与配置。"
+          }
+        }
+      ]
+    },
+    {
+      "id": "correctness",
+      "title": {
+        "en": "Replication, administration and Stream fixes",
+        "zh-CN": "复制、管理与 Stream 修复"
+      },
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "Replication V2 encoding supports wide argument counts, and replication preserves already-admitted writes under memory pressure. Accepted Admin mutation results are retained. Stream range reads refresh locations before pinning them. Managed FLUSH recovery, native handoff readability, lease-policy proxy handling and concurrency diagnostics also receive fixes or stronger regression coverage.",
+            "zh-CN": "复制 V2 编码支持更大的参数数量，并在内存压力下保留已接纳的写入。Admin 已接受的变更结果得到保留；Stream 范围读取在固定位置前刷新地址。托管 FLUSH 恢复、原生交接可读性、租约策略代理处理与并发诊断也获得修复或更强的回归覆盖。"
+          }
+        }
+      ]
+    },
+    {
+      "id": "crc",
+      "title": {
+        "en": "Data-record CRC is now opt-in",
+        "zh-CN": "数据记录 CRC 改为按需启用"
+      },
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "CRC generation for new data records and value/key extents is disabled by default. Enable it at startup with `--record-crc` or `record-crc yes`; `--no-record-crc` or `record-crc no` selects the disabled policy on the next start. Each object persists its policy. Reads continue to validate CRCs that are present, including older records. Device labels, block headers, metadata, checkpoints, function catalogs and replication frames retain their integrity checks. Readers predating the no-CRC flags cannot consume those objects; plan backups and recovery rehearsal before an upgrade and do not assume an in-place downgrade is supported.",
+            "zh-CN": "新数据记录及值/键 extent 默认不生成 CRC。启动时可通过 `--record-crc` 或 `record-crc yes` 启用；`--no-record-crc` 或 `record-crc no` 在下一次启动选择禁用策略。每个对象持久化自身策略，读取仍校验已有 CRC，包括旧记录。设备标签、块头、元数据、检查点、函数目录与复制帧保留完整性检查。早于 no-CRC 标志的读取程序无法消费这类对象；升级前安排备份与恢复演练，不应假定支持原地降级。"
+          }
+        }
+      ]
+    },
+    {
+      "id": "benchmarks",
+      "title": {
+        "en": "New published benchmark results",
+        "zh-CN": "新发布的基准测试"
+      },
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "The October 21 reports cover 2-vCPU and 16-vCPU Redis/Valkey comparisons, a billion-key SSD-backed comparison, and Aerospike YCSB. On the 16-vCPU 10M-key SPDK workload, Lavik reaches 1,156,956 GET QPS and 945,384 SET QPS at 1,280 connections. The separate 1B-key run reaches 1,129,597 GET QPS and 910,356 SET QPS. Workloads, client counts, hosts and persistence differ across experiments; the benchmark pages provide paired latency and complete methods.",
+            "zh-CN": "10 月 21 日报告覆盖 2 vCPU 与 16 vCPU 的 Redis/Valkey 对比、十亿键 SSD 对比及 Aerospike YCSB。16 vCPU、1,000 万键 SPDK 负载中，Lavik 在 1,280 连接下达到 1,156,956 GET QPS 与 945,384 SET QPS；独立十亿键测试达到 1,129,597 GET QPS 与 910,356 SET QPS。各实验负载、客户端数量、主机和持久化条件不同，基准页提供配对延迟与完整方法。"
+          }
+        },
+        {
+          "type": "link",
+          "text": {
+            "en": "Current benchmark reports",
+            "zh-CN": "当前基准报告"
+          },
+          "href": "/{locale}/benchmarks/"
+        }
+      ]
+    },
+    {
+      "id": "start",
+      "title": {
+        "en": "Install and evaluate 0.2.0",
+        "zh-CN": "安装与评估 0.2.0"
+      },
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "Download the checksummed 0.2.0 release archive matching your architecture. Standard includes DPDK/SPDK; Minimal uses kernel TCP/io_uring. Both require Linux 6.1+ with io_uring enabled and Ubuntu 24.04-compatible glibc. The archive includes lavik, lavik-meta, lavik-ctl, Lavik Admin and its Node.js runtime. The version selector retains the 0.1.0 and beta documentation.",
+            "zh-CN": "下载与你的架构匹配、带校验和的 0.2.0 发布压缩包。Standard 包含 DPDK/SPDK，Minimal 使用内核 TCP/io_uring。两者均要求启用 io_uring 的 Linux 6.1+ 与兼容 Ubuntu 24.04 的 glibc。包内包含 lavik、lavik-meta、lavik-ctl、Lavik Admin 及其 Node.js 运行时；版本选择器保留 0.1.0 和 Beta 文档。"
+          }
+        },
+        {
+          "type": "link",
+          "text": {
+            "en": "Get started with 0.2.0",
+            "zh-CN": "开始使用 0.2.0"
+          },
+          "href": "/{locale}/docs/0.2.0/quick-start/"
+        }
+      ]
+    }
+  ]
+}

@@ -1,10 +1,16 @@
+import { defaultDocVersion, type StableDocVersion } from "./versions";
+import {
+  documentationPublication,
+  documentationPublicationErrors,
+  containerBundleErrors,
+} from "./publication";
 import { isDeepStrictEqual } from "node:util";
 import { hash, readJson, readText } from "../content/repository";
 import { manualEvidenceErrors } from "../manual/gate";
 import { manualClients } from "../manual/repository";
 import { ownerAuthorization, ownerAuthorizationErrors } from "./authorization";
 import {
-  stableRelease,
+  stableReleaseFor,
   stableCatalog,
   stableCases,
   stableClientReport,
@@ -16,23 +22,25 @@ import {
 
 export function stableDocumentationErrors({
   requireAuthorization = true,
+  version = defaultDocVersion as StableDocVersion,
 } = {}) {
   try {
     const errors: string[] = [];
+    const stableRelease = stableReleaseFor(version);
     const names = [
       ...readText(
-        "evidence/docs/0.1.0/sources/src_redis_command_table.cpp",
+        `evidence/docs/${version}/sources/src_redis_command_table.cpp`,
       ).matchAll(/\{"([^"]+)", CommandKind::/g),
     ]
       .map((match) => match[1].toUpperCase())
       .sort();
-    const commands = stableCommandReport(),
-      clients = stableClientReport();
+    const commands = stableCommandReport(version),
+      clients = stableClientReport(version);
     errors.push(
       ...manualEvidenceErrors(
         {
           names,
-          cases: stableCases(),
+          cases: stableCases(version),
           commands,
           clients: manualClients(),
           clientResults: clients,
@@ -43,7 +51,7 @@ export function stableDocumentationErrors({
     if (
       !isDeepStrictEqual(
         names,
-        stableCatalog()
+        stableCatalog(version)
           .commands.map((command) => command.name)
           .sort(),
       )
@@ -58,7 +66,7 @@ export function stableDocumentationErrors({
         errors.push(`Stable client source changed: ${file}`);
     for (const layout of ["single", "ha"]) {
       const report = readJson(
-        `evidence/docs/0.1.0/operations-${layout}.json`,
+        `evidence/docs/${version}/operations-${layout}.json`,
       ) as {
         status: string;
         sourceCommit: string;
@@ -79,7 +87,7 @@ export function stableDocumentationErrors({
         if (hash(readText(file)) !== digest)
           errors.push(`Stable operations example changed: ${file}`);
     }
-    const install = readJson("evidence/docs/0.1.0/install.json") as {
+    const install = readJson(`evidence/docs/${version}/install.json`) as {
       status: string;
       sourceCommit: string;
       fileHashes: Record<string, string>;
@@ -91,7 +99,7 @@ export function stableDocumentationErrors({
       install.packages.length !== 4
     )
       errors.push("Incomplete stable installation evidence");
-    for (const pkg of stablePackages()) {
+    for (const pkg of stablePackages(version)) {
       const tested = install.packages.find(
         (item) => item.filename === pkg.filename,
       );
@@ -101,7 +109,9 @@ export function stableDocumentationErrors({
     for (const [file, digest] of Object.entries(install.fileHashes))
       if (hash(readText(file)) !== digest)
         errors.push(`Stable install instructions changed: ${file}`);
-    const inventory = readJson("evidence/docs/0.1.0/source-inventory.json") as {
+    const inventory = readJson(
+      `evidence/docs/${version}/source-inventory.json`,
+    ) as {
       commit: string;
       sources: { file: string; url: string; sha256: string }[];
     };
@@ -115,7 +125,7 @@ export function stableDocumentationErrors({
         hash(readText(source.file)) !== source.sha256
       )
         errors.push(`Stable source mismatch: ${source.file}`);
-    const monitoring = readJson("evidence/docs/0.1.0/monitoring.json") as {
+    const monitoring = readJson(`evidence/docs/${version}/monitoring.json`) as {
       status: string;
       sourceCommit: string;
       fileHashes: Record<string, string>;
@@ -128,7 +138,7 @@ export function stableDocumentationErrors({
     for (const [file, digest] of Object.entries(monitoring.fileHashes))
       if (hash(readText(file)) !== digest)
         errors.push(`Stable monitoring inputs changed: ${file}`);
-    const migration = readJson("evidence/docs/0.1.0/migration.json") as {
+    const migration = readJson(`evidence/docs/${version}/migration.json`) as {
       status: string;
       sourceCommit: string;
       fileHashes: Record<string, string>;
@@ -158,7 +168,7 @@ export function stableDocumentationErrors({
       if (hash(readText(file)) !== digest)
         errors.push(`Stable migration instructions changed: ${file}`);
     const migrationInstaller = readJson(
-      "evidence/docs/0.1.0/migration-installer.json",
+      `evidence/docs/${version}/migration-installer.json`,
     ) as {
       status: string;
       redisShakeVersion: string;
@@ -172,23 +182,43 @@ export function stableDocumentationErrors({
     for (const [file, digest] of Object.entries(migrationInstaller.fileHashes))
       if (hash(readText(file)) !== digest)
         errors.push(`RedisShake installer changed: ${file}`);
-    const commits = readJson("evidence/docs/0.1.0/commits.json") as {
+    if (version === "0.2.0") {
+      errors.push(...containerBundleErrors());
+      const docker = readJson("evidence/docs/0.2.0/docker.json") as {
+        status: string;
+        images: Record<string, { configDigest: string }>;
+        fileHashes: Record<string, string>;
+      };
+      if (
+        docker.status !== "passed" ||
+        !docker.images["lavik:0.2.0"] ||
+        !docker.images["lavik:0.2.0-cluster"]
+      )
+        errors.push("0.2.0 container examples lack passing execution evidence");
+      for (const [file, digest] of Object.entries(docker.fileHashes))
+        if (hash(readText(`packaging/docker/0.2.0/${file}`)) !== digest)
+          errors.push(`0.2.0 Docker input changed: ${file}`);
+    }
+    const commits = readJson(`evidence/docs/${version}/commits.json`) as {
       head: string;
       total: number;
       commits: { sha: string }[];
     };
     if (
       commits.head !== stableRelease.commit ||
-      commits.total !== 135 ||
-      commits.commits.length !== 135 ||
-      new Set(commits.commits.map((c) => c.sha)).size !== 135
+      commits.total !== (version === "0.1.0" ? 135 : 47) ||
+      commits.commits.length !== commits.total ||
+      new Set(commits.commits.map((c) => c.sha)).size !== commits.total
     )
-      errors.push("Invalid beta-to-stable commit inventory");
-    for (const guide of [...stableGuides(), stableReleaseNotes()]) {
+      errors.push("Invalid release commit inventory");
+    for (const guide of [
+      ...stableGuides(version),
+      stableReleaseNotes(version),
+    ]) {
       for (const source of guide.sources)
         if (source !== "commits")
           readText(
-            `evidence/docs/0.1.0/sources/${source.replaceAll("/", "_")}`,
+            `evidence/docs/${version}/sources/${source.replaceAll("/", "_")}`,
           );
       for (const section of guide.sections)
         for (const block of section.blocks)
@@ -198,17 +228,26 @@ export function stableDocumentationErrors({
             else readText(block.file);
           }
     }
-    if (requireAuthorization) errors.push(...ownerAuthorizationErrors());
+    if (requireAuthorization)
+      errors.push(
+        ...(version === "0.1.0"
+          ? ownerAuthorizationErrors()
+          : documentationPublicationErrors()),
+      );
     return errors;
   } catch (error) {
     return [`Stable documentation: ${String(error)}`];
   }
 }
-export function requireStableDocs() {
-  const errors = stableDocumentationErrors();
+export function requireStableDocs(
+  version: StableDocVersion = defaultDocVersion,
+) {
+  const errors = stableDocumentationErrors({ version });
   if (errors.length)
     throw new Error(
       `Stable documentation cannot be exported:\n${errors.join("\n")}`,
     );
-  return ownerAuthorization();
+  return version === "0.1.0"
+    ? ownerAuthorization()
+    : documentationPublication();
 }
