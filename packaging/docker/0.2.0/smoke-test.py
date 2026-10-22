@@ -257,7 +257,7 @@ def main():
         )
         print("All Docker release smoke checks passed.", flush=True)
         for image, identity in identities.items():
-            if json.loads(run("docker", "image", "inspect", image))[0]["Id"] != identity["configDigest"]:
+            if json.loads(run("docker", "image", "inspect", image))[0]["Id"] != identity["imageId"]:
                 raise RuntimeError("Image changed during smoke verification")
         if file_hashes != {p.name: hashlib.sha256(p.read_bytes()).hexdigest() for p in inspected_files}:
             raise RuntimeError("Packaging inputs changed during smoke verification")
