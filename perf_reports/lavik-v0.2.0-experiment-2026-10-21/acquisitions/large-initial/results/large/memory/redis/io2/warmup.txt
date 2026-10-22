@@ -1,0 +1,93 @@
+============== Configuration values: ==============
+server = 10.96.1.4
+port = 6379
+uri = 
+unix socket = (null)
+address family = Unspecified
+protocol = redis
+tls = no
+cert = (null)
+key = (null)
+cacert = (null)
+tls_skip_verify = no
+sni = (null)
+out_file = (null)
+client_stats = (null)
+run_count = 1
+debug = 0
+requests = 0
+rate_limit = 0
+clients = 40
+threads = 16
+test_time = 10
+ratio = 1:10
+pipeline = 1
+transaction = no
+data_size = 1024
+data_offset = 0
+random_data = no
+data_size_range = 0-0
+data_size_list = 
+data_size_pattern = R
+expiry_range = 0-0
+data_import = (null)
+data_verify = no
+verify_only = no
+generate_keys = no
+key_prefix = 
+key_minimum = 1
+key_maximum = 10000000
+key_pattern = R:R
+key_stddev = 0.000000
+key_median = 0.000000
+reconnect_interval = 0
+retry_on_error = no
+max_retries = -1
+retry_backoff_ms = 0
+retry_backoff_factor = 0.000000
+retry_on = 
+max_retry_queue = 0
+failed_keys_file = 
+connection_timeout = 0
+connection_stage_timeout = 30
+thread_conn_start_min_jitter_micros = 0
+thread_conn_start_max_jitter_micros = 0
+multi_key_get = 0
+authenticate = 
+select-db = 0
+no-expiry = no
+wait-ratio = 0:0
+num-slaves = 0-0
+wait-timeout = 0-0
+json-out-file = /opt/bench020/client-results/large/memory/redis/io2/warmup.json
+print-all-runs = no
+prometheus-port = -1
+prometheus-bind-addr = 127.0.0.1
+prometheus-run-labels = 
+prometheus-latency-buckets = default
+===================================================
+Json file /opt/bench020/client-results/large/memory/redis/io2/warmup.json created...
+Writing results to stdout
+[RUN #1] Preparing benchmark client...
+[RUN #1] Launching threads now...
+[RUN #1 10%,   1 secs] 16 threads 40 conns:      161587 ops,  161539 (avg:  161539) ops/sec, 163.13MB/sec (avg: 163.13MB/sec),  3.95 (avg:  3.95) msec latency[RUN #1 20%,   2 secs] 16 threads 40 conns:      320678 ops,  158647 (avg:  160091) ops/sec, 160.21MB/sec (avg: 161.67MB/sec),  4.03 (avg:  3.99) msec latency[RUN #1 30%,   3 secs] 16 threads 40 conns:      481391 ops,  160684 (avg:  160289) ops/sec, 162.27MB/sec (avg: 161.87MB/sec),  3.98 (avg:  3.99) msec latency[RUN #1 40%,   4 secs] 16 threads 40 conns:      641967 ops,  160442 (avg:  160327) ops/sec, 162.02MB/sec (avg: 161.91MB/sec),  3.99 (avg:  3.99) msec latency[RUN #1 50%,   5 secs] 16 threads 40 conns:      802072 ops,  160078 (avg:  160277) ops/sec, 161.65MB/sec (avg: 161.85MB/sec),  4.00 (avg:  3.99) msec latency[RUN #1 60%,   6 secs] 16 threads 40 conns:      961223 ops,  159123 (avg:  160085) ops/sec, 160.69MB/sec (avg: 161.66MB/sec),  4.02 (avg:  3.99) msec latency[RUN #1 70%,   7 secs] 16 threads 40 conns:     1120852 ops,  159205 (avg:  159959) ops/sec, 160.77MB/sec (avg: 161.53MB/sec),  4.02 (avg:  4.00) msec latency[RUN #1 80%,   8 secs] 16 threads 40 conns:     1279238 ops,  158358 (avg:  159759) ops/sec, 159.92MB/sec (avg: 161.33MB/sec),  4.04 (avg:  4.00) msec latency[RUN #1 90%,   9 secs] 16 threads 40 conns:     1437912 ops,  158647 (avg:  159636) ops/sec, 160.21MB/sec (avg: 161.21MB/sec),  4.03 (avg:  4.01) msec latency[RUN #1 100%,  10 secs] 15 threads 40 conns:     1596536 ops,  158647 (avg:  159562) ops/sec, 160.21MB/sec (avg: 161.13MB/sec),  4.03 (avg:  4.01) msec latency[RUN #1 100%,  10 secs]  0 threads 40 conns:     1596762 ops,  158647 (avg:  159569) ops/sec, 160.21MB/sec (avg: 161.14MB/sec),  4.03 (avg:  4.01) msec latency
+
+
+CPU Utilization Summary
+  Total CPU time:   29.350s  (user 7.177s, sys 22.173s)
+  Wall time:        10.015s
+  Cores used:       2.931   (avg 18.3% across 16 worker threads)
+  Peak utilization: 300.5%
+16        Threads
+40        Connections per thread
+10        Seconds
+
+
+ALL STATS
+============================================================================================================================================
+Type         Ops/sec     Hits/sec   Misses/sec    Avg. Latency     p50 Latency     p99 Latency   p99.9 Latency  p99.99 Latency       KB/sec 
+--------------------------------------------------------------------------------------------------------------------------------------------
+Gets       159569.00    159569.00         0.00         4.00975         3.66300         7.48700         8.89500        12.09500    165006.76 
+Totals     159569.00    159569.00         0.00         4.00975         3.66300         7.48700         8.89500        12.09500    330013.52 
+Saving JSON output file: /opt/bench020/client-results/large/memory/redis/io2/warmup.json
+Json file closed.

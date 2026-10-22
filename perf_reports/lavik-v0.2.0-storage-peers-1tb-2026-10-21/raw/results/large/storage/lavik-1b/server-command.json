@@ -1,0 +1,18 @@
+[
+  "taskset",
+  "-c",
+  "0-15",
+  "/opt/bench020/downloads/lavik-v0.2.0-linux-x86_64/lavik",
+  "--storage=spdk",
+  "--bind=10.96.1.4",
+  "--tomb-raider-interval-ms=0",
+  "--spdk-max-completions-per-poll=16",
+  "--log-dir=/opt/bench020/results/large/storage/lavik-1b/logs",
+  "--data-file=spdk://7133:00:00.0/1",
+  "--data-file=spdk://10fc:00:00.0/1",
+  "--data-file=spdk://9c4a:00:00.0/1",
+  "--data-file=spdk://ef09:00:00.0/1",
+  "--data-file=spdk://fa44:00:00.0/1",
+  "--data-file=spdk://9816:00:00.0/1",
+  "--shutdown-checkpoint"
+]

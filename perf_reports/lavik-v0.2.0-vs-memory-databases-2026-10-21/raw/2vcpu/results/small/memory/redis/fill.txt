@@ -1,0 +1,95 @@
+============== Configuration values: ==============
+server = 10.96.0.4
+port = 6379
+uri = 
+unix socket = (null)
+address family = Unspecified
+protocol = redis
+tls = no
+cert = (null)
+key = (null)
+cacert = (null)
+tls_skip_verify = no
+sni = (null)
+out_file = (null)
+client_stats = (null)
+run_count = 1
+debug = 0
+requests = 6250
+rate_limit = 0
+clients = 10
+threads = 16
+test_time = 0
+ratio = 1:0
+pipeline = 1
+transaction = no
+data_size = 1024
+data_offset = 0
+random_data = no
+data_size_range = 0-0
+data_size_list = 
+data_size_pattern = R
+expiry_range = 0-0
+data_import = (null)
+data_verify = no
+verify_only = no
+generate_keys = no
+key_prefix = 
+key_minimum = 1
+key_maximum = 1000000
+key_pattern = P:P
+key_stddev = 0.000000
+key_median = 0.000000
+reconnect_interval = 0
+retry_on_error = no
+max_retries = -1
+retry_backoff_ms = 0
+retry_backoff_factor = 0.000000
+retry_on = 
+max_retry_queue = 0
+failed_keys_file = 
+connection_timeout = 0
+connection_stage_timeout = 30
+thread_conn_start_min_jitter_micros = 0
+thread_conn_start_max_jitter_micros = 0
+multi_key_get = 0
+authenticate = 
+select-db = 0
+no-expiry = no
+wait-ratio = 0:0
+num-slaves = 0-0
+wait-timeout = 0-0
+json-out-file = /opt/bench020/client-results/small/memory/redis/fill.json
+print-all-runs = no
+prometheus-port = -1
+prometheus-bind-addr = 127.0.0.1
+prometheus-run-labels = 
+prometheus-latency-buckets = default
+===================================================
+Json file /opt/bench020/client-results/small/memory/redis/fill.json created...
+Writing results to stdout
+[RUN #1] Preparing benchmark client...
+[RUN #1] Launching threads now...
+[RUN #1 18%,   1 secs] 16 threads 10 conns:      180363 ops,  180314 (avg:  180314) ops/sec, 182.78MB/sec (avg: 182.78MB/sec),  0.89 (avg:  0.89) msec latency[RUN #1 36%,   2 secs] 16 threads 10 conns:      361781 ops,  181398 (avg:  180856) ops/sec, 183.88MB/sec (avg: 183.32MB/sec),  0.88 (avg:  0.88) msec latency[RUN #1 54%,   3 secs] 16 threads 10 conns:      541826 ops,  180025 (avg:  180579) ops/sec, 182.48MB/sec (avg: 183.04MB/sec),  0.89 (avg:  0.89) msec latency[RUN #1 72%,   4 secs] 16 threads 10 conns:      719907 ops,  178060 (avg:  179949) ops/sec, 180.49MB/sec (avg: 182.41MB/sec),  0.90 (avg:  0.89) msec latency[RUN #1 90%,   5 secs] 16 threads 10 conns:      900131 ops,  180208 (avg:  180001) ops/sec, 182.67MB/sec (avg: 182.46MB/sec),  0.89 (avg:  0.89) msec latency[RUN #1 100%,   5 secs]  0 threads 10 conns:     1000000 ops,  180208 (avg:  183234) ops/sec, 182.67MB/sec (avg: 185.74MB/sec),  0.89 (avg:  0.87) msec latency
+
+
+CPU Utilization Summary
+  Total CPU time:   14.921s  (user 3.469s, sys 11.452s)
+  Wall time:        5.569s
+  Cores used:       2.679   (avg 16.7% across 16 worker threads)
+  Peak utilization: 272.9%
+Saving JSON output file: /opt/bench020/client-results/small/memory/redis/fill.json
+Json file closed.
+16        Threads
+10        Connections per thread
+6250      Requests per client
+
+
+ALL STATS
+============================================================================================================================================
+Type         Ops/sec     Hits/sec   Misses/sec    Avg. Latency     p50 Latency     p99 Latency   p99.9 Latency  p99.99 Latency       KB/sec 
+--------------------------------------------------------------------------------------------------------------------------------------------
+Sets       181409.25          ---          ---         0.87289         0.71100         1.61500         1.99100         4.25500    188298.71 
+Gets            0.00         0.00         0.00             ---             ---             ---             ---             ---         0.00 
+Waits           0.00          ---          ---             ---             ---             ---             ---             ---          --- 
+Totals     181409.25         0.00         0.00         0.87289         0.71100         1.61500         1.99100         4.25500    188298.71 

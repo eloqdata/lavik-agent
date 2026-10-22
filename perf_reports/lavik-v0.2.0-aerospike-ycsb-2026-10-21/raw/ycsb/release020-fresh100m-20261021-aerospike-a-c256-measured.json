@@ -1,0 +1,185 @@
+{
+  "mode": "aerospike",
+  "workload": "A",
+  "workers": 256,
+  "phase": "measured",
+  "label": "release020-fresh100m-20261021",
+  "requested_duration_seconds": 300,
+  "d_insert_start": null,
+  "target_ops_sec": 0,
+  "measurement_interval": "both",
+  "command": [
+    "taskset",
+    "-c",
+    "0-15",
+    "/usr/bin/python3",
+    "/opt/bench020/ycsb-aerospike-dist/bin/ycsb",
+    "run",
+    "aerospike",
+    "-s",
+    "-threads",
+    "256",
+    "-P",
+    "/opt/bench020/ycsb-aerospike-dist/workloads/workloada",
+    "-p",
+    "recordcount=100000000",
+    "-p",
+    "operationcount=2000000000",
+    "-p",
+    "fieldcount=10",
+    "-p",
+    "fieldlength=128",
+    "-p",
+    "fieldlengthdistribution=constant",
+    "-p",
+    "readallfields=true",
+    "-p",
+    "writeallfields=true",
+    "-p",
+    "insertorder=hashed",
+    "-p",
+    "requestdistribution=uniform",
+    "-p",
+    "readproportion=0.5",
+    "-p",
+    "updateproportion=0.5",
+    "-p",
+    "insertproportion=0",
+    "-p",
+    "scanproportion=0",
+    "-p",
+    "readmodifywriteproportion=0",
+    "-p",
+    "measurementtype=hdrhistogram",
+    "-p",
+    "measurement.interval=both",
+    "-p",
+    "hdrhistogram.percentiles=50,95,99,99.9,99.99",
+    "-p",
+    "status.interval=10",
+    "-p",
+    "maxexecutiontime=300",
+    "-p",
+    "as.host=10.96.1.4",
+    "-p",
+    "as.port=3000",
+    "-p",
+    "as.namespace=ycsb",
+    "-p",
+    "as.timeout=10000"
+  ],
+  "start_utc": "2026-10-21T15:15:44Z",
+  "runtime_ms": 300037,
+  "attempted": 131075833,
+  "succeeded": 131075833,
+  "failed": 0,
+  "success_qps": 436865.5632471995,
+  "metrics": {
+    "OVERALL": {
+      "RunTime(ms)": 300037,
+      "Throughput(ops/sec)": 436865.5632471995
+    },
+    "TOTAL_GCS_G1_Young_Generation": {
+      "Count": 679
+    },
+    "TOTAL_GC_TIME_G1_Young_Generation": {
+      "Time(ms)": 873
+    },
+    "TOTAL_GC_TIME_%_G1_Young_Generation": {
+      "Time(%)": 0.2909641144258875
+    },
+    "TOTAL_GCS_G1_Old_Generation": {
+      "Count": 0
+    },
+    "TOTAL_GC_TIME_G1_Old_Generation": {
+      "Time(ms)": 0
+    },
+    "TOTAL_GC_TIME_%_G1_Old_Generation": {
+      "Time(%)": 0.0
+    },
+    "TOTAL_GCs": {
+      "Count": 679
+    },
+    "TOTAL_GC_TIME": {
+      "Time(ms)": 873
+    },
+    "TOTAL_GC_TIME_%": {
+      "Time(%)": 0.2909641144258875
+    },
+    "READ": {
+      "Operations": 65535258,
+      "AverageLatency(us)": 636.661874406598,
+      "MinLatency(us)": 146,
+      "MaxLatency(us)": 99839,
+      "50thPercentileLatency(us)": 618,
+      "95thPercentileLatency(us)": 955,
+      "99thPercentileLatency(us)": 1164,
+      "99.9PercentileLatency(us)": 2225,
+      "99.99PercentileLatency(us)": 4191,
+      "Return=OK": 65535258
+    },
+    "CLEANUP": {
+      "Operations": 256,
+      "AverageLatency(us)": 2023.60546875,
+      "MinLatency(us)": 37,
+      "MaxLatency(us)": 5803,
+      "50thPercentileLatency(us)": 1622,
+      "95thPercentileLatency(us)": 5087,
+      "99thPercentileLatency(us)": 5587,
+      "99.9PercentileLatency(us)": 5803,
+      "99.99PercentileLatency(us)": 5803
+    },
+    "UPDATE": {
+      "Operations": 65540575,
+      "AverageLatency(us)": 527.7109138270453,
+      "MinLatency(us)": 134,
+      "MaxLatency(us)": 71935,
+      "50thPercentileLatency(us)": 510,
+      "95thPercentileLatency(us)": 835,
+      "99thPercentileLatency(us)": 1037,
+      "99.9PercentileLatency(us)": 1900,
+      "99.99PercentileLatency(us)": 2537,
+      "Return=OK": 65540575
+    },
+    "Intended-READ": {
+      "Operations": 65535258,
+      "AverageLatency(us)": 636.6969417897157,
+      "MinLatency(us)": 146,
+      "MaxLatency(us)": 99839,
+      "50thPercentileLatency(us)": 618,
+      "95thPercentileLatency(us)": 955,
+      "99thPercentileLatency(us)": 1164,
+      "99.9PercentileLatency(us)": 2225,
+      "99.99PercentileLatency(us)": 4191
+    },
+    "Intended-CLEANUP": {
+      "Operations": 256,
+      "AverageLatency(us)": 2023.73046875,
+      "MinLatency(us)": 37,
+      "MaxLatency(us)": 5803,
+      "50thPercentileLatency(us)": 1622,
+      "95thPercentileLatency(us)": 5087,
+      "99thPercentileLatency(us)": 5587,
+      "99.9PercentileLatency(us)": 5803,
+      "99.99PercentileLatency(us)": 5803
+    },
+    "Intended-UPDATE": {
+      "Operations": 65540575,
+      "AverageLatency(us)": 527.7437823516196,
+      "MinLatency(us)": 134,
+      "MaxLatency(us)": 71935,
+      "50thPercentileLatency(us)": 510,
+      "95thPercentileLatency(us)": 836,
+      "99thPercentileLatency(us)": 1037,
+      "99.9PercentileLatency(us)": 1900,
+      "99.99PercentileLatency(us)": 2537
+    }
+  },
+  "sha256": "90e36e14d284a28098a9be8f1cb031bf62c18c091bb55deed6bc6c2e063128b3",
+  "exit_code": 0,
+  "end_utc": "2026-10-21T15:20:45Z",
+  "before_records": 100000000,
+  "after_records": 100000000,
+  "host_before": "release020-fresh100m-20261021-aerospike-a-c256-measured.host-before.json",
+  "host_after": "release020-fresh100m-20261021-aerospike-a-c256-measured.host-after.json"
+}

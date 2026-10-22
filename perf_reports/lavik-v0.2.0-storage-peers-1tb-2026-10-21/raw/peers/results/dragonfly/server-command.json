@@ -1,0 +1,19 @@
+[
+  "taskset",
+  "-c",
+  "0-15",
+  "/opt/bench020/peers/downloads/dragonfly/dragonfly-x86_64",
+  "--logtostderr",
+  "--bind=10.96.1.4",
+  "--proactor_threads=16",
+  "--maxmemory=96GB",
+  "--dir=/mnt/bench020/data/dragonfly",
+  "--dbfilename=",
+  "--tiered_prefix=/mnt/bench020/data/dragonfly/tier",
+  "--tiering_disk_storage_initial_size=64GB",
+  "--tiered_max_file_size=2TB",
+  "--backing_file_direct=false",
+  "--tiered_offload_threshold=1.0",
+  "--tiered_experimental_cooling=false",
+  "--tiered_max_pending_stash_bytes=16MB"
+]
