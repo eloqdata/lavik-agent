@@ -2,7 +2,7 @@ name: Verify stable release artifacts
 on:
   workflow_dispatch:
   push:
-    branches: [release/0.1.0-packages]
+    branches: [release/0.2.0-packages]
     paths:
       - packaging/**
       - packages/apt/**
@@ -25,8 +25,8 @@ jobs:
     runs-on: ${{ matrix.runner }}
     timeout-minutes: 15
     env:
-      SINGLE: eloqdata/lavik@sha256:b9e84e08de65f7a73543ead849ada46e8f2d3860075d71c614a49bc3e51967ba
-      CLUSTER: eloqdata/lavik@sha256:f78849ba3ba4253f7cd93567054a138512763a380a35da2de9bc712914ab3cf2
+      SINGLE: eloqdata/lavik@sha256:a48e36d4f02f4cb2bf8bbb604d7cb9032aae44f4fc2f35ac3a253ff05d584dc3
+      CLUSTER: eloqdata/lavik@sha256:05616d1b5002ccf63acd8b63ed1aa80e8d2a05d989b6db8dc6ec14e1be27d5c0
     steps:
       - uses: actions/checkout@v6
         with:
@@ -37,7 +37,7 @@ jobs:
         run: |
           mkdir -p .cache/published-verification
           set -o pipefail
-          python3 packaging/docker/0.1.0/smoke-test.py \
+          python3 packaging/docker/0.2.0/smoke-test.py \
             --platform linux/${{ matrix.arch }} --single-image "$SINGLE" --cluster-image "$CLUSTER" \
             --receipt .cache/published-verification/docker-${{ matrix.arch }}.json \
             | tee .cache/published-verification/docker-${{ matrix.arch }}.log
@@ -73,13 +73,13 @@ jobs:
       - name: Verify signed APT installation and persistence
         run: python3 scripts/verify-apt.py .cache/apt-staged .cache/release-verification/apt-${{ matrix.arch }}.json
       - name: Build the pinned standalone image
-        run: docker build --target single -t eloqdata/lavik:0.1.0 packaging/docker/0.1.0
+        run: docker build --target single -t eloqdata/lavik:0.2.0 packaging/docker/0.2.0
       - name: Build the pinned cluster image
-        run: docker build --target cluster -t eloqdata/lavik:0.1.0-cluster packaging/docker/0.1.0
+        run: docker build --target cluster -t eloqdata/lavik:0.2.0-cluster packaging/docker/0.2.0
       - name: Verify Docker persistence, replication, failover and recovery
         run: |
           set -o pipefail
-          python3 packaging/docker/0.1.0/smoke-test.py --platform linux/${{ matrix.arch }} | tee .cache/release-verification/docker-${{ matrix.arch }}.log
+          python3 packaging/docker/0.2.0/smoke-test.py --platform linux/${{ matrix.arch }} --single-image eloqdata/lavik:0.2.0 --cluster-image eloqdata/lavik:0.2.0-cluster --receipt .cache/release-verification/docker-${{ matrix.arch }}.json | tee .cache/release-verification/docker-${{ matrix.arch }}.log
       - uses: actions/upload-artifact@v6
         if: always()
         with:

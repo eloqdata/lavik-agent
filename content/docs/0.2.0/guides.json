@@ -191,58 +191,102 @@
       "zh-CN": "从软件包安装"
     },
     "summary": {
-      "en": "Choose the official 0.2.0 release archive for your Linux architecture and verify its checksum.",
-      "zh-CN": "选择与你的 Linux 架构匹配的官方 0.2.0 发布压缩包，并验证校验和。"
+      "en": "Install the signed 0.2.0 APT package on Ubuntu 24.04 and manage it with systemd.",
+      "zh-CN": "在 Ubuntu 24.04 上安装签名的 0.2.0 APT 包，并用 systemd 管理。"
     },
     "sources": [
       "README.md"
     ],
     "sections": [
       {
-        "id": "packages",
+        "id": "install",
         "title": {
-          "en": "Choose your release package",
-          "zh-CN": "选择发布包"
+          "en": "1. Add The Signed APT Repository",
+          "zh-CN": "1. 添加签名 APT 仓库"
         },
         "blocks": [
           {
             "type": "paragraph",
             "text": {
-              "en": "Lavik 0.2.0 is available as checksummed Minimal and Standard archives for Linux AMD64 and ARM64. The archive includes lavik, lavik-meta, lavik-ctl, Lavik Admin and its Node.js runtime. Minimal uses kernel TCP/io_uring; Standard also includes SPDK/DPDK. Use the binary installer below to select your architecture and package.",
-              "zh-CN": "Lavik 0.2.0 为 Linux AMD64 与 ARM64 提供带校验和的 Minimal 和 Standard 压缩包，包含 lavik、lavik-meta、lavik-ctl、Lavik Admin 及其 Node.js 运行时。Minimal 使用内核 TCP/io_uring，Standard 另含 SPDK/DPDK。请使用二进制安装页选择架构和发布包。"
+              "en": "Packages support Ubuntu 24.04 (noble), AMD64 and ARM64, with Linux 6.1+ and usable io_uring. The current Debian version is 0.2.0-1. Unversioned apt install lavik selects 0.2.0; 0.1.0 and beta.1 remain available for version-pinned installs. The repository URL and signing key are unchanged.",
+              "zh-CN": "软件包支持 Ubuntu 24.04（noble）的 AMD64 和 ARM64，要求 Linux 6.1+ 及可用的 io_uring。当前 Debian 版本为 0.2.0-1。apt install lavik 默认选择 0.2.0；仓库保留 0.1.0 和 beta.1，可指定版本安装。仓库地址及签名密钥保持不变。"
             }
           },
           {
-            "type": "link",
-            "text": {
-              "en": "Install the 0.2.0 binary release",
-              "zh-CN": "安装 0.2.0 二进制发布版"
-            },
-            "href": "/{locale}/docs/0.2.0/quick-start/"
+            "type": "code",
+            "file": "verification/docs/0.2.0/apt-install.sh"
           }
         ]
       },
       {
-        "id": "apt",
+        "id": "start",
         "title": {
-          "en": "Existing APT installations",
-          "zh-CN": "现有 APT 安装"
+          "en": "2. Start The Service",
+          "zh-CN": "2. 启动服务"
+        },
+        "blocks": [
+          {
+            "type": "code",
+            "file": "verification/docs/0.2.0/apt-start.sh"
+          },
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "Fresh installation leaves the service stopped. It runs as the lavik system user, binds to 127.0.0.1:6379, and allocates its data file only when absent. Data lives under /var/lib/lavik; logs live under /var/log/lavik. Set service options in /etc/default/lavik, then restart the service.",
+              "zh-CN": "全新安装后服务默认停止。服务使用 lavik 系统用户，监听 127.0.0.1:6379，仅在数据文件不存在时分配文件。数据位于 /var/lib/lavik，日志位于 /var/log/lavik。在 /etc/default/lavik 配置选项后重启服务。"
+            }
+          }
+        ]
+      },
+      {
+        "id": "standard",
+        "title": {
+          "en": "Choose Minimal Or Standard",
+          "zh-CN": "选择 Minimal 或 Standard"
         },
         "blocks": [
           {
             "type": "paragraph",
             "text": {
-              "en": "The signed APT repository currently contains the 0.1.0 server packages. Selecting the 0.2.0 documentation does not upgrade an installed APT service. Use the 0.2.0 release archive for this version; the archived 0.1.0 guide retains the exact APT commands and service layout.",
-              "zh-CN": "当前签名 APT 仓库提供 0.1.0 服务端软件包。切换到 0.2.0 文档不会升级已安装的 APT 服务。本版请使用 0.2.0 发布压缩包；历史 0.1.0 指南保留精确的 APT 命令与服务布局。"
+              "en": "lavik is Minimal; lavik-standard adds compiled SPDK/DPDK support. Both install the same executable names and conflict, so select one variant. Standard still defaults to kernel TCP/io_uring. The APT packages contain lavik, lavik-meta and lavik-ctl; download a release archive for Lavik Admin and its Node.js runtime.",
+              "zh-CN": "lavik 为 Minimal；lavik-standard 另含编译的 SPDK/DPDK 支持。两者安装相同名称的程序，互相冲突，需选择其一。Standard 默认仍使用内核 TCP/io_uring。APT 包包含 lavik、lavik-meta 和 lavik-ctl；如需 Lavik Admin 和 Node.js 运行时，请下载发布压缩包。"
+            }
+          },
+          {
+            "type": "code",
+            "file": "verification/docs/0.2.0/apt-standard.sh"
+          }
+        ]
+      },
+      {
+        "id": "manage",
+        "title": {
+          "en": "Manage And Upgrade",
+          "zh-CN": "管理与升级"
+        },
+        "blocks": [
+          {
+            "type": "code",
+            "file": "verification/docs/0.2.0/apt-upgrade.sh"
+          },
+          {
+            "type": "code",
+            "file": "verification/docs/0.2.0/apt-manage.sh"
+          },
+          {
+            "type": "paragraph",
+            "text": {
+              "en": "Before upgrading, back up your data and review the 0.2.0 release notes. New data/value-key CRC generation is off by default; existing CRCs are still verified. Older readers cannot consume the new no-CRC flags, so retain a pre-upgrade backup for rollback. A package upgrade does not certify a beta cluster migration.",
+              "zh-CN": "升级前请备份数据并阅读 0.2.0 版本说明。新数据及值键 CRC 生成默认关闭，现有 CRC 仍会校验。旧版读取器不能识别新的无 CRC 标志，因此回滚应使用升级前的备份。软件包升级并不证明 Beta 集群迁移兼容。"
             }
           },
           {
             "type": "link",
             "text": {
-              "en": "Archived 0.1.0 APT guide",
-              "zh-CN": "历史 0.1.0 APT 指南"
+              "en": "0.2.0 Release Notes",
+              "zh-CN": "0.2.0 版本说明"
             },
-            "href": "/{locale}/docs/0.1.0/install-packages/"
+            "href": "/{locale}/releases/0-2-0/"
           }
         ]
       }
@@ -255,8 +299,8 @@
       "zh-CN": "使用 Docker 安装"
     },
     "summary": {
-      "en": "Build a local 0.2.0 image from verified official release archives, then run it with a persistent volume.",
-      "zh-CN": "从已校验的官方发布压缩包构建本地 0.2.0 镜像，并使用持久卷运行。"
+      "en": "Pull the 0.2.0 Docker image and run it with a persistent volume.",
+      "zh-CN": "拉取 0.2.0 Docker 镜像，并使用持久卷运行。"
     },
     "sources": [
       "README.md"
@@ -272,8 +316,8 @@
           {
             "type": "paragraph",
             "text": {
-              "en": "The public registry does not yet provide a 0.2.0 tag. This guide downloads a pinned source bundle and builds the local lavik:0.2.0 image from the official checksum-verified Minimal archive. Docker BuildKit chooses the matching AMD64 or ARM64 package.",
-              "zh-CN": "公共镜像仓库尚未提供 0.2.0 标签。本指南下载固定校验和的构建源码包，从官方已校验的 Minimal 压缩包构建本地 lavik:0.2.0 镜像。Docker BuildKit 选择对应的 AMD64 或 ARM64 发布包。"
+              "en": "Pull eloqdata/lavik:0.2.0 from Docker Hub. Docker selects the matching AMD64 or ARM64 image. Each image packages the official checksum-verified 0.2.0 Minimal server archive.",
+              "zh-CN": "从 Docker Hub 拉取 eloqdata/lavik:0.2.0。Docker 自动选择对应的 AMD64 或 ARM64 镜像。镜像使用官方已校验的 0.2.0 Minimal 服务端发布包。"
             }
           },
           {
@@ -373,8 +417,8 @@
           {
             "type": "paragraph",
             "text": {
-              "en": "This single-host lab uses locally built lavik:0.2.0-cluster, three Meta voters and two Data nodes in Redis Cluster mode. One Group owns all 16,384 slots. Named volumes preserve Meta and Data state. Three containers on one host do not provide host-level HA; place members on separate hosts for that failure domain.",
-              "zh-CN": "这个单机实验使用 本地构建的 lavik:0.2.0-cluster，在 Redis Cluster 模式下运行三个 Meta 投票成员和两个 Data 节点。一个 Group 持有全部 16,384 个槽。命名卷保留 Meta 和 Data 状态。单台主机上的三个容器不提供主机级高可用；应将成员分布到不同主机。"
+              "en": "This single-host lab uses eloqdata/lavik:0.2.0-cluster from Docker Hub, three Meta voters and two Data nodes in Redis Cluster mode. One Group owns all 16,384 slots. Named volumes preserve Meta and Data state. Three containers on one host do not provide host-level HA; place members on separate hosts for that failure domain.",
+              "zh-CN": "这个单机实验使用 Docker Hub 上的 eloqdata/lavik:0.2.0-cluster，在 Redis Cluster 模式下运行三个 Meta 投票成员和两个 Data 节点。一个 Group 持有全部 16,384 个槽。命名卷保留 Meta 和 Data 状态。单台主机上的三个容器不提供主机级高可用；应将成员分布到不同主机。"
             }
           },
           {

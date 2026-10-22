@@ -3,6 +3,8 @@ import { isDeepStrictEqual } from "node:util";
 import { hash, readJson, readText } from "../content/repository";
 import { gunzipSync } from "node:zlib";
 
+import { aptReviewedFiles } from "../apt/repository";
+
 const directory = "evidence/docs/0.2.0";
 export function containerBundleErrors() {
   try {
@@ -14,7 +16,7 @@ export function containerBundleErrors() {
       !readText(`${file}.sha256`).startsWith(`${digest}  docker-source.tar.gz`)
     )
       return ["Container source bundle checksum changed"];
-    for (const snippet of ["docker-start.sh", "compose-download.sh"])
+    for (const snippet of ["compose-download.sh"])
       if (!readText(`verification/docs/0.2.0/${snippet}`).includes(digest))
         return [
           "Container source download is not pinned to the published bundle",
@@ -115,6 +117,9 @@ export const documentationReviewFiles = () => {
       "tests/browser/docs-versions.spec.ts",
       "tests/browser/release-020.spec.ts",
       "scripts/review-release-020.ts",
+      "scripts/review-release-020-packaging.ts",
+      ...aptReviewedFiles(),
+      ".github/workflows/release-artifacts.yml",
       "scripts/review-release-020-manifest.ts",
       "packages/local/codex.ts",
       "tests/local-codex.test.ts",

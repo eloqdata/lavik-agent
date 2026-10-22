@@ -3,7 +3,7 @@
 The public endpoint is `https://lavik.dev/apt/`, distribution `noble`, component
 `main`, architectures `amd64` and `arm64`. `lavik` packages Minimal; the mutually
 exclusive `lavik-standard` packages Standard. The default candidate is stable
-`0.1.0-1`, built from upstream `v0.1.0`. The beta package `0.1.0~beta.1-1` is
+`0.2.0-1`, built from upstream `v0.2.0`. Stable `0.1.0-1` and the beta package `0.1.0~beta.1-1` is
 retained so the existing beta manual's version-pinned commands continue to work.
 Only Ubuntu 24.04 is supported. Lavik Admin and its Node runtime remain in the
 upstream release tarballs; the APT server packages contain Lavik, Meta and lavik-ctl.
@@ -21,10 +21,10 @@ It is exported by the package build and staged with the complete signed APT
 repository. Cloudflare receives it through the normal GitHub website deployment.
 The private signing key stays on the release machine.
 
-For the stable 0.1.0 release:
+For the stable 0.2.0 release:
 
 ```sh
-LAVIK_APT_BUILD_DIR=.cache/apt-build-0.1.0-1 sh scripts/build-apt.sh
+LAVIK_APT_BUILD_DIR=.cache/apt-build-0.2.0-1 sh scripts/build-apt.sh
 ```
 
 The release inputs are `packaging/apt/release.json` (upstream tag, commit,
@@ -71,10 +71,10 @@ Record a renewed key/signature snapshot before key expiration. Keep the old
 public key available while clients transition. Key generation must never
 silently replace a lost production key.
 
-The public-only archive is `lavik-apt-0.1.0-1.tar.gz`. It contains the
+The public-only archive is `lavik-apt-0.2.0-1.tar.gz`. It contains the
 aptly publication tree and armored public key, not the private aptly database
 or signing directory. It is stored in this repository's GitHub release
-`apt-v0.1.0-1`. The exact archive SHA-256 and every asset's SHA-256/size
+`apt-v0.2.0-1`. The exact archive SHA-256 and every asset's SHA-256/size
 are locked in `packages/apt/manifest.json`; public-key bytes are also tracked.
 Do not overwrite published packages at an existing version or clobber this
 release asset. Increment the Debian packaging revision for packaging fixes.

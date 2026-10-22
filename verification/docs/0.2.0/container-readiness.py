@@ -1,4 +1,4 @@
-"""Execute published readiness blocks against local images in isolated Docker projects."""
+"""Execute published readiness blocks against published images in isolated Docker projects."""
 from pathlib import Path
 from datetime import datetime, timezone
 import hashlib
@@ -16,7 +16,7 @@ identity = 'lavik-ready-' + uuid.uuid4().hex[:10]
 steps = []
 files = {}
 env = dict(os.environ, COMPOSE_PROJECT_NAME=identity, LAVIK_PRIMARY_PORT='0',
-           LAVIK_FOLLOWER_PORT='0', LAVIK_DOCKER_IMAGE='lavik:0.2.0-cluster')
+           LAVIK_FOLLOWER_PORT='0', LAVIK_DOCKER_IMAGE='eloqdata/lavik:0.2.0-cluster')
 def execute(name, cwd, text=None):
     original = (source / name).read_text()
     files[name] = hashlib.sha256(original.encode()).hexdigest()
@@ -59,6 +59,6 @@ with tempfile.TemporaryDirectory(prefix=identity) as temporary:
     finally:
         subprocess.run(['docker', 'compose', 'down', '-v'], cwd=work, env=env, capture_output=True)
 receipt = dict(status='passed', checkedAt=datetime.now(timezone.utc).isoformat(),
-               scope='Published container readiness, cold startup and restart on native ARM64 local images; download/build tested separately.',
+               scope='Published container readiness, cold startup and restart on native ARM64 published images; pull and bundle verification tested separately.',
                fileHashes=files, steps=steps)
 (root / 'evidence/docs/0.2.0/container-readiness.json').write_text(json.dumps(receipt, indent=2) + '\n')

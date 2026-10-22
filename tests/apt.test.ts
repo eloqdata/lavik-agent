@@ -10,7 +10,7 @@ test("APT publication requires signed package lifecycle evidence and current inp
   assert.deepEqual(aptEvidenceErrors(), []);
   assert.equal(
     aptManifest.files.filter((f: any) => f.path.endsWith(".deb")).length,
-    8,
+    12,
   );
   for (const mutate of [
     (r: any) => r.checks.pop(),
@@ -22,7 +22,7 @@ test("APT publication requires signed package lifecycle evidence and current inp
     (r: any) => (r.imageId = "mutable-tag"),
     (r: any) => (r.status = "failed"),
   ]) {
-    const report = JSON.parse(readText("evidence/apt/0.1.0/verification.json"));
+    const report = JSON.parse(readText("evidence/apt/0.2.0/verification.json"));
     mutate(report);
     assert.ok(aptEvidenceErrors(report).length);
   }

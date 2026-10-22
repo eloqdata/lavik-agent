@@ -21,14 +21,14 @@ export const aptReviewedFiles = () => [
   "packages/apt/manifest.json",
   "packages/apt/lavik-archive-keyring.asc",
   "packages/apt/repository.ts",
-  "evidence/apt/0.1.0/verification.json",
+  "evidence/apt/0.2.0/verification.json",
   "apps/web/public/_headers",
   "tests/apt.test.ts",
   "tests/verify-apt-live.test.py",
   "docs/apt-publishing.md",
 ];
 export function aptEvidenceErrors(
-  report = JSON.parse(readText("evidence/apt/0.1.0/verification.json")),
+  report = JSON.parse(readText("evidence/apt/0.2.0/verification.json")),
 ) {
   const errors: string[] = [];
   try {
@@ -56,13 +56,13 @@ export function aptEvidenceErrors(
     )
       errors.push("APT lifecycle/signature checks incomplete");
     if (
-      aptRelease.tag_name !== "v0.1.0" ||
+      aptRelease.tag_name !== "v0.2.0" ||
       aptRelease.prerelease !== false ||
-      aptRelease.commit !== "feb61224e414c5653fd09560e20c9d214db1e3ac" ||
+      aptRelease.commit !== "2908f86f2770e9c6e8acc6585b3bedb4b44d1cd5" ||
       aptManifest.release !== aptRelease.tag_name.slice(1) ||
       aptManifest.sourceCommit !== aptRelease.commit ||
       aptManifest.version !== aptRelease.debianVersion ||
-      aptManifest.version !== "0.1.0-1" ||
+      aptManifest.version !== "0.2.0-1" ||
       aptManifest.fingerprint !== previous.fingerprint ||
       aptManifest.distribution !== "noble" ||
       !isDeepStrictEqual(aptManifest.architectures, ["amd64", "arm64"]) ||
@@ -89,7 +89,9 @@ export function aptEvidenceErrors(
       "lavik-archive-keyring.asc",
       ...["amd64", "arm64"].flatMap((arch) => [
         `dists/noble/main/binary-${arch}/Packages`,
+        `pool/main/l/lavik/lavik_0.2.0-1_${arch}.deb`,
         `pool/main/l/lavik/lavik_0.1.0-1_${arch}.deb`,
+        `pool/main/l/lavik-standard/lavik-standard_0.2.0-1_${arch}.deb`,
         `pool/main/l/lavik-standard/lavik-standard_0.1.0-1_${arch}.deb`,
         `pool/main/l/lavik/lavik_0.1.0~beta.1-1_${arch}.deb`,
         `pool/main/l/lavik-standard/lavik-standard_0.1.0~beta.1-1_${arch}.deb`,
@@ -122,7 +124,7 @@ export function aptEvidenceErrors(
       errors.push("APT public key mismatch");
     if (
       !aptManifest.artifact.url.startsWith(
-        "https://github.com/eloqdata/lavik-agent/releases/download/apt-v0.1.0-1/",
+        "https://github.com/eloqdata/lavik-agent/releases/download/apt-v0.2.0-1/",
       ) ||
       !/^[a-f0-9]{64}$/.test(aptManifest.artifact.sha256)
     )

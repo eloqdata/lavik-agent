@@ -26,14 +26,15 @@ Signed-By: /etc/apt/keyrings/lavik.asc
 SOURCE
 # No trusted=yes or unsigned fallback: APT must validate the real repository.
 apt-get update -qq
-# Both versions remain installable; unversioned installation selects stable.
+# All three versions remain installable; unversioned installation selects stable.
 for package in lavik lavik-standard; do
-  apt-cache policy "$package" | grep -F 'Candidate: 0.1.0-1' >/dev/null
+  apt-cache policy "$package" | grep -F 'Candidate: 0.2.0-1' >/dev/null
   apt-cache madison "$package" | grep -F '0.1.0~beta.1-1' >/dev/null
+  apt-cache madison "$package" | grep -F '0.1.0-1' >/dev/null
   apt-get install -y "$package" >/dev/null
-  test "$(dpkg-query -W -f='${Version}' "$package")" = '0.1.0-1'
-  test "$(lavik --version)" = 'lavik 0.1.0'
-  test "$(cat /usr/lib/lavik/REVISION)" = 'feb61224e414c5653fd09560e20c9d214db1e3ac'
+  test "$(dpkg-query -W -f='${Version}' "$package")" = '0.2.0-1'
+  test "$(lavik --version)" = 'lavik 0.2.0'
+  test "$(cat /usr/lib/lavik/REVISION)" = '2908f86f2770e9c6e8acc6585b3bedb4b44d1cd5'
   command -v lavik-meta
   command -v lavik-ctl
   cmp /templates/start /usr/lib/lavik/start
@@ -80,14 +81,14 @@ for package in lavik lavik-standard; do
   trap - EXIT
   # Debian conffile edits survive a reinstall.
   printf '\n# local customization\n' >> /etc/default/lavik
-  apt-get install --reinstall -y "$package=0.1.0-1" >/dev/null
+  apt-get install --reinstall -y "$package=0.2.0-1" >/dev/null
   grep -q 'local customization' /etc/default/lavik
   apt-get purge -y "$package" >/dev/null
   test -s /var/lib/lavik/data
   test ! -e /usr/bin/lavik
   test ! -L /etc/systemd/system/multi-user.target.wants/lavik.service
   # Reinstallation still recovers the old database.
-  apt-get install -y "$package=0.1.0-1" >/dev/null
+  apt-get install -y "$package=0.2.0-1" >/dev/null
   runuser -u lavik -- /usr/lib/lavik/start > /tmp/lavik.log 2>&1 &
   runner=$!
   trap 'kill -TERM "$runner" 2>/dev/null || true; wait "$runner" || true' EXIT

@@ -75,7 +75,7 @@ def main():
         if source=='live': verify_live_files(manifest,metadata_only=True)
         report=dict(status='passed',checkedAt=datetime.now(timezone.utc).isoformat(),source=source,release=manifest['release'],version=manifest['version'],sourceCommit=manifest['sourceCommit'],fingerprint=manifest['fingerprint'],artifactSha256=manifest['artifact']['sha256'],imageId=json.loads(run('docker','image','inspect',image))[0]['Id'],architecture=json.loads(run('docker','image','inspect',image))[0]['Architecture'],checks=checks,fileHashes=before,scope='Native Ubuntu 24.04 Docker; both package variants; signed APT install, unit static validation and exact ExecStart as service user, commands, graceful restart, allocation and conffile preservation, purge/reinstall recovery, invalid-key rejection. Container does not boot systemd; service-manager enable/restart not runtime-certified. No SPDK hardware or multi-host testing.')
         if source=='live': report['deployedFilesVerified']=deployed_files
-        target=Path(sys.argv[2]) if len(sys.argv)>2 else ROOT/'evidence/apt/0.1.0/verification.json'
+        target=Path(sys.argv[2]) if len(sys.argv)>2 else ROOT/f"evidence/apt/{manifest['release']}/verification.json"
         target.parent.mkdir(parents=True,exist_ok=True)
         target.write_text(json.dumps(report,indent=2)+'\n')
     finally:
