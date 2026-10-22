@@ -5,12 +5,12 @@ import os from "node:os";
 import path from "node:path";
 import { spawnSync } from "node:child_process";
 
-test("0.2.0 container instructions stop before startup after a failed checksum or image pull", () => {
+test("0.2.0 container instructions stop before a stale image can run after failed verification or build", () => {
   const bundle = path.resolve(
     "apps/web/public/installation-assets/0.2.0/docker-source.tar.gz",
   );
   for (const snippet of ["docker-start.sh", "compose-download.sh"])
-    for (const failure of snippet === "docker-start.sh" ? ["pull"] : ["checksum", "pull"]) {
+    for (const failure of ["checksum", "build"]) {
       const directory = fs.mkdtempSync(
           path.join(os.tmpdir(), "lavik-container-guard-"),
         ),
@@ -26,7 +26,7 @@ test("0.2.0 container instructions stop before startup after a failed checksum o
       );
       fs.writeFileSync(
         path.join(bin, "docker"),
-        '#!/bin/sh\nprintf "%s\\n" "$*" >> "$DOCKER_CALLS"\nexit 1\n',
+        '#!/bin/sh\nprintf "%s\\n" "$*" >> "$DOCKER_CALLS"\n[ "$1" != build ]\n',
         { mode: 0o755 },
       );
       try {
@@ -47,7 +47,7 @@ test("0.2.0 container instructions stop before startup after a failed checksum o
         assert.notEqual(result.status, 0, `${snippet}/${failure} must fail`);
         const calls = fs.existsSync(log) ? fs.readFileSync(log, "utf8") : "";
         if (failure === "checksum") assert.equal(calls, "");
-        else assert.match(calls, /^(?:pull eloqdata\/lavik:0\.2\.0|compose pull)/);
+        else assert.match(calls, /^build /);
         assert.doesNotMatch(calls, /^run /m);
       } finally {
         fs.rmSync(directory, { recursive: true, force: true });

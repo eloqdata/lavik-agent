@@ -1,12 +1,18 @@
-# Run in Bash; stop if the image cannot be pulled.
+# Run in Bash; stop on a failed download, checksum, extraction or build.
 set -euo pipefail
-docker pull eloqdata/lavik:0.2.0
+mkdir -p lavik-0.2.0-build
+cd lavik-0.2.0-build
+curl -fLO --retry 3 https://lavik.dev/installation-assets/0.2.0/docker-source.tar.gz
+printf '%s\n' '3832426121dba1714fe154e33271351174da79d01d10002851584d88541cd637  docker-source.tar.gz' | sha256sum -c -
+tar -xzf docker-source.tar.gz
+cd lavik-0.2.0-docker
+docker build --target single -t lavik:0.2.0 .
 docker run -d --name lavik \
   --security-opt seccomp=unconfined \
   --ulimit memlock=536870912:536870912 \
   -p 127.0.0.1:6379:6379 -v lavik-data:/data \
   -e LAVIK_DATA_SIZE=1G -e LAVIK_THREADS=2 \
-  eloqdata/lavik:0.2.0
+  lavik:0.2.0
 wait_for_lavik() {
   local attempt
   for attempt in {1..60}; do

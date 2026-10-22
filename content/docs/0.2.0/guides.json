@@ -299,8 +299,8 @@
       "zh-CN": "使用 Docker 安装"
     },
     "summary": {
-      "en": "Pull the 0.2.0 Docker image and run it with a persistent volume.",
-      "zh-CN": "拉取 0.2.0 Docker 镜像，并使用持久卷运行。"
+      "en": "Build a local 0.2.0 image from verified official release archives, then run it with a persistent volume.",
+      "zh-CN": "从已校验的官方发布压缩包构建本地 0.2.0 镜像，并使用持久卷运行。"
     },
     "sources": [
       "README.md"
@@ -316,8 +316,8 @@
           {
             "type": "paragraph",
             "text": {
-              "en": "Pull eloqdata/lavik:0.2.0 from Docker Hub. Docker selects the matching AMD64 or ARM64 image. Each image packages the official checksum-verified 0.2.0 Minimal server archive.",
-              "zh-CN": "从 Docker Hub 拉取 eloqdata/lavik:0.2.0。Docker 自动选择对应的 AMD64 或 ARM64 镜像。镜像使用官方已校验的 0.2.0 Minimal 服务端发布包。"
+              "en": "The public registry does not yet provide a 0.2.0 tag. This guide downloads a pinned source bundle and builds the local lavik:0.2.0 image from the official checksum-verified Minimal archive. Docker BuildKit chooses the matching AMD64 or ARM64 package.",
+              "zh-CN": "公共镜像仓库尚未提供 0.2.0 标签。本指南下载固定校验和的构建源码包，从官方已校验的 Minimal 压缩包构建本地 lavik:0.2.0 镜像。Docker BuildKit 选择对应的 AMD64 或 ARM64 发布包。"
             }
           },
           {
@@ -417,8 +417,8 @@
           {
             "type": "paragraph",
             "text": {
-              "en": "This single-host lab uses eloqdata/lavik:0.2.0-cluster from Docker Hub, three Meta voters and two Data nodes in Redis Cluster mode. One Group owns all 16,384 slots. Named volumes preserve Meta and Data state. Three containers on one host do not provide host-level HA; place members on separate hosts for that failure domain.",
-              "zh-CN": "这个单机实验使用 Docker Hub 上的 eloqdata/lavik:0.2.0-cluster，在 Redis Cluster 模式下运行三个 Meta 投票成员和两个 Data 节点。一个 Group 持有全部 16,384 个槽。命名卷保留 Meta 和 Data 状态。单台主机上的三个容器不提供主机级高可用；应将成员分布到不同主机。"
+              "en": "This single-host lab uses locally built lavik:0.2.0-cluster, three Meta voters and two Data nodes in Redis Cluster mode. One Group owns all 16,384 slots. Named volumes preserve Meta and Data state. Three containers on one host do not provide host-level HA; place members on separate hosts for that failure domain.",
+              "zh-CN": "这个单机实验使用 本地构建的 lavik:0.2.0-cluster，在 Redis Cluster 模式下运行三个 Meta 投票成员和两个 Data 节点。一个 Group 持有全部 16,384 个槽。命名卷保留 Meta 和 Data 状态。单台主机上的三个容器不提供主机级高可用；应将成员分布到不同主机。"
             }
           },
           {
