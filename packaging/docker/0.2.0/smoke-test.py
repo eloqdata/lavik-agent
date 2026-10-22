@@ -156,7 +156,7 @@ def main():
     try:
         for image in (single_image, cluster_image):
             identity = json.loads(run("docker", "image", "inspect", image))[0]
-            identities[image] = {"configDigest": identity["Id"], "architecture": identity["Architecture"], "os": identity["Os"]}
+            identities[image] = {"imageId": identity["Id"], "architecture": identity["Architecture"], "os": identity["Os"]}
             if args.platform and f'{identity["Os"]}/{identity["Architecture"]}' != args.platform:
                 raise RuntimeError("Test image architecture differs from requested native platform")
             version = run("docker", "run", "--rm", image, "lavik", "--version")
@@ -263,7 +263,7 @@ def main():
             raise RuntimeError("Packaging inputs changed during smoke verification")
         if args.receipt:
             args.receipt.parent.mkdir(parents=True, exist_ok=True)
-            args.receipt.write_text(json.dumps({"status": "passed", "checkedAt": datetime.now(timezone.utc).isoformat(), "platform": args.platform, "images": identities, "fileHashes": file_hashes, "scope": "Native standalone PING/write/restart/allocation; cluster bootstrap, replication, controlled failover and full recovery."}, indent=2) + "\n")
+            args.receipt.write_text(json.dumps({"status": "passed", "checkedAt": datetime.now(timezone.utc).isoformat(), "platform": args.platform, "images": identities, "fileHashes": file_hashes, "scope": "imageId is the Docker daemon image ID (not assumed to be a config digest). Native standalone PING/write/restart/allocation; cluster bootstrap, replication, controlled failover and full recovery."}, indent=2) + "\n")
     except Exception:
         print(
             run("docker", "logs", "--tail", "80", standalone, check=False), flush=True

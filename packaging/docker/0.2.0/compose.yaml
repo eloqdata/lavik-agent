@@ -3,7 +3,7 @@
 name: lavik-stable
 
 x-server: &server
-  image: ${LAVIK_DOCKER_IMAGE:-lavik:0.2.0-cluster}
+  image: ${LAVIK_DOCKER_IMAGE:-eloqdata/lavik:0.2.0-cluster}
   # The Docker default seccomp profile blocks io_uring. No privileged mode needed.
   security_opt: [seccomp=unconfined]
   restart: unless-stopped
@@ -140,7 +140,7 @@ services:
     networks:
       cluster: { ipv4_address: 172.30.92.22 }
   bootstrap:
-    image: ${LAVIK_DOCKER_IMAGE:-lavik:0.2.0-cluster}
+    image: ${LAVIK_DOCKER_IMAGE:-eloqdata/lavik:0.2.0-cluster}
     # Lifecycle state belongs to Meta; avoid an unused anonymous data volume.
     tmpfs: [/data]
     command: [bootstrap-cluster, "172.30.92.11:7200", /etc/lavik/cluster.toml]
