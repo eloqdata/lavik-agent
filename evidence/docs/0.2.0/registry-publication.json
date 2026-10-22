@@ -1,0 +1,53 @@
+{
+  "status": "passed",
+  "release": "0.2.0",
+  "sourceCommit": "2908f86f2770e9c6e8acc6585b3bedb4b44d1cd5",
+  "scope": "Both completed, successful published-image jobs verify the immutable public digests on native AMD64 and ARM64 using exact current smoke sources and correctly labelled daemon image IDs. The aggregate run snapshot is recorded literally; its duplicate APT/build job was still running at capture time and is not claimed complete. APT already passed separate native CI and live signed installation. Full documented tag pulls and public bundle download/checksum/extraction separately passed in container-readiness.json. Website publication still requires the full normal main-branch CI workflow to pass. No SPDK or multi-host HA certification.",
+  "indexes": {
+    "single": {
+      "tag": "eloqdata/lavik:0.2.0",
+      "digest": "sha256:a48e36d4f02f4cb2bf8bbb604d7cb9032aae44f4fc2f35ac3a253ff05d584dc3",
+      "indexFile": "evidence/docs/0.2.0/registry/single-index.json",
+      "platforms": [
+        "linux/amd64",
+        "linux/arm64"
+      ]
+    },
+    "cluster": {
+      "tag": "eloqdata/lavik:0.2.0-cluster",
+      "digest": "sha256:05616d1b5002ccf63acd8b63ed1aa80e8d2a05d989b6db8dc6ec14e1be27d5c0",
+      "indexFile": "evidence/docs/0.2.0/registry/cluster-index.json",
+      "platforms": [
+        "linux/amd64",
+        "linux/arm64"
+      ]
+    }
+  },
+  "ci": {
+    "headSha": "7cc89b960c89cfa55fa39f638683b450ccb74392",
+    "status": "in_progress",
+    "conclusion": "",
+    "url": "https://github.com/eloqdata/lavik-agent/actions/runs/39785844453"
+  },
+  "nativeJobs": [
+    {
+      "name": "published (ubuntu-24.04, amd64)",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/eloqdata/lavik-agent/actions/runs/39785844453/job/119848703795"
+    },
+    {
+      "name": "published (ubuntu-24.04-arm, arm64)",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/eloqdata/lavik-agent/actions/runs/39785844453/job/119848703851"
+    }
+  ],
+  "fileHashes": {
+    "evidence/docs/0.2.0/registry/single-index.json": "a48e36d4f02f4cb2bf8bbb604d7cb9032aae44f4fc2f35ac3a253ff05d584dc3",
+    "evidence/docs/0.2.0/registry/cluster-index.json": "05616d1b5002ccf63acd8b63ed1aa80e8d2a05d989b6db8dc6ec14e1be27d5c0",
+    "evidence/docs/0.2.0/registry/published-amd64.json": "e9987bdaae5578915027e8f29141a995f7fecd782f5e6a68173590075c565e07",
+    "evidence/docs/0.2.0/registry/published-arm64.json": "14c0de27dc3bc69dac193682f48cf8b6b3b9395018264311830128873d7627a3"
+  },
+  "checkedAt": "2026-10-22T13:30:33.642542+00:00"
+}
