@@ -29,6 +29,7 @@ export const benchmarkBoundFiles = [
   "packages/benchmarks/raw-data.ts",
   "scripts/extract-benchmark-numbers.py",
   "scripts/review-benchmark-numbers.ts",
+  "scripts/review-benchmark-cpu-split.ts",
   "packages/benchmarks/review-lock.ts",
   "packages/comparisons/review-lock.ts",
   "packages/marketing/process-lock.ts",

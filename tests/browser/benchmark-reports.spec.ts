@@ -52,7 +52,7 @@ test("Benchmarks shares Compare menu styling, closes accessibly, and navigates t
     await page.setViewportSize({ width: 1440, height: 950 });
   }
 });
-test("every benchmark renders complete source commands, original graphs, local assets and responsive tables", async ({
+test("every benchmark renders its scoped source commands, original graphs, local assets and responsive tables", async ({
   page,
   request,
 }) => {
@@ -76,9 +76,19 @@ test("every benchmark renders complete source commands, original graphs, local a
       );
       const fence = String.fromCharCode(96).repeat(3),
         pattern = new RegExp(fence + "[^\\n]*\\n([\\s\\S]*?)" + fence, "g");
-      const expected = [...original.matchAll(pattern)].map((m) =>
-        m[1].trimEnd(),
-      );
+      const smallStart = original.indexOf("\n### 2 vCPU\n"),
+        largeStart = original.indexOf("\n### 16 vCPU / 10M\n");
+      if (id === "2vcpu-capacity" || id === "redis-valkey") {
+        expect(smallStart).toBeGreaterThanOrEqual(0);
+        expect(largeStart).toBeGreaterThan(smallStart);
+      }
+      const scoped =
+        id === "2vcpu-capacity"
+          ? original.slice(smallStart, largeStart)
+          : id === "redis-valkey"
+            ? original.slice(largeStart)
+            : original;
+      const expected = [...scoped.matchAll(pattern)].map((m) => m[1].trimEnd());
       expect(
         (await page.locator(".benchmark-code pre code").allTextContents()).map(
           (s) => s.trimEnd(),
@@ -182,4 +192,38 @@ test("high-throughput report presents raw peaks and exact paired latency in both
       "945,384",
     );
   }
+});
+
+test("memory benchmark pages and procedure downloads contain only their server CPU configuration", async ({
+  page,
+  request,
+}) => {
+  for (const locale of ["en", "zh-CN"])
+    for (const [id, cpu, other] of [
+      ["2vcpu-capacity", "2", "16"],
+      ["redis-valkey", "16", "2"],
+    ]) {
+      await page.goto(`/${locale}/benchmarks/${id}/`);
+      const report = page.locator(".benchmark-report");
+      await expect(
+        report.locator("h2").filter({ hasText: new RegExp(`^${cpu} vCPU`) }),
+      ).toHaveCount(1);
+      await expect(
+        report
+          .locator("h2, h3")
+          .filter({ hasText: new RegExp(`^${other} vCPU`) }),
+      ).toHaveCount(0);
+      await expect(report.locator("img")).toHaveCount(2);
+      for (const image of await report.locator("img").all())
+        expect(await image.getAttribute("src")).toContain(`/${cpu}vcpu-`);
+      const file = locale === "en" ? "README.md" : "README.zh-CN.md";
+      const response = await request.get(
+        `/benchmark-assets/0.2.0/${id}/${file}`,
+      );
+      expect(response.ok()).toBe(true);
+      const text = await response.text();
+      expect(text).toContain(`${cpu}vcpu-combined.svg`);
+      expect(text).not.toContain(`${other}vcpu-`);
+      expect(text).not.toMatch(new RegExp(`^#{2,3} ${other} vCPU`, "m"));
+    }
 });

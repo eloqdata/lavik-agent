@@ -5,6 +5,7 @@ import { benchmarkReports } from "../packages/benchmarks/catalog.ts";
 import {
   benchmarkSources,
   reportMarkdown,
+  reportAssetData,
   reportLink,
   reportSections,
   sourceFile,
@@ -17,7 +18,7 @@ import {
   validateBenchmarkPublication,
 } from "../packages/benchmarks/gate.ts";
 import { storage320Rows } from "../packages/benchmarks/storage-data.ts";
-test("reports preserve every published code block and resolve source links to the pinned revision", () => {
+test("reports preserve matching published code blocks and resolve source links to the pinned revision", () => {
   assert.deepEqual(benchmarkEvidenceErrors(), []);
   for (const r of benchmarkReports)
     for (const locale of ["en", "zh-CN"] as const) {
@@ -29,7 +30,17 @@ test("reports preserve every published code block and resolve source links to th
         fence = String.fromCharCode(96).repeat(3),
         pattern = new RegExp(fence + "[^\\n]*\\n([\\s\\S]*?)" + fence, "g");
       const blocks = (s: string) => [...s.matchAll(pattern)].map((m) => m[1]);
-      assert.deepEqual(blocks(md), blocks(raw));
+      const procedureStart = raw.indexOf("\n### 2 vCPU\n"),
+        largeStart = raw.indexOf("\n### 16 vCPU / 10M\n");
+      if (r.id === "2vcpu-capacity" || r.id === "redis-valkey")
+        assert.ok(procedureStart >= 0 && largeStart > procedureStart);
+      const expected =
+        r.id === "2vcpu-capacity"
+          ? raw.slice(procedureStart, largeStart)
+          : r.id === "redis-valkey"
+            ? raw.slice(largeStart)
+            : raw;
+      assert.deepEqual(blocks(md), blocks(expected));
       assert.ok(blocks(raw).length > 0);
       assert.ok(reportSections(r, locale).length >= 4);
       assert.equal(
@@ -109,4 +120,42 @@ test("benchmark approval binds bytes and rejects missing/changed review evidence
   }
   assert.ok(validateBenchmarkPublication(record, files, raw + " ").length);
   assert.ok(validateBenchmarkPublication({}, files, raw).length);
+});
+
+test("memory benchmark topics isolate server results, methods, charts and procedure downloads in both languages", () => {
+  for (const locale of ["en", "zh-CN"] as const)
+    for (const [id, cpu, other, points] of [
+      ["2vcpu-capacity", "2", "16", 84],
+      ["redis-valkey", "16", "2", 96],
+    ] as const) {
+      const r = benchmarkReports.find((r) => r.id === id)!;
+      const md = reportMarkdown(r, locale);
+      assert.ok(md.includes(`**${points}`), id);
+      assert.match(md, new RegExp(`^## ${cpu} vCPU`, "m"));
+      assert.doesNotMatch(md, new RegExp(`^#{2,3} ${other} vCPU`, "m"));
+      assert.ok(md.includes(`${cpu}vcpu-combined.svg`));
+      assert.ok(md.includes(`${cpu}vcpu-all-configurations.svg`));
+      assert.ok(!md.includes(`${other}vcpu-`));
+      assert.ok(
+        !md.includes(cpu === "2" ? "Standard_L16aos_v4" : "Standard_L2aos_v5"),
+      );
+      assert.ok(
+        reportSections(r, locale).every(
+          (s) => !new RegExp(`^${other} vCPU`).test(s.text),
+        ),
+      );
+      const matrix = md
+        .split("\n")
+        .filter((line) => /^\| (2|16) \|/.test(line));
+      assert.equal(matrix.length, cpu === "2" ? 1 : 2);
+      assert.ok(matrix.every((line) => line.startsWith(`| ${cpu} |`)));
+      const file = locale === "en" ? "README.md" : "README.zh-CN.md";
+      const download = reportAssetData(r, file).toString();
+      assert.ok(download.includes(md));
+      assert.ok(!download.includes(`${other}vcpu-`));
+      assert.equal(
+        reportAssetData(r, `${cpu}vcpu-combined.svg`).toString(),
+        sourceFile(r, `${cpu}vcpu-combined.svg`).data.toString(),
+      );
+    }
 });

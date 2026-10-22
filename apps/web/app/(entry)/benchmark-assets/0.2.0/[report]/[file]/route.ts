@@ -1,6 +1,6 @@
 import { benchmarkReports } from "../../../../../../../../packages/benchmarks/catalog";
 import {
-  sourceFile,
+  reportAssetData,
   reportAssets,
 } from "../../../../../../../../packages/benchmarks/repository";
 import { assertBenchmarkPublication } from "../../../../../../../../packages/benchmarks/gate";
@@ -21,7 +21,7 @@ export async function GET(
   )
     return new Response("Not found", { status: 404 });
   assertBenchmarkPublication();
-  const { data } = sourceFile(r, p.file);
+  const data = reportAssetData(r, p.file);
   return new Response(new Uint8Array(data), {
     headers: {
       "Content-Type": p.file.endsWith(".svg")
