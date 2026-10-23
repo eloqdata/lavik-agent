@@ -1,0 +1,107 @@
+{
+  "id": "lavik-field-notes-2026-10-23",
+  "locale": "zh-CN",
+  "version": "0.1.0",
+  "kind": "blog",
+  "slug": "lavik-field-notes-2026-10-23",
+  "title": "缓存对象变大，读取窗口可以保持很小",
+  "summary": "以定长记录组成的时间线缓存为例，说明如何利用 Lavik 的 NVMe 值存储与 String 分段机制，在保留更多内容的同时，让局部读取和更新只涉及所需片段。",
+  "updatedAt": "2026-10-23",
+  "sourceRevision": "471f4864357f4a5034c64e7d4972ec0e55b82d94",
+  "topics": [
+    "use-case",
+    "architecture"
+  ],
+  "blocks": [
+    {
+      "type": "paragraph",
+      "text": "缓存对象可能不断增长，但每个页面仍然只需要其中的一小部分。假设一个服务缓存紧凑编码的活动时间线，每次展示八条记录。保留更多历史会增大缓存对象；如果每次都读取整个对象，每次翻页也就要承担这部分增长。Lavik 0.1.0 为这种场景提供了一个有用的设计选择：值存放在 NVMe 上，大 String 可以通过 Redis 接口读取和修改指定的字节片段。",
+      "sources": [
+        "current-010-readme",
+        "current-010-collections"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "下面是一个假设场景：每条时间线记录固定占用 32 字节。缓存最初为每个对象保留 128 条记录，对应一个 4 KiB String。产品调整后，保留量增加到 2,048 条，每个 String 变为 64 KiB。对象数量不变，每页仍只需要八条记录，即 256 字节。这些数字是应用设计假设，并非基准测试结果。采用 Lavik 的具体理由是：用 SSD 保留更长的时间线，并通过字节范围操作，让常见请求的数据量仍与展示窗口相匹配。",
+      "sources": [
+        "current-010-collections",
+        "current-010-storage"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "对象增大后，存储表示也会改变"
+    },
+    {
+      "type": "paragraph",
+      "text": "Lavik 将顶层键索引保存在 DRAM 中，将值保存在存储设备上。因此，在保留更多历史时维持键数量不变，可以避免顶层键索引条目随之成倍增长。但这不代表内存用量恒定：分组对象还需要常驻的路由和物理位置元数据，请求也需要缓冲区。容量经济上的机会在于，让新增历史使用 NVMe 容量，而不必让这些新增值字节全部常驻 DRAM。",
+      "sources": [
+        "current-010-readme",
+        "current-010-storage",
+        "current-010-collections"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "String 写入在编码大小达到 16 KiB 时转为分组存储。分组 String 使用固定的 8 KiB 字节段，并根据字节偏移直接定位。在这个例子中，4 KiB 载荷使用紧凑表示，64 KiB 载荷则占用八个值段。每个段的载荷不会重复保存父键。这只是内部表示发生变化：应用仍然通过一个 Redis String 键访问整个对象。",
+      "sources": [
+        "current-010-collections"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "对于分组 String，GETRANGE 只读取与请求字节范围相交的段。八条记录的窗口如果完全位于一个段内，就选择一个段；跨越段边界时，则选择两个段。这不意味着返回 256 字节只需要 256 字节的设备 I/O，而是意味着存储读取路径可以跳过无关的值段。读取整个对象仍然需要整个对象，因此，仅改变存储介质并不能减少返回给应用的数据量。",
+      "sources": [
+        "current-010-collections"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "让对象布局贴合请求方式"
+    },
+    {
+      "type": "paragraph",
+      "text": "在这个缓存设计中，可以为每条记录分配固定的字节位置，并将布局版本纳入键名。页面请求根据起始记录位置和所需记录数量，就能算出字节范围。在一个对象的生命周期内保持记录顺序稳定；布局或排序改变时，发布新版本。如果对整个对象统一压缩，就难以直接按记录寻址，除非应用另外设计可独立解码的数据块。这里真正有用的属性是：无需先下载整个 String，就能定位所需窗口。",
+      "sources": [
+        "current-010-collections"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "同样的布局也有利于修正记录。SETRANGE 通过分组发布边界替换相交的段以及发生变化的尾部链接；APPEND 也有针对分段存储的访问路径。因此，修正一条 32 字节记录时，可以保留无关段不变。变化的组及其根记录作为一次逻辑更新发布。这体现的是段粒度的局部性，并不意味着每次修正只写入 32 字节，或只发生一次物理写入。如果读取方通过多个独立命令获取不同窗口，应用还需要处理两次读取之间发生的更新；使用不可变的版本化对象，是让这些窗口对应同一份内容的一种方式。",
+      "sources": [
+        "current-010-collections"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "明确缓存的职责边界"
+    },
+    {
+      "type": "paragraph",
+      "text": "一个适合首先采用的场景，是能够从权威事件源重建的时间线历史。Lavik 对分组更新的原子发布，并不意味着普通命令成功返回时已经完成同步崩溃持久化。此外，一个大 String 仍然是一个键，仍由一个键所有者管理，并参与键级访问协调；分段不会把一条热点时间线分散到多个 worker。应按账户、设备等应用自然归属划分时间线键，而不是将整个服务的历史合并到一个对象中。",
+      "sources": [
+        "current-010-storage",
+        "current-010-collections"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "下一步可以做一次聚焦的应用对比：使用有代表性的 64 KiB 时间线，比较完整对象读取与实际的八条记录窗口读取，并纳入跨段窗口和并发记录修正。记录响应字节数、客户端观察到的尾延迟、存储读写量和内存占用。所提供的 GET/SET 基准使用 1 KiB 值，不能证明这个范围访问设计的性能。最终要回答的是：应用能否保留更多有用历史，同时让最常见的请求继续保持很小。",
+      "sources": [
+        "current-010-collections",
+        "current-010-storage",
+        "current-010-memory"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "出版参考：Lavik 0.1.0 采用 Apache 2.0 许可证开源。安装说明及固定版本手册入口，请参阅稳定版 README 中的文档链接：https://github.com/eloqdata/lavik/blob/471f4864357f4a5034c64e7d4972ec0e55b82d94/README.md。范围访问机制详见 Grouped collections：https://github.com/eloqdata/lavik/blob/471f4864357f4a5034c64e7d4972ec0e55b82d94/docs/architecture/09-grouped-collections.md。",
+      "sources": [
+        "current-010-readme",
+        "current-010-collections"
+      ]
+    }
+  ]
+}

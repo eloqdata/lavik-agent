@@ -1,0 +1,107 @@
+{
+  "id": "lavik-field-notes-2026-10-23",
+  "locale": "en",
+  "version": "0.1.0",
+  "kind": "blog",
+  "slug": "lavik-field-notes-2026-10-23",
+  "title": "When cached objects grow, make the read window stay small",
+  "summary": "A packed timeline cache shows how Lavik’s NVMe values and segmented Strings can support larger objects while keeping selected reads and updates local.",
+  "updatedAt": "2026-10-23",
+  "sourceRevision": "471f4864357f4a5034c64e7d4972ec0e55b82d94",
+  "topics": [
+    "use-case",
+    "architecture"
+  ],
+  "blocks": [
+    {
+      "type": "paragraph",
+      "text": "A cached object can grow even when each screen still needs only a small slice of it. Consider a service that caches a packed activity timeline and displays eight records at a time. Keeping more history makes the cached object larger; fetching the entire object makes every page request carry that growth. Lavik 0.1.0 offers a useful design opportunity here: values live on NVMe, and large Strings support reads and mutations of selected byte segments through the Redis interface.",
+      "sources": [
+        "current-010-readme",
+        "current-010-collections"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "Suppose, hypothetically, each timeline contains fixed-width, 32-byte records. The cache initially retains 128 records per object, a 4 KiB String. A product change raises retention to 2,048 records, making each String 64 KiB. The object count stays constant, and the page still needs eight records: 256 bytes. These are application design assumptions, not benchmark observations. The adoption case is to retain the longer timeline on SSD while using byte-range operations to keep the normal request proportional to the displayed window.",
+      "sources": [
+        "current-010-collections",
+        "current-010-storage"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "The larger object changes its storage representation"
+    },
+    {
+      "type": "paragraph",
+      "text": "Lavik keeps a top-level key index in DRAM and stores values on storage. Keeping the same number of keys therefore avoids multiplying top-level key entries as retention grows. It does not make memory consumption constant: grouped objects also need resident routing and physical-location metadata, and requests need buffers. The economic opportunity is to put the additional history in NVMe capacity instead of requiring all those value bytes to remain in DRAM.",
+      "sources": [
+        "current-010-readme",
+        "current-010-storage",
+        "current-010-collections"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "String writes promote to grouped storage at 16 KiB of encoded size. Grouped Strings use fixed 8 KiB byte segments, with direct positional indexing derived from byte offsets. In this example, the 4 KiB payload uses compact storage and the 64 KiB payload spans eight value segments. Segment payloads do not repeat the parent key. This is an internal representation change: the application still addresses one Redis String key.",
+      "sources": [
+        "current-010-collections"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "For a grouped String, GETRANGE reads only segments intersecting the requested bytes. An eight-record window inside one segment selects one segment; a window crossing a segment boundary selects two. That does not mean a 256-byte response costs only 256 bytes of device I/O. It means the storage reader can avoid unrelated value segments. A whole-object read still asks for the whole object, so changing the storage tier alone cannot reduce the bytes sent back to the application.",
+      "sources": [
+        "current-010-collections"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "Make the object layout match the request"
+    },
+    {
+      "type": "paragraph",
+      "text": "For this proposed cache, assign each record a fixed byte position and include the layout version in the key identity. A page request can derive its byte range from the first record position and the number of records needed. Keep each object's records in a stable order during its lifetime; publish a new version when the layout or ordering changes. Whole-object compression would undermine direct record addressing unless the application also introduced independently decodable blocks. The useful design property is that the requested window can be located without first downloading the entire String.",
+      "sources": [
+        "current-010-collections"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "The same layout helps corrections. SETRANGE replaces intersecting segments and any changed tail link through the grouped publication boundary; APPEND also has a segment-aware path. Correcting one 32-byte record can therefore leave unrelated segments unchanged. Changed groups and their root publish as one logical update. This is locality at segment granularity, not a claim that each correction writes only 32 bytes or needs exactly one physical write. If a reader fetches multiple windows in separate commands, the application must also account for updates between those reads; an immutable versioned object is one way to give those windows a common meaning.",
+      "sources": [
+        "current-010-collections"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "Choose the cache boundary deliberately"
+    },
+    {
+      "type": "paragraph",
+      "text": "A useful first application is reconstructable timeline history backed by an authoritative event source. Lavik's atomic publication of a grouped update does not make an ordinary successful reply a synchronous crash-durability fence. Also, one large String remains one key with one key owner and key arbitration; segmentation does not distribute a hot timeline across workers. Separate timeline keys by the application's natural ownership boundary, such as account or device, rather than combining the entire service's history into one object.",
+      "sources": [
+        "current-010-storage",
+        "current-010-collections"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "The practical next step is a focused application comparison: use representative 64 KiB timelines and compare whole-object fetches with the actual eight-record windows, including windows that cross segment boundaries and concurrent record corrections. Measure response bytes, client-observed tail latency, storage reads and writes, and memory footprint. The supplied GET/SET benchmarks use 1 KiB values; they do not establish the performance of this range-access design. The decision is whether your application can retain more useful history while keeping its common request small.",
+      "sources": [
+        "current-010-collections",
+        "current-010-storage",
+        "current-010-memory"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "Publication references: Lavik 0.1.0 is open source under Apache 2.0. For installation and the version-pinned manual entry point, follow the documentation links in the stable README: https://github.com/eloqdata/lavik/blob/471f4864357f4a5034c64e7d4972ec0e55b82d94/README.md. For the exact range-access mechanisms, read Grouped collections: https://github.com/eloqdata/lavik/blob/471f4864357f4a5034c64e7d4972ec0e55b82d94/docs/architecture/09-grouped-collections.md.",
+      "sources": [
+        "current-010-readme",
+        "current-010-collections"
+      ]
+    }
+  ]
+}
