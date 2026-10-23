@@ -1,0 +1,288 @@
+Reading package lists...
+Building dependency tree...
+Reading state information...
+gdisk is already the newest version (1.0.10-1build1).
+gdisk set to manually installed.
+The following additional packages will be installed:
+  python3-pip-whl python3-setuptools-whl python3.12-venv
+The following NEW packages will be installed:
+  python3-pip-whl python3-setuptools-whl python3-venv python3.12-venv
+0 upgraded, 4 newly installed, 0 to remove and 13 not upgraded.
+Need to get 2430 kB of archives.
+After this operation, 2783 kB of additional disk space will be used.
+Get:1 http://azure.archive.ubuntu.com/ubuntu noble-updates/universe amd64 python3-pip-whl all 24.0+dfsg-1ubuntu1.3 [1707 kB]
+Get:2 http://azure.archive.ubuntu.com/ubuntu noble-updates/universe amd64 python3-setuptools-whl all 68.1.2-2ubuntu1.2 [716 kB]
+Get:3 http://azure.archive.ubuntu.com/ubuntu noble-updates/universe amd64 python3.12-venv amd64 3.12.3-1ubuntu0.17 [5684 B]
+Get:4 http://azure.archive.ubuntu.com/ubuntu noble-updates/universe amd64 python3-venv amd64 3.12.3-0ubuntu2.1 [1032 B]
+Fetched 2430 kB in 0s (8803 kB/s)
+Selecting previously unselected package python3-pip-whl.
+(Reading database ... (Reading database ... 5%(Reading database ... 10%(Reading database ... 15%(Reading database ... 20%(Reading database ... 25%(Reading database ... 30%(Reading database ... 35%(Reading database ... 40%(Reading database ... 45%(Reading database ... 50%(Reading database ... 55%(Reading database ... 60%(Reading database ... 65%(Reading database ... 70%(Reading database ... 75%(Reading database ... 80%(Reading database ... 85%(Reading database ... 90%(Reading database ... 95%(Reading database ... 100%(Reading database ... 108034 files and directories currently installed.)
+Preparing to unpack .../python3-pip-whl_24.0+dfsg-1ubuntu1.3_all.deb ...
+Unpacking python3-pip-whl (24.0+dfsg-1ubuntu1.3) ...
+Selecting previously unselected package python3-setuptools-whl.
+Preparing to unpack .../python3-setuptools-whl_68.1.2-2ubuntu1.2_all.deb ...
+Unpacking python3-setuptools-whl (68.1.2-2ubuntu1.2) ...
+Selecting previously unselected package python3.12-venv.
+Preparing to unpack .../python3.12-venv_3.12.3-1ubuntu0.17_amd64.deb ...
+Unpacking python3.12-venv (3.12.3-1ubuntu0.17) ...
+Selecting previously unselected package python3-venv.
+Preparing to unpack .../python3-venv_3.12.3-0ubuntu2.1_amd64.deb ...
+Unpacking python3-venv (3.12.3-0ubuntu2.1) ...
+Setting up python3-setuptools-whl (68.1.2-2ubuntu1.2) ...
+Setting up python3-pip-whl (24.0+dfsg-1ubuntu1.3) ...
+Setting up python3.12-venv (3.12.3-1ubuntu0.17) ...
+Setting up python3-venv (3.12.3-0ubuntu2.1) ...
+
+No services need to be restarted.
+
+No containers need to be restarted.
+
+No user sessions are running outdated binaries.
+
+No VM guests are running outdated hypervisor (qemu) binaries on this host.
+Collecting aerospike==19.3.0
+  Downloading aerospike-19.3.0-cp312-cp312-manylinux_2_28_x86_64.whl.metadata (5.5 kB)
+Downloading aerospike-19.3.0-cp312-cp312-manylinux_2_28_x86_64.whl (6.3 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 6.3/6.3 MB 25.4 MB/s eta 0:00:00
+Installing collected packages: aerospike
+Successfully installed aerospike-19.3.0
+mdadm: array /dev/md/bench020 started.
+Creating new GPT entries in memory.
+The operation has completed successfully.
+{"utc": "2026-10-21T14:51:01Z", "state": "starting-load", "mode": "aerospike", "complete": 0, "total": 16}
+{"utc": "2026-10-21T14:51:04Z", "state": "failed", "complete": 0, "total": 16}
+Traceback (most recent call last):
+  File "/opt/bench020/ycsb/runner.py", line 460, in <module>
+    main()
+  File "/opt/bench020/ycsb/runner.py", line 390, in main
+    start(mode, 'load')
+  File "/opt/bench020/ycsb/runner.py", line 209, in start
+    assert unit_state in ('active', 'activating'), (mode, unit_state)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ('aerospike', 'inactive')
+{"utc": "2026-10-21T14:52:24Z", "state": "starting-load", "mode": "aerospike", "complete": 0, "total": 16}
+{"utc": "2026-10-21T14:52:27Z", "state": "loading", "mode": "aerospike", "complete": 0, "total": 16}
+{"utc": "2026-10-21T14:56:55Z", "state": "recovering", "mode": "aerospike", "complete": 0, "total": 16}
+{"utc": "2026-10-21T15:00:07Z", "state": "warmup", "mode": "aerospike", "workload": "C", "target": 100000, "complete": 0, "total": 16}
+START release020-fresh100m-20261021-aerospike-c-c256-target100000-warmup
+DONE release020-fresh100m-20261021-aerospike-c-c256-target100000-warmup qps=93835 errors=0
+{"utc": "2026-10-21T15:00:19Z", "state": "measured", "mode": "aerospike", "workload": "C", "target": 100000, "complete": 0, "total": 16}
+START release020-fresh100m-20261021-aerospike-c-c256-target100000-measured
+DONE release020-fresh100m-20261021-aerospike-c-c256-target100000-measured qps=99909 errors=0
+{"utc": "2026-10-21T15:05:20Z", "state": "warmup", "mode": "aerospike", "workload": "C", "target": 0, "complete": 1, "total": 16}
+START release020-fresh100m-20261021-aerospike-c-c256-warmup
+DONE release020-fresh100m-20261021-aerospike-c-c256-warmup qps=260281 errors=0
+{"utc": "2026-10-21T15:05:25Z", "state": "measured", "mode": "aerospike", "workload": "C", "target": 0, "complete": 1, "total": 16}
+START release020-fresh100m-20261021-aerospike-c-c256-measured
+DONE release020-fresh100m-20261021-aerospike-c-c256-measured qps=396447 errors=0
+{"utc": "2026-10-21T15:10:26Z", "state": "warmup", "mode": "aerospike", "workload": "A", "target": 100000, "complete": 2, "total": 16}
+START release020-fresh100m-20261021-aerospike-a-c256-target100000-warmup
+DONE release020-fresh100m-20261021-aerospike-a-c256-target100000-warmup qps=92713 errors=0
+{"utc": "2026-10-21T15:10:38Z", "state": "measured", "mode": "aerospike", "workload": "A", "target": 100000, "complete": 2, "total": 16}
+START release020-fresh100m-20261021-aerospike-a-c256-target100000-measured
+DONE release020-fresh100m-20261021-aerospike-a-c256-target100000-measured qps=99916 errors=0
+{"utc": "2026-10-21T15:15:39Z", "state": "warmup", "mode": "aerospike", "workload": "A", "target": 0, "complete": 3, "total": 16}
+START release020-fresh100m-20261021-aerospike-a-c256-warmup
+DONE release020-fresh100m-20261021-aerospike-a-c256-warmup qps=267666 errors=0
+{"utc": "2026-10-21T15:15:44Z", "state": "measured", "mode": "aerospike", "workload": "A", "target": 0, "complete": 3, "total": 16}
+START release020-fresh100m-20261021-aerospike-a-c256-measured
+DONE release020-fresh100m-20261021-aerospike-a-c256-measured qps=436866 errors=0
+{"utc": "2026-10-21T15:20:46Z", "state": "warmup", "mode": "aerospike", "workload": "B", "target": 100000, "complete": 4, "total": 16}
+START release020-fresh100m-20261021-aerospike-b-c256-target100000-warmup
+DONE release020-fresh100m-20261021-aerospike-b-c256-target100000-warmup qps=97456 errors=0
+{"utc": "2026-10-21T15:20:57Z", "state": "measured", "mode": "aerospike", "workload": "B", "target": 100000, "complete": 4, "total": 16}
+START release020-fresh100m-20261021-aerospike-b-c256-target100000-measured
+DONE release020-fresh100m-20261021-aerospike-b-c256-target100000-measured qps=99932 errors=0
+{"utc": "2026-10-21T15:25:58Z", "state": "warmup", "mode": "aerospike", "workload": "B", "target": 0, "complete": 5, "total": 16}
+START release020-fresh100m-20261021-aerospike-b-c256-warmup
+DONE release020-fresh100m-20261021-aerospike-b-c256-warmup qps=282805 errors=0
+{"utc": "2026-10-21T15:26:03Z", "state": "measured", "mode": "aerospike", "workload": "B", "target": 0, "complete": 5, "total": 16}
+START release020-fresh100m-20261021-aerospike-b-c256-measured
+DONE release020-fresh100m-20261021-aerospike-b-c256-measured qps=396293 errors=0
+{"utc": "2026-10-21T15:31:04Z", "state": "warmup", "mode": "aerospike", "workload": "D", "target": 100000, "complete": 6, "total": 16}
+START release020-fresh100m-20261021-aerospike-d-c256-target100000-warmup
+DONE release020-fresh100m-20261021-aerospike-d-c256-target100000-warmup qps=97618 errors=0
+{"utc": "2026-10-21T15:31:15Z", "state": "measured", "mode": "aerospike", "workload": "D", "target": 100000, "complete": 6, "total": 16}
+START release020-fresh100m-20261021-aerospike-d-c256-target100000-measured
+DONE release020-fresh100m-20261021-aerospike-d-c256-target100000-measured qps=99934 errors=0
+{"utc": "2026-10-21T15:36:17Z", "state": "warmup", "mode": "aerospike", "workload": "D", "target": 0, "complete": 7, "total": 16}
+START release020-fresh100m-20261021-aerospike-d-c256-warmup
+DONE release020-fresh100m-20261021-aerospike-d-c256-warmup qps=280978 errors=0
+{"utc": "2026-10-21T15:36:21Z", "state": "measured", "mode": "aerospike", "workload": "D", "target": 0, "complete": 7, "total": 16}
+START release020-fresh100m-20261021-aerospike-d-c256-measured
+DONE release020-fresh100m-20261021-aerospike-d-c256-measured qps=397541 errors=0
+{"utc": "2026-10-21T15:41:23Z", "state": "starting-load", "mode": "hreplace", "complete": 8, "total": 16}
+{"utc": "2026-10-21T15:41:26Z", "state": "loading", "mode": "hreplace", "complete": 8, "total": 16}
+{"utc": "2026-10-21T15:46:12Z", "state": "recovering", "mode": "hreplace", "complete": 8, "total": 16}
+{"utc": "2026-10-21T15:46:15Z", "state": "warmup", "mode": "hreplace", "workload": "C", "target": 100000, "complete": 8, "total": 16}
+START release020-fresh100m-20261021-hreplace-c-c256-target100000-warmup
+DONE release020-fresh100m-20261021-hreplace-c-c256-target100000-warmup qps=98785 errors=0
+{"utc": "2026-10-21T15:46:26Z", "state": "measured", "mode": "hreplace", "workload": "C", "target": 100000, "complete": 8, "total": 16}
+START release020-fresh100m-20261021-hreplace-c-c256-target100000-measured
+DONE release020-fresh100m-20261021-hreplace-c-c256-target100000-measured qps=99968 errors=0
+{"utc": "2026-10-21T15:51:27Z", "state": "warmup", "mode": "hreplace", "workload": "C", "target": 0, "complete": 9, "total": 16}
+START release020-fresh100m-20261021-hreplace-c-c256-warmup
+DONE release020-fresh100m-20261021-hreplace-c-c256-warmup qps=304599 errors=0
+{"utc": "2026-10-21T15:51:31Z", "state": "measured", "mode": "hreplace", "workload": "C", "target": 0, "complete": 9, "total": 16}
+START release020-fresh100m-20261021-hreplace-c-c256-measured
+DONE release020-fresh100m-20261021-hreplace-c-c256-measured qps=482358 errors=0
+{"utc": "2026-10-21T15:56:32Z", "state": "warmup", "mode": "hreplace", "workload": "A", "target": 100000, "complete": 10, "total": 16}
+START release020-fresh100m-20261021-hreplace-a-c256-target100000-warmup
+DONE release020-fresh100m-20261021-hreplace-a-c256-target100000-warmup qps=98922 errors=0
+{"utc": "2026-10-21T15:56:43Z", "state": "measured", "mode": "hreplace", "workload": "A", "target": 100000, "complete": 10, "total": 16}
+START release020-fresh100m-20261021-hreplace-a-c256-target100000-measured
+DONE release020-fresh100m-20261021-hreplace-a-c256-target100000-measured qps=99959 errors=0
+{"utc": "2026-10-21T16:01:44Z", "state": "warmup", "mode": "hreplace", "workload": "A", "target": 0, "complete": 11, "total": 16}
+START release020-fresh100m-20261021-hreplace-a-c256-warmup
+DONE release020-fresh100m-20261021-hreplace-a-c256-warmup qps=309119 errors=0
+{"utc": "2026-10-21T16:01:48Z", "state": "measured", "mode": "hreplace", "workload": "A", "target": 0, "complete": 11, "total": 16}
+START release020-fresh100m-20261021-hreplace-a-c256-measured
+DONE release020-fresh100m-20261021-hreplace-a-c256-measured qps=476454 errors=0
+{"utc": "2026-10-21T16:06:50Z", "state": "warmup", "mode": "hreplace", "workload": "B", "target": 100000, "complete": 12, "total": 16}
+START release020-fresh100m-20261021-hreplace-b-c256-target100000-warmup
+DONE release020-fresh100m-20261021-hreplace-b-c256-target100000-warmup qps=98736 errors=0
+{"utc": "2026-10-21T16:07:01Z", "state": "measured", "mode": "hreplace", "workload": "B", "target": 100000, "complete": 12, "total": 16}
+START release020-fresh100m-20261021-hreplace-b-c256-target100000-measured
+DONE release020-fresh100m-20261021-hreplace-b-c256-target100000-measured qps=99976 errors=0
+{"utc": "2026-10-21T16:12:02Z", "state": "warmup", "mode": "hreplace", "workload": "B", "target": 0, "complete": 13, "total": 16}
+START release020-fresh100m-20261021-hreplace-b-c256-warmup
+DONE release020-fresh100m-20261021-hreplace-b-c256-warmup qps=314169 errors=0
+{"utc": "2026-10-21T16:12:06Z", "state": "measured", "mode": "hreplace", "workload": "B", "target": 0, "complete": 13, "total": 16}
+START release020-fresh100m-20261021-hreplace-b-c256-measured
+DONE release020-fresh100m-20261021-hreplace-b-c256-measured qps=488622 errors=0
+{"utc": "2026-10-21T16:17:07Z", "state": "warmup", "mode": "hreplace", "workload": "D", "target": 100000, "complete": 14, "total": 16}
+START release020-fresh100m-20261021-hreplace-d-c256-target100000-warmup
+DONE release020-fresh100m-20261021-hreplace-d-c256-target100000-warmup qps=98309 errors=0
+{"utc": "2026-10-21T16:17:18Z", "state": "measured", "mode": "hreplace", "workload": "D", "target": 100000, "complete": 14, "total": 16}
+START release020-fresh100m-20261021-hreplace-d-c256-target100000-measured
+DONE release020-fresh100m-20261021-hreplace-d-c256-target100000-measured qps=99973 errors=0
+{"utc": "2026-10-21T16:22:19Z", "state": "warmup", "mode": "hreplace", "workload": "D", "target": 0, "complete": 15, "total": 16}
+START release020-fresh100m-20261021-hreplace-d-c256-warmup
+DONE release020-fresh100m-20261021-hreplace-d-c256-warmup qps=273823 errors=0
+{"utc": "2026-10-21T16:22:23Z", "state": "measured", "mode": "hreplace", "workload": "D", "target": 0, "complete": 15, "total": 16}
+START release020-fresh100m-20261021-hreplace-d-c256-measured
+DONE release020-fresh100m-20261021-hreplace-d-c256-measured qps=493262 errors=0
+{"utc": "2026-10-21T16:27:28Z", "state": "final-recovery", "mode": "aerospike", "complete": 16, "total": 16}
+{"utc": "2026-10-21T16:32:59Z", "state": "complete", "complete": 16, "total": 16}
+Waiting for 32-thread Lavik 1B rerun and fresh peer filesystem
+32-thread storage benchmark environment ready
+2026-10-21 17:04:34 UTC starting /opt/bench020/peers/downloads/dragonfly/dragonfly-x86_64
+Could not connect to Redis at 10.96.1.4:6379: Connection refused
+2026-10-21 17:04:34 UTC results/dragonfly/fill
+2026-10-21 17:29:00 UTC results/dragonfly/fill done: 820369 QPS, p999=16.639 ms
+2026-10-21 17:29:00 UTC checking sampled value lengths
+2026-10-21 17:29:00 UTC results/dragonfly/warmup
+2026-10-21 17:32:01 UTC results/dragonfly/warmup done: 274365 QPS, p999=11.135 ms
+2026-10-21 17:32:01 UTC results/dragonfly/get-c160
+2026-10-21 17:33:01 UTC results/dragonfly/get-c160 done: 257252 QPS, p999=12.287 ms
+2026-10-21 17:33:01 UTC results/dragonfly/get-c320
+2026-10-21 17:34:02 UTC results/dragonfly/get-c320 done: 469604 QPS, p999=17.023 ms
+2026-10-21 17:34:02 UTC results/dragonfly/get-c640
+2026-10-21 17:35:03 UTC results/dragonfly/get-c640 done: 459905 QPS, p999=33.279 ms
+2026-10-21 17:35:03 UTC results/dragonfly/get-c1280
+2026-10-21 17:36:04 UTC results/dragonfly/get-c1280 done: 500682 QPS, p999=60.415 ms
+2026-10-21 17:36:04 UTC results/dragonfly/set-c160
+2026-10-21 17:37:05 UTC results/dragonfly/set-c160 done: 366038 QPS, p999=7.359 ms
+2026-10-21 17:37:05 UTC results/dragonfly/set-c320
+2026-10-21 17:38:06 UTC results/dragonfly/set-c320 done: 517357 QPS, p999=14.143 ms
+2026-10-21 17:38:06 UTC results/dragonfly/set-c640
+2026-10-21 17:39:07 UTC results/dragonfly/set-c640 done: 550147 QPS, p999=30.335 ms
+2026-10-21 17:39:07 UTC results/dragonfly/set-c1280
+2026-10-21 17:40:08 UTC results/dragonfly/set-c1280 done: 549937 QPS, p999=60.671 ms
+2026-10-21 17:40:08 UTC checking sampled value lengths
+2026-10-21 17:40:20 UTC COMPLETE results/dragonfly
+2026-10-21 17:40:20 UTC starting /opt/bench020/peers/downloads/garnet/net10.0/GarnetServer
+Could not connect to Redis at 10.96.1.4:6379: Connection refused
+Could not connect to Redis at 10.96.1.4:6379: Connection refused
+2026-10-21 17:40:21 UTC results/garnet/fill
+2026-10-21 18:05:37 UTC results/garnet/fill done: 798058 QPS, p999=6.271 ms
+2026-10-21 18:05:37 UTC checking sampled value lengths
+2026-10-21 18:05:37 UTC results/garnet/warmup
+2026-10-21 18:08:38 UTC results/garnet/warmup done: 177074 QPS, p999=3.423 ms
+2026-10-21 18:08:38 UTC results/garnet/get-c160
+2026-10-21 18:09:39 UTC results/garnet/get-c160 done: 419982 QPS, p999=2.687 ms
+2026-10-21 18:09:39 UTC results/garnet/get-c320
+2026-10-21 18:10:40 UTC results/garnet/get-c320 done: 253433 QPS, p999=7.167 ms
+2026-10-21 18:10:40 UTC results/garnet/get-c640
+2026-10-21 18:11:41 UTC results/garnet/get-c640 done: 396838 QPS, p999=10.367 ms
+2026-10-21 18:11:41 UTC results/garnet/get-c1280
+2026-10-21 18:12:42 UTC results/garnet/get-c1280 done: 399895 QPS, p999=15.935 ms
+2026-10-21 18:12:42 UTC results/garnet/set-c160
+2026-10-21 18:13:43 UTC results/garnet/set-c160 done: 387296 QPS, p999=4.191 ms
+2026-10-21 18:13:43 UTC results/garnet/set-c320
+2026-10-21 18:14:44 UTC results/garnet/set-c320 done: 668406 QPS, p999=4.415 ms
+2026-10-21 18:14:44 UTC results/garnet/set-c640
+2026-10-21 18:15:45 UTC results/garnet/set-c640 done: 832135 QPS, p999=7.263 ms
+2026-10-21 18:15:45 UTC results/garnet/set-c1280
+2026-10-21 18:16:46 UTC results/garnet/set-c1280 done: 822427 QPS, p999=7.071 ms
+2026-10-21 18:16:46 UTC checking sampled value lengths
+2026-10-21 18:16:54 UTC COMPLETE results/garnet
+2026-10-21 18:16:54 UTC starting /opt/bench020/peers/sources/kvrocks/build/kvrocks
+Could not connect to Redis at 10.96.1.4:6379: Connection refused
+2026-10-21 18:16:55 UTC results/kvrocks/fill
+2026-10-21 20:09:42 UTC results/kvrocks/fill done: 163321 QPS, p999=24.831 ms
+2026-10-21 20:09:42 UTC checking sampled value lengths
+2026-10-21 20:09:42 UTC results/kvrocks/get-c160
+2026-10-21 20:10:43 UTC results/kvrocks/get-c160 done: 48895 QPS, p999=9.471 ms
+2026-10-21 20:10:43 UTC results/kvrocks/get-c320
+2026-10-21 20:11:44 UTC results/kvrocks/get-c320 done: 73587 QPS, p999=8.383 ms
+2026-10-21 20:11:44 UTC results/kvrocks/get-c640
+2026-10-21 20:12:45 UTC results/kvrocks/get-c640 done: 75639 QPS, p999=18.303 ms
+2026-10-21 20:12:45 UTC results/kvrocks/get-c1280
+2026-10-21 20:13:46 UTC results/kvrocks/get-c1280 done: 75255 QPS, p999=29.695 ms
+2026-10-21 20:13:46 UTC results/kvrocks/set-c160
+2026-10-21 20:14:47 UTC results/kvrocks/set-c160 done: 112843 QPS, p999=4.607 ms
+2026-10-21 20:14:47 UTC results/kvrocks/set-c320
+2026-10-21 20:15:48 UTC results/kvrocks/set-c320 done: 114683 QPS, p999=6.047 ms
+2026-10-21 20:15:48 UTC results/kvrocks/set-c640
+2026-10-21 20:16:49 UTC results/kvrocks/set-c640 done: 111034 QPS, p999=29.055 ms
+2026-10-21 20:16:49 UTC results/kvrocks/set-c1280
+2026-10-21 20:17:50 UTC results/kvrocks/set-c1280 done: 109065 QPS, p999=36.095 ms
+2026-10-21 20:17:50 UTC checking sampled value lengths
+2026-10-21 20:18:09 UTC COMPLETE results/kvrocks
+2026-10-21 20:18:10 UTC starting /opt/bench020/peers/downloads/pika/bin/pika
+Could not connect to Redis at 10.96.1.4:6379: Connection refused
+2026-10-21 20:18:10 UTC results/pika/fill
+2026-10-21 23:46:39 UTC results/pika/fill done: 82423 QPS, p999=83.455 ms
+2026-10-21 23:46:39 UTC checking sampled value lengths
+2026-10-21 23:46:39 UTC results/pika/get-c160
+2026-10-21 23:47:40 UTC results/pika/get-c160 done: 107938 QPS, p999=3.839 ms
+2026-10-21 23:47:40 UTC results/pika/get-c320
+2026-10-21 23:48:41 UTC results/pika/get-c320 done: 202391 QPS, p999=4.191 ms
+2026-10-21 23:48:41 UTC results/pika/get-c640
+2026-10-21 23:49:42 UTC results/pika/get-c640 done: 278178 QPS, p999=8.095 ms
+2026-10-21 23:49:42 UTC results/pika/get-c1280
+2026-10-21 23:50:43 UTC results/pika/get-c1280 done: 281975 QPS, p999=15.359 ms
+2026-10-21 23:50:43 UTC results/pika/set-c160
+2026-10-21 23:51:44 UTC results/pika/set-c160 done: 90218 QPS, p999=5.279 ms
+2026-10-21 23:51:44 UTC results/pika/set-c320
+2026-10-21 23:52:44 UTC results/pika/set-c320 done: 94438 QPS, p999=8.831 ms
+2026-10-21 23:52:44 UTC results/pika/set-c640
+2026-10-21 23:53:45 UTC results/pika/set-c640 done: 89450 QPS, p999=65.023 ms
+2026-10-21 23:53:45 UTC results/pika/set-c1280
+2026-10-21 23:54:47 UTC results/pika/set-c1280 done: 86950 QPS, p999=64.511 ms
+2026-10-21 23:54:47 UTC checking sampled value lengths
+2026-10-21 23:55:41 UTC COMPLETE results/pika
+2026-10-21 23:55:42 UTC starting /opt/bench020/peers/downloads/tendis/tendisplus-2.8.4-rocksdb-v8.5.3/bin/tendisplus
+Could not connect to Redis at 10.96.1.4:6379: Connection refused
+2026-10-21 23:55:42 UTC results/tendis/fill
+2026-10-22 01:18:16 UTC results/tendis/fill done: 209462 QPS, p999=9.727 ms
+2026-10-22 01:18:16 UTC checking sampled value lengths
+2026-10-22 01:18:16 UTC results/tendis/get-c160
+2026-10-22 01:19:17 UTC results/tendis/get-c160 done: 61462 QPS, p999=41.215 ms
+2026-10-22 01:19:17 UTC results/tendis/get-c320
+2026-10-22 01:20:18 UTC results/tendis/get-c320 done: 121240 QPS, p999=4.831 ms
+2026-10-22 01:20:18 UTC results/tendis/get-c640
+2026-10-22 01:21:19 UTC results/tendis/get-c640 done: 144571 QPS, p999=6.399 ms
+2026-10-22 01:21:19 UTC results/tendis/get-c1280
+2026-10-22 01:22:20 UTC results/tendis/get-c1280 done: 141987 QPS, p999=13.695 ms
+2026-10-22 01:22:20 UTC results/tendis/set-c160
+2026-10-22 01:23:21 UTC results/tendis/set-c160 done: 204258 QPS, p999=6.783 ms
+2026-10-22 01:23:21 UTC results/tendis/set-c320
+2026-10-22 01:24:22 UTC results/tendis/set-c320 done: 137471 QPS, p999=7.999 ms
+2026-10-22 01:24:22 UTC results/tendis/set-c640
+2026-10-22 01:25:24 UTC results/tendis/set-c640 done: 138691 QPS, p999=12.351 ms
+2026-10-22 01:25:24 UTC results/tendis/set-c1280
+2026-10-22 01:26:26 UTC results/tendis/set-c1280 done: 132374 QPS, p999=28.287 ms
+2026-10-22 01:26:26 UTC checking sampled value lengths
+2026-10-22 01:26:39 UTC COMPLETE results/tendis

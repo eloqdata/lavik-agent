@@ -1,0 +1,77 @@
+{
+  "partition_table": {
+    "partitiontable": {
+      "label": "gpt",
+      "id": "3EA5DE9F-0A94-4CE4-90ED-DEB5B17CBD8C",
+      "device": "/dev/md127",
+      "unit": "sectors",
+      "firstlba": 34,
+      "lastlba": 22496661470,
+      "grain": "3145728",
+      "sectorsize": 512,
+      "partitions": [
+        {
+          "node": "/dev/md127p1",
+          "start": 49152,
+          "size": 2147450880,
+          "type": "0FC63DAF-8483-4772-8E79-3D69D8477DE4",
+          "uuid": "DE3F20A6-B6D0-48E3-92ED-D2A53C2218DF",
+          "name": "bench020-aerospike"
+        },
+        {
+          "node": "/dev/md127p2",
+          "start": 2147500032,
+          "size": 2147450880,
+          "type": "0FC63DAF-8483-4772-8E79-3D69D8477DE4",
+          "uuid": "00ADF75E-7E3A-4F80-BAD2-3B35580D97D5",
+          "name": "bench020-lavik"
+        }
+      ]
+    }
+  },
+  "mdadm": "/dev/md127:\n           Version : 1.2\n     Creation Time : Wed Oct 21 14:42:34 2026\n        Raid Level : raid0\n        Array Size : 11248330752 (10.48 TiB 11.52 TB)\n      Raid Devices : 6\n     Total Devices : 6\n       Persistence : Superblock is persistent\n\n       Update Time : Wed Oct 21 14:42:34 2026\n             State : clean \n    Active Devices : 6\n   Working Devices : 6\n    Failed Devices : 0\n     Spare Devices : 0\n\n            Layout : original\n        Chunk Size : 512K\n\nConsistency Policy : none\n\n              Name : server:bench020  (local to host server)\n              UUID : 123758a5:88728b9f:e84c2b14:c91e2633\n            Events : 0\n\n    Number   Major   Minor   RaidDevice State\n       0     259        9        0      active sync   /dev/nvme5n1\n       1     259       10        1      active sync   /dev/nvme6n1\n       2     259        6        2      active sync   /dev/nvme2n1\n       3     259        8        3      active sync   /dev/nvme4n1\n       4     259        5        4      active sync   /dev/nvme1n1\n       5     259        7        5      active sync   /dev/nvme3n1",
+  "devices": [
+    {
+      "serial": "7906831e17220f400001",
+      "bdf": "7133:00:00.0",
+      "nsid": 1,
+      "bytes": 1919850381312,
+      "device": "/dev/nvme5n1"
+    },
+    {
+      "serial": "7906831e17220f400002",
+      "bdf": "10fc:00:00.0",
+      "nsid": 1,
+      "bytes": 1919850381312,
+      "device": "/dev/nvme6n1"
+    },
+    {
+      "serial": "7906831e17220f400003",
+      "bdf": "9c4a:00:00.0",
+      "nsid": 1,
+      "bytes": 1919850381312,
+      "device": "/dev/nvme2n1"
+    },
+    {
+      "serial": "7906831e17220f400004",
+      "bdf": "ef09:00:00.0",
+      "nsid": 1,
+      "bytes": 1919850381312,
+      "device": "/dev/nvme4n1"
+    },
+    {
+      "serial": "7906831e17220f400005",
+      "bdf": "fa44:00:00.0",
+      "nsid": 1,
+      "bytes": 1919850381312,
+      "device": "/dev/nvme1n1"
+    },
+    {
+      "serial": "7906831e17220f400006",
+      "bdf": "9816:00:00.0",
+      "nsid": 1,
+      "bytes": 1919850381312,
+      "device": "/dev/nvme3n1"
+    }
+  ]
+}

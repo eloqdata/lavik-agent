@@ -1,0 +1,90 @@
+java -cp /opt/bench020/ycsb-aerospike-dist/aerospike-binding/conf:/opt/bench020/ycsb-aerospike-dist/conf:/opt/bench020/ycsb-aerospike-dist/lib/jbcrypt-0.3m.jar:/opt/bench020/ycsb-aerospike-dist/lib/jackson-core-asl-1.9.4.jar:/opt/bench020/ycsb-aerospike-dist/lib/aerospike-client-3.1.2.jar:/opt/bench020/ycsb-aerospike-dist/lib/jackson-mapper-asl-1.9.4.jar:/opt/bench020/ycsb-aerospike-dist/lib/gnu-crypto-2.0.1.jar:/opt/bench020/ycsb-aerospike-dist/lib/htrace-core4-4.1.0-incubating.jar:/opt/bench020/ycsb-aerospike-dist/lib/luaj-jse-3.0.jar:/opt/bench020/ycsb-aerospike-dist/lib/aerospike-binding-0.18.0-SNAPSHOT.jar:/opt/bench020/ycsb-aerospike-dist/lib/HdrHistogram-2.1.12.jar:/opt/bench020/ycsb-aerospike-dist/lib/core-0.18.0-SNAPSHOT.jar site.ycsb.Client -db site.ycsb.db.AerospikeClient -s -threads 256 -P /opt/bench020/ycsb-aerospike-dist/workloads/workloada -target 100000 -p recordcount=100000000 -p operationcount=2000000000 -p fieldcount=10 -p fieldlength=128 -p fieldlengthdistribution=constant -p readallfields=true -p writeallfields=true -p insertorder=hashed -p requestdistribution=uniform -p readproportion=1 -p updateproportion=0 -p insertproportion=0 -p scanproportion=0 -p readmodifywriteproportion=0 -p measurementtype=hdrhistogram -p measurement.interval=both -p hdrhistogram.percentiles=50,95,99,99.9,99.99 -p status.interval=10 -p maxexecutiontime=300 -p as.host=10.96.1.4 -p as.port=3000 -p as.namespace=ycsb -p as.timeout=10000 -t
+Command line: -db site.ycsb.db.AerospikeClient -s -threads 256 -P /opt/bench020/ycsb-aerospike-dist/workloads/workloada -target 100000 -p recordcount=100000000 -p operationcount=2000000000 -p fieldcount=10 -p fieldlength=128 -p fieldlengthdistribution=constant -p readallfields=true -p writeallfields=true -p insertorder=hashed -p requestdistribution=uniform -p readproportion=1 -p updateproportion=0 -p insertproportion=0 -p scanproportion=0 -p readmodifywriteproportion=0 -p measurementtype=hdrhistogram -p measurement.interval=both -p hdrhistogram.percentiles=50,95,99,99.9,99.99 -p status.interval=10 -p maxexecutiontime=300 -p as.host=10.96.1.4 -p as.port=3000 -p as.namespace=ycsb -p as.timeout=10000 -t
+YCSB Client 0.18.0-SNAPSHOT
+
+Loading workload...
+Starting test.
+Maximum execution time specified as: 300 secs
+2026-10-21 15:00:19:975 0 sec: 0 operations; est completion in 0 second 
+DBWrapper: report latency for each error is false and specific error codes to track for latency are: []
+2026-10-21 15:00:29:898 10 sec: 973285 operations; 97328.5 current ops/sec; est completion in 5 hours 42 minutes [READ: Count=973343, Max=58655, Min=192, Avg=435.62, 50=425, 90=603, 99=722, 99.9=882, 99.99=4107] [Intended-READ: Count=973927, Max=105727, Min=219, Avg=578.41, 50=485, 90=666, 99=830, 99.9=31519, 99.99=87167] 
+2026-10-21 15:00:39:898 20 sec: 1973273 operations; 99998.8 current ops/sec; est completion in 5 hours 37 minutes [READ: Count=999979, Max=5307, Min=155, Avg=436.5, 50=425, 90=605, 99=717, 99.9=828, 99.99=2769] [Intended-READ: Count=999578, Max=5343, Min=216, Avg=497.86, 50=486, 90=666, 99=784, 99.9=2367, 99.99=3239] 
+2026-10-21 15:00:49:898 30 sec: 2973290 operations; 100001.7 current ops/sec; est completion in 5 hours 35 minutes [READ: Count=1000008, Max=4687, Min=166, Avg=439.61, 50=428, 90=608, 99=730, 99.9=848, 99.99=1973] [Intended-READ: Count=999915, Max=4775, Min=214, Avg=500.13, 50=488, 90=669, 99=796, 99.9=1651, 99.99=3599] 
+2026-10-21 15:00:59:898 40 sec: 3973278 operations; 99998.8 current ops/sec; est completion in 5 hours 34 minutes [READ: Count=999986, Max=2409, Min=199, Avg=436.3, 50=426, 90=603, 99=716, 99.9=841, 99.99=1605] [Intended-READ: Count=1000096, Max=2481, Min=217, Avg=495.82, 50=487, 90=664, 99=780, 99.9=1151, 99.99=1804] 
+2026-10-21 15:01:09:898 50 sec: 4973274 operations; 99999.6 current ops/sec; est completion in 5 hours 34 minutes [READ: Count=999998, Max=2281, Min=197, Avg=436.55, 50=426, 90=606, 99=722, 99.9=830, 99.99=1549] [Intended-READ: Count=999981, Max=2589, Min=221, Avg=495.94, 50=486, 90=666, 99=785, 99.9=972, 99.99=1765] 
+2026-10-21 15:01:19:898 60 sec: 5973275 operations; 100000.1 current ops/sec; est completion in 5 hours 33 minutes [READ: Count=1000024, Max=2255, Min=201, Avg=437.9, 50=428, 90=607, 99=721, 99.9=841, 99.99=1479] [Intended-READ: Count=1000005, Max=2329, Min=220, Avg=497.22, 50=488, 90=668, 99=784, 99.9=1027, 99.99=1690] 
+2026-10-21 15:01:29:898 70 sec: 6973295 operations; 100002 current ops/sec; est completion in 5 hours 33 minutes [READ: Count=999989, Max=2511, Min=199, Avg=438, 50=426, 90=608, 99=724, 99.9=835, 99.99=1606] [Intended-READ: Count=999874, Max=2569, Min=218, Avg=497.38, 50=487, 90=669, 99=787, 99.9=1071, 99.99=1810] 
+2026-10-21 15:01:39:898 80 sec: 7973281 operations; 99998.6 current ops/sec; est completion in 5 hours 33 minutes [READ: Count=999989, Max=2503, Min=176, Avg=436.86, 50=426, 90=607, 99=722, 99.9=836, 99.99=1599] [Intended-READ: Count=999996, Max=2547, Min=217, Avg=496.36, 50=486, 90=668, 99=785, 99.9=1191, 99.99=1812] 
+2026-10-21 15:01:49:898 90 sec: 8973269 operations; 99998.8 current ops/sec; est completion in 5 hours 32 minutes [READ: Count=999997, Max=2371, Min=199, Avg=438.85, 50=428, 90=606, 99=730, 99.9=848, 99.99=1532] [Intended-READ: Count=1000003, Max=2431, Min=220, Avg=498.14, 50=488, 90=667, 99=793, 99.9=994, 99.99=1724] 
+2026-10-21 15:01:59:898 100 sec: 9973266 operations; 99999.7 current ops/sec; est completion in 5 hours 32 minutes [READ: Count=1000014, Max=2347, Min=201, Avg=438.84, 50=427, 90=607, 99=725, 99.9=843, 99.99=1602] [Intended-READ: Count=1000011, Max=2409, Min=223, Avg=498.29, 50=488, 90=668, 99=788, 99.9=1034, 99.99=1747] 
+2026-10-21 15:02:09:898 110 sec: 10973290 operations; 100002.4 current ops/sec; est completion in 5 hours 32 minutes [READ: Count=999996, Max=2309, Min=179, Avg=438.37, 50=427, 90=606, 99=721, 99.9=833, 99.99=1608] [Intended-READ: Count=999995, Max=2371, Min=220, Avg=497.85, 50=488, 90=667, 99=785, 99.9=1155, 99.99=1773] 
+2026-10-21 15:02:19:898 120 sec: 11973278 operations; 99998.8 current ops/sec; est completion in 5 hours 32 minutes [READ: Count=999998, Max=2259, Min=166, Avg=436.78, 50=427, 90=604, 99=716, 99.9=833, 99.99=1564] [Intended-READ: Count=999998, Max=2331, Min=220, Avg=496.1, 50=487, 90=665, 99=779, 99.9=972, 99.99=1763] 
+2026-10-21 15:02:29:898 130 sec: 12973271 operations; 99999.3 current ops/sec; est completion in 5 hours 31 minutes [READ: Count=999995, Max=2201, Min=162, Avg=438.12, 50=427, 90=607, 99=723, 99.9=842, 99.99=1618] [Intended-READ: Count=1000012, Max=2267, Min=215, Avg=497.47, 50=488, 90=667, 99=786, 99.9=1081, 99.99=1802] 
+2026-10-21 15:02:39:898 140 sec: 13973272 operations; 100000.1 current ops/sec; est completion in 5 hours 31 minutes [READ: Count=1000009, Max=2239, Min=159, Avg=441.02, 50=430, 90=609, 99=724, 99.9=836, 99.99=1507] [Intended-READ: Count=999997, Max=2299, Min=212, Avg=500.34, 50=490, 90=670, 99=786, 99.9=1017, 99.99=1715] 
+2026-10-21 15:02:49:898 150 sec: 14973286 operations; 100001.4 current ops/sec; est completion in 5 hours 31 minutes [READ: Count=1000000, Max=2569, Min=199, Avg=438.85, 50=427, 90=607, 99=722, 99.9=840, 99.99=1610] [Intended-READ: Count=999982, Max=2859, Min=212, Avg=498.22, 50=488, 90=668, 99=785, 99.9=1122, 99.99=1809] 
+2026-10-21 15:02:59:898 160 sec: 15973282 operations; 99999.6 current ops/sec; est completion in 5 hours 31 minutes [READ: Count=999995, Max=2251, Min=190, Avg=437.9, 50=426, 90=608, 99=727, 99.9=849, 99.99=1527] [Intended-READ: Count=1000002, Max=2311, Min=221, Avg=497.18, 50=486, 90=669, 99=789, 99.9=989, 99.99=1698] 
+2026-10-21 15:03:09:898 170 sec: 16973273 operations; 99999.1 current ops/sec; est completion in 5 hours 31 minutes [READ: Count=999986, Max=2617, Min=185, Avg=439.04, 50=427, 90=609, 99=733, 99.9=872, 99.99=1563] [Intended-READ: Count=999972, Max=2679, Min=223, Avg=498.33, 50=488, 90=670, 99=797, 99.9=1061, 99.99=1745] 
+2026-10-21 15:03:19:898 180 sec: 17973273 operations; 100000 current ops/sec; est completion in 5 hours 30 minutes [READ: Count=999995, Max=2385, Min=181, Avg=439.7, 50=428, 90=608, 99=723, 99.9=859, 99.99=1609] [Intended-READ: Count=1000102, Max=2447, Min=195, Avg=499.09, 50=488, 90=669, 99=786, 99.9=1051, 99.99=1786] 
+2026-10-21 15:03:29:898 190 sec: 18973293 operations; 100002 current ops/sec; est completion in 5 hours 30 minutes [READ: Count=1000009, Max=2735, Min=196, Avg=439.52, 50=427, 90=610, 99=731, 99.9=863, 99.99=1673] [Intended-READ: Count=999897, Max=2761, Min=222, Avg=498.85, 50=488, 90=671, 99=794, 99.9=1058, 99.99=1886] 
+2026-10-21 15:03:39:898 200 sec: 19973278 operations; 99998.5 current ops/sec; est completion in 5 hours 30 minutes [READ: Count=999993, Max=2235, Min=189, Avg=437.93, 50=427, 90=606, 99=725, 99.9=843, 99.99=1460] [Intended-READ: Count=999994, Max=2297, Min=222, Avg=497.22, 50=487, 90=667, 99=788, 99.9=992, 99.99=1654] 
+2026-10-21 15:03:49:898 210 sec: 20973270 operations; 99999.2 current ops/sec; est completion in 5 hours 30 minutes [READ: Count=999996, Max=2271, Min=200, Avg=437.65, 50=427, 90=607, 99=723, 99.9=856, 99.99=1600] [Intended-READ: Count=999992, Max=2347, Min=221, Avg=497.11, 50=487, 90=668, 99=787, 99.9=1171, 99.99=1803] 
+2026-10-21 15:03:59:898 220 sec: 21973263 operations; 99999.3 current ops/sec; est completion in 5 hours 30 minutes [READ: Count=1000002, Max=2243, Min=162, Avg=439.42, 50=428, 90=607, 99=729, 99.9=857, 99.99=1549] [Intended-READ: Count=1000020, Max=2305, Min=222, Avg=498.76, 50=489, 90=668, 99=793, 99.9=1032, 99.99=1712] 
+2026-10-21 15:04:09:898 230 sec: 22973292 operations; 100002.9 current ops/sec; est completion in 5 hours 29 minutes [READ: Count=1000012, Max=2209, Min=164, Avg=438.21, 50=427, 90=606, 99=727, 99.9=842, 99.99=1516] [Intended-READ: Count=1000102, Max=2275, Min=221, Avg=497.47, 50=488, 90=667, 99=790, 99.9=991, 99.99=1720] 
+2026-10-21 15:04:19:898 240 sec: 23973277 operations; 99998.5 current ops/sec; est completion in 5 hours 29 minutes [READ: Count=999990, Max=2139, Min=201, Avg=438.51, 50=427, 90=607, 99=722, 99.9=854, 99.99=1590] [Intended-READ: Count=999883, Max=2233, Min=217, Avg=497.94, 50=488, 90=667, 99=786, 99.9=1116, 99.99=1782] 
+2026-10-21 15:04:29:898 250 sec: 24973276 operations; 99999.9 current ops/sec; est completion in 5 hours 29 minutes [READ: Count=1000000, Max=2111, Min=165, Avg=438.63, 50=427, 90=606, 99=720, 99.9=845, 99.99=1569] [Intended-READ: Count=1000003, Max=2175, Min=222, Avg=497.93, 50=487, 90=667, 99=783, 99.9=1034, 99.99=1751] 
+2026-10-21 15:04:39:898 260 sec: 25973270 operations; 99999.4 current ops/sec; est completion in 5 hours 29 minutes [READ: Count=999997, Max=2367, Min=173, Avg=441.4, 50=430, 90=611, 99=730, 99.9=847, 99.99=1586] [Intended-READ: Count=1000007, Max=2429, Min=219, Avg=500.72, 50=490, 90=672, 99=793, 99.9=987, 99.99=1810] 
+2026-10-21 15:04:49:898 270 sec: 26973289 operations; 100001.9 current ops/sec; est completion in 5 hours 29 minutes [READ: Count=1000011, Max=2065, Min=195, Avg=439.84, 50=428, 90=609, 99=730, 99.9=843, 99.99=1552] [Intended-READ: Count=999997, Max=2199, Min=222, Avg=499.24, 50=489, 90=670, 99=794, 99.9=1075, 99.99=1749] 
+2026-10-21 15:04:59:898 280 sec: 27973275 operations; 99998.6 current ops/sec; est completion in 5 hours 29 minutes [READ: Count=999993, Max=2543, Min=201, Avg=439.47, 50=428, 90=607, 99=725, 99.9=839, 99.99=1607] [Intended-READ: Count=999985, Max=2603, Min=218, Avg=499.01, 50=488, 90=667, 99=789, 99.9=1229, 99.99=1843] 
+2026-10-21 15:05:09:898 290 sec: 28973271 operations; 99999.6 current ops/sec; est completion in 5 hours 28 minutes [READ: Count=999999, Max=2157, Min=169, Avg=439.59, 50=428, 90=609, 99=729, 99.9=842, 99.99=1546] [Intended-READ: Count=999994, Max=2251, Min=219, Avg=498.89, 50=489, 90=670, 99=791, 99.9=1003, 99.99=1731] 
+2026-10-21 15:05:19:898 300 sec: 29973271 operations; 100000 current ops/sec; est completion in 5 hours 28 minutes [READ: Count=1000001, Max=2379, Min=160, Avg=437.64, 50=427, 90=606, 99=722, 99.9=839, 99.99=1514] [Intended-READ: Count=1000010, Max=2431, Min=218, Avg=496.82, 50=487, 90=667, 99=785, 99.9=984, 99.99=1669] 
+Maximum time elapsed. Requesting stop for the workload.
+Stop requested for workload. Now Joining!
+2026-10-21 15:05:19:936 300 sec: 29976619 operations; 88105.26 current ops/sec; est completion in 5 hours 28 minutes [READ: Count=3315, Max=1190, Min=207, Avg=437.41, 50=425, 90=609, 99=738, 99.9=1087, 99.99=1190] [CLEANUP: Count=256, Max=2197, Min=34, Avg=268.99, 50=57, 90=1055, 99=2117, 99.9=2197, 99.99=2197] [Intended-READ: Count=3289, Max=1249, Min=240, Avg=496.29, 50=486, 90=670, 99=795, 99.9=1148, 99.99=1249] [Intended-CLEANUP: Count=256, Max=2197, Min=34, Avg=269.17, 50=58, 90=1055, 99=2117, 99.9=2197, 99.99=2197] 
+[OVERALL], RunTime(ms), 300038
+[OVERALL], Throughput(ops/sec), 99909.40814163539
+[TOTAL_GCS_G1_Young_Generation], Count, 204
+[TOTAL_GC_TIME_G1_Young_Generation], Time(ms), 231
+[TOTAL_GC_TIME_%_G1_Young_Generation], Time(%), 0.07699024790193243
+[TOTAL_GCS_G1_Old_Generation], Count, 0
+[TOTAL_GC_TIME_G1_Old_Generation], Time(ms), 0
+[TOTAL_GC_TIME_%_G1_Old_Generation], Time(%), 0.0
+[TOTAL_GCs], Count, 204
+[TOTAL_GC_TIME], Time(ms), 231
+[TOTAL_GC_TIME_%], Time(%), 0.07699024790193243
+[READ], Operations, 29976619
+[READ], AverageLatency(us), 438.4232462973893
+[READ], MinLatency(us), 155
+[READ], MaxLatency(us), 58655
+[READ], 50thPercentileLatency(us), 427
+[READ], 95thPercentileLatency(us), 649
+[READ], 99thPercentileLatency(us), 724
+[READ], 99.9PercentileLatency(us), 845
+[READ], 99.99PercentileLatency(us), 1624
+[READ], Return=OK, 29976619
+[CLEANUP], Operations, 256
+[CLEANUP], AverageLatency(us), 268.9921875
+[CLEANUP], MinLatency(us), 34
+[CLEANUP], MaxLatency(us), 2197
+[CLEANUP], 50thPercentileLatency(us), 57
+[CLEANUP], 95thPercentileLatency(us), 1418
+[CLEANUP], 99thPercentileLatency(us), 2117
+[CLEANUP], 99.9PercentileLatency(us), 2197
+[CLEANUP], 99.99PercentileLatency(us), 2197
+[Intended-READ], Operations, 29976619
+[Intended-READ], AverageLatency(us), 500.60138136325514
+[Intended-READ], MinLatency(us), 195
+[Intended-READ], MaxLatency(us), 105727
+[Intended-READ], 50thPercentileLatency(us), 488
+[Intended-READ], 95thPercentileLatency(us), 709
+[Intended-READ], 99thPercentileLatency(us), 789
+[Intended-READ], 99.9PercentileLatency(us), 1274
+[Intended-READ], 99.99PercentileLatency(us), 4037
+[Intended-CLEANUP], Operations, 256
+[Intended-CLEANUP], AverageLatency(us), 269.171875
+[Intended-CLEANUP], MinLatency(us), 34
+[Intended-CLEANUP], MaxLatency(us), 2197
+[Intended-CLEANUP], 50thPercentileLatency(us), 58
+[Intended-CLEANUP], 95thPercentileLatency(us), 1418
+[Intended-CLEANUP], 99thPercentileLatency(us), 2117
+[Intended-CLEANUP], 99.9PercentileLatency(us), 2197
+[Intended-CLEANUP], 99.99PercentileLatency(us), 2197

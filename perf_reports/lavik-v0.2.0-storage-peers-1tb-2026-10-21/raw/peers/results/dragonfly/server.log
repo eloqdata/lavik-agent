@@ -1,0 +1,50 @@
+I20261021 17:04:34.459999 18336 init.cc:144] /opt/bench020/peers/downloads/dragonfly/dragonfly-x86_64 running in opt mode.
+                   .--::--.                   
+   :+*=:          =@@@@@@@@=          :+*+:   
+  %@@@@@@%*=.     =@@@@@@@@-     .=*%@@@@@@#  
+  @@@@@@@@@@@@#+-. .%@@@@#. .-+#@@@@@@@@@@@%  
+  -@@@@@@@@@@@@@@@@*:#@@#:*@@@@@@@@@@@@@@@@-  
+    :+*********####-%@%%@%-####********++.    
+   .%@@@@@@@@@@@@@%:@@@@@@:@@@@@@@@@@@@@@%    
+   .@@@@@@@@%*+-:   =@@@@=  .:-+*%@@@@@@@%.   
+     =*+-:           ###*          .:-+*=     
+                     %@@%                     
+                     *@@*                     
+                     +@@=                     
+                     :##:                     
+                     :@@:                     
+                      @@                      
+                      ..                      
+* Logs will be written to the first available of the following paths:
+/tmp/dragonfly.*
+./dragonfly.*
+* For the available flags type dragonfly [--help | --helpfull]
+* Documentation can be found at: https://www.dragonflydb.io/docs
+I20261021 17:04:34.460083 18336 dfly_main.cc:1108] Starting dragonfly df-v2.0.2-8ce4bbb106586057fbd85f71ed353c60d0d5bf87
+I20261021 17:04:34.460280 18336 dfly_main.cc:1158] Using proactor_threads=16 (overriding cgroup-derived 0)
+I20261021 17:04:34.460297 18336 dfly_main.cc:1190] Max memory limit is: 96.00GiB
+I20261021 17:04:34.460964 18338 uring_proactor.cc:263] IORing with 1024 entries, allocated 98368 bytes, cq_entries is 2048
+I20261021 17:04:34.462427 18336 proactor_pool.cc:186] Running 16 io threads
+I20261021 17:04:34.463515 18338 dragonfly_listener.cc:159] SSL version: OpenSSL 3.4.5 7 Apr 2026
+I20261021 17:04:34.463711 18336 dragonfly_connection.cc:917] Shared RESP V2 read buffer disabled
+I20261021 17:04:34.464085 18336 engine_shard_set.cc:85] Max file size is: 2.00TiB
+I20261021 17:04:34.467895 18336 server_family.cc:1217] Host OS: Linux 6.17.0-1022-azure x86_64 with 16 threads
+I20261021 17:04:34.473037 18339 listener_interface.cc:102] sock[35] AcceptServer - listening on 10.96.1.4:6379
+W20261021 17:23:40.875165 18353 proactor_base.cc:239] OnIdle task is taking too long: 18407 us defrag
+W20261021 17:27:17.746171 18343 proactor_base.cc:239] OnIdle task is taking too long: 7208 us defrag
+W20261021 17:33:05.590139 18351 proactor_base.cc:239] OnIdle task is taking too long: 1618 us defrag
+W20261021 17:34:05.873962 18345 proactor_base.cc:239] OnIdle task is taking too long: 4339 us defrag
+W20261021 17:35:06.248850 18341 proactor_base.cc:239] OnIdle task is taking too long: 5949 us defrag
+W20261021 17:35:08.342317 18352 proactor_base.cc:239] OnIdle task is taking too long: 6043 us defrag
+W20261021 17:36:06.580605 18353 proactor_base.cc:239] OnIdle task is taking too long: 6239 us defrag
+W20261021 17:36:08.582821 18346 proactor_base.cc:239] OnIdle task is taking too long: 5936 us defrag
+W20261021 17:37:04.738162 18339 proactor_base.cc:239] OnIdle task is taking too long: 18073 us defrag
+W20261021 17:37:07.188970 18338 proactor_base.cc:239] OnIdle task is taking too long: 5080 us defrag
+W20261021 17:38:06.234860 18345 proactor_base.cc:239] OnIdle task is taking too long: 3472 us defrag
+W20261021 17:38:08.315156 18352 proactor_base.cc:239] OnIdle task is taking too long: 5980 us defrag
+W20261021 17:39:06.281728 18341 proactor_base.cc:239] OnIdle task is taking too long: 5168 us defrag
+W20261021 17:39:08.503111 18340 proactor_base.cc:239] OnIdle task is taking too long: 5305 us defrag
+W20261021 17:39:12.621208 18352 proactor_base.cc:239] OnIdle task is taking too long: 6213 us defrag
+W20261021 17:40:06.883066 18341 proactor_base.cc:239] OnIdle task is taking too long: 5181 us defrag
+I20261021 17:40:08.252895 18338 accept_server.cc:60] Exiting on signal Terminated
+I20261021 17:40:08.253187 18339 listener_interface.cc:230] Listener stopped for port 6379

@@ -4,6 +4,10 @@ Original benchmark outputs are organized by the matching report directory in [el
 
 | Report | Scope |
 |---|---|
+| [v0.2.0 aerospike-ycsb](lavik-v0.2.0-aerospike-ycsb-2026-10-21) | Raw files and metadata for the October 21–22, 2026 measurements. |
+| [v0.2.0 storage-peers-1tb](lavik-v0.2.0-storage-peers-1tb-2026-10-21) | Raw files and metadata for the October 21–22, 2026 measurements. |
+| [v0.2.0 vs-memory-databases](lavik-v0.2.0-vs-memory-databases-2026-10-21) | Raw files and metadata for the October 21–22, 2026 measurements. |
+| [v0.2.0 complete acquisition captures](lavik-v0.2.0-experiment-2026-10-21) | Full stage captures, scripts and superseded/excluded measurements. |
 | [2 vCPU Redis/Valkey comparison](lavik-v0.1.0-2vcpu-latest-capacity-2026-10-13) | 1 million keys for the memory comparison and 100 million keys for Lavik capacity measurements, with 1 KiB values. |
 | [16 vCPU Redis/Valkey comparison](lavik-v0.1.0-spdk-vs-latest-2026-10-13) | 10 million keys for the memory comparison and 1 billion keys for Lavik storage measurements, with 1 KiB values. |
 | [1TB storage-system comparison](lavik-v0.1.0-storage-peers-1tb-2026-10-14) | Dragonfly, Garnet, Apache Kvrocks, Pika and Tendis: 1 billion keys with 1 KiB values. The Lavik measurements are shared with the 16 vCPU report. |

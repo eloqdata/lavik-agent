@@ -1,0 +1,95 @@
+============== Configuration values: ==============
+server = 10.96.1.4
+port = 6379
+uri = 
+unix socket = (null)
+address family = Unspecified
+protocol = redis
+tls = no
+cert = (null)
+key = (null)
+cacert = (null)
+tls_skip_verify = no
+sni = (null)
+out_file = (null)
+client_stats = (null)
+run_count = 1
+debug = 0
+requests = 15625
+rate_limit = 0
+clients = 40
+threads = 16
+test_time = 0
+ratio = 1:0
+pipeline = 1
+transaction = no
+data_size = 1024
+data_offset = 0
+random_data = no
+data_size_range = 0-0
+data_size_list = 
+data_size_pattern = R
+expiry_range = 0-0
+data_import = (null)
+data_verify = no
+verify_only = no
+generate_keys = no
+key_prefix = 
+key_minimum = 1
+key_maximum = 10000000
+key_pattern = P:P
+key_stddev = 0.000000
+key_median = 0.000000
+reconnect_interval = 0
+retry_on_error = no
+max_retries = -1
+retry_backoff_ms = 0
+retry_backoff_factor = 0.000000
+retry_on = 
+max_retry_queue = 0
+failed_keys_file = 
+connection_timeout = 0
+connection_stage_timeout = 30
+thread_conn_start_min_jitter_micros = 0
+thread_conn_start_max_jitter_micros = 0
+multi_key_get = 0
+authenticate = 
+select-db = 0
+no-expiry = no
+wait-ratio = 0:0
+num-slaves = 0-0
+wait-timeout = 0-0
+json-out-file = /opt/bench020/client-results/large/memory/lavik-10m/fill.json
+print-all-runs = no
+prometheus-port = -1
+prometheus-bind-addr = 127.0.0.1
+prometheus-run-labels = 
+prometheus-latency-buckets = default
+===================================================
+Json file /opt/bench020/client-results/large/memory/lavik-10m/fill.json created...
+Writing results to stdout
+[RUN #1] Preparing benchmark client...
+[RUN #1] Launching threads now...
+[RUN #1 9%,   1 secs] 16 threads 40 conns:      899319 ops,  898918 (avg:  898918) ops/sec, 912.04MB/sec (avg: 912.04MB/sec),  0.71 (avg:  0.71) msec latency[RUN #1 18%,   2 secs] 16 threads 40 conns:     1806106 ops,  905882 (avg:  902401) ops/sec, 919.11MB/sec (avg: 915.58MB/sec),  0.71 (avg:  0.71) msec latency[RUN #1 27%,   3 secs] 16 threads 40 conns:     2705325 ops,  898997 (avg:  901267) ops/sec, 912.12MB/sec (avg: 914.43MB/sec),  0.71 (avg:  0.71) msec latency[RUN #1 36%,   4 secs] 16 threads 40 conns:     3608045 ops,  902043 (avg:  901461) ops/sec, 915.22MB/sec (avg: 914.62MB/sec),  0.71 (avg:  0.71) msec latency[RUN #1 45%,   5 secs] 16 threads 40 conns:     4498896 ops,  890630 (avg:  899295) ops/sec, 903.63MB/sec (avg: 912.43MB/sec),  0.72 (avg:  0.71) msec latency[RUN #1 53%,   6 secs] 16 threads 40 conns:     5311489 ops,  812386 (avg:  884814) ops/sec, 824.25MB/sec (avg: 897.73MB/sec),  0.79 (avg:  0.72) msec latency[RUN #1 62%,   7 secs] 16 threads 40 conns:     6187162 ops,  874779 (avg:  883380) ops/sec, 887.55MB/sec (avg: 896.28MB/sec),  0.73 (avg:  0.72) msec latency[RUN #1 71%,   8 secs] 16 threads 40 conns:     7071010 ops,  885208 (avg:  883608) ops/sec, 898.14MB/sec (avg: 896.51MB/sec),  0.72 (avg:  0.72) msec latency[RUN #1 79%,   8 secs] 16 threads 40 conns:     7888682 ops,  917667 (avg:  887020) ops/sec, 931.06MB/sec (avg: 899.97MB/sec),  0.70 (avg:  0.72) msec latency[RUN #1 86%,   9 secs] 16 threads 40 conns:     8585300 ops,  960460 (avg:  892558) ops/sec, 974.49MB/sec (avg: 905.59MB/sec),  0.67 (avg:  0.72) msec latency[RUN #1 93%,  10 secs] 16 threads 40 conns:     9253469 ops,  958866 (avg:  897037) ops/sec, 972.88MB/sec (avg: 910.14MB/sec),  0.67 (avg:  0.71) msec latency[RUN #1 97%,  10 secs] 16 threads 40 conns:     9696033 ops, 1072630 (avg:  903790) ops/sec, 1.06GB/sec (avg: 916.99MB/sec),  0.60 (avg:  0.71) msec latency[RUN #1 99%,  10 secs] 16 threads 40 conns:     9938937 ops, 1107658 (avg:  907874) ops/sec, 1.10GB/sec (avg: 921.13MB/sec),  0.58 (avg:  0.70) msec latency[RUN #1 100%,  10 secs]  0 threads 40 conns:    10000000 ops, 1107658 (avg:  909132) ops/sec, 1.10GB/sec (avg: 922.41MB/sec),  0.58 (avg:  0.70) msec latency
+
+
+CPU Utilization Summary
+  Total CPU time:   142.466s  (user 26.913s, sys 115.553s)
+  Wall time:        13.815s
+  Cores used:       10.313   (avg 64.4% across 16 worker threads)
+  Peak utilization: 1292.1%
+16        Threads
+40        Connections per thread
+15625     Requests per client
+
+
+ALL STATS
+============================================================================================================================================
+Type         Ops/sec     Hits/sec   Misses/sec    Avg. Latency     p50 Latency     p99 Latency   p99.9 Latency  p99.99 Latency       KB/sec 
+--------------------------------------------------------------------------------------------------------------------------------------------
+Sets       944950.67          ---          ---         0.70385         0.63100         1.99900         3.82300         6.62300    981760.27 
+Gets            0.00         0.00         0.00             ---             ---             ---             ---             ---         0.00 
+Waits           0.00          ---          ---             ---             ---             ---             ---             ---          --- 
+Totals     944950.67         0.00         0.00         0.70385         0.63100         1.99900         3.82300         6.62300    981760.27 
+Saving JSON output file: /opt/bench020/client-results/large/memory/lavik-10m/fill.json
+Json file closed.

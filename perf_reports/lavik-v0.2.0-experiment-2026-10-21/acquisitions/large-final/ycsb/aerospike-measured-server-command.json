@@ -1,0 +1,24 @@
+{
+  "utc": "2026-10-21T14:56:55Z",
+  "argv": [
+    "systemd-run",
+    "--unit",
+    "aerospike-ycsb-default-20261021.service",
+    "--collect",
+    "-p",
+    "TimeoutStopSec=300",
+    "-p",
+    "StandardOutput=append:/opt/bench020/ycsb/aerospike-server.stdout",
+    "-p",
+    "StandardError=inherit",
+    "-p",
+    "SendSIGKILL=no",
+    "-p",
+    "LimitNOFILE=100000",
+    "/opt/bench020/aerospike-package/usr/bin/asd",
+    "--config-file",
+    "/opt/bench020/ycsb/aerospike.conf",
+    "--foreground"
+  ],
+  "binary_sha256": "6e1b2bd6deebd5816f4f369ac1db4151217ed0be3b66578bdd6f15c24e6af8d0"
+}
