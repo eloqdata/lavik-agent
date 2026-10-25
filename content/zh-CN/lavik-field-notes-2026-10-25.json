@@ -1,0 +1,149 @@
+{
+  "id": "lavik-field-notes-2026-10-25",
+  "locale": "zh-CN",
+  "version": "0.1.0",
+  "kind": "blog",
+  "slug": "lavik-field-notes-2026-10-25",
+  "title": "迁移 Redis 缓存前，先演练积压如何改变过期时间",
+  "summary": "迁移可以准确复制所有值，却让旧数据存活得过久。以对 TTL 敏感的缓存为例，制定兼容性、过期时间验证、延迟验收和重新建立基线的回退方案。",
+  "updatedAt": "2026-10-25",
+  "sourceRevision": "471f4864357f4a5034c64e7d4972ec0e55b82d94",
+  "topics": [
+    "use-case",
+    "best-practise"
+  ],
+  "blocks": [
+    {
+      "type": "paragraph",
+      "text": "设想一个商品详情缓存：长尾商品不断增加，即使单个商品访问不多，其描述、图片元数据和派生展示字段仍值得保留。Lavik 0.1.0 提供了具体的采用理由：保留 Redis 接口，将值容量放到 NVMe 上，并在 DRAM 中维护紧凑的键索引。迁移演练需要确认，这个更大的缓存也能遵守应用对数据新鲜度的要求。",
+      "sources": [
+        "current-010-readme",
+        "current-010-storage"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "容易遗漏的问题是：值正确，剩余寿命却不正确。文档中的托管导入路径使用 RedisShake v4.6.2，源端基线为 Redis 7.2.14。RedisShake 在解析基线数据时，将绝对过期时间转换为 RESTORE 或 PEXPIRE 的相对 TTL。因此，数据在目标写入队列中的等待时间可能延后过期时间。值和键数量相同，并不能证明新鲜度正确。",
+      "sources": [
+        "current-010-import"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "把队列延迟变成明确的应用决策"
+    },
+    {
+      "type": "paragraph",
+      "text": "假设一次演练中，RedisShake 解析某条记录时，其剩余寿命为十分钟，而目标端九十秒后才应用这条记录。如果相对 TTL 没有变化，目标端的过期时刻就会比源端晚九十秒。商品描述或许能接受，缓存的优惠信息却未必可以。快照中已经过期的条目也可能以一个很短的正 TTL 到达目标端。导入前应按数据类别规定允许的绝对过期时间偏差；严格保持绝对过期时间，需要工具侧方案或切换前的显式校正。",
+      "sources": [
+        "current-010-import"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "围绕这些差异准备演练数据：永久保存的描述、寿命较长的派生记录、即将过期的条目，以及基线加载期间被更新或删除的条目。纳入应用实际使用的对象编码和命令模式。对每类有过期时间的数据，记录允许的绝对截止时间偏差，以及源端截止时间过去后必须表现出的行为。这样，即使复制过程看似成功，新鲜度规则仍能独立判定它不合格。",
+      "sources": [
+        "current-010-import"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "让演练包含正式目标的管理方式"
+    },
+    {
+      "type": "paragraph",
+      "text": "从一开始就创建隔离、空白、带原生副本的 Meta 托管目标，导入期间不接入业务流量。RedisShake 的写入由此遵循正常的托管权限和原生复制路径。先向非 Meta 节点导入数据，再将已有数据纳入托管目标，并不是受支持的操作。需要 DB0–15 时选择 Single；Cluster 使用 DB0，并要求多键操作位于同一槽。数据库重映射和跨槽操作改造仍由应用或迁移工具负责。",
+      "sources": [
+        "current-010-import"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "兼容性验收应明确源端版本、对象编码和应用行为。文档基线覆盖 Redis 7.2 的 String、List、Hash、Set、Sorted Set 和 Stream 编码，不能据此推断任意更新版本对象或模块的兼容性。如果需要保留消费者组和待处理条目状态，应让 Stream 使用文档规定的 RESTORE 路径。Function 库也必须参与比较。另外，RedisShake 会移除源端 MULTI/EXEC 边界，因此尚未完成导入的目标不适合承接应用读取。",
+      "sources": [
+        "current-010-import"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "证明停写后的源端数据已到达所有预期读节点"
+    },
+    {
+      "type": "paragraph",
+      "text": "在演练的切换边界，停止源端所有修改，并记录每个主节点的身份和复制偏移。要求每个 RedisShake reader 的 AOF 接收和发送偏移都达到对应源端记录的尾部，同时所有 writer 的未应答条目数和字节数均为零。进程仍在运行、RDB 已加载完成或进度差为零，都不能单独证明完成。",
+      "sources": [
+        "current-010-import"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "工具完成导入和副本复制进度是两个独立的验收条件。导入需要与每个当前目标 Owner 的发布历史关联的复制屏障；仅从新连接观察到副本在线，不能证明导入写入已经到达这些副本。具体屏障流程及其结果解释，请查阅文末固定版本的迁移手册。这份证据仍受异步复制语义约束：它既不是全局提交，也不能保证数据在所有故障切换下都能保留。",
+      "sources": [
+        "current-010-import"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "比较源端各数据库与目标各 Group 及预期副本的完整键集合，包括目标端多出的键。检查类型、逻辑值、永久或过期状态、约定容差内的绝对过期时间、Function 代码，以及相关 Stream 和待处理条目状态。对于验证期间到期的条目，应结合截止时间和观测时间解释其是否存在，不能要求两个不同时刻的扫描机械地相等。源端身份变化或目标 Owner、历史发生切换，都会使本轮验证失效。",
+      "sources": [
+        "current-010-import",
+        "current-010-storage"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "同时验收新鲜度和延迟"
+    },
+    {
+      "type": "paragraph",
+      "text": "对于商品详情服务，应依据真实的读取与刷新比例、响应大小、并发量及应用延迟分位数预算制定验收标准。在导入队列排空、预期副本数据完整后，测量隔离目标；另外观察导入队列延迟，因为它直接影响过期时间。延迟达标不能抵消过期时间偏差超标，截止时间一致也不能抵消应用读取过慢。",
+      "sources": [
+        "current-010-import",
+        "current-010-compact"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "提供的 Lavik 双 vCPU 基准使用均匀随机 GET 或覆盖式 SET、1 KiB 值、无 TTL、SPDK 存储，每个点只测量一次、持续三十秒。在同一台标称内存为 16 GiB 的 Azure 虚拟机上，Lavik 存放了一亿个键，逻辑值载荷合计 95.37 GiB，不含键和元数据。这为容量论点提供了证据，但没有测量这个 TTL 敏感应用或其迁移过程的延迟保证。",
+      "sources": [
+        "current-010-compact"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "继续推进的经济理由是，值增长可以消耗 NVMe 容量，而不必让所有值都容纳在 DRAM 中。索引内存、副本和空间回收余量仍需单独预算。这种架构提供了调整容量预算的机会，但不等于已测得的整体部署成本节省，也不证明 SLA 等价。",
+      "sources": [
+        "current-010-readme",
+        "current-010-storage"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "失败后重新建立完整基线"
+    },
+    {
+      "type": "paragraph",
+      "text": "如果过期时间验证失败、工具断连或目标 Owner 发生变化，应让业务客户端继续使用源端，并放弃本次尝试。重新开始之前，先停止旧的导入写入进程。RedisShake v4.6.2 在此流程中没有可靠的检查点续传能力，丢失的应答也可能对应已经提交的命令。下一次应优先使用新的隔离目标、新工具进程和新 spool 目录，重新建立完整基线。一旦目标开始接收业务写入，返回源端就需要数据对账与合并。原生复制是异步的，普通写入成功也不构成同步的崩溃持久性屏障。",
+      "sources": [
+        "current-010-import",
+        "current-010-storage"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "下一次演练可以从一类真实缓存开始：写明源端版本、对象编码、过期时间容差、完整数据比较规则、延迟预算，以及重新建立基线的回退方案。随后在隔离环境中，一边更新源端，一边建立基线，并有意延缓目标端写入。演练应产出的证据是：更大的 NVMe 缓存能够同时满足应用的新鲜度和延迟要求。",
+      "sources": [
+        "current-010-import",
+        "current-010-readme"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "发布参考：安装和启动请使用经过测试的 0.1.0 手册：https://github.com/eloqdata/lavik/blob/471f4864357f4a5034c64e7d4972ec0e55b82d94/README.md 。固定版本的迁移流程、复制屏障与兼容性边界见《Redis import into Meta-managed Lavik》：https://github.com/eloqdata/lavik/blob/471f4864357f4a5034c64e7d4972ec0e55b82d94/docs/operations/redis-import.md 。Lavik 0.1.0 采用 Apache 2.0 开源许可证。",
+      "sources": [
+        "current-010-readme",
+        "current-010-import"
+      ]
+    }
+  ]
+}

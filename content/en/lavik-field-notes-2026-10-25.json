@@ -1,0 +1,149 @@
+{
+  "id": "lavik-field-notes-2026-10-25",
+  "locale": "en",
+  "version": "0.1.0",
+  "kind": "blog",
+  "slug": "lavik-field-notes-2026-10-25",
+  "title": "Rehearse the expiry backlog before moving your Redis cache",
+  "summary": "A migration can copy every value correctly and still keep stale data alive too long. Use a TTL-sensitive cache to define compatibility, expiry validation, latency acceptance, and a clean fallback.",
+  "updatedAt": "2026-10-25",
+  "sourceRevision": "471f4864357f4a5034c64e7d4972ec0e55b82d94",
+  "topics": [
+    "use-case",
+    "best-practise"
+  ],
+  "blocks": [
+    {
+      "type": "paragraph",
+      "text": "Consider a product-detail cache whose long tail keeps growing: descriptions, image metadata, and derived display fields remain useful even when individual products receive few requests. Lavik 0.1.0 gives this application a concrete adoption path: keep the Redis interface while moving value capacity to NVMe, with a compact key index in DRAM. The migration rehearsal should establish whether that larger cache also preserves the application’s freshness contract.",
+      "sources": [
+        "current-010-readme",
+        "current-010-storage"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "The subtle failure is a correct value with the wrong remaining lifetime. The documented managed import path uses RedisShake v4.6.2 with a Redis 7.2.14 source baseline. RedisShake converts baseline absolute expirations into relative RESTORE or PEXPIRE TTLs at parse time. Time spent waiting in the destination queue can therefore extend expiry. Matching values and key counts cannot establish freshness.",
+      "sources": [
+        "current-010-import"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "Turn queue delay into an application decision"
+    },
+    {
+      "type": "paragraph",
+      "text": "In a hypothetical rehearsal, RedisShake parses an entry with ten minutes remaining, then the destination applies it ninety seconds later. If the relative TTL is unchanged, the destination deadline moves ninety seconds beyond the source deadline. That may be acceptable for descriptive copy and unacceptable for a cached offer. An entry already expired in the snapshot can also arrive with a minimal positive TTL. Define the permitted deadline difference by data class before importing; strict absolute-expiry preservation requires a tool-side solution or explicit reconciliation before cutover.",
+      "sources": [
+        "current-010-import"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "Build the rehearsal dataset around those distinctions: persistent descriptions, long-lived derived records, entries close to expiry, and entries updated or deleted while the baseline loads. Include the actual object encodings and command patterns used by the application. For each expiring class, record the allowed absolute deadline difference and the required behavior once the source deadline has passed. This makes expiry acceptance a business rule that can reject an otherwise successful copy.",
+      "sources": [
+        "current-010-import"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "Keep the target’s ownership model in the rehearsal"
+    },
+    {
+      "type": "paragraph",
+      "text": "Create an isolated, empty Meta-managed target with native replicas from the start, and keep business traffic off it during import. RedisShake writes then follow ordinary managed authority and native replication. Populating a non-Meta node first and later adopting that data into a managed target is not a supported procedure. Choose Single for DB0–15 or Cluster for DB0 and same-slot operations; database remapping and cross-slot redesign remain application or migration-tool work.",
+      "sources": [
+        "current-010-import"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "Compatibility acceptance should name the source version, object encodings, and application behavior. The documented baseline covers Redis 7.2 encodings for Strings, Lists, Hashes, Sets, Sorted Sets, and Streams; it does not establish compatibility with arbitrary newer objects or modules. Keep Streams on the documented RESTORE path when consumer-group and pending state matter. Include Function libraries in the comparison, and account for RedisShake stripping source MULTI/EXEC boundaries: the partially imported target is unsuitable for application reads.",
+      "sources": [
+        "current-010-import"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "Prove a stopped source has reached every intended reader"
+    },
+    {
+      "type": "paragraph",
+      "text": "At the rehearsal’s cutover boundary, stop all source mutations and record each primary’s identity and replication offset. Require every RedisShake reader’s received and sent AOF offsets to reach its recorded source tail, with every writer’s unanswered entries and bytes at zero. A running process, completed RDB load, or zero progress difference alone is insufficient.",
+      "sources": [
+        "current-010-import"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "Tool completion and replica progress are separate acceptance conditions. The import needs a replication fence associated with each current target Owner’s publisher history; merely observing online replicas from a fresh connection does not establish that imported writes reached them. Use the pinned migration manual in the publication references for the fence procedure and its interpretation. This evidence remains bounded by asynchronous replication: it is neither a global commit nor a guarantee of survival under every failover.",
+      "sources": [
+        "current-010-import"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "Compare complete key sets, including extra target keys, across source databases and target Groups and intended replicas. Compare types, logical values, persistent versus expiring state, absolute expiry deadlines within the agreed tolerance, Function code, and relevant Stream and pending-entry state. For entries that expire during verification, interpret presence against the deadline and observation time instead of demanding equality between scans taken at different moments. A source identity change or target Owner/history transition invalidates the verification pass.",
+      "sources": [
+        "current-010-import",
+        "current-010-storage"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "Accept freshness and latency together"
+    },
+    {
+      "type": "paragraph",
+      "text": "For the product-detail service, define latency acceptance around its actual read and refresh mix, response sizes, concurrency, and application percentile budget. Measure the isolated target after import has drained and intended replicas are complete; separately observe import queue delay because it affects expiry. Passing the latency budget must not excuse a failed expiry tolerance, and matching deadlines must not excuse slow application reads.",
+      "sources": [
+        "current-010-import",
+        "current-010-compact"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "Lavik’s supplied 2-vCPU benchmark uses uniform-random GET or overwriting SET, 1 KiB values, no TTL, and one 30-second run per point with SPDK storage. On the same nominal 16 GiB Azure VM, Lavik held 100 million keys containing 95.37 GiB of logical value payload, excluding keys and metadata. That supports the capacity case, but supplies no measured latency guarantee for this TTL-sensitive application or its migration.",
+      "sources": [
+        "current-010-compact"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "The economic reason to proceed is that value growth can consume NVMe capacity instead of requiring all values to fit in DRAM. Budget separately for index memory, replicas, and reclamation space. This architecture creates an opportunity to change the capacity budget; it does not establish measured deployment-wide savings or SLA equivalence.",
+      "sources": [
+        "current-010-readme",
+        "current-010-storage"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "Make failure produce a fresh baseline"
+    },
+    {
+      "type": "paragraph",
+      "text": "If expiry validation fails, the tool disconnects, or the target changes Owner, keep business clients on the source and abandon the attempt. Stop the old import writers before starting again. RedisShake v4.6.2 has no reliable checkpoint resume for this workflow, and a lost reply can hide a committed command. Prefer a new isolated target, a new tool process, and a new spool directory for the next full baseline. Once target business writes begin, returning to the source requires data reconciliation. Native replication is asynchronous, and an ordinary successful write is not a synchronous crash-durability fence.",
+      "sources": [
+        "current-010-import",
+        "current-010-storage"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "For the next rehearsal, select one real cache family and write down its source version, encodings, expiry tolerances, complete-data comparison rules, latency budget, and fresh-baseline fallback. Then exercise a baseline with concurrent updates and a deliberately delayed destination in an isolated environment. The useful outcome is evidence that your larger NVMe-backed cache can meet both its freshness and latency requirements.",
+      "sources": [
+        "current-010-import",
+        "current-010-readme"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "Publication references: use the tested 0.1.0 manual for installation and startup: https://github.com/eloqdata/lavik/blob/471f4864357f4a5034c64e7d4972ec0e55b82d94/README.md . For the pinned migration procedure, replication fence, and compatibility boundaries, see Redis import into Meta-managed Lavik: https://github.com/eloqdata/lavik/blob/471f4864357f4a5034c64e7d4972ec0e55b82d94/docs/operations/redis-import.md . Lavik 0.1.0 is open source under Apache 2.0.",
+      "sources": [
+        "current-010-readme",
+        "current-010-import"
+      ]
+    }
+  ]
+}
