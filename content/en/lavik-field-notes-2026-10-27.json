@@ -1,0 +1,139 @@
+{
+  "id": "lavik-field-notes-2026-10-27",
+  "locale": "en",
+  "version": "0.1.0",
+  "kind": "blog",
+  "slug": "lavik-field-notes-2026-10-27",
+  "title": "Build a catalog cache that can replace the whole record",
+  "summary": "A catalog refresh must remove obsolete fields as well as update values. Use that application contract to guide a first Lavik evaluation, with package and storage choices supporting the design.",
+  "updatedAt": "2026-10-27",
+  "sourceRevision": "471f4864357f4a5034c64e7d4972ec0e55b82d94",
+  "topics": [
+    "use-case",
+    "architecture",
+    "best-practise"
+  ],
+  "blocks": [
+    {
+      "type": "paragraph",
+      "text": "A product catalog cache can outgrow its RAM budget while its Redis interface remains useful. It can also accumulate a subtler problem: refreshes that merge new fields leave old fields behind. Lavik 0.1.0 offers a concrete design opportunity here: keep Redis-compatible field reads, put value capacity on NVMe, and use an explicit whole-Hash replacement operation for refreshes. The first evaluation should establish that application behavior; choosing Minimal or Standard follows from the host and storage path needed to exercise it.",
+      "sources": [
+        "current-010-readme",
+        "current-010-requests"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "Define the refresh contract before the storage experiment"
+    },
+    {
+      "type": "paragraph",
+      "text": "Consider a proposed cache with one Hash per product, holding title, display price, availability label, category, image URL, optional campaign text, and a source revision. A product card requests only its display fields; a detail view reads the complete Hash. The authoritative catalog remains elsewhere. A background refresh supplies a complete new field set. If a campaign ends, the replacement must remove campaign text. HSET and HMSET merge fields, so omitting that field from a refresh does not remove it.",
+      "sources": [
+        "current-010-collections",
+        "current-010-requests"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "Lavik’s LAVIK.HREPLACE extension matches that replacement contract for an existing Hash: it atomically replaces the entire field set and preserves the absolute key expiry. Missing or expired keys return null without a write; another live type returns WRONGTYPE. This separates refreshing a live record from filling a cache miss. It also means refreshing content does not silently extend its deadline. Redis SDKs can call the extension through their raw command API, but ordinary Redis does not recognize it.",
+      "sources": [
+        "current-010-requests"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "For this design, choose an expiry deadline at fill time and let ordinary refreshes preserve it. Treat a null replacement result as a return to the application’s miss-fill path. Keep that path responsible for coordinating creation and assigning expiry. Also serialize refreshes per product, or compare the source revision within a declared-key Lua operation before replacement: an atomic replacement alone does not stop an older refresh from overwriting a newer one. Lavik supports the extension inside EXEC and Lua; the revision policy remains application logic.",
+      "sources": [
+        "current-010-requests"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "Why the record shape matters on NVMe"
+    },
+    {
+      "type": "paragraph",
+      "text": "Small Hashes use compact whole-value storage. As encoded collections reach the 16 KiB promotion threshold, Lavik switches to independently addressed groups, targeting 8 KiB per group. Hash fields route through a prefix directory. Selected-field reads load the affected groups, while whole-value reads still assemble the logical value and require aggregate temporary memory. A product-card endpoint should therefore request its actual fields rather than fetching every attribute merely because the client supports it. This becomes particularly useful when some products accumulate large localized descriptions or optional attributes.",
+      "sources": [
+        "current-010-collections"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "Complete refreshes have a different access pattern. For a grouped Hash, LAVIK.HREPLACE checks the existing key, type, expiry and preceding grouped decision without loading the old field payloads. The replacement comes from admitted request data and publishes through one logical boundary. That suits a catalog publisher that already has the complete new record. It still sends and writes the replacement data; it is not a sparse-update optimization. Small field changes can continue using ordinary HSET.",
+      "sources": [
+        "current-010-collections"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "Use the package sequence to isolate the next question"
+    },
+    {
+      "type": "paragraph",
+      "text": "Start the application evaluation with a reconstructable dataset in a preallocated regular file using kernel TCP and io_uring. Both packages support this path, and Standard defaults to it. Minimal is sufficient when no bypass backend is needed. Exercise a product with campaign text, a refresh that removes it, a refresh after expiry, and two refreshes arriving out of revision order. These are proposed application acceptance cases, not reported test results. Include both compact and larger grouped records so the evaluation represents the intended catalog.",
+      "sources": [
+        "current-010-readme",
+        "current-010-storage",
+        "current-010-collections",
+        "current-010-requests"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "Both packages require Linux 6.1 or newer with usable io_uring—even when SPDK is selected—and compatible glibc. Linux 6.1 is an API floor, not a tested-kernel matrix; the release build environment is Ubuntu 24.04. Standard additionally requires x86-64-v2 on x86_64 or the CRC32 instruction extension on ARM64, plus NUMA and UUID runtime libraries. Those CPU requirements apply even when bypass is disabled. Minimal uses the compiler’s default CPU target and excludes SPDK and DPDK.",
+      "sources": [
+        "current-010-readme"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "If SPDK is a useful next experiment, first run Standard with the same io_uring file workload. That intermediate step exposes package prerequisites before device provisioning changes. Then evaluate Standard with SPDK on a separately prepared dataset, keeping kernel TCP, record shapes and refresh traffic consistent. SPDK needs an accessible NVMe device, exclusive ownership and explicit device and hugepage preparation; it does not require experimental DPDK networking. Storage selection is fixed at startup, and a shared durable format does not turn device rebinding into an automatic migration.",
+      "sources": [
+        "current-010-readme",
+        "current-010-storage"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "Make the adoption decision about retained catalog data"
+    },
+    {
+      "type": "paragraph",
+      "text": "The published 2-vCPU result establishes why capacity beyond RAM is worth investigating: Standard with SPDK held 100 million 1 KiB values, or 95.37 GiB of logical value payload, on a nominal 16-GiB Azure VM with a dedicated NVMe namespace and a 2-GiB hugepage reservation. Its uniform-random GET and overwriting SET points were measured once each for 30 seconds. Those String measurements do not establish Hash refresh performance, Minimal/io_uring performance or this catalog’s latency.",
+      "sources": [
+        "current-010-compact"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "Adopt Lavik for this cache when retaining more catalog values on NVMe meets the application’s field-read and complete-refresh requirements within its latency and memory budgets. Budget for resident indexes, temporary whole-record reads, refresh requests and reclamation space as well as stored values. Keep the cache reconstructable: an ordinary successful write is not a synchronous crash-durability fence. The economic opportunity is reduced dependence on DRAM for value capacity; deployment savings still depend on replicas and operating headroom, rather than implying measured total-cost or SLA equivalence.",
+      "sources": [
+        "current-010-readme",
+        "current-010-storage",
+        "current-010-collections"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "Publication references and next step"
+    },
+    {
+      "type": "paragraph",
+      "text": "Choose one representative catalog record and write down its selected-field read, complete replacement, expiry and revision-order expectations. Use those cases for the first file-backed evaluation. Lavik 0.1.0 is open source under Apache 2.0. Follow the release-pinned 0.1.0 manual for installation and platform requirements: https://github.com/eloqdata/lavik/blob/471f4864357f4a5034c64e7d4972ec0e55b82d94/README.md#installation",
+      "sources": [
+        "current-010-readme",
+        "current-010-requests"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "For the optional storage experiment, the manual links device preparation and host restoration in the SPDK guide: https://github.com/eloqdata/lavik/blob/471f4864357f4a5034c64e7d4972ec0e55b82d94/docs/operations/spdk-storage.md . Read the measured configuration and limits in the 2-vCPU capacity report: https://github.com/eloqdata/lavik/blob/471f4864357f4a5034c64e7d4972ec0e55b82d94/perf_reports/lavik-v0.1.0-2vcpu-latest-capacity-2026-10-13/README.md",
+      "sources": [
+        "current-010-readme",
+        "current-010-compact"
+      ]
+    }
+  ]
+}

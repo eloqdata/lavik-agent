@@ -1,0 +1,139 @@
+{
+  "id": "lavik-field-notes-2026-10-27",
+  "locale": "zh-CN",
+  "version": "0.1.0",
+  "kind": "blog",
+  "slug": "lavik-field-notes-2026-10-27",
+  "title": "让商品目录缓存能够完整替换一条记录",
+  "summary": "目录刷新既要更新值，也要移除过时字段。以这一应用约定组织首次 Lavik 评估，让软件包和存储路径选择服务于具体设计。",
+  "updatedAt": "2026-10-27",
+  "sourceRevision": "471f4864357f4a5034c64e7d4972ec0e55b82d94",
+  "topics": [
+    "use-case",
+    "architecture",
+    "best-practise"
+  ],
+  "blocks": [
+    {
+      "type": "paragraph",
+      "text": "商品目录缓存可能已经超出内存预算，但现有 Redis 接口仍然合用。它还可能积累一个更隐蔽的问题：刷新时合并新字段，却留下了旧字段。Lavik 0.1.0 提供了一种具体设计选择：保留 Redis 兼容的字段读取接口，将值容量放到 NVMe，并使用明确的整 Hash 替换操作完成刷新。首次评估应先验证这些应用行为；Minimal 或 Standard 的选择，则取决于承载它们的主机和存储路径。",
+      "sources": [
+        "current-010-readme",
+        "current-010-requests"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "先定义刷新约定，再做存储实验"
+    },
+    {
+      "type": "paragraph",
+      "text": "考虑这样一个缓存设计：每件商品对应一个 Hash，包含标题、展示价格、供货状态标签、分类、图片 URL、可选促销文案，以及源数据版本号。商品卡片只请求展示所需字段，详情页读取完整 Hash。权威目录保留在其他系统中。后台刷新提供完整的新字段集合；促销结束后，替换必须移除促销文案。HSET 和 HMSET 会合并字段，因此仅在刷新内容中省略该字段，并不会将它删除。",
+      "sources": [
+        "current-010-collections",
+        "current-010-requests"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "Lavik 的 LAVIK.HREPLACE 扩展符合已有 Hash 的完整替换约定：原子替换全部字段，并保留键的绝对过期时间。键不存在或已过期时，操作返回 null，不执行写入；键仍存在但类型不符时返回 WRONGTYPE。这将已有记录的刷新与缓存未命中的填充分开，也意味着刷新内容不会悄悄延长有效期。Redis SDK 可以通过原始命令接口调用该扩展，但普通 Redis 不识别它。",
+      "sources": [
+        "current-010-requests"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "在这个设计中，填充时确定过期截止时间，普通刷新保留该时间。替换返回 null 时，交回应用的未命中填充流程，由该流程协调创建并设置过期时间。此外，应按商品串行处理刷新，或在声明了目标键的 Lua 操作中先比较源数据版本号，再执行替换：替换的原子性本身不能阻止迟到的旧刷新覆盖新记录。Lavik 支持在 EXEC 和 Lua 中使用该扩展，而版本策略仍属于应用逻辑。",
+      "sources": [
+        "current-010-requests"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "记录形状如何影响 NVMe 访问"
+    },
+    {
+      "type": "paragraph",
+      "text": "小 Hash 使用紧凑的整值存储。集合编码大小达到 16 KiB 提升阈值后，Lavik 改用可独立寻址的分组，目标大小为每组 8 KiB。Hash 字段通过前缀目录路由。选定字段的读取只加载相关分组，而整值读取仍会组装逻辑值，需要为整体临时内存留出空间。因此，商品卡片接口应请求实际需要的字段，而不是因为客户端支持就取回全部属性。当部分商品积累了较长的多语言描述或可选属性时，这一点尤其有用。",
+      "sources": [
+        "current-010-collections"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "完整刷新具有另一种访问模式。对于分组 Hash，LAVIK.HREPLACE 检查已有键、类型、过期时间和前序分组提交决定，而不加载旧字段载荷。替换内容来自通过内存准入的请求数据，并通过一个逻辑边界发布。这适合已经持有完整新记录的目录发布程序。不过，它仍然需要传输和写入替换数据，并不是稀疏更新优化。少量字段变化仍可使用普通 HSET。",
+      "sources": [
+        "current-010-collections"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "用软件包评估顺序隔离下一个问题"
+    },
+    {
+      "type": "paragraph",
+      "text": "首次应用评估可以使用可重建的数据集，放入预分配的普通文件，通过内核 TCP 和 io_uring 访问。两个软件包都支持这条路径，Standard 默认也使用它。不需要旁路后端时，Minimal 已经足够。评估应覆盖带促销文案的商品、移除文案的刷新、过期后的刷新，以及按版本逆序到达的两次刷新。这些是建议的应用验收场景，并非已报告的测试结果。数据中同时包含紧凑记录和较大的分组记录，才能反映目标目录。",
+      "sources": [
+        "current-010-readme",
+        "current-010-storage",
+        "current-010-collections",
+        "current-010-requests"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "两个软件包都要求 Linux 6.1 或更新版本、可用的 io_uring，以及兼容的 glibc；选择 SPDK 也不能绕过 io_uring 要求。Linux 6.1 是 API 下限，不是经过测试的内核矩阵；发布构建环境为 Ubuntu 24.04。Standard 还要求 x86_64 上的 x86-64-v2，或 ARM64 上的 CRC32 指令扩展，以及 NUMA 和 UUID 运行时库。即使未启用旁路，这些 CPU 要求仍然适用。Minimal 使用编译器默认 CPU 目标，不包含 SPDK 和 DPDK。",
+      "sources": [
+        "current-010-readme"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "如果下一步值得研究 SPDK，先让 Standard 运行相同的 io_uring 文件负载。这个中间步骤可以在改变设备配置之前暴露软件包前提条件问题。随后，在单独准备的数据集上评估 Standard 配合 SPDK，保持内核 TCP、记录形状和刷新流量一致。SPDK 需要可访问的 NVMe 设备、独占所有权，以及明确的设备和大页准备；它不要求启用实验性的 DPDK 网络。存储后端在启动时固定，共享持久化格式也不意味着重新绑定设备就能自动迁移数据。",
+      "sources": [
+        "current-010-readme",
+        "current-010-storage"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "围绕需要保留的目录数据决定是否采用"
+    },
+    {
+      "type": "paragraph",
+      "text": "已发布的 2 vCPU 结果说明了为何值得研究超出内存的容量：Standard 配合 SPDK，在标称 16 GiB 内存的 Azure 虚拟机上保存了 1 亿个 1 KiB 值，即 95.37 GiB 逻辑值载荷，使用独占 NVMe 命名空间并预留 2 GiB 大页。均匀随机 GET 和覆盖式 SET 的每个测量点仅运行一次，持续 30 秒。这些 String 测量不能证明 Hash 刷新性能、Minimal/io_uring 性能，或这个目录应用的延迟。",
+      "sources": [
+        "current-010-compact"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "当更多目录值保留在 NVMe 上，仍能在应用的延迟和内存预算内满足字段读取与完整刷新要求时，Lavik 就具备了明确的采用理由。除了值本身，还要为驻留索引、整记录读取的临时内存、刷新请求和空间回收留出预算。缓存应保持可重建：普通写入成功并不构成同步的崩溃持久化屏障。经济价值来自降低值容量对 DRAM 的依赖；实际部署节省仍取决于副本和运行余量，不能据此推导已测得的总成本收益或 SLA 等价。",
+      "sources": [
+        "current-010-readme",
+        "current-010-storage",
+        "current-010-collections"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "发布参考资料与下一步"
+    },
+    {
+      "type": "paragraph",
+      "text": "选取一条有代表性的目录记录，写清选定字段读取、完整替换、过期和版本顺序的预期行为，再用这些场景开展首次文件存储评估。Lavik 0.1.0 以 Apache 2.0 许可证开源。安装和平台要求请遵循固定版本的 0.1.0 手册：https://github.com/eloqdata/lavik/blob/471f4864357f4a5034c64e7d4972ec0e55b82d94/README.md#installation",
+      "sources": [
+        "current-010-readme",
+        "current-010-requests"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "如需开展后续存储实验，手册链接的 SPDK 指南包含设备准备和主机恢复说明：https://github.com/eloqdata/lavik/blob/471f4864357f4a5034c64e7d4972ec0e55b82d94/docs/operations/spdk-storage.md 。测量配置及其适用范围见 2 vCPU 容量报告：https://github.com/eloqdata/lavik/blob/471f4864357f4a5034c64e7d4972ec0e55b82d94/perf_reports/lavik-v0.1.0-2vcpu-latest-capacity-2026-10-13/README.md",
+      "sources": [
+        "current-010-readme",
+        "current-010-compact"
+      ]
+    }
+  ]
+}
