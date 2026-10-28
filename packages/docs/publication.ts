@@ -92,6 +92,7 @@ export const documentationReviewFiles = () => {
       "apps/web/components/use-cases.tsx",
       "apps/web/components/release-badge.tsx",
       "apps/web/components/site.tsx",
+      "apps/web/components/github-star.tsx",
       "packages/content/schema.ts",
       "packages/editorial/faq.ts",
       "packages/use-cases/content.ts",
