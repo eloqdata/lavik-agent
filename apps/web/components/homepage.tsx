@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { GitHubStar } from "./github-star";
 import { BenchmarkChart, type BenchmarkRow } from "./benchmark";
 import type { Locale } from "../../../packages/content/schema";
 import { pageStructuredData } from "../../../packages/seo/site";
@@ -55,6 +56,7 @@ export function Homepage({
               {zh ? "开始使用 Lavik" : "Start with Lavik"}{" "}
               <span aria-hidden="true">→</span>
             </Link>
+            <GitHubStar locale={locale} />
             <Link href={`/${locale}/benchmarks/`}>
               {zh ? "查看基准测试" : "See benchmarks"}{" "}
               <span aria-hidden="true">↗</span>

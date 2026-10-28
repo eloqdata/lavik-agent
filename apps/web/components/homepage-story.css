@@ -568,7 +568,14 @@
   font-size: 19px;
   font-weight: 500;
 }
-.home-final-cta > a {
+.home-final-actions {
+  display: flex;
+  flex-shrink: 0;
+  flex-wrap: wrap;
+  gap: 11px;
+  max-width: 100%;
+}
+.home-final-actions > a:not(.github-link) {
   flex-shrink: 0;
   background: var(--story-accent);
   color: #18321b;
@@ -577,11 +584,11 @@
   font-size: 14px;
   font-weight: 600;
 }
-.home-final-cta > a:hover {
+.home-final-actions > a:not(.github-link):hover {
   color: #18321b;
   background: #ddf7b8;
 }
-.home-final-cta > a span {
+.home-final-actions > a:not(.github-link) span {
   margin-left: 24px;
 }
 @media (max-width: 1000px) {
@@ -763,6 +770,13 @@
     align-items: flex-start;
     margin-top: 40px;
     padding: 24px;
+  }
+  .home-final-actions > a:not(.github-link) {
+    padding: 12px 14px;
+    font-size: 13px;
+  }
+  .home-final-actions > a:not(.github-link) span {
+    margin-left: 12px;
   }
   .home-tail-details {
     padding: 18px;

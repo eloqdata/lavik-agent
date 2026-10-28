@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { GitHubStar } from "./github-star";
 import type { Locale } from "../../../packages/content/schema";
 
 import {
@@ -475,10 +476,13 @@ export function HomepageStory({ locale }: { locale: Locale }) {
               "Redis 兼容。NVMe SSD 容量。Apache 2.0。",
             )}
           </strong>
-          <Link href={`${docs}/quick-start/`}>
-            {t("Start with Lavik", "开始使用 Lavik")}{" "}
-            <span aria-hidden="true">→</span>
-          </Link>
+          <div className="home-final-actions">
+            <Link href={`${docs}/quick-start/`}>
+              {t("Start with Lavik", "开始使用 Lavik")}{" "}
+              <span aria-hidden="true">→</span>
+            </Link>
+            <GitHubStar locale={locale} />
+          </div>
         </div>
       </section>
     </div>
