@@ -51,48 +51,54 @@ test("production tracker preserves campaign attribution, counts versioned instal
       await route.fulfill({ response });
     }
   });
-  await page.goto(
-    "https://lavik.dev/en/?utm_source=wechat&utm_medium=social&utm_campaign=site-home&utm_content=wg01",
-  );
-  await expect
-    .poll(() => events.filter((e) => e.event === "visit").length)
-    .toBe(1);
-  await page.evaluate(() =>
-    history.pushState(
-      null,
-      "",
-      "/en/?utm_source=medium&utm_medium=referral&utm_campaign=site-download",
-    ),
-  );
-  await expect
-    .poll(() => events.filter((e) => e.event === "visit").length)
-    .toBe(2);
-  await page.goto("https://lavik.dev/en/docs/0.1.0/install-docker/");
-  await expect
-    .poll(() => events.filter((e) => e.event === "install").length)
-    .toBe(1);
-  expect(events.find((e) => e.event === "visit")?.source).toBe("wechat");
-  expect(events.find((e) => e.event === "visit")?.placement).toBe("wg01");
-  expect(events.find((e) => e.event === "visit")?.campaign).toBe("site-home");
-  expect(events.find((e) => e.event === "install")?.campaign).toBe(
-    "site-download",
-  );
-  expect(events.find((e) => e.event === "install")?.source).toBe("medium");
-  expect(events.filter((e) => e.event === "visit")).toHaveLength(2);
-  await page.goto("https://lavik.dev/en/privacy/");
-  await page
-    .getByRole("button", { name: "Disable analytics / 退出统计" })
-    .click();
-  await expect(
-    page.getByRole("button", { name: "Enable analytics / 启用统计" }),
-  ).toBeVisible();
-  const before = events.length;
-  await page.clock.fastForward(25_000);
-  expect(
-    await page.evaluate(() => sessionStorage.getItem("lavik.visit.v1")),
-  ).toBeNull();
-  expect(events).toHaveLength(before);
-  await page.goto("https://lavik.dev/en/download/");
-  await page.waitForLoadState("networkidle");
-  expect(events).toHaveLength(before);
+  try {
+    await page.goto(
+      "https://lavik.dev/en/?utm_source=wechat&utm_medium=social&utm_campaign=site-home&utm_content=wg01",
+    );
+    await expect
+      .poll(() => events.filter((e) => e.event === "visit").length)
+      .toBe(1);
+    await page.evaluate(() =>
+      history.pushState(
+        null,
+        "",
+        "/en/?utm_source=medium&utm_medium=referral&utm_campaign=site-download",
+      ),
+    );
+    await expect
+      .poll(() => events.filter((e) => e.event === "visit").length)
+      .toBe(2);
+    await page.goto("https://lavik.dev/en/docs/0.1.0/install-docker/");
+    await expect
+      .poll(() => events.filter((e) => e.event === "install").length)
+      .toBe(1);
+    expect(events.find((e) => e.event === "visit")?.source).toBe("wechat");
+    expect(events.find((e) => e.event === "visit")?.placement).toBe("wg01");
+    expect(events.find((e) => e.event === "visit")?.campaign).toBe("site-home");
+    expect(events.find((e) => e.event === "install")?.campaign).toBe(
+      "site-download",
+    );
+    expect(events.find((e) => e.event === "install")?.source).toBe("medium");
+    expect(events.filter((e) => e.event === "visit")).toHaveLength(2);
+    await page.goto("https://lavik.dev/en/privacy/");
+    await page
+      .getByRole("button", { name: "Disable analytics / 退出统计" })
+      .click();
+    await expect(
+      page.getByRole("button", { name: "Enable analytics / 启用统计" }),
+    ).toBeVisible();
+    const before = events.length;
+    await page.clock.fastForward(25_000);
+    expect(
+      await page.evaluate(() => sessionStorage.getItem("lavik.visit.v1")),
+    ).toBeNull();
+    expect(events).toHaveLength(before);
+    await page.goto("https://lavik.dev/en/download/");
+    await page.waitForLoadState("networkidle");
+    expect(events).toHaveLength(before);
+  } finally {
+    // Stop prefetching before removing the production-origin interception.
+    await page.goto("about:blank");
+    await page.unrouteAll({ behavior: "wait" });
+  }
 });
