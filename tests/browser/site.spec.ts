@@ -267,10 +267,18 @@ test("homepage capacity scenario responds to input and links to current migratio
         ? "not a tested 300-to-3 migration"
         : "并非经过测试的 300 到 3 迁移",
     );
-    await expect(page.locator(".home-final-cta a")).toHaveAttribute(
+    await expect(page.locator(".home-final-cta a").first()).toHaveAttribute(
       "href",
       `/${locale}/docs/0.2.0/quick-start/`,
     );
+    for (const section of [".dual-actions", ".home-final-actions"]) {
+      const star = page.locator(`${section} .github-link`);
+      await expect(star).toBeVisible();
+      await expect(star).toHaveAttribute(
+        "href",
+        "https://github.com/eloqdata/lavik",
+      );
+    }
   }
 });
 

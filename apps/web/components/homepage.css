@@ -109,7 +109,7 @@ body:has(.homepage-g) :focus-visible {
   gap: 11px;
   margin-top: 29px;
 }
-.dual-actions a {
+.dual-actions a:not(.github-link) {
   padding: 12px 17px;
   border: 1px solid #526047;
   border-radius: 5px;
@@ -122,10 +122,10 @@ body:has(.homepage-g) :focus-visible {
   border-color: var(--dual-lavik);
   color: #18321b;
 }
-.dual-actions a:hover {
+.dual-actions a:not(.github-link):hover {
   filter: brightness(1.12);
 }
-.dual-actions span {
+.dual-actions a:not(.github-link) span {
   padding-left: 12px;
 }
 .dual-compatible {

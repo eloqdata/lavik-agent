@@ -104,12 +104,30 @@ summary:focus-visible {
   padding-left: 20px;
 }
 .github-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
   padding: 8px 14px;
-  border: 1px solid var(--line);
+  background: var(--green);
+  color: var(--dark);
+  border: 1px solid var(--green);
   border-radius: 5px;
+  font-size: 13px;
+  font-weight: 700;
+  white-space: nowrap;
 }
-.github-link span {
-  margin-left: 9px;
+.github-link:hover,
+.header-inner nav .github-link:hover,
+.home-story .github-link:hover {
+  background: #cce59f;
+  color: var(--dark);
+  border-color: var(--accent);
+}
+.github-link-star {
+  font-size: 20px;
+  line-height: 1;
 }
 .hero {
   padding: 78px 0 76px;
@@ -956,8 +974,14 @@ h2 {
     font-size: 11px;
     flex-wrap: wrap;
   }
-  .github-link {
-    padding: 3px 6px;
+  .header-inner .github-link {
+    position: absolute;
+    top: 18px;
+    right: 0;
+    padding: 8px 10px;
+  }
+  .github-link-label {
+    display: none;
   }
   .language-switch {
     padding-left: 10px;

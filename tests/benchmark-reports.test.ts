@@ -108,6 +108,7 @@ test("benchmark approval binds bytes and rejects missing/changed review evidence
   for (const file of [
     "apps/web/app/(site)/[locale]/layout.tsx",
     "apps/web/components/use-cases.css",
+    "apps/web/components/github-star.tsx",
     "packages/seo/site.ts",
     "scripts/check-content.ts",
   ]) {

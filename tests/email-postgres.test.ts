@@ -36,6 +36,9 @@ test(
               "exec",
               container,
               "pg_isready",
+              // The initialization server only listens on a Unix socket.
+              "-h",
+              "127.0.0.1",
               "-U",
               "lavik_test",
               "-d",

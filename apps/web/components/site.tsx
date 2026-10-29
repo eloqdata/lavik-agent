@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { LanguageSwitch } from "./language-switch";
+import { GitHubStar } from "./github-star";
 import type { Locale } from "../../../packages/content/schema";
 import { BenchmarksMenu } from "./benchmarks-menu";
 import { CompareMenu } from "./compare-menu";
@@ -46,9 +47,7 @@ export function Header({ locale }: { locale: Locale }) {
             {zh ? "社区" : "Community"}
           </Link>
           <LanguageSwitch locale={locale} />
-          <a className="github-link" href="https://github.com/eloqdata/lavik">
-            GitHub <span aria-hidden="true">↗</span>
-          </a>
+          <GitHubStar locale={locale} />
         </nav>
       </div>
     </header>

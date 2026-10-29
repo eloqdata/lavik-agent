@@ -48,6 +48,7 @@ export const benchmarkBoundFiles = [
   "apps/web/components/benchmark.tsx",
   "tests/homepage-benchmark.test.ts",
   "apps/web/components/site.tsx",
+  "apps/web/components/github-star.tsx",
   "packages/seo/site.ts",
   "apps/web/app/(entry)/sitemap.ts",
   "scripts/build-discovery.ts",
