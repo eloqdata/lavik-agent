@@ -1,0 +1,164 @@
+{
+  "id": "lavik-stream-retention-and-pending-deliveries",
+  "locale": "zh-CN",
+  "version": "0.2.0",
+  "kind": "blog",
+  "slug": "lavik-stream-retention-and-pending-deliveries",
+  "title": "Stream 很短，待确认列表却未必",
+  "summary": "通过一个假设的图像处理队列，理解为什么重放保留期、待确认投递和物理存储需要分别规划，以及 Lavik 的 NVMe Stream 如何支撑这种设计。",
+  "updatedAt": "2026-11-01",
+  "publishedAt": "2026-11-01",
+  "sourceRevision": "2908f86f2770e9c6e8acc6585b3bedb4b44d1cd5",
+  "topics": [
+    "use-case",
+    "architecture",
+    "best-practise"
+  ],
+  "featured": false,
+  "technical": {
+    "sources": [
+      {
+        "id": "overview",
+        "title": "Lavik 0.2.0 overview",
+        "url": "https://github.com/eloqdata/lavik/blob/2908f86f2770e9c6e8acc6585b3bedb4b44d1cd5/README.md",
+        "file": "evidence/docs/0.2.0/sources/README.md",
+        "sha256": "ec6f4352e39da4115d875de16baa3a490851d106fb6f2f3d508f29d726f310c3"
+      },
+      {
+        "id": "streams",
+        "title": "Streams at Lavik 0.2.0",
+        "url": "https://github.com/eloqdata/lavik/blob/2908f86f2770e9c6e8acc6585b3bedb4b44d1cd5/docs/architecture/12-streams.md",
+        "file": "evidence/docs/0.2.0/sources/docs_architecture_12-streams.md",
+        "sha256": "56c73f23cc27678d71acde798e1a84d6259d52dcb89f6538a8fa30cd9aa484cc"
+      },
+      {
+        "id": "collections",
+        "title": "Grouped collections at Lavik 0.2.0",
+        "url": "https://github.com/eloqdata/lavik/blob/2908f86f2770e9c6e8acc6585b3bedb4b44d1cd5/docs/architecture/09-grouped-collections.md",
+        "file": "evidence/docs/0.2.0/sources/docs_architecture_09-grouped-collections.md",
+        "sha256": "f7367fb37ea43a82075c7036fb3c3261168c73c9e781869533b62dedf8701e01"
+      },
+      {
+        "id": "storage",
+        "title": "Storage and recovery at Lavik 0.2.0",
+        "url": "https://github.com/eloqdata/lavik/blob/2908f86f2770e9c6e8acc6585b3bedb4b44d1cd5/docs/architecture/04-storage-and-recovery.md",
+        "file": "evidence/docs/0.2.0/sources/docs_architecture_04-storage-and-recovery.md",
+        "sha256": "79b2bf3dbe629fae7f65a702e13cee4c4a33b9b18e763d4ee72a953dc5257b1b"
+      }
+    ],
+    "visuals": []
+  },
+  "blocks": [
+    {
+      "type": "heading",
+      "text": "一个 Stream 中的两种生命周期"
+    },
+    {
+      "type": "paragraph",
+      "text": "工作队列中的消息可能很少，却仍然保留着大量未完成的投递状态。在 Lavik 0.2.0 中，Stream 保存有序的消息序列，各消费组则独立保存游标、消费者和待确认条目列表，也就是 PEL。XACK 清除待确认状态，但不删除消息。删除或裁剪消息可以移除消息载荷，同时留下待确认引用。即使 Stream 已经没有消息，也仍可能保留消费组、PEL 条目和 ID 历史。因此，XLEN 回答的是一个有用但范围有限的问题：还剩多少条消息，而不是队列总共保留了多少状态。",
+      "sources": [
+        "streams"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "设想一个图像处理服务：作为事实依据的作业记录保存在另一个数据库中，原图保存在对象存储中，Stream 消息携带作业标识和所需的图像转换信息。工作进程通过消费组领取任务。应用希望保留消息，以便在发现处理缺陷后重放，同时也要接管因工作进程崩溃而遗留的投递。这是两个不同的需求：重放需要消息载荷；投递恢复需要待确认条目的归属信息和应用作业状态。Lavik 将消息与消费组状态分开保存，明确体现了这种区别，但两者的生命周期如何配合，仍由应用决定。",
+      "sources": [
+        "streams"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "跟随作业经历完成、崩溃与裁剪"
+    },
+    {
+      "type": "paragraph",
+      "text": "假设应用为作业 A 分配一个稳定标识，其中包含目标转换版本。工作进程通过 XREADGROUP 收到消息，产生待确认投递状态。在这个拟议的应用设计中，工作进程先将输出写入与该标识关联的位置，再将完成状态写入权威数据库，最后确认投递。XACK 成功后，待确认条目被移除，但消息仍在选定的重放窗口内保留。处理完成和消息保留由此拥有了刻意区分的结束时间。",
+      "sources": [
+        "streams"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "接下来，一个工作进程收到作业 B，完成输出并写入完成记录，却在确认之前崩溃。B 仍处于待确认状态。应用的恢复流程可以通过 XCLAIM 或 XAUTOCLAIM 接管这项工作。按照这里假设的策略，接管者会先检查权威完成记录；如果作业已经完成，就确认投递，而不重复执行产生副作用的操作。稳定的作业标识和幂等的输出处理用于应对应用完成与投递确认之间的间隙。接管改变的是消费组内部对该投递的处理归属，本身并不能证明外部图像操作是否已经完成。",
+      "sources": [
+        "streams"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "最后，一个工作进程收到作业 C，却在生成输出之前崩溃。C 尚未确认时，应用的保留策略裁剪掉了它的消息。消息载荷已经消失，待确认引用却可能仍然存在。因此，不能把接管操作视为原始任务描述仍可读取的承诺。在这个设计中，对账流程通过权威作业记录识别未完成工作，并安排新的投递。如果唯一的任务描述只存在于已被裁剪的消息中，这条恢复路径就不存在了。因此，保留策略决定了基于 Stream 的重放可以持续多久，而待确认状态是否仍然存在是另一回事。",
+      "sources": [
+        "streams"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "明确确认操作的含义"
+    },
+    {
+      "type": "paragraph",
+      "text": "对于这个服务，确认投递意味着应用已在其他地方记录成功完成，或明确记录某种终止结果。重试和接管流程会检查该记录，依据应用自行选择的超时时间区分慢任务与被遗弃的任务，并将反复失败的作业转入应用定义的待审核状态。有意重新处理时，应使用新的转换版本，避免幂等逻辑阻止预期中的工作。这些都是应用决策，并非 XACK 提供的属性。由于各消费组独立保留状态，清除一个组中的待确认条目，也不意味着其他组的相关投递状态都已解决。",
+      "sources": [
+        "streams"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "由此得到的容量模型包含两个可以独立增长的部分。重放预算覆盖保留的消息及其载荷大小；投递状态预算覆盖消费组、消费者和仍未解决的待确认条目。即使确认很及时，较长的重放窗口也可能保留大量消息；即使裁剪让 XLEN 保持较小，停滞的消费组仍可能积累待确认状态。XINFO 和 XPENDING 可以提供摘要或选定的检查信息，但检查全部状态并不是恒定空间操作。COUNT 限制的是所选回复或读取窗口，而不是服务器保留的全部消息历史或待确认状态。",
+      "sources": [
+        "streams"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "NVMe 如何承载有用的重放历史"
+    },
+    {
+      "type": "paragraph",
+      "text": "Lavik 将内存中的键索引与存储设备上的值分开。对于采用分组表示的 Stream，有序页面保存消息、逻辑宏节点元数据、消费组头部、消费者以及单独的待确认条目。整个消费组或整个 PEL 都不会作为一个不可分割的页面条目存放。常驻内存的目录保留页面标识、链接、计数和有长度上限的路由键，并缓存固定的 Stream 头部；它不会保留全部消息、消费者或 PEL 载荷。这种结构让有用的重放历史可以保存在 NVMe 上，同时仍需为路由元数据和通过内存准入的操作预留内存。",
+      "sources": [
+        "overview",
+        "streams",
+        "collections"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "访问路径随请求内容而定。XACK 访问目标消费组元数据、指定的待确认 ID 和 PEL 计数。范围读取和 XREADGROUP 回复会固定相关的不可变根及选定页面，再根据网络背压逐步输出已通过内存准入的解码页面。连续消息范围可以使用有界的并发读取窗口：COUNT 限制所需页面，总字节预算则约束解码页面和调度元数据。这对重放工作进程很有意义：保留很长的历史，不意味着每次读取选定范围都要加载整个 Stream。不过，较大的单条记录，以及范围较广的修改或检查请求，仍必须满足内存准入要求。",
+      "sources": [
+        "streams"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "裁剪使用另一套逻辑结构。近似裁剪依据逻辑宏节点中持久化的有效条目计数，而逻辑宏节点独立于物理存储页面。页面分裂不会重新定义这些裁剪单元；在恢复或修改 stream-node-max-entries 后，持久化计数仍用于保留这些边界。完整移除的页面范围可以在不读取载荷的情况下退役，但逻辑删除不等于空间立即可复用。快照和读取器的固定引用、退役处理以及存储回收，共同决定旧数据占用的物理空间何时能归还分配器。因此，重放预算也需要容纳从数据保留到容量回收之间的过渡阶段。",
+      "sources": [
+        "streams",
+        "collections",
+        "storage"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "把存储边界纳入应用设计"
+    },
+    {
+      "type": "paragraph",
+      "text": "以 NVMe 为后端，并不意味着普通命令成功返回就构成同步持久化屏障。Lavik 可以先发布可读状态，再跨过对应的崩溃持久化边界。同样，追加或投递会在成功发布后唤醒阻塞读取器；唤醒并不是数据已经刷盘的证据。将权威作业记录保存在其他地方，让这个假设的服务在 Stream 状态不足时，仍有依据核对未完成工作。这一队列设计不能证明它适合所有事件日志场景，也不构成对生产负载的认证。固定版本文档还将内部 Stream 传输格式和存储模式标为尚未发布，因此这些描述不构成兼容性承诺。",
+      "sources": [
+        "streams",
+        "storage"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "接下来，可以结合阅读 0.2.0 的 Streams、Grouped collections 和 Storage and recovery 文档，再对照应用自己的完成记录，评估上面三种作业经历。评估应明确：哪些内容仍可重放，如何识别已经完成却尚未确认的作业，以及消息消失后如何恢复未完成工作。容量观察除了 XLEN，还应覆盖待确认状态和可用存储空间。这样，保留 NVMe 历史数据的理由就落实为具体的应用约定：保存有用的重放数据，明确解决每次投递，并为生命周期超过消息保留期的工作提供恢复路径。",
+      "sources": [
+        "streams",
+        "collections",
+        "storage"
+      ]
+    }
+  ]
+}

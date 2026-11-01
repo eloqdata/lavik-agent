@@ -1,0 +1,164 @@
+{
+  "id": "lavik-stream-retention-and-pending-deliveries",
+  "locale": "en",
+  "version": "0.2.0",
+  "kind": "blog",
+  "slug": "lavik-stream-retention-and-pending-deliveries",
+  "title": "Your stream is short. Its pending list is not.",
+  "summary": "A hypothetical image-processing queue shows why replay retention, pending deliveries, and physical storage need separate budgets—and how Lavik’s NVMe-backed Streams support that design.",
+  "updatedAt": "2026-11-01",
+  "publishedAt": "2026-11-01",
+  "sourceRevision": "2908f86f2770e9c6e8acc6585b3bedb4b44d1cd5",
+  "topics": [
+    "use-case",
+    "architecture",
+    "best-practise"
+  ],
+  "featured": false,
+  "technical": {
+    "sources": [
+      {
+        "id": "overview",
+        "title": "Lavik 0.2.0 overview",
+        "url": "https://github.com/eloqdata/lavik/blob/2908f86f2770e9c6e8acc6585b3bedb4b44d1cd5/README.md",
+        "file": "evidence/docs/0.2.0/sources/README.md",
+        "sha256": "ec6f4352e39da4115d875de16baa3a490851d106fb6f2f3d508f29d726f310c3"
+      },
+      {
+        "id": "streams",
+        "title": "Streams at Lavik 0.2.0",
+        "url": "https://github.com/eloqdata/lavik/blob/2908f86f2770e9c6e8acc6585b3bedb4b44d1cd5/docs/architecture/12-streams.md",
+        "file": "evidence/docs/0.2.0/sources/docs_architecture_12-streams.md",
+        "sha256": "56c73f23cc27678d71acde798e1a84d6259d52dcb89f6538a8fa30cd9aa484cc"
+      },
+      {
+        "id": "collections",
+        "title": "Grouped collections at Lavik 0.2.0",
+        "url": "https://github.com/eloqdata/lavik/blob/2908f86f2770e9c6e8acc6585b3bedb4b44d1cd5/docs/architecture/09-grouped-collections.md",
+        "file": "evidence/docs/0.2.0/sources/docs_architecture_09-grouped-collections.md",
+        "sha256": "f7367fb37ea43a82075c7036fb3c3261168c73c9e781869533b62dedf8701e01"
+      },
+      {
+        "id": "storage",
+        "title": "Storage and recovery at Lavik 0.2.0",
+        "url": "https://github.com/eloqdata/lavik/blob/2908f86f2770e9c6e8acc6585b3bedb4b44d1cd5/docs/architecture/04-storage-and-recovery.md",
+        "file": "evidence/docs/0.2.0/sources/docs_architecture_04-storage-and-recovery.md",
+        "sha256": "79b2bf3dbe629fae7f65a702e13cee4c4a33b9b18e763d4ee72a953dc5257b1b"
+      }
+    ],
+    "visuals": []
+  },
+  "blocks": [
+    {
+      "type": "heading",
+      "text": "Two lifetimes inside one stream"
+    },
+    {
+      "type": "paragraph",
+      "text": "A work queue can have few messages and still carry substantial unfinished delivery state. In Lavik 0.2.0, a Stream contains an ordered message sequence, while each consumer group independently retains its cursor, consumers, and pending-entry list, or PEL. XACK removes pending state without deleting the message. Deleting or trimming a message can remove its payload while leaving pending references behind. Even an empty Stream can retain groups, PEL entries, and ID history. XLEN therefore answers a useful but narrow question: how many messages remain, not how much state the queue retains.",
+      "sources": [
+        "streams"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "Consider a hypothetical image-processing service. An authoritative job record lives in another database, the original image lives in object storage, and a Stream message names the job and requested transformation. Workers use a consumer group to receive work. The application wants to retain messages for replay after a processing defect, while also recovering deliveries abandoned by crashed workers. These are separate requirements: replay needs message payloads; delivery recovery needs pending ownership and application job state. Lavik’s separation of messages and group state makes that distinction explicit, but the application must decide how the two lifetimes interact.",
+      "sources": [
+        "streams"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "Follow one job through completion, a crash, and trimming"
+    },
+    {
+      "type": "paragraph",
+      "text": "Suppose the application assigns job A a stable identity that includes the intended transformation version. A worker receives its message through XREADGROUP, creating pending delivery state. In this proposed application design, the worker writes the output to a location associated with that identity and records completion in the authoritative database before acknowledging the delivery. If XACK succeeds, the pending entry is removed, but the message remains available within the chosen replay window. Successful processing and message retention now have deliberately different endpoints.",
+      "sources": [
+        "streams"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "Next, a worker receives job B, completes its output and completion record, then crashes before acknowledgement. B remains pending. The application’s recovery process can use XCLAIM or XAUTOCLAIM to take over pending work. A replacement worker first checks the authoritative completion record; in this hypothetical policy, it acknowledges an already completed job instead of repeating its effects. Stable job identities and idempotent output handling address the gap between application completion and acknowledgement. Claiming a delivery changes its handling within the consumer group; it does not by itself establish whether the external image operation finished.",
+      "sources": [
+        "streams"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "Finally, a worker receives job C and crashes before producing output. While C remains pending, the application’s retention policy trims its message. The pending reference can survive even though its payload is gone. A claim cannot be treated as a promise that the original work description is still available. In this design, reconciliation uses the authoritative job record to identify incomplete work and arrange a replacement delivery. If the only work description had lived in the trimmed message, that recovery path would be unavailable. Retention therefore determines how long Stream-based replay remains possible, independently of whether pending state still exists.",
+      "sources": [
+        "streams"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "Choose what acknowledgement means"
+    },
+    {
+      "type": "paragraph",
+      "text": "For this service, acknowledgement would mean that the application has recorded either successful completion or an explicit terminal outcome elsewhere. Retry and claim handling would check that record, distinguish slow work from abandoned work using an application-selected timeout, and route repeatedly failing jobs to an application-defined review state. A deliberate reprocessing run would use a new transformation version so that idempotency does not suppress intended work. These are application decisions, not properties supplied by XACK. Because consumer groups retain independent state, removing a pending entry in one group also does not settle every other group’s delivery state.",
+      "sources": [
+        "streams"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "The resulting capacity model has two independently growing parts. The replay budget covers retained messages and their payload sizes. The delivery-state budget covers groups, consumers, and pending entries that remain unresolved. A long replay window can retain many messages even when acknowledgements are prompt; a stalled group can accumulate pending state while trimming keeps XLEN small. XINFO and XPENDING expose summary or selected inspection information, but inspecting everything is not a constant-space operation. A COUNT limit bounds the selected reply or read window, not the total message history or pending state retained by the server.",
+      "sources": [
+        "streams"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "How useful replay history fits on NVMe"
+    },
+    {
+      "type": "paragraph",
+      "text": "Lavik separates an in-memory key index from storage-backed values. For grouped Streams, ordered pages contain messages, logical macro-node metadata, group headers, consumers, and individual pending entries. Neither an entire consumer group nor its entire PEL is one indivisible page item. The resident directory retains page identities, links, counts, and bounded routing keys, together with a cached fixed Stream header; it does not retain all message, consumer, or PEL payloads. This provides a storage structure for keeping useful replay history on NVMe while still budgeting memory for routing metadata and admitted operations.",
+      "sources": [
+        "overview",
+        "streams",
+        "collections"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "The access paths follow the requested work. XACK touches target-group metadata, specified pending IDs, and the PEL count. Range reads and XREADGROUP replies pin the relevant immutable root and selected pages, then drain admitted decoded pages under network backpressure. Continuous message ranges can use bounded concurrent read windows, with COUNT limiting the pages needed and an aggregate byte budget bounding decoded pages and scheduling metadata. That matters for a replay worker: retaining a long history does not require each selected range read to load the entire Stream. Large individual records and broad mutation or inspection requests still have to fit memory admission.",
+      "sources": [
+        "streams"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "Trimming has a separate logical structure. Approximate trimming follows persisted live-entry counts in logical macro nodes, which are independent of physical storage pages. Page splits do not redefine those trimming units, and their counts preserve the boundaries across recovery or changes to stream-node-max-entries. Complete removed page ranges can be retired without reading their payloads, but logical removal is not immediate reusable space. Snapshot and reader pins, retirement processing, and storage reclamation govern when obsolete physical storage can return to the allocator. A replay budget therefore needs room for the transition between retained data and reclaimed capacity.",
+      "sources": [
+        "streams",
+        "collections",
+        "storage"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "Keep the storage boundary in the application design"
+    },
+    {
+      "type": "paragraph",
+      "text": "NVMe-backed storage does not make an ordinary successful command a synchronous durability fence. Lavik can publish readable state before the corresponding crash-durability boundary. Similarly, an append or delivery wakes blocked readers after successful publication; that wakeup is not evidence of a disk flush. Keeping the authoritative job record elsewhere gives this hypothetical service a basis for reconciling incomplete work when Stream state is insufficient. This queue design does not establish suitability for every event log or certify a production workload. The pinned documentation also labels internal Stream wire and storage schemas unreleased, so their descriptions are not compatibility promises.",
+      "sources": [
+        "streams",
+        "storage"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "A useful next step is to read the 0.2.0 Streams document alongside Grouped collections and Storage and recovery, then evaluate the three job histories above against the application’s own completion records. The evaluation should establish what remains replayable, how a completed but unacknowledged job is recognized, and how incomplete work is recovered after its message disappears. Capacity observations should include pending state and available storage as well as XLEN. That connects the reason for retaining history on NVMe to a concrete application contract: useful replay data, explicitly resolved deliveries, and a recovery path for work that outlives its message.",
+      "sources": [
+        "streams",
+        "collections",
+        "storage"
+      ]
+    }
+  ]
+}
