@@ -1,0 +1,131 @@
+{
+  "id": "lavik-field-notes-2026-11-02",
+  "locale": "en",
+  "version": "0.1.0",
+  "kind": "blog",
+  "slug": "lavik-field-notes-2026-11-02",
+  "title": "Evaluate the client that stops reading",
+  "summary": "An NVMe-backed activity history can outgrow RAM while its API still returns small pages. Evaluate Redis client compatibility at the response boundary: decoding, range semantics, cancellation, and slow consumers.",
+  "updatedAt": "2026-11-02",
+  "sourceRevision": "471f4864357f4a5034c64e7d4972ec0e55b82d94",
+  "topics": [
+    "use-case",
+    "best-practise",
+    "architecture"
+  ],
+  "blocks": [
+    {
+      "type": "paragraph",
+      "text": "An activity-history service usually displays a small page even when it retains a long history. Consider a hypothetical support dashboard that shows 50 events per account and occasionally exports an account’s history. Lavik 0.1.0 offers a concrete reason to keep more of that reconstructable history online: values reside on NVMe while key and routing metadata remain in memory, behind a Redis-compatible interface. The client evaluation should therefore include what happens when a response becomes large—or its reader disappears.",
+      "sources": [
+        "current-010-readme",
+        "current-010-collections"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "Make the page the application’s unit of work"
+    },
+    {
+      "type": "paragraph",
+      "text": "A useful design is a List per account and time bucket, with bounded event sizes and a capped page size. Lavik promotes compact collections at 16 KiB of encoded size and targets 8 KiB groups; indivisible entries can exceed that target. Grouped List range reads locate the relevant rank pages, validate those pages, and copy only requested values into the reply. This supports retaining a larger history without requiring every page request to materialize the entire List. Time buckets are an application design choice, not an automatic Lavik feature.",
+      "sources": [
+        "current-010-collections"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "For a worked example, suppose each encoded event is at most 1 KiB. A 50-event page then carries at most 50 KiB of event payload, before RESP framing and client object overhead. Fetching 100,000 such events could carry about 97.7 MiB instead. These are application sizing calculations, not measurements. Bound both event size and result count: a count limit alone cannot bound response bytes. Keep exports separate from interactive page requests so the application can assign them different concurrency and timeout budgets.",
+      "sources": [
+        "current-010-collections",
+        "current-010-requests"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "Evaluate the exact response contract"
+    },
+    {
+      "type": "paragraph",
+      "text": "Protocol: exercise the actual client library and decoder in each protocol mode you intend to support. Lavik connections begin in RESP2; HELLO can negotiate RESP3, whose replies can include native nulls, maps, sets, and push frames. For this dashboard, record the library-level results of List range and length reads, including empty results and binary event payloads. If the same client also reads Hash metadata, check its RESP3 map handling explicitly. A successful connection or PING does not exercise these response shapes.",
+      "sources": [
+        "current-010-requests"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "Commands: define fixtures for LRANGE and LLEN at an empty bucket, a page boundary, and the last partial page, plus the actual List writes used by ingestion. Include missing keys and keys holding the wrong type, and record the exact error or value exposed by the library. Repeat the relevant reads while ingestion changes the List. Each grouped range read uses an immutable routing view, but separate page requests do not constitute one application snapshot. For a stable export, an application can seal a time bucket against further writes before paging it; active-bucket pagination needs an explicit policy for duplicates or shifts.",
+      "sources": [
+        "current-010-collections",
+        "current-010-requests"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "Errors: distinguish an empty result from WRONGTYPE, memory-admission rejection, and managed-serving errors such as LOADING or TRYAGAIN. Lavik admits reply and selected-page memory, so a large request can encounter a resource limit even when storage has room for the retained history. The application should preserve the error category rather than rendering every failed read as “no events.” Exercise the selected deployment mode: Cluster adds same-slot constraints to multi-key requests, whereas a single-key List page does not need a cross-key transaction.",
+      "sources": [
+        "current-010-collections",
+        "current-010-requests"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "Make slow readers part of acceptance"
+    },
+    {
+      "type": "paragraph",
+      "text": "Timeouts: interrupt a response after the client has received only part of it, then observe how the library handles that connection. The acceptance condition is that a later request cannot consume leftover bytes as its own reply; determine whether the library drains the response or discards the connection. Measure application completion time, including decoding and client memory growth, alongside server command latency. Lavik retains owned reply fragments or storage leases through socket writes, so command execution and delivery are distinct parts of the request lifetime. These are proposed evaluation cases, not reported test results.",
+      "sources": [
+        "current-010-requests",
+        "current-010-storage"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "Operational behavior: compare an ordinary 50-event page with a deliberately slow export and a disconnected reader. Observe whether interactive requests still meet your latency budget and whether retained memory settles after cleanup. Lavik’s memory setting governs accumulating retained state rather than imposing a strict RSS ceiling; request buffers, I/O, and allocator overhead also need headroom. If an administrative tool uses KEYS during the exercise, treat it separately: its streamed reply can hold an exclusive database gate and delay population replacement. The documented 30-second watchdog bounds lack of network progress, not total response duration, so a slowly progressing consumer is a distinct case.",
+      "sources": [
+        "current-010-requests",
+        "current-010-storage"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "If the dashboard adds live Pub/Sub notifications, test them as another consumer path. RESP2 subscribed connections have restricted command access; RESP3 allows ordinary commands alongside push messages. Slow subscribers are disconnected when output limits are exceeded, and reconnecting does not replay missed messages. Keep retained activity history as the application’s recovery path, and use notifications to prompt a fresh page read. A reconnect should restore the subscription and refresh the displayed history rather than imply that every notification was delivered.",
+      "sources": [
+        "current-010-requests"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "Adopt for retained capacity, accept on delivered pages"
+    },
+    {
+      "type": "paragraph",
+      "text": "This design gives Lavik a specific role: retain more reconstructable activity data on NVMe while keeping interactive reads bounded. It can reduce the pressure to provision DRAM for all retained values, although indexes, routing metadata, reply buffers, replicas, and reclamation still consume resources. Ordinary successful writes are not synchronous crash-durability fences, so retain the upstream source needed to rebuild this history. There is no List-pagination benchmark in the supplied evidence; String GET/SET throughput cannot establish this dashboard’s latency or cost. The capacity mechanism supports an adoption hypothesis, but does not establish measured total-cost savings or equivalent SLAs.",
+      "sources": [
+        "current-010-readme",
+        "current-010-collections",
+        "current-010-storage",
+        "current-010-memory"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "Start with one sealed bucket and one actively updated bucket using your production client. Define expected decoded values, error categories, page-byte limits, and connection behavior after an interrupted reply. Then compare normal paging, a slow export, and disconnect cleanup at the concurrency your application expects. That produces a concrete adoption decision: whether the larger retained history fits the resource budget while the client continues delivering correct, bounded pages.",
+      "sources": [
+        "current-010-collections",
+        "current-010-requests",
+        "current-010-storage"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "Publication references: Lavik 0.1.0 is the current stable release and is open source under Apache 2.0. Use the release-pinned 0.1.0 manual entry point for installation and operational procedures: https://github.com/eloqdata/lavik/blob/471f4864357f4a5034c64e7d4972ec0e55b82d94/README.md . For managed migration: https://github.com/eloqdata/lavik/blob/471f4864357f4a5034c64e7d4972ec0e55b82d94/docs/operations/redis-import.md . Related reading: “Evaluate the Redis client’s second attempt” at /en/blog/lavik-field-notes-2026-09-28/ ; “Price the capacity you can keep available” at /en/blog/lavik-field-notes-2026-10-10/ ; “What the NVMe benchmark tells us” at /en/blog/reading-the-benchmark/ .",
+      "sources": [
+        "current-010-readme",
+        "current-010-import",
+        "current-010-memory"
+      ]
+    }
+  ]
+}

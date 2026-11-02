@@ -1,0 +1,131 @@
+{
+  "id": "lavik-field-notes-2026-11-02",
+  "locale": "zh-CN",
+  "version": "0.1.0",
+  "kind": "blog",
+  "slug": "lavik-field-notes-2026-11-02",
+  "title": "评估那个停止读取响应的客户端",
+  "summary": "NVMe 上的活动历史可以超过内存容量，而 API 仍然只返回小页面。从响应边界评估 Redis 客户端兼容性：解码、范围语义、取消请求与慢消费者。",
+  "updatedAt": "2026-11-02",
+  "sourceRevision": "471f4864357f4a5034c64e7d4972ec0e55b82d94",
+  "topics": [
+    "use-case",
+    "best-practise",
+    "architecture"
+  ],
+  "blocks": [
+    {
+      "type": "paragraph",
+      "text": "活动历史服务即使保留了很长的历史，通常也只展示一小页。设想一个客服面板：每次显示某个账户的 50 条事件，偶尔导出该账户的历史。Lavik 0.1.0 为保留更多可重建的在线历史提供了具体理由：值存储在 NVMe 上，键索引和路由元数据保留在内存中，并提供兼容 Redis 的接口。因此，客户端评估也应覆盖响应变大，以及读取响应的客户端中途消失时的行为。",
+      "sources": [
+        "current-010-readme",
+        "current-010-collections"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "以页面作为应用的工作单位"
+    },
+    {
+      "type": "paragraph",
+      "text": "一种实用设计是按账户和时间桶分别建立 List，同时限制事件大小和每页条数。Lavik 在紧凑集合的编码大小达到 16 KiB 时将其提升为分组表示，目标组大小为 8 KiB；不可拆分的条目可以超过这一目标。分组 List 的范围读取会定位相关排名页、校验这些页，并且只把请求的值复制到响应中。这使应用能够保留更长的历史，而不必在每次翻页时物化整个 List。时间分桶是应用设计，并非 Lavik 自动提供的功能。",
+      "sources": [
+        "current-010-collections"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "举例来说，假设每条编码后的事件最多为 1 KiB，那么 50 条事件的一页最多包含 50 KiB 的事件载荷，另加 RESP 封装和客户端对象开销。一次获取 100,000 条这样的事件，则可能携带约 97.7 MiB 载荷。这是应用容量计算，不是实测结果。应同时限制事件大小和结果条数：只限制条数无法限制响应字节数。将导出与交互式翻页分开，让应用能够为两者设置不同的并发和超时预算。",
+      "sources": [
+        "current-010-collections",
+        "current-010-requests"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "评估准确的响应契约"
+    },
+    {
+      "type": "paragraph",
+      "text": "协议：在准备支持的每种协议模式下，使用实际客户端库及其解码器进行评估。Lavik 连接初始使用 RESP2；HELLO 可以协商 RESP3，后者的响应可以包含原生空值、映射、集合和推送帧。对于这个面板，应记录客户端库返回的 List 范围与长度读取结果，包括空结果和二进制事件载荷。如果同一客户端还读取 Hash 元数据，也要明确检查 RESP3 映射的处理方式。连接成功或 PING 成功并不能覆盖这些响应形态。",
+      "sources": [
+        "current-010-requests"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "命令：为 LRANGE 和 LLEN 准备空桶、页面边界、最后一个不足整页的页面等数据样例，并加入写入流程实际使用的 List 命令。还应覆盖键不存在和键持有错误类型的情况，记录客户端库暴露的准确错误或值。在写入流程修改 List 时重复相关读取。单次分组范围读取使用不可变路由视图，但多次翻页请求并不构成一个应用快照。需要稳定导出时，应用可以先封存时间桶、停止对其写入，再分页读取；读取仍在更新的桶，则需要明确处理重复条目或位置变化的策略。",
+      "sources": [
+        "current-010-collections",
+        "current-010-requests"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "错误：区分空结果、WRONGTYPE、内存准入拒绝，以及 LOADING、TRYAGAIN 等托管服务错误。Lavik 会对响应和选中页面所需的内存进行准入控制，因此，即使存储仍有空间保留历史，大请求也可能触及资源限制。应用应保留错误类别，不要把所有读取失败都显示成“没有事件”。还要覆盖实际选择的部署模式：Cluster 对多键请求增加了同槽约束，而单键 List 页面不需要跨键事务。",
+      "sources": [
+        "current-010-collections",
+        "current-010-requests"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "把慢读者纳入验收"
+    },
+    {
+      "type": "paragraph",
+      "text": "超时：在客户端只收到部分响应时中断请求，观察客户端库如何处理该连接。验收条件是，后续请求不能把残留字节误认为自己的响应；需要确认客户端库会排空响应，还是丢弃连接。除服务端命令延迟外，还应测量包含解码过程的应用完成时间和客户端内存增长。Lavik 在套接字写入期间会保留响应片段的所有权或存储租约，因此，命令执行和响应交付是请求生命周期中不同的环节。这里提出的是评估案例，不是已完成的测试结果。",
+      "sources": [
+        "current-010-requests",
+        "current-010-storage"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "运行行为：比较普通的 50 条事件页面、刻意放慢的导出，以及断开连接的读取者。观察交互式请求是否仍满足延迟预算，以及清理结束后保留内存是否回落。Lavik 的内存设置约束的是持续累积的保留状态，并非严格的 RSS 上限；请求缓冲区、I/O 和分配器开销也需要余量。如果管理工具在评估期间使用 KEYS，应单独观察：其流式响应可能持有数据库独占门控，从而延迟数据集替换。文档中的 30 秒看门狗限制的是网络无进展的时间，并非响应总时长，因此，持续缓慢读取的消费者需要单独评估。",
+      "sources": [
+        "current-010-requests",
+        "current-010-storage"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "如果面板加入实时 Pub/Sub 通知，应将其作为另一条消费路径测试。RESP2 订阅连接只能执行受限命令；RESP3 允许普通命令与推送消息共用连接。慢订阅者超出输出限制时会被断开，重新连接也不会重放遗漏消息。可以让保留的活动历史承担应用恢复职责，让通知仅用于触发重新读取页面。重连后应恢复订阅并刷新已显示的历史，而不能据此认为所有通知都已送达。",
+      "sources": [
+        "current-010-requests"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "为保留容量而采用，以页面交付来验收"
+    },
+    {
+      "type": "paragraph",
+      "text": "这个设计为 Lavik 确定了具体用途：在 NVMe 上保留更多可重建的活动数据，同时限制交互式读取的规模。它可以减轻为全部保留值配置 DRAM 的压力，不过索引、路由元数据、响应缓冲区、副本和空间回收仍然消耗资源。普通写入成功并不是同步的崩溃持久性屏障，因此应保留重建这份历史所需的上游来源。所提供的证据中没有 List 分页基准，String GET/SET 吞吐量不能证明这个面板的延迟或成本。这种容量机制为采用 Lavik 提供了值得验证的理由，但并未证明实测总成本节省或 SLA 等价。",
+      "sources": [
+        "current-010-readme",
+        "current-010-collections",
+        "current-010-storage",
+        "current-010-memory"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "下一步，用生产客户端连接一个已封存的桶和一个持续更新的桶。明确预期解码值、错误类别、每页字节上限，以及响应中断后的连接行为。随后在应用预期的并发水平下，比较正常分页、慢速导出和断连清理。这样可以形成具体的采用依据：在更长历史符合资源预算的同时，客户端能否持续交付正确且大小受限的页面。",
+      "sources": [
+        "current-010-collections",
+        "current-010-requests",
+        "current-010-storage"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "发布参考：Lavik 0.1.0 是当前稳定版，以 Apache 2.0 许可证开源。安装与运维步骤请从固定到该版本的 0.1.0 手册入口查看：https://github.com/eloqdata/lavik/blob/471f4864357f4a5034c64e7d4972ec0e55b82d94/README.md 。托管部署迁移指南：https://github.com/eloqdata/lavik/blob/471f4864357f4a5034c64e7d4972ec0e55b82d94/docs/operations/redis-import.md 。延伸阅读（英文）：《评估 Redis 客户端的第二次尝试》 /en/blog/lavik-field-notes-2026-09-28/ ；《为能够保持可用的容量定价》 /en/blog/lavik-field-notes-2026-10-10/ ；《NVMe 基准告诉了我们什么》 /en/blog/reading-the-benchmark/ 。",
+      "sources": [
+        "current-010-readme",
+        "current-010-import",
+        "current-010-memory"
+      ]
+    }
+  ]
+}
