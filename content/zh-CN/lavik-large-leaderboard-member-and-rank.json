@@ -1,0 +1,183 @@
+{
+  "id": "lavik-large-leaderboard-member-and-rank",
+  "locale": "zh-CN",
+  "version": "0.2.0",
+  "kind": "blog",
+  "slug": "lavik-large-leaderboard-member-and-rank",
+  "title": "一张排行榜，两条查找选手的路径",
+  "summary": "赛季排行榜需要让有序榜单与个人分数查询保持一致。本文介绍 Lavik 0.2.0 如何一起更新 Sorted Set 的两套索引，以及应用应如何处理分数事件。",
+  "updatedAt": "2026-11-07",
+  "publishedAt": "2026-11-07",
+  "sourceRevision": "2908f86f2770e9c6e8acc6585b3bedb4b44d1cd5",
+  "topics": [
+    "use-case",
+    "architecture",
+    "best-practise"
+  ],
+  "featured": false,
+  "technical": {
+    "sources": [
+      {
+        "id": "overview",
+        "title": "Lavik 0.2.0 overview",
+        "url": "https://github.com/eloqdata/lavik/blob/2908f86f2770e9c6e8acc6585b3bedb4b44d1cd5/README.md",
+        "file": "evidence/docs/0.2.0/sources/README.md",
+        "sha256": "ec6f4352e39da4115d875de16baa3a490851d106fb6f2f3d508f29d726f310c3"
+      },
+      {
+        "id": "requests",
+        "title": "Request serving at Lavik 0.2.0",
+        "url": "https://github.com/eloqdata/lavik/blob/2908f86f2770e9c6e8acc6585b3bedb4b44d1cd5/docs/architecture/02-request-serving.md",
+        "file": "evidence/docs/0.2.0/sources/docs_architecture_02-request-serving.md",
+        "sha256": "6faf35de1a1f339c50087a701fdf51e5a194ed7ed87325da937ceb9939d8f79b"
+      },
+      {
+        "id": "collections",
+        "title": "Grouped collections at Lavik 0.2.0",
+        "url": "https://github.com/eloqdata/lavik/blob/2908f86f2770e9c6e8acc6585b3bedb4b44d1cd5/docs/architecture/09-grouped-collections.md",
+        "file": "evidence/docs/0.2.0/sources/docs_architecture_09-grouped-collections.md",
+        "sha256": "f7367fb37ea43a82075c7036fb3c3261168c73c9e781869533b62dedf8701e01"
+      },
+      {
+        "id": "storage",
+        "title": "Storage and recovery at Lavik 0.2.0",
+        "url": "https://github.com/eloqdata/lavik/blob/2908f86f2770e9c6e8acc6585b3bedb4b44d1cd5/docs/architecture/04-storage-and-recovery.md",
+        "file": "evidence/docs/0.2.0/sources/docs_architecture_04-storage-and-recovery.md",
+        "sha256": "79b2bf3dbe629fae7f65a702e13cee4c4a33b9b18e763d4ee72a953dc5257b1b"
+      }
+    ],
+    "visuals": []
+  },
+  "blocks": [
+    {
+      "type": "paragraph",
+      "text": "设想一款名为 Summit Circuit 的游戏，每个赛季都会开启新的竞赛。首页展示领先选手，回归玩家则想查看自己的分数和排名。已经结束的赛季仍然保留，供玩家比较。这是一个假设的应用设计，并非经过测量的部署案例。Lavik 0.2.0 提供了值得探索的基础：兼容 Redis 的 Sorted Set，将值存放在 NVMe 上，在内存中保留紧凑的键索引及大型集合的路由元数据。因此，让更多可重建的排名数据持续在线，是评估采用 Lavik 的一个实际理由。",
+      "sources": [
+        "overview",
+        "collections"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "查领先选手与查个人，提出的是不同问题"
+    },
+    {
+      "type": "paragraph",
+      "text": "Summit Circuit 可以为每个赛季设置独立的排行榜键，并以稳定的参赛者标识作为成员。这些都是应用层的设计选择。领先选手视图需要按排名或分数读取有序范围；个人视图则从成员标识出发，查询分数或排名。Lavik 的分组 Sorted Set 通过两套持久化结构支持这些查询：按（分数，成员）排序的页面，以及将成员映射到分数的前缀索引。成员索引保存的是分数，而不是有序页的地址，因此有序页分裂不会使成员路由失效。",
+      "sources": [
+        "collections"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "较小的 Sorted Set 使用紧凑存储。写入使集合的编码大小达到 16 KiB 时，系统会自动将其转换为分组表示；每组的目标大小为 8 KiB，但不可拆分的条目可能超过该目标。在分组表示中，每个成员同时出现在有序页和成员到分数的索引中。常驻内存的目录保留页级分数边界和排名元数据，而不是每个成员及其分数。将载荷移到存储设备上改变了内存必须保留的内容，但并不意味着内存消耗恒定。",
+      "sources": [
+        "collections"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "跟随一次分数变化，观察两套索引"
+    },
+    {
+      "type": "paragraph",
+      "text": "假设 player-17 从 120 分升至 150 分，而 player-42 已经是 150 分。应用希望查询 player-17 时得到 150，同时有序榜单也将这个成员放到新位置。在 Lavik 中，专用的分数更新路径会先通过成员索引找到旧分数，再定位原来的有序页，并为两套图结构准备变更。它可以从旧位置删除有序条目，再将其插入其他位置，而不必保留或重写新旧位置之间的全部值。",
+      "sources": [
+        "collections"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "准备阶段会对照两套索引验证请求涉及的旧成员。有变化的有序页、成员前缀快照以及必要的结构调整，共用一个命令局部决议，并通过同一个根发布。仅写入辅助页不会改变用户可见的集合。两套图结构一起变为可见，因此失败不会让成员查询已经返回新分数，而有序位置仍停留在旧处，反过来也一样。对于分数不断变化的排行榜，这种一致性是核心属性。",
+      "sources": [
+        "collections"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "局部修改仍然需要协调。整个集合依然是一个键，受键所属工作线程的仲裁；成员分布在不同页面，并不意味着它们可以由独立写入者互不协调地更新。Lavik 在准备分组 Sorted Set 变更时可以释放工作线程的存储状态，但仍保留键意向，并在发布前验证数据群体和逻辑根。即使载荷能够轻松容纳在 NVMe 上，竞争激烈的单个排行榜也值得单独评估。",
+      "sources": [
+        "collections",
+        "storage"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "同分选手需要明确的产品规则"
+    },
+    {
+      "type": "paragraph",
+      "text": "考虑一个仅有三名选手的示例：player-17 为 150 分，player-42 为 150 分，player-09 为 180 分。按（分数，二进制成员）升序排列时，player-17 在 player-42 前面，随后是 player-09。逆序则是 player-09、player-42、player-17：逆序也会反转同分成员之间的顺序。二进制成员排序比较的是标识符的字节，并不表示谁先达到这个分数，也不表示谁的显示名称应该排在前面。",
+      "sources": [
+        "collections"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "Summit Circuit 可以选择让两位 150 分选手显示为并列名次。这是一项拟议的产品规则，与他们在 Sorted Set 全序中各自占据的位置不同。应用还需要决定并列之后的名次如何编号。稳定的标识符能为存储提供确定的同分顺序，但界面不应悄然将这个顺序变成竞赛规则。如果到达分数的时间影响比赛结果，应用就需要明确设计这种语义。",
+      "sources": [
+        "collections"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "页面路由缩小查找范围，但同分仍有成本"
+    },
+    {
+      "type": "paragraph",
+      "text": "指定排名范围的读取，从排名目录定位的页面开始；分数范围查询利用常驻内存的页级分数边界寻找候选区间。查询个人分数时，Lavik 读取选中的成员前缀页。查询该成员的排名还需要进一步处理：先解析出分数，再到候选有序页中查找确切成员，最后将其页内位置与目录中的 Fenwick 前缀计数结合。两条访问路径指向同一个逻辑成员，但执行的存储工作不同。",
+      "sources": [
+        "collections"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "当许多玩家都达到同一个分数上限时，这种区别尤其重要。分数边界能够跳过无关页面，但较长的同分区间仍需要逐页精确比较成员；成员查找的工作量可能随集合规模增长。大范围 Sorted Set 聚合又有不同的成本：它会物化经过内存准入的逻辑输入和聚合结果，并可能因内存不足而被拒绝。因此，大量同分的赛季或跨榜聚合功能，需要超出小范围榜首查询的评估。仅凭架构无法得出排行榜的延迟上界。",
+      "sources": [
+        "collections"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "存储原子更新仍需配合应用的分数处理"
+    },
+    {
+      "type": "paragraph",
+      "text": "对于这款假想游戏，权威事件与分数来源将始终作为赛季重建和对账的依据。应用可以发布从该来源推导出的绝对分数。重复提交同一个预期绝对值，可以避免把同一份积分加两遍，但迟到的旧更新仍可能覆盖新分数。在这个设计中，更新顺序和分数处理的幂等性属于应用职责；Sorted Set 的双索引发布并不提供事件去重。",
+      "sources": [
+        "collections",
+        "requests"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "增量加分尤其需要注意网络边界。一次超时的增量更新可能已经执行，盲目重试就可能重复计分。连接清理期间，在途工作可能完成，而回复并未发送，因此没有收到响应并不能证明数据没有变化。Summit Circuit 拟议的分数处理器应依据权威来源解决结果不确定的情况，而不是把超时视为可以再次加分的许可。",
+      "sources": [
+        "requests",
+        "collections"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "原子发布也有明确的作用范围。不同 HTTP 调用可能观察到不同的已完成分数更新；分别提交到赛季榜和总榜两个键的变更，也不会自动组成一个应用事务。Lavik 为适用的多键操作提供 MULTI/EXEC 和 Lua 协调；在集群模式下，这些键必须处于同一哈希槽。另一个独立边界是：普通命令成功返回，并不构成同步的崩溃持久化屏障。两套索引的一致性、应用事务范围，以及回复时的数据持久化状态，是不同的属性。",
+      "sources": [
+        "requests",
+        "storage",
+        "collections"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "在赛季持续变化时评估它"
+    },
+    {
+      "type": "paragraph",
+      "text": "一个有价值的采用评估起点，是使用可重建的分数历史，构造有代表性的赛季负载。其中应包含普通分数移动、进入长同分区间的更新、个人分数与排名查询，以及产品实际需要的大范围查询。在暂停变更的对照时点，权威分数、成员查询和有序榜单应按照选定的同分规则保持一致。同时，也让拟议的应用处理器经历更新结果不确定的情况。这样，Lavik 基于 NVMe 的排名存储就与真正重要的功能联系起来：让历史赛季持续可查，同时在当前赛季不断变化时维持一致的榜单。",
+      "sources": [
+        "overview",
+        "collections",
+        "requests"
+      ]
+    }
+  ]
+}

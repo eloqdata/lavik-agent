@@ -1,0 +1,183 @@
+{
+  "id": "lavik-large-leaderboard-member-and-rank",
+  "locale": "en",
+  "version": "0.2.0",
+  "kind": "blog",
+  "slug": "lavik-large-leaderboard-member-and-rank",
+  "title": "One leaderboard, two ways to find a player",
+  "summary": "A seasonal leaderboard needs ordered standings and individual score lookups to agree. Explore how Lavik 0.2.0 updates both Sorted Set indexes together, and what that means for application score processing.",
+  "updatedAt": "2026-11-07",
+  "publishedAt": "2026-11-07",
+  "sourceRevision": "2908f86f2770e9c6e8acc6585b3bedb4b44d1cd5",
+  "topics": [
+    "use-case",
+    "architecture",
+    "best-practise"
+  ],
+  "featured": false,
+  "technical": {
+    "sources": [
+      {
+        "id": "overview",
+        "title": "Lavik 0.2.0 overview",
+        "url": "https://github.com/eloqdata/lavik/blob/2908f86f2770e9c6e8acc6585b3bedb4b44d1cd5/README.md",
+        "file": "evidence/docs/0.2.0/sources/README.md",
+        "sha256": "ec6f4352e39da4115d875de16baa3a490851d106fb6f2f3d508f29d726f310c3"
+      },
+      {
+        "id": "requests",
+        "title": "Request serving at Lavik 0.2.0",
+        "url": "https://github.com/eloqdata/lavik/blob/2908f86f2770e9c6e8acc6585b3bedb4b44d1cd5/docs/architecture/02-request-serving.md",
+        "file": "evidence/docs/0.2.0/sources/docs_architecture_02-request-serving.md",
+        "sha256": "6faf35de1a1f339c50087a701fdf51e5a194ed7ed87325da937ceb9939d8f79b"
+      },
+      {
+        "id": "collections",
+        "title": "Grouped collections at Lavik 0.2.0",
+        "url": "https://github.com/eloqdata/lavik/blob/2908f86f2770e9c6e8acc6585b3bedb4b44d1cd5/docs/architecture/09-grouped-collections.md",
+        "file": "evidence/docs/0.2.0/sources/docs_architecture_09-grouped-collections.md",
+        "sha256": "f7367fb37ea43a82075c7036fb3c3261168c73c9e781869533b62dedf8701e01"
+      },
+      {
+        "id": "storage",
+        "title": "Storage and recovery at Lavik 0.2.0",
+        "url": "https://github.com/eloqdata/lavik/blob/2908f86f2770e9c6e8acc6585b3bedb4b44d1cd5/docs/architecture/04-storage-and-recovery.md",
+        "file": "evidence/docs/0.2.0/sources/docs_architecture_04-storage-and-recovery.md",
+        "sha256": "79b2bf3dbe629fae7f65a702e13cee4c4a33b9b18e763d4ee72a953dc5257b1b"
+      }
+    ],
+    "visuals": []
+  },
+  "blocks": [
+    {
+      "type": "paragraph",
+      "text": "Imagine a game called Summit Circuit that runs a new competition each season. Its home screen shows the leaders; a returning player wants their own score and standing. Completed seasons remain available for comparison. This is a hypothetical application design, not a measured deployment. Lavik 0.2.0 offers a useful foundation: Redis-compatible Sorted Sets with values on NVMe, a compact key index in memory, and routing metadata for large collections. That makes retaining more reconstructable ranking data online an adoption reason worth exploring.",
+      "sources": [
+        "overview",
+        "collections"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "The leaders and one player ask different questions"
+    },
+    {
+      "type": "paragraph",
+      "text": "Summit Circuit would use a separate leaderboard key for each season and a stable participant identifier as each member. These are application choices. The leaders view asks for an ordered rank or score range. A personal view starts with a member identity and asks for its score or rank. Lavik’s grouped Sorted Sets support these questions through two persisted structures: pages ordered by (score, member), and a prefix index mapping members to scores. The member index stores the score, not an ordered-page address, so splitting an ordered page does not invalidate member routing.",
+      "sources": [
+        "collections"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "Small Sorted Sets use compact storage. Writes automatically promote collections at 16 KiB of encoded size; grouped storage targets 8 KiB per group, although indivisible entries can exceed that target. In the grouped representation, each member appears in an ordered page and in the member-to-score index. The resident directory retains page-level score bounds and rank metadata, rather than every member and score. Moving payloads to storage therefore changes what must stay in memory without making memory consumption constant.",
+      "sources": [
+        "collections"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "Follow one score change through both indexes"
+    },
+    {
+      "type": "paragraph",
+      "text": "Suppose participant player-17 advances from 120 points to 150, where player-42 already sits. The application wants a lookup of player-17 to report 150 and the ordered standings to place that same member at its new position. In Lavik, a typed score update resolves the old score through the member index, locates the ordered source pages, and prepares changes to both graphs. It can remove the old ordered entry and insert the new one elsewhere without retaining or rewriting all the intervening values.",
+      "sources": [
+        "collections"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "Preparation verifies the requested old member against both indexes. Changed ordered pages, member-prefix snapshots, and any required structural changes share one command-local decision and publish through one root. Auxiliary page writes alone do not change the visible collection. Both graphs become visible together, so a failure cannot expose an updated member lookup alongside an old ordered position, or the reverse. This agreement is the central property for a leaderboard whose scores keep moving.",
+      "sources": [
+        "collections"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "Sparse changes still have coordination costs. The collection remains one key with key-owner arbitration; members do not become independent writers merely because their records occupy different pages. Lavik can prepare grouped Sorted Set changes while releasing worker store state, but it retains key intent and validates the population and logical root before publication. A single intensely contested board therefore deserves its own workload evaluation even when its payload fits comfortably on NVMe.",
+      "sources": [
+        "collections",
+        "storage"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "Equal scores need an explicit product meaning"
+    },
+    {
+      "type": "paragraph",
+      "text": "Consider a three-player illustration containing only player-17 at 150, player-42 at 150, and player-09 at 180. Ascending (score, binary member) order puts player-17 before player-42, then player-09. Reverse order puts player-09 first, followed by player-42 and player-17: reversing also reverses the member order within a tie. Binary member ordering compares identifier bytes; it does not express who reached the score first or whose display name should sort first.",
+      "sources": [
+        "collections"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "Summit Circuit could choose to show the two 150-point players as sharing a place. That is a proposed product policy, distinct from their separate positions in the Sorted Set’s total order. The application would also need to decide how the next place is numbered. A stable identifier provides a deterministic tie order for storage, but the interface should not quietly turn that order into a sporting rule. If arrival time matters to the competition, the application needs an explicit design for that meaning.",
+      "sources": [
+        "collections"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "Page routing narrows work, but ties still matter"
+    },
+    {
+      "type": "paragraph",
+      "text": "Selected rank ranges start at pages identified by the rank directory. Score ranges seek candidate intervals using resident page-level score bounds. For a personal score lookup, Lavik reads the selected member-prefix pages. Finding that member’s rank adds another step: resolve its score, search the candidate ordered pages for the exact member, and combine its position within the page with the directory’s Fenwick prefix count. The two access paths meet at the same logical member, but perform different storage work.",
+      "sources": [
+        "collections"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "That distinction is especially relevant when many players earn the same capped score. Score bounds can skip unrelated pages, but equal-score runs still require pagewise exact-member comparisons; a member search can scale with the collection. Broad Sorted Set aggregation has another cost shape: it materializes admitted logical inputs and the aggregate result, and can be rejected for insufficient memory. A season with many ties or a cross-board aggregation feature therefore needs evaluation beyond a small leaders query. The architecture alone does not establish a leaderboard latency bound.",
+      "sources": [
+        "collections"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "Atomic storage updates need application score discipline"
+    },
+    {
+      "type": "paragraph",
+      "text": "For this hypothetical game, an authoritative event and score source would remain the basis for rebuilding and reconciling each season. The application could publish absolute scores derived from that source. Repeating the same intended absolute value avoids adding the same points twice, but an older update arriving late could still overwrite a newer score. Ordering and idempotent score processing are application responsibilities in this design; the Sorted Set’s dual-index publication does not supply event deduplication.",
+      "sources": [
+        "collections",
+        "requests"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "Increments require particular care at the network boundary. A timed-out increment may already have been applied; a blind retry can count the points again. Connection cleanup can finish in-flight work without flushing a reply, so the absence of a response is not evidence that nothing changed. Summit Circuit’s proposed score processor would resolve uncertain outcomes against its authoritative source rather than interpreting a timeout as permission to repeat an increment.",
+      "sources": [
+        "requests",
+        "collections"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "The atomic publication boundary also has a precise scope. Separate HTTP calls can observe different completed score updates, and independently issued changes to seasonal and lifetime leaderboard keys do not become one application transaction. Lavik provides MULTI/EXEC and Lua coordination for suitable multi-key work; in cluster mode, the keys must share a hash slot. Separately, a successful ordinary command is not a synchronous crash-durability fence. Agreement between the two indexes, application transaction boundaries, and persistence at reply time are distinct properties.",
+      "sources": [
+        "requests",
+        "storage",
+        "collections"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "Evaluate a season as it changes"
+    },
+    {
+      "type": "paragraph",
+      "text": "A useful adoption next step is a representative seasonal evaluation built from reconstructable score history. Include ordinary score moves, moves into long ties, individual score and rank lookups, and the broader queries the product actually needs. At a quiescent comparison point, the authoritative scores, member lookups, and ordered standings should agree under the chosen tie policy. Also exercise uncertain update outcomes through the proposed application processor. This connects Lavik’s NVMe-backed ranking storage to the feature that matters: keeping past seasons accessible while maintaining coherent standings as the current season changes.",
+      "sources": [
+        "overview",
+        "collections",
+        "requests"
+      ]
+    }
+  ]
+}
