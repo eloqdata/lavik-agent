@@ -1,0 +1,347 @@
+{
+  "version": "0.2.0",
+  "provenance": "Original complete-window memtier data checked against SHA256SUMS. P95 decoded from embedded HDR; P50/P99/P99.9 and sample counts reconciled. No benchmark was run to create this article.",
+  "memory": [
+    {
+      "system": "Lavik 0.2.0 SPDK",
+      "operation": "GET",
+      "qps": 1156955.76,
+      "averageMs": 1.106,
+      "latencyMs": {
+        "p50": 1.023,
+        "p95": 1.495,
+        "p99": 3.999,
+        "p99.9": 7.103
+      },
+      "histogramCount": 34717270,
+      "source": "perf_reports/lavik-v0.2.0-vs-memory-databases-2026-10-21/raw/16vcpu-10m/results/large/memory/lavik-10m/get-c1280.json"
+    },
+    {
+      "system": "Lavik 0.2.0 SPDK",
+      "operation": "SET",
+      "qps": 945383.88,
+      "averageMs": 1.353,
+      "latencyMs": {
+        "p50": 1.143,
+        "p95": 2.719,
+        "p99": 4.447,
+        "p99.9": 10.175
+      },
+      "histogramCount": 28374555,
+      "source": "perf_reports/lavik-v0.2.0-vs-memory-databases-2026-10-21/raw/16vcpu-10m/results/large/memory/lavik-10m/set-c1280.json"
+    },
+    {
+      "system": "Redis 8.10.2",
+      "operation": "GET",
+      "qps": 976086.75,
+      "averageMs": 1.311,
+      "latencyMs": {
+        "p50": 1.119,
+        "p95": 2.703,
+        "p99": 4.383,
+        "p99.9": 7.039
+      },
+      "histogramCount": 29290012,
+      "source": "perf_reports/lavik-v0.2.0-vs-memory-databases-2026-10-21/raw/16vcpu-10m/results/large/memory/redis/io16/get-c1280.json"
+    },
+    {
+      "system": "Redis 8.10.2",
+      "operation": "SET",
+      "qps": 863860.02,
+      "averageMs": 1.481,
+      "latencyMs": {
+        "p50": 1.295,
+        "p95": 2.751,
+        "p99": 4.191,
+        "p99.9": 7.391
+      },
+      "histogramCount": 25922328,
+      "source": "perf_reports/lavik-v0.2.0-vs-memory-databases-2026-10-21/raw/16vcpu-10m/results/large/memory/redis/io16/set-c1280.json"
+    },
+    {
+      "system": "Valkey 9.1.2",
+      "operation": "GET",
+      "qps": 913755.76,
+      "averageMs": 1.4,
+      "latencyMs": {
+        "p50": 1.191,
+        "p95": 2.639,
+        "p99": 4.383,
+        "p99.9": 7.743
+      },
+      "histogramCount": 27419135,
+      "source": "perf_reports/lavik-v0.2.0-vs-memory-databases-2026-10-21/raw/16vcpu-10m/results/large/memory/valkey/io16/get-c1280.json"
+    },
+    {
+      "system": "Valkey 9.1.2",
+      "operation": "SET",
+      "qps": 793808.71,
+      "averageMs": 1.612,
+      "latencyMs": {
+        "p50": 1.511,
+        "p95": 2.543,
+        "p99": 3.775,
+        "p99.9": 7.743
+      },
+      "histogramCount": 23820002,
+      "source": "perf_reports/lavik-v0.2.0-vs-memory-databases-2026-10-21/raw/16vcpu-10m/results/large/memory/valkey/io8/set-c1280.json"
+    }
+  ],
+  "curves": [
+    {
+      "label": "Lavik 0.2.0 · 10M",
+      "operation": "GET",
+      "color": "#a64626",
+      "points": [
+        {
+          "connections": 160,
+          "qps": 377857.26,
+          "p999Ms": 0.855
+        },
+        {
+          "connections": 320,
+          "qps": 612513.29,
+          "p999Ms": 1.431
+        },
+        {
+          "connections": 640,
+          "qps": 876216.71,
+          "p999Ms": 3.983
+        },
+        {
+          "connections": 1280,
+          "qps": 1156955.76,
+          "p999Ms": 7.103
+        }
+      ]
+    },
+    {
+      "label": "Lavik 0.2.0 · 10M",
+      "operation": "SET",
+      "color": "#a64626",
+      "points": [
+        {
+          "connections": 160,
+          "qps": 431054.25,
+          "p999Ms": 1.255
+        },
+        {
+          "connections": 320,
+          "qps": 637287.39,
+          "p999Ms": 1.375
+        },
+        {
+          "connections": 640,
+          "qps": 834507.7,
+          "p999Ms": 3.871
+        },
+        {
+          "connections": 1280,
+          "qps": 945383.88,
+          "p999Ms": 10.175
+        }
+      ]
+    },
+    {
+      "label": "Redis · 10M",
+      "operation": "GET",
+      "color": "#345b70",
+      "points": [
+        {
+          "connections": 160,
+          "qps": 408158.67,
+          "p999Ms": 0.871
+        },
+        {
+          "connections": 320,
+          "qps": 603866.24,
+          "p999Ms": 1.399
+        },
+        {
+          "connections": 640,
+          "qps": 800217.4,
+          "p999Ms": 3.711
+        },
+        {
+          "connections": 1280,
+          "qps": 976086.75,
+          "p999Ms": 7.039
+        }
+      ]
+    },
+    {
+      "label": "Redis · 10M",
+      "operation": "SET",
+      "color": "#345b70",
+      "points": [
+        {
+          "connections": 160,
+          "qps": 384938.85,
+          "p999Ms": 0.903
+        },
+        {
+          "connections": 320,
+          "qps": 579901.88,
+          "p999Ms": 1.423
+        },
+        {
+          "connections": 640,
+          "qps": 732342.49,
+          "p999Ms": 3.423
+        },
+        {
+          "connections": 1280,
+          "qps": 863860.02,
+          "p999Ms": 7.391
+        }
+      ]
+    },
+    {
+      "label": "Valkey · 10M",
+      "operation": "GET",
+      "color": "#7c7467",
+      "points": [
+        {
+          "connections": 160,
+          "qps": 459449.15,
+          "p999Ms": 0.895
+        },
+        {
+          "connections": 320,
+          "qps": 640091.41,
+          "p999Ms": 1.431
+        },
+        {
+          "connections": 640,
+          "qps": 791160.85,
+          "p999Ms": 3.887
+        },
+        {
+          "connections": 1280,
+          "qps": 913755.76,
+          "p999Ms": 7.743
+        }
+      ]
+    },
+    {
+      "label": "Valkey · 10M",
+      "operation": "SET",
+      "color": "#7c7467",
+      "points": [
+        {
+          "connections": 160,
+          "qps": 453171.21,
+          "p999Ms": 0.847
+        },
+        {
+          "connections": 320,
+          "qps": 638516.68,
+          "p999Ms": 1.383
+        },
+        {
+          "connections": 640,
+          "qps": 749664.03,
+          "p999Ms": 3.759
+        },
+        {
+          "connections": 1280,
+          "qps": 793808.71,
+          "p999Ms": 7.743
+        }
+      ]
+    },
+    {
+      "label": "Lavik 0.2.0 · 1B",
+      "operation": "GET",
+      "color": "#1d7668",
+      "points": [
+        {
+          "connections": 160,
+          "qps": 375965.89,
+          "p999Ms": 0.823
+        },
+        {
+          "connections": 320,
+          "qps": 652881.2,
+          "p999Ms": 0.943
+        },
+        {
+          "connections": 640,
+          "qps": 985019.32,
+          "p999Ms": 1.751
+        },
+        {
+          "connections": 1280,
+          "qps": 1129596.68,
+          "p999Ms": 4.015
+        }
+      ]
+    },
+    {
+      "label": "Lavik 0.2.0 · 1B",
+      "operation": "SET",
+      "color": "#1d7668",
+      "points": [
+        {
+          "connections": 160,
+          "qps": 409886.01,
+          "p999Ms": 0.783
+        },
+        {
+          "connections": 320,
+          "qps": 701241.48,
+          "p999Ms": 0.959
+        },
+        {
+          "connections": 640,
+          "qps": 861911.39,
+          "p999Ms": 1.727
+        },
+        {
+          "connections": 1280,
+          "qps": 910355.55,
+          "p999Ms": 4.319
+        }
+      ]
+    }
+  ],
+  "compactPeaks": {
+    "lavik-1m": {
+      "GET": 215639.82,
+      "SET": 239404.77
+    },
+    "lavik-100m": {
+      "GET": 215644.06,
+      "SET": 231361.25
+    }
+  },
+  "mixed": [
+    {
+      "workload": "A",
+      "totalQps": 476453.6299929689,
+      "readP999Ms": 4.399,
+      "updateP999Ms": 2.179
+    },
+    {
+      "workload": "B",
+      "totalQps": 488621.90427627304,
+      "readP999Ms": 1.902,
+      "updateP999Ms": 1.716
+    }
+  ],
+  "relativePercent": {
+    "getVsRedis": 18.530013853789118,
+    "getVsValkey": 26.615427299741445,
+    "setVsRedis": 9.437160895581197
+  },
+  "sourceFiles": {
+    "perf_reports/lavik-v0.2.0-vs-memory-databases-2026-10-21/raw/16vcpu-10m/results/large/memory/lavik-10m/get-c1280.json": "3bd088c61a1d115a9219ab37a036b6179f1d0ba0bed557fc4860a9f69543eae1",
+    "perf_reports/lavik-v0.2.0-vs-memory-databases-2026-10-21/raw/16vcpu-10m/results/large/memory/lavik-10m/set-c1280.json": "a4316e3055ab482d36ad8d9ee8cfca2ddc58f22fbf3a62596e293fe6ba0cab27",
+    "perf_reports/lavik-v0.2.0-vs-memory-databases-2026-10-21/raw/16vcpu-10m/results/large/memory/redis/io16/get-c1280.json": "b97f66eb953dab31ebdd7f26bd4b66ef126c0e347ef8dc48d3d5b1b2cd262018",
+    "perf_reports/lavik-v0.2.0-vs-memory-databases-2026-10-21/raw/16vcpu-10m/results/large/memory/redis/io16/set-c1280.json": "1886d83892fa2823fa896d0cdec0f9a41d11e7411bf679419bca223a5cf597d1",
+    "perf_reports/lavik-v0.2.0-vs-memory-databases-2026-10-21/raw/16vcpu-10m/results/large/memory/valkey/io16/get-c1280.json": "4740c214e04214bdc46504178472cb0821108464622935def29a065f0a1c00f9",
+    "perf_reports/lavik-v0.2.0-vs-memory-databases-2026-10-21/raw/16vcpu-10m/results/large/memory/valkey/io8/set-c1280.json": "c7c96e7221938691d0a62f95dcc6e19ac5b1b76f2766fe8df060e2e177ebba46",
+    "perf_reports/lavik-v0.2.0-vs-memory-databases-2026-10-21/metadata/results.csv": "6a4a1f117a66365e9887a885218b9d1f886bf130c94b1054b5d4abeeb7360b0c",
+    "perf_reports/lavik-v0.2.0-aerospike-ycsb-2026-10-21/metadata/results.csv": "c86ea86d2f851a064901a730eba7a77afa687ad0b953ea6763225b715f6e85f2"
+  }
+}

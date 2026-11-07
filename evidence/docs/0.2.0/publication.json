@@ -150,7 +150,7 @@
     "tests/container-download.test.ts": "a8f92e254088d7145d262277bec886e7c1e0eeebae749bb6a6db785fde19abd5",
     "tests/docs-versions.test.ts": "082795fcff3bef4482c40e966adf911407d8a22a949ddf38abb1a1747bb72250",
     "tests/local-codex.test.ts": "806f0775e8f91fcfb564f2e7754b4afe122cf2afe9c7fc3e54fda82185fc9db8",
-    "tests/release-020.test.ts": "fa0941fbac88a9e6efa9e04bd50c72a8b15a3319614fc239cbb07c3080c50536",
+    "tests/release-020.test.ts": "4707d40c306ad046609f2b79a48f05a0e4270957084571e4297f5695e7e5dbdd",
     "tests/verify-apt-live.test.py": "81fd50aced90beb5479393ea11b77976d676eb843178dc58bd29d305316c1ded",
     "verification/docs/0.2.0/apt-install.sh": "7a3b0c0867186eb3bc4c30f5ea3bb66d706087cf9a62b1accb41f263578df25d",
     "verification/docs/0.2.0/apt-manage.sh": "fee18915684736b9b23f84f59ad557630e650fbab9188be60aa807c2e27b4721",
@@ -207,22 +207,42 @@
     "verification/docs/0.2.0/query-0.txt": "e62c421f8f38333cfcdf3905625f1b2d5f70dd92a7366765ece6a1e56e834f1d",
     "verification/docs/0.2.0/query-1.txt": "e62c421f8f38333cfcdf3905625f1b2d5f70dd92a7366765ece6a1e56e834f1d"
   },
-  "bundleHash": "17a49c6b010c282bcad0c9c1081283b5e2317f6b87c07e818bb06b11b2435ef1",
-  "reviewSha256": "996af7290e265039493bae314c74d96213fa5df01ab2458657c5e1ae2da65f95",
+  "bundleHash": "2a885fab4853761c625531a5b06699e29dfce2c08035685a5fab16faa61df7c5",
+  "reviewSha256": "dd4b5008edb5743fda91d36cde5b0a0f66b037bd1fc8b06bde1a625e6c0efe33",
   "reviewer": {
     "role": "reviewer",
     "model": "gpt-6-astra",
     "provider": "openai",
     "authentication": "chatgpt",
     "reasoning": "high",
-    "startedAt": "2026-10-28T09:57:05.688Z",
-    "finishedAt": "2026-10-28T09:58:30.732Z",
-    "promptSha256": "68522b63094dd073f78fdaca224710be6e5016ee768f9da5aac8a5d4c3ade390",
-    "outputSha256": "996af7290e265039493bae314c74d96213fa5df01ab2458657c5e1ae2da65f95"
+    "additionalReviewReason": "Review the owner-requested featured-pair exception in the historical regression test",
+    "startedAt": "2026-11-07T15:16:06.002Z",
+    "finishedAt": "2026-11-07T15:16:17.670Z",
+    "promptSha256": "f9b20932e37caa8f5a75d74d6a23595994e7813c01fe91070c1b7496bff0a27e",
+    "outputSha256": "dd4b5008edb5743fda91d36cde5b0a0f66b037bd1fc8b06bde1a625e6c0efe33"
   },
-  "reviewScope": "Prior technical-content approvals plus actual independent GitHub Star CTA review",
+  "reviewScope": "Prior approved documentation inherited byte-for-byte; actual independent review of the sole historical-test change for the owner-requested featured revision",
   "lineage": {
-    "file": "evidence/reviews/github-star-cta.json",
-    "sha256": "dbef7a16bf846999ab3d7777e5cf5ee227781b46a1398b253dd307e278c3bcc1"
+    "file": "evidence/technical/featured-020-sales/history-guard-review.json",
+    "sha256": "6bed157b8129ccb0eebdef6be5b4c80e9f1770737bcd8b75fd05f76ba32dbd89"
+  },
+  "incrementalReview": {
+    "scope": "Only tests/release-020.test.ts changed: explicitly requested current featured-pair revision, requiring valid independent article approval. All documentation, commands, clients, runtime receipts and rendering inherit the byte-identical passing baseline.",
+    "baselineCommit": "35147f963631c507db5119ae41001192daeab1b0",
+    "previousPublication": {
+      "file": "evidence/technical/featured-020-sales/documentation-before.json",
+      "sha256": "107bb49e240bb31659c5c9dc3fb07998b04d387ba93e0c4a6f47185c65985d92"
+    },
+    "previousReview": {
+      "file": "evidence/technical/featured-020-sales/documentation-review-before.json",
+      "sha256": "996af7290e265039493bae314c74d96213fa5df01ab2458657c5e1ae2da65f95"
+    },
+    "changedFiles": [
+      "tests/release-020.test.ts"
+    ],
+    "actualDeltaReview": {
+      "file": "evidence/technical/featured-020-sales/history-guard-review.json",
+      "sha256": "6bed157b8129ccb0eebdef6be5b4c80e9f1770737bcd8b75fd05f76ba32dbd89"
+    }
   }
 }

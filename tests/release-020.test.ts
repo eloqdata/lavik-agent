@@ -10,16 +10,35 @@ import {
 } from "../packages/docs/stable.ts";
 import { blogSections } from "../packages/blog/presentation.ts";
 import { pageMetadata } from "../packages/seo/site.ts";
+import { publicationErrors } from "../packages/content/gate.ts";
 import { documentationPublicationErrors } from "../packages/docs/publication.ts";
 
-test("0.2.0 is current while historical article and 0.1.0 documentation bytes remain intact", () => {
+test("0.2.0 is current while historical posts and docs remain intact outside the reviewed featured revision", () => {
   assert.equal(defaultDocVersion, "0.2.0");
   assert.deepEqual(docVersions, ["0.2.0", "0.1.0", "0.1.0-beta.1"]);
   const baseline = JSON.parse(
     fs.readFileSync("evidence/docs/0.2.0/historical-content.json", "utf8"),
   );
-  for (const [file, digest] of Object.entries(baseline.files))
-    assert.equal(hash(fs.readFileSync(file)), digest, file);
+  // The owner requested a subsequent 0.2.0 revision of this exact featured pair.
+  // Preserve the original snapshot and byte-check every other historical file.
+  const revisedFeatured = new Set([
+    "content/en/300-redis-nodes-to-3-lavik-nodes.json",
+    "content/zh-CN/300-redis-nodes-to-3-lavik-nodes.json",
+  ]);
+  for (const [file, digest] of Object.entries(baseline.files)) {
+    if (revisedFeatured.has(file)) {
+      const article = articles().find(
+        (a) => `content/${a.locale}/${a.id}.json` === file,
+      );
+      assert.ok(article, file);
+      assert.equal(article.featured, true, file);
+      assert.equal(article.version, "0.2.0", file);
+      assert.equal(article.publishedAt, "2026-10-15", file);
+      assert.deepEqual(publicationErrors(article), [], file);
+    } else {
+      assert.equal(hash(fs.readFileSync(file)), digest, file);
+    }
+  }
   assert.equal(
     stableReleaseFor("0.1.0").commit,
     "feb61224e414c5653fd09560e20c9d214db1e3ac",

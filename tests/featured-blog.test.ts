@@ -83,7 +83,8 @@ test("technical articles require exact sources, rectangular tables, known citati
 
 test("altered diagram bytes or review records cannot retain approval", (t) => {
   const read = fs.readFileSync.bind(fs);
-  let altered = "apps/web/public/blog-assets/agent-era/consolidation.svg";
+  const figure = flagship.technical!.visuals.find((v) => v.type === "figure")!;
+  let altered = "apps/web/public" + figure.src;
   t.mock.method(fs, "readFileSync", ((
     file: fs.PathOrFileDescriptor,
     ...args: unknown[]

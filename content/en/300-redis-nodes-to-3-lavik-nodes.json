@@ -1,20 +1,28 @@
 {
   "id": "300-redis-nodes-to-3-lavik-nodes",
   "locale": "en",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "kind": "blog",
   "slug": "300-redis-nodes-to-3-lavik-nodes",
-  "title": "Migrate Your 300-Node Redis Cluster to Just 3 Lavik Nodes",
-  "summary": "Why keep buying servers for RAM? Lavik combines NVMe SSD capacity with throughput above Redis on DRAM. Explore the architecture, benchmarks and economics of a 300-to-3 consolidation.",
-  "updatedAt": "2026-10-15",
+  "title": "Modeled: From 300 Redis Nodes to 3 Lavik VMs",
+  "summary": "A modeled VM consolidation for roughly 2.4 TB of retained data, read-heavy demand below about 1M ops/s, and two data copies per side. Lavik 0.2.0 evidence, larger-VM Redis alternatives, and Singapore reserved pricing.",
+  "updatedAt": "2026-11-07",
   "publishedAt": "2026-10-15",
-  "topics": ["architecture", "use-case", "benchmark"],
+  "topics": [
+    "architecture",
+    "use-case",
+    "benchmark"
+  ],
   "featured": true,
   "blocks": [
     {
       "type": "paragraph",
-      "text": "Memory is full. CPU still has room. Yet the next increase in retained data means another Redis shard, another replica, and another pair of servers to operate. For a capacity-bound application, that is an expensive way to grow. Lavik changes the resource that determines capacity: application values live on NVMe SSD, served by an engine that measured 1.14 million GETs per second—faster than Redis on DRAM in the published comparison. That combination opens a much more attractive design: consolidate a memory-bound fleet onto a few storage-dense hosts, with room for the next generation of agent state.",
-      "sources": ["memory-report", "model"]
+      "text": "Modeled assumptions: about 2.4 TB of retained data, a read-heavy planning envelope below roughly 1M operations per second, and two full dataset copies on each side. This is a VM consolidation model, not a measured migration or a validated replicated 2.4 TB deployment. The opportunity is concrete: when memory fills before CPU, NVMe-backed values can reduce the servers bought primarily for RAM. Lavik 0.2.0 reached 1.157M GETs per second in the separate single-server benchmark; the workload limits below determine whether a three-VM proposal is worth testing.",
+      "sources": [
+        "model",
+        "memory-report",
+        "overview"
+      ]
     },
     {
       "type": "heading",
@@ -23,12 +31,17 @@
     {
       "type": "paragraph",
       "text": "A human-facing application might retain a profile, a session and a set of features per user. An agent application can retain all of these for a research assistant, a coding assistant and multiple background workers acting on that user’s behalf. Each agent accumulates execution state, observations and working context. An agent that runs occasionally may still need its state immediately when it resumes. Capacity grows with the number of agents, the size of their state and how long it remains useful; request volume does not have to grow at the same rate.",
-      "sources": ["model"]
+      "sources": [
+        "model"
+      ]
     },
     {
       "type": "paragraph",
       "text": "At one billion agents, just 1 KB of features each produces approximately 1 TB of values. Increase that to 10 KB and the dataset reaches 10 TB; at 100 KB, it reaches 100 TB, before keys, indexes or replication. Applications still need low-latency reads and updates through familiar Redis clients and data structures. Keeping every retained value in expensive DRAM makes that combination harder to afford. Lavik is designed to make NVMe SSD capacity practical for those latency-sensitive workloads.",
-      "sources": ["model", "overview"]
+      "sources": [
+        "model",
+        "overview"
+      ]
     },
     {
       "type": "heading",
@@ -36,23 +49,52 @@
     },
     {
       "type": "paragraph",
-      "text": "Consider 300 Standard_E2s_v4 Azure VMs, each with two vCPUs, 16 GiB RAM and no local SSD, arranged as 150 primaries and 150 replicas. The fleet buys 600 vCPUs and 4,800 GiB of RAM, with 2,400 GiB on the primary side. When memory fills first, expanding this fleet buys additional CPU, networking and operating systems largely to obtain more RAM. The application may need more retained profiles or longer session lifetimes without needing proportionally more compute. This is the central opportunity for Redis cost optimization: choose storage density independently of the processors needed to serve traffic.",
-      "sources": ["model", "azure-esv4"]
+      "text": "Consider an illustrative fleet of 300 Standard_E2s_v4 Azure VMs, each with two vCPUs, 16 GiB RAM and no local SSD: 150 primaries and 150 replicas. This represents a finely sharded, small-VM fleet, rather than a claim that 300 nodes is typical. It provides 600 vCPUs and 4,800 GiB RAM overall, with 2,400 GiB of primary RAM—about 2.577 decimal TB before overhead. The roughly 2.4 TB dataset is a planning target; keys, indexes, database overhead and operating headroom must fit. Raw RAM and raw SSD capacity are not usable-value capacity guarantees.",
+      "sources": [
+        "model",
+        "azure-esv4"
+      ]
     },
     {
       "type": "paragraph",
-      "text": "Use the same Azure region and purchasing model for both deployments: East US 2, Linux pay-as-you-go, in US dollars. Microsoft’s retail rate is $0.126 per hour for Standard_E2s_v4 and $1.376 per hour for Standard_L16as_v4. At 730 hours per month, 300 Redis VMs cost $27,594. Lavik uses two L16as_v4 data VMs and one smaller E2s_v4 voter, totaling $2,100.94 per month. Each data VM includes 16 vCPUs, 128 GiB RAM and 3.84 TB of local NVMe SSD; the voter needs no local SSD or dataset copy.",
-      "sources": ["azure-pricing", "azure-esv4", "azure-lasv4", "model"]
+      "text": "Price both self-hosted deployments in East US 2, Linux pay-as-you-go, in US dollars. The Microsoft retail rates checked on November 7, 2026 are $0.126 per hour for Standard_E2s_v4 and $1.376 for Standard_L16as_v4. At 730 hours per month, 300 Redis VMs cost $27,594. Two L16as_v4 Lavik data VMs plus one E2s_v4 Meta-only voter cost $2,100.94. Each data VM includes 16 vCPUs, 128 GiB RAM and 3.84 TB local NVMe; the smaller voter holds no application dataset.",
+      "sources": [
+        "azure-pricing",
+        "azure-esv4",
+        "azure-lasv4",
+        "model"
+      ]
     },
     {
       "type": "paragraph",
-      "text": "Adding flash does not automatically solve the latency problem. Redis describes Flex’s flash access in milliseconds and advises against broad access patterns, large working sets and frequent movement between RAM and flash. For an application with a sub-millisecond latency budget, a millisecond flash path is too slow. Agent workloads that repeatedly revisit different profiles and contexts make this distinction consequential: the storage engine needs to serve a large dataset efficiently even when accesses spread beyond RAM.",
-      "sources": ["redis-flex", "redis-flex-latency"]
+      "text": "Bigger Redis VMs change the node-count story. For example, 40 E16s_v4 VMs with 128 GiB each, or 20 E32s_v4 VMs with 256 GiB each, provide 2,560 GiB of primary RAM with one replica per primary. These are alternative models, not claims about a typical customer's fleet. Their slightly larger raw capacity costs $29,433.60 per month at the same regional pay-as-you-go rates. Capacity-normalized RAM cost remains $10,707.88 per TB-month, the same as the small-VM example. The economic comparison comes from RAM versus included NVMe capacity; it does not require every Redis deployment to have 300 nodes.",
+      "sources": [
+        "model",
+        "azure-pricing",
+        "azure-esv4"
+      ]
     },
     {
       "type": "paragraph",
-      "text": "The monthly VM bill falls by $25,493.06—92.4%—and the annualized saving is $305,916.72. Lavik’s three VMs provide 34 vCPUs and 272 GiB RAM across the deployment, with the two NVMe-equipped nodes handling data and the smaller VM completing the failover quorum. Redis’s 300 VMs provide 600 vCPUs, much of which a memory-bound workload may not need. Storage density reduces the serving fleet, while separating the voter’s role avoids paying for an extra data-sized machine. The table prices self-hosted VMs for both systems; OS disks, backups and traffic are additional deployment costs.",
-      "sources": ["model", "azure-pricing", "meta", "overview"]
+      "text": "In the headline small-VM model, the monthly VM bill falls by $25,493.06—92.4%—with an annualized difference of $305,916.72. The three Lavik VMs total 34 vCPUs and 272 GiB RAM: two data-sized machines and a smaller control-plane voter. This is a modeled VM saving, not measured total cost or equal service-level performance. OS and durable Meta disks, backups, traffic, operations, support and taxes are additional costs on both sides.",
+      "sources": [
+        "model",
+        "azure-pricing",
+        "meta"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "Singapore: the same model with reserved pricing"
+    },
+    {
+      "type": "paragraph",
+      "text": "For APAC planning, price the same two-copy deployments in Azure Southeast Asia (Singapore), in USD. The table compares pay-as-you-go, one-year and three-year reservations like for like: 300 E2s_v4 Redis VMs versus two L16as_v4 Lavik VMs plus one E2s_v4 voter. Microsoft's one-year full-term prices per VM are $783 and $8,505 respectively; three-year prices are $1,502 and $16,434. Divide those commitments by 12 or 36 for a level monthly equivalent, rather than multiplying them by 730 as hourly rates. The comparison assumes matching VMs are used throughout the term; a billing reservation is not a capacity or performance guarantee. These are regional cost scenarios, not Singapore benchmark results.",
+      "sources": [
+        "model",
+        "azure-pricing",
+        "azure-reservations"
+      ]
     },
     {
       "type": "heading",
@@ -60,79 +102,119 @@
     },
     {
       "type": "paragraph",
-      "text": "Build the Lavik deployment from two Standard_L16as_v4 VMs and one Standard_E2s_v4 VM. The primary and follower each have 16 vCPUs, 128 GiB RAM and four 960 GB local NVMe devices, totaling 3.84 TB per data VM. Each runs a Data process and a Meta member. The E2s_v4 runs the third Meta member on two vCPUs and 16 GiB RAM, completing the three-member Raft quorum for automatic failover. This voter-only VM stores control-plane metadata, not application data. The topology has two complete dataset copies and three Meta voters.",
+      "text": "The proposed Lavik topology uses one primary and one full follower on separate Standard_L16as_v4 VMs. Each has four 960 GB local NVMe devices, totaling 3.84 TB, and runs one Data process plus one Meta member. A Standard_E2s_v4 VM runs the third Meta member. The result is two complete dataset copies and three Meta voters; the third VM is a control-plane participant, not a third dataset copy or another serving primary.",
       "sources": [
         "model",
         "azure-esv4",
         "azure-lasv4",
-        "overview",
         "meta",
         "replication"
       ]
     },
     {
       "type": "paragraph",
-      "text": "The primary and follower each hold a full copy, so the single-copy capacity basis remains 3.84 TB. Including the voter VM, the deployment costs $547.12 per TB-month. Redis’s 150 primaries provide 2,400 GiB, or about 2.577 decimal TB, yielding $10,707.88 per TB-month. These are capacity-normalized VM costs before database overhead and operational free-space reserves. If the primary VM fails, the follower and dedicated voter retain a two-of-three Meta majority to coordinate promotion of the eligible follower. The surviving follower holds the remaining data copy; the voter supplies control-plane participation.",
-      "sources": ["model", "azure-pricing", "meta", "replication"]
+      "text": "Count capacity once when normalizing the complete deployment bill. Lavik has 3.84 TB of raw single-copy NVMe capacity and costs $547.12 per TB-month including its follower and voter. Redis has 2,400 GiB of primary RAM, or 2.577 decimal TB, and costs $10,707.88 per TB-month including replicas. Both denominators are before database overhead and free-space reserves. The capacity comparison explains the opportunity; an application still needs to satisfy its memory, storage and traffic requirements.",
+      "sources": [
+        "model",
+        "azure-pricing",
+        "azure-esv4",
+        "azure-lasv4"
+      ]
     },
     {
       "type": "paragraph",
-      "text": "Lavik uses DRAM where it has the most value on the request path: the key index, metadata and active buffers. Values use NVMe SSD capacity. This separates growth in value bytes from growth in index memory, which is particularly useful as agent profiles and retained context become larger. Size RAM from the application’s key count and key lengths, together with buffers, hugepages and replication backlog. In the published large-dataset experiment, a billion-key layout fits a 125.8 GiB host while its values occupy about a terabyte.",
-      "sources": ["storage", "memory-report"]
+      "text": "Lavik uses DRAM for key indexes, metadata and active buffers, while values use NVMe capacity. RAM still needs sizing from key count and key lengths, routing metadata, buffers, hugepages and replication backlog. The 0.2.0 billion-key experiment uses a nominal 128 GiB server and 1.024 TB of logical value payload, excluding keys and storage overhead. That demonstrates capacity beyond RAM in its recorded configuration; it does not validate the larger 2.4 TB target or the differently sized SSDs in this cost model.",
+      "sources": [
+        "storage",
+        "memory-report",
+        "model"
+      ]
     },
     {
       "type": "paragraph",
       "text": "SPDK makes the storage path explicit. Lavik submits NVMe operations through userspace queue pairs and polls for completions, removing the kernel block-I/O submission path and its syscall and wakeup overhead. Asynchronous requests keep storage work in flight while workers make progress on other commands. Polling trades CPU time for prompt completion handling; queue depth, completion batching and CPU placement determine how effectively that time is used. Modern NVMe devices supply the parallel queues and internal concurrency. The engine must deliver enough independent work to exploit them.",
-      "sources": ["spdk-nvme", "spdk-concurrency", "memory-report"]
+      "sources": [
+        "spdk-nvme",
+        "spdk-concurrency",
+        "memory-report"
+      ]
     },
     {
       "type": "paragraph",
       "text": "Lavik’s Bycorf workers use coroutines, owner-local mutable state and explicit dispatch between workers. While one command waits for storage, other runnable work can proceed. Ownership keeps common operations close to the state they modify and reduces coordination between cores. That matters at a million operations per second: small amounts of scheduling, synchronization or allocation overhead accumulate into substantial CPU demand. Designing execution and storage together lets Lavik use SSD parallelism without turning every I/O into a stalled request-processing thread.",
-      "sources": ["overview", "requests", "storage"]
+      "sources": [
+        "overview",
+        "requests",
+        "storage"
+      ]
     },
     {
       "type": "paragraph",
       "text": "The optimizations extend through the request path. Eligible disk GETs can use an admitted index snapshot on the connection worker, avoiding owner dispatch when the fast path applies. Parsing handles batches of up to 128 commands, and small pipeline replies can coalesce into 64 KiB writes. Per-worker append streams avoid a staging-buffer allocation for every logical slot. Together, these choices reduce coordination, system calls and buffer overhead. The Redis-compatible interface stays familiar to applications; the implementation underneath is built around efficient concurrent storage access.",
-      "sources": ["requests", "storage"]
+      "sources": [
+        "requests",
+        "storage"
+      ]
     },
     {
       "type": "paragraph",
-      "text": "Large objects receive the same attention. Lavik 0.1.0 supports grouped storage for Strings, Hashes, Sets, Lists, Sorted Sets and Streams. Large strings use 8 KiB segments, while collections use independently addressed groups. A focused operation can work on the relevant part instead of rewriting an entire large object. For an agent profile with frequently changing features and much larger retained state, that layout makes the difference between a small update and unnecessary work across the whole record. NVMe performance depends on both how I/O is scheduled and how much data each operation touches.",
-      "sources": ["collections"]
+      "text": "Lavik 0.2.0 supports grouped storage for Strings, Hashes, Sets, Lists, Sorted Sets and Streams. Large Strings use 8 KiB segments, while collections use independently addressed groups. Focused operations can work on the relevant portions instead of materializing or rewriting an entire large object. This matters when an agent profile combines frequently updated features with much larger retained state: I/O scheduling and the bytes touched by each command both affect the request path.",
+      "sources": [
+        "collections"
+      ]
     },
     {
       "type": "heading",
-      "text": "4. Faster than Redis on DRAM—with values on SSD"
+      "text": "4. Lavik 0.2.0 measurements: throughput and latency together"
     },
     {
       "type": "paragraph",
-      "text": "The direct benchmark compares Lavik 0.1.0 SPDK with Redis 8.10.2 and Valkey 9.1.2 on the same 16-vCPU Azure server. A separate load generator issues uniform random GETs and SETs over private networking, with 1 KiB values and pipeline depth one. Redis and Valkey serve their values from DRAM; Lavik uses its NVMe storage path. The table shows throughput and client-observed latency together, so readers can choose an operating point against their application’s latency budget.",
-      "sources": ["memory-report"]
+      "text": "The October 21 benchmark compares Lavik 0.2.0 SPDK, Redis 8.10.2 and Valkey 9.1.2 on the same 16-vCPU Azure server. A separate load generator issues uniform-random GETs or overwriting SETs over private networking, using 1 KiB values and pipeline depth one. Redis and Valkey keep values in DRAM; Lavik uses NVMe. These are single-server measurements without Data replicas, with Redis AOF and scheduled snapshots disabled. Read throughput together with client-observed latency, rather than treating peak QPS as a production service envelope.",
+      "sources": [
+        "memory-report"
+      ]
     },
     {
       "type": "paragraph",
-      "text": "At 1,280 connections, Lavik delivers 1,145,772 GET QPS and 971,950 SET QPS. GET throughput is 12.5% higher than Redis and 18.1% higher than Valkey; SET throughput is 2.2% higher than Redis. Lavik’s GET P99 at that point is 3.999 ms, compared with Redis’s 4.415 ms. This is the architectural result that makes consolidation worth considering: NVMe-backed capacity can come with higher throughput than an in-memory server, rather than forcing the application to exchange performance for lower storage cost.",
-      "sources": ["measurements", "memory-report"]
+      "text": "At 1,280 connections and 10M keys, Lavik 0.2.0 delivers 1,156,956 GET QPS and 945,384 SET QPS. At that same concurrency, GET throughput is 18.5% above Redis and 26.6% above Valkey; SET is 9.4% above Redis. Lavik GET p99 is 3.999 ms and p99.9 is 7.103 ms; SET p99.9 is 10.175 ms. The table preserves the measured latency alongside the throughput. The current homepage and this article use the same 0.2.0 results.",
+      "sources": [
+        "measurements",
+        "memory-report"
+      ]
     },
     {
       "type": "paragraph",
-      "text": "Latency also depends on how hard a server is driven. At the billion-key operating point with 80 connections, Lavik delivers 385,514 GET QPS at 0.439 ms P99.9. At 640 connections, it reaches more than a million GETs per second. An infrastructure team can use these curves to select the throughput and tail-latency combination it needs. Keeping headroom for bursts is more useful than sizing a production deployment solely from the highest point on a throughput chart.",
-      "sources": ["memory-report"]
+      "text": "The billion-key run offers a different operating point: at 320 connections it delivers 652,881 GET QPS at 0.943 ms p99.9. At 1,280 connections it reaches 1,129,597 GET QPS at 4.015 ms p99.9. This is a throughput/latency tradeoff, not a promise of sub-millisecond latency at the peak. Its client uses 32 threads and 60-second windows, compared with 16 threads and 30-second windows for the 10M-key comparison.",
+      "sources": [
+        "memory-report",
+        "measurements"
+      ]
     },
     {
       "type": "paragraph",
-      "text": "The billion-key dataset contains 1.024 TB of raw values—about 7.6 times the server’s RAM—and reaches 1,069,126 GET QPS. Lavik’s performance therefore extends well beyond a memory-sized dataset. The smaller-instance results tell the same capacity story: on two vCPUs and 16 GiB nominal RAM, increasing the dataset from one million to 100 million 1 KiB values changes peak GET throughput from 215,521 to 215,463 QPS. SET retains 95.2% of its smaller-dataset peak. That is valuable for both a compact service and a large agent platform: capacity can grow without demanding a matching increase in serving nodes.",
-      "sources": ["memory-report", "compact-report"]
+      "text": "The billion-key dataset contains 1.024 TB of logical values, about 7.5 times the nominal 128 GiB of RAM, before keys and other overhead. The separate 2-vCPU 0.2.0 experiment retains 100M keys with 95.37 GiB of logical values on a nominal 16 GiB host. Its peak GET and SET rates are 215,644 and 231,361 ops/s. The smaller 1M-key dataset peaks at 215,640 GET and 239,405 SET ops/s. These workload-specific results support testing storage-backed capacity; they do not establish arbitrary application latency or proportional scaling across fleet sizes.",
+      "sources": [
+        "memory-report",
+        "measurements"
+      ]
     },
     {
       "type": "paragraph",
-      "text": "Agent state also needs updates. In the separate io_uring YCSB experiment, Lavik processes 529,501 operations per second for a 50/50 read/update mix and 577,373 for a 95/5 mix. These are structured-record operations: HGETALL reads and LAVIK.HREPLACE updates against 100 million records with ten 128-byte fields. They show the relevance of Lavik’s design beyond a pure GET workload, including feature records whose contents change as an agent progresses through a task.",
-      "sources": ["mixed-report"]
+      "text": "The 0.2.0 io_uring YCSB experiment also measures changing structured records. Lavik achieves 476,454 total ops/s for a 50/50 read/update mix and 488,622 for a 95/5 mix, using HGETALL reads and LAVIK.HREPLACE updates against 100M records of ten 128-byte fields. These separate 300-second, 256-worker, unreplicated runs are below one million ops/s; GET throughput must not be reused as mixed-workload capacity. The table includes the operation-specific p99.9 values.",
+      "sources": [
+        "mixed-report",
+        "measurements"
+      ]
     },
     {
       "type": "paragraph",
-      "text": "One million operations per second corresponds to 86.4 billion operations per day if sustained. That level of measured serving performance, combined with NVMe storage density, makes a strong case for reevaluating a memory-bound fleet. Start with the actual traffic envelope—command mix, peak demand, bursts and latency target—and allocate compute to that envelope. Let NVMe SSD provide the capacity for everything the application needs to remember.",
-      "sources": ["model", "memory-report"]
+      "text": "Treat roughly 1M ops/s as an upper planning boundary for investigating this three-VM, read-heavy proposal—not a guaranteed operating rate. Above about 1M ops/s, the three-VM answer no longer applies: add serving capacity or redesign and reprice the topology. Write-heavy or expensive-command workloads, stricter tail latency, replication and burst headroom can require more hosts below that boundary too. The follower is a second data copy, not an assumed doubling of primary throughput. No replicated three-VM or 2.4 TB workload result is claimed.",
+      "sources": [
+        "model",
+        "memory-report",
+        "mixed-report",
+        "replication"
+      ]
     },
     {
       "type": "heading",
@@ -140,18 +222,28 @@
     },
     {
       "type": "paragraph",
-      "text": "Memory-driven growth also expands the topology engineers must operate. Redis Cluster distributes 16,384 hash slots and uses a full-mesh cluster bus. Its specification gives each node N−1 outgoing and N−1 incoming bus connections. Across the cluster, that is N(N−1) initiated connections: 89,700 at 300 nodes, 359,400 at 600 and 999,000 at 1,000. These are cluster-bus connections, separate from application traffic. As agent state expands, adding memory through more nodes also increases the size of this coordination fabric.",
-      "sources": ["redis-cluster"]
+      "text": "Node count changes cluster machinery as well as the VM bill. Redis Cluster distributes 16,384 hash slots and uses a full-mesh cluster bus. The specification describes N−1 outgoing and N−1 incoming bus connections per node, or N(N−1) initiated connections cluster-wide: 89,700 for 300 nodes, 1,560 for 40, and 380 for 20. These are bus connections, separate from application traffic. The larger-VM alternatives therefore reduce this topology as well; the headline's 300-node case should not be treated as universal.",
+      "sources": [
+        "redis-cluster",
+        "model"
+      ]
     },
     {
       "type": "paragraph",
       "text": "The cluster uses gossip, heartbeat probes and failure reports to maintain membership and health. Local failure suspicion must be reconciled with reports from other nodes; failover requires authorization and configuration epochs. During a network partition or rolling restart, engineers must understand which primaries, replicas and paths remain reachable. More members create more placements and relationships to diagnose, even when request-processing capacity is sufficient. The operating cost of a fleet includes this work as well as the VM bill.",
-      "sources": ["redis-cluster"]
+      "sources": [
+        "redis-cluster"
+      ]
     },
     {
       "type": "paragraph",
       "text": "Resharding adds data movement, ownership changes and client redirects. Maintenance adds patching, restarts, monitoring and replica placement. A storage-dense Lavik deployment reduces the number of Data processes needed for capacity and gives each one room to grow. Lavik’s Meta service manages topology and authority, while native replication maintains followers. For a capacity-bound application, reducing the fleet addresses two expenses at once: the servers purchased for memory and the operational work that comes with managing them.",
-      "sources": ["redis-scaling", "overview", "meta", "replication"]
+      "sources": [
+        "redis-scaling",
+        "overview",
+        "meta",
+        "replication"
+      ]
     },
     {
       "type": "heading",
@@ -159,18 +251,29 @@
     },
     {
       "type": "paragraph",
-      "text": "The strongest consolidation candidate is easy to recognize: memory pressure keeps forcing expansion while CPU utilization and traffic remain below the fleet’s serving capacity. Select a representative workload and size Lavik for its commands, key count, value distribution and busiest periods. A demanding tail-latency target or CPU-intensive command mix may need additional serving capacity. The architectural advantage remains the same: retained data no longer has to determine node count through DRAM capacity alone.",
-      "sources": ["model", "overview"]
+      "text": "The strongest candidate is capacity-bound: retained state forces expansion while CPU utilization and traffic remain below the fleet's serving capacity. Evaluate actual commands, key count, value sizes, replication and busiest periods on the proposed hardware. The benchmark L16aos_v4 has different local storage from the priced L16as_v4, so the quoted peak does not transfer automatically. If the latency or traffic target needs more Data nodes, update the topology and bill rather than preserving the three-VM headline.",
+      "sources": [
+        "model",
+        "overview",
+        "memory-report"
+      ]
     },
     {
       "type": "paragraph",
-      "text": "Build availability into the deployment from the beginning. Place VMs in appropriate failure domains and keep Meta state on durable disks. Azure’s local NVMe is temporary storage, so pair replication across VMs with external backups. Measure serving latency with replication, expiration and reclamation active, then rehearse primary failure and follower rebuild at the intended dataset size. Lavik’s Meta uses Raft for topology and authority, while Data replication is asynchronous. Set the application’s recovery-point and recovery-time targets accordingly, then verify them through failover drills.",
-      "sources": ["azure-lasv4", "meta", "replication", "model"]
+      "text": "Both sides retain two data copies, but copy count is not a service-level guarantee. Lavik Data replication is asynchronous, Azure local NVMe is temporary storage, and Meta state needs durable disks. External backups remain part of the deployment budget.",
+      "sources": [
+        "model",
+        "azure-lasv4",
+        "meta",
+        "replication"
+      ]
     },
     {
       "type": "paragraph",
       "text": "Use RedisShake to move from the existing Redis deployment. Inventory commands and key shapes, create the managed Lavik target, copy the baseline and follow incremental changes. Reconcile key counts, values and expirations before cutover. Pause source writes for the final catch-up, switch clients, and keep a rollback procedure that accounts for new writes. The source shard count does not have to dictate the target’s physical layout. The linked migration guide provides release-pinned configuration and steps for turning the consolidation design into an executable migration.",
-      "sources": ["migration"]
+      "sources": [
+        "migration"
+      ]
     },
     {
       "type": "heading",
@@ -178,8 +281,13 @@
     },
     {
       "type": "paragraph",
-      "text": "When retained state grows from 1 TB to 10 TB and beyond, the cost of each additional terabyte becomes a product constraint. Lavik offers a different foundation: a Redis-compatible NVMe key-value store with measured throughput above Redis on DRAM, efficient large-object storage and an Apache 2.0 open-source license. Start with the commands your application uses, load a representative dataset and measure the latency budget that matters to your users. From 300 Redis nodes to three Lavik nodes, the opportunity is to build around the workload’s real compute demand—and give its data room to grow.",
-      "sources": ["overview", "collections", "memory-report", "model"]
+      "text": "Lavik 0.2.0 offers a Redis-compatible NVMe key-value store, efficient grouped storage and an Apache 2.0 license. For a capacity-bound application, the modeled VM economics are a reason to test consolidation. The right result may be three VMs, or a larger topology once traffic and operating requirements are included. Start with a representative dataset and the application's latency budget, then let measured workload demand decide compute and replication while NVMe provides retained-data capacity.",
+      "sources": [
+        "overview",
+        "collections",
+        "memory-report",
+        "model"
+      ]
     },
     {
       "type": "heading",
@@ -187,23 +295,29 @@
     },
     {
       "type": "paragraph",
-      "text": "Benchmark setup: Azure Standard_L16aos_v4, Japan West zone 2, AMD EPYC 9V74, 16 logical CPUs (eight physical cores with SMT), 125.8 GiB RAM and six 1.92 TB NVMe devices. The F32als_v6 client uses 16 threads over private accelerated mlx5 networking and Linux TCP. Ten-million-key windows run for 30 seconds with correlated seeds; billion-key windows run for 60 seconds with distinct seeds. Lavik uses 8 GiB of hugepages, defrag enabled and 16 completions per poll. Selected Redis I/O-thread counts are 16 for GET and SET; Valkey uses 16 for GET and eight for SET. All runs use a single server without Data replicas; Redis and Valkey disable AOF and scheduled snapshots.",
-      "sources": ["memory-report"]
+      "text": "Benchmark setup: Azure Standard_L16aos_v4, Japan East zone 2, AMD EPYC 9V74, 16 logical CPUs on eight physical cores, nominal 128 GiB RAM, and six 1.92 TB NVMe devices. All values are 1 KiB. The 10M-key comparison uses 16 client threads and one 30-second window per point; the 1B-key run uses 32 client threads, independent client seeds and one 60-second window. Both use kernel TCP, private accelerated networking, SPDK and no Data replicas. Selected Redis I/O threads are 16 for GET/SET; Valkey uses 16 for GET and eight for SET. These Japanese benchmark hosts are distinct from both regional pricing scenarios.",
+      "sources": [
+        "memory-report"
+      ]
     },
     {
       "type": "paragraph",
-      "text": "Measurement details: each curve point is one measured window. Latencies come from whole-window memtier results; P95 is decoded from the embedded HDR histogram. The mixed-workload experiment uses io_uring, 12 Lavik workers plus four system/IRQ CPUs, 256 client workers and 300-second windows without replicas. These reports cover the workloads shown; production selection should also measure the application’s own value sizes, command mix and replicated tail latency.",
-      "sources": ["measurements", "memory-report", "mixed-report"]
+      "text": "Measurement details: percentiles come from complete windows, not averages of interval percentiles. P95 in the peak table is decoded from the embedded HDR histogram; sample counts and P50/P99/P99.9 are checked against raw JSON. Each point is one observed run, with no confidence interval. The separate mixed-workload experiment uses io_uring, 12 Lavik workers plus four system/IRQ CPUs, 256 client workers, 300-second windows and no replicas.",
+      "sources": [
+        "measurements",
+        "memory-report",
+        "mixed-report"
+      ]
     },
     {
       "type": "paragraph",
-      "text": "Sizing and cost basis: the Azure comparison uses 300 E2s_v4 VMs versus two L16as_v4 data VMs plus one E2s_v4 Meta-only voter. Both use Linux pay-as-you-go prices in East US 2 and 730 hours per month; annual cost is 12 monthly periods. Capacity normalization counts one logical copy: 2,400 GiB of Redis primary RAM and 3.84 TB of Lavik NVMe SSD, both before overhead. The logarithmic chart repeats independent three-VM Lavik deployment units as capacity grows. Throughput measurements use the separate L16aos_v4 benchmark setup. Cost per million operations assumes an average 1 million QPS; VM prices exclude managed disks, external backups, traffic, staffing and taxes.",
+      "text": "Cost basis: the East US 2 comparison uses Linux pay-as-you-go, 730 hours/month and 12 monthly periods/year. Capacity-normalized costs count one logical copy while including all replica and voter VM charges. They are before database overhead and headroom. The capacity chart shows Redis alternatives at 16, 128 and 256 GiB per VM and repeats independent Lavik units of two data VMs plus one voter for raw capacity growth; it is not a throughput scale-out measurement. Singapore reservations below are committed full-term prices converted to monthly equivalents. All figures exclude disks, backups, traffic, staffing, support, tax and negotiated discounts.",
       "sources": [
         "model",
         "azure-pricing",
         "azure-esv4",
         "azure-lasv4",
-        "memory-report"
+        "azure-reservations"
       ]
     }
   ],
@@ -211,10 +325,24 @@
     "sources": [
       {
         "id": "model",
-        "title": "Azure primary, follower and Meta-only voter capacity and cost model",
-        "url": "https://github.com/eloqdata/lavik-agent/blob/main/evidence/technical/agent-era-voter/sizing.json",
-        "file": "evidence/technical/agent-era-voter/sizing.json",
-        "sha256": "c593d994a7fad4d7ff0c5adedb0fb4d80ce8f03ac04134f629db074b12ad6703"
+        "title": "Modeled Azure fleet sizing and regional costs",
+        "file": "evidence/technical/featured-020-sales/sizing.json",
+        "url": "https://github.com/eloqdata/lavik-agent/blob/main/evidence/technical/featured-020-sales/sizing.json",
+        "sha256": "be331304b84fd8061957a2c7ebbf2938c1daf09066d7c0732cc21b9f344b02fc"
+      },
+      {
+        "id": "measurements",
+        "title": "Lavik 0.2.0 exact throughput and latency derivation",
+        "file": "evidence/technical/featured-020-sales/measurements.json",
+        "url": "https://github.com/eloqdata/lavik-agent/blob/main/evidence/technical/featured-020-sales/measurements.json",
+        "sha256": "d628f96e5711c55e0741a6af187fbcf98664826586a92fb75c4a037aae2b5835"
+      },
+      {
+        "id": "azure-pricing",
+        "title": "Microsoft retail prices: East US 2 and Singapore, PAYG and reservations",
+        "file": "evidence/technical/featured-020-sales/sources/azure-retail-prices.json",
+        "url": "https://github.com/eloqdata/lavik-agent/blob/main/evidence/technical/featured-020-sales/sources/azure-retail-prices.json",
+        "sha256": "70f6d7640800a4bdf1fddce88893a6f776989ef10a0f766c814b5d8b0dce6b0e"
       },
       {
         "id": "redis-cluster",
@@ -246,171 +374,150 @@
       },
       {
         "id": "overview",
-        "title": "Lavik 0.1.0 architecture and runtime",
-        "url": "https://github.com/eloqdata/lavik/blob/471f4864357f4a5034c64e7d4972ec0e55b82d94/docs/architecture/01-overview.md",
-        "file": "evidence/technical/agent-era/sources/01-overview.md",
+        "title": "Lavik 0.2.0 architecture",
+        "file": "evidence/docs/0.2.0/sources/docs_architecture_01-overview.md",
+        "url": "https://github.com/eloqdata/lavik/blob/2908f86f2770e9c6e8acc6585b3bedb4b44d1cd5/docs/architecture/01-overview.md",
         "sha256": "e512dee3ffcb8e48a2d4fcbb0046266b591d6ab0a74b37be92da2b8ea4f89720"
       },
       {
         "id": "replication",
-        "title": "Lavik native replication and recovery",
-        "url": "https://github.com/eloqdata/lavik/blob/471f4864357f4a5034c64e7d4972ec0e55b82d94/docs/architecture/05-replication.md",
-        "file": "evidence/technical/agent-era/sources/05-replication.md",
-        "sha256": "2d1814e2b83c4a9b358e6d01759d3811bf6717aa3f71dee3260b4f23467005ad"
+        "title": "Lavik 0.2.0 native replication",
+        "file": "evidence/docs/0.2.0/sources/docs_architecture_05-replication.md",
+        "url": "https://github.com/eloqdata/lavik/blob/2908f86f2770e9c6e8acc6585b3bedb4b44d1cd5/docs/architecture/05-replication.md",
+        "sha256": "3231fa4b6f0515c104233d0b56b87eccf18283738078fc31dac3dced18b6b85b"
       },
       {
         "id": "requests",
-        "title": "Lavik request serving",
-        "url": "https://github.com/eloqdata/lavik/blob/471f4864357f4a5034c64e7d4972ec0e55b82d94/docs/architecture/02-request-serving.md",
-        "file": "evidence/docs/0.1.0/sources/docs_architecture_02-request-serving.md",
-        "sha256": "c6704856dc370f4a0e1e1cc2d7697a0b16b058682442591c1b378386df2611b8"
+        "title": "Lavik 0.2.0 request serving",
+        "file": "evidence/docs/0.2.0/sources/docs_architecture_02-request-serving.md",
+        "url": "https://github.com/eloqdata/lavik/blob/2908f86f2770e9c6e8acc6585b3bedb4b44d1cd5/docs/architecture/02-request-serving.md",
+        "sha256": "6faf35de1a1f339c50087a701fdf51e5a194ed7ed87325da937ceb9939d8f79b"
       },
       {
         "id": "storage",
-        "title": "Lavik storage and recovery",
-        "url": "https://github.com/eloqdata/lavik/blob/471f4864357f4a5034c64e7d4972ec0e55b82d94/docs/architecture/04-storage-and-recovery.md",
-        "file": "evidence/docs/0.1.0/sources/docs_architecture_04-storage-and-recovery.md",
-        "sha256": "09edcb680ebd0ddebb0f7659924c6739145534a710c96711fe98d453e80d169e"
+        "title": "Lavik 0.2.0 storage and recovery",
+        "file": "evidence/docs/0.2.0/sources/docs_architecture_04-storage-and-recovery.md",
+        "url": "https://github.com/eloqdata/lavik/blob/2908f86f2770e9c6e8acc6585b3bedb4b44d1cd5/docs/architecture/04-storage-and-recovery.md",
+        "sha256": "79b2bf3dbe629fae7f65a702e13cee4c4a33b9b18e763d4ee72a953dc5257b1b"
       },
       {
         "id": "collections",
-        "title": "Lavik grouped collections",
-        "url": "https://github.com/eloqdata/lavik/blob/471f4864357f4a5034c64e7d4972ec0e55b82d94/docs/architecture/09-grouped-collections.md",
-        "file": "evidence/docs/0.1.0/sources/docs_architecture_09-grouped-collections.md",
-        "sha256": "beee7bebd6e1dffeab8984c5fa0ed9b8d5ba1501f47933cc8de8a4dc1f233ec9"
+        "title": "Lavik 0.2.0 grouped collections",
+        "file": "evidence/docs/0.2.0/sources/docs_architecture_09-grouped-collections.md",
+        "url": "https://github.com/eloqdata/lavik/blob/2908f86f2770e9c6e8acc6585b3bedb4b44d1cd5/docs/architecture/09-grouped-collections.md",
+        "sha256": "f7367fb37ea43a82075c7036fb3c3261168c73c9e781869533b62dedf8701e01"
       },
       {
         "id": "meta",
-        "title": "Lavik Meta Raft",
-        "url": "https://github.com/eloqdata/lavik/blob/471f4864357f4a5034c64e7d4972ec0e55b82d94/docs/architecture/10-meta-raft.md",
-        "file": "evidence/docs/0.1.0/sources/docs_architecture_10-meta-raft.md",
+        "title": "Lavik 0.2.0 Meta Raft",
+        "file": "evidence/docs/0.2.0/sources/docs_architecture_10-meta-raft.md",
+        "url": "https://github.com/eloqdata/lavik/blob/2908f86f2770e9c6e8acc6585b3bedb4b44d1cd5/docs/architecture/10-meta-raft.md",
         "sha256": "86e7db40e44990df56428aedc164eff478db55c87e5cecaa5de77671f4f14e3a"
       },
       {
         "id": "migration",
-        "title": "Lavik RedisShake import procedure",
-        "url": "https://github.com/eloqdata/lavik/blob/471f4864357f4a5034c64e7d4972ec0e55b82d94/docs/operations/redis-import.md",
-        "file": "evidence/docs/0.1.0/sources/docs_operations_redis-import.md",
+        "title": "Lavik 0.2.0 RedisShake migration",
+        "file": "evidence/docs/0.2.0/sources/docs_operations_redis-import.md",
+        "url": "https://github.com/eloqdata/lavik/blob/2908f86f2770e9c6e8acc6585b3bedb4b44d1cd5/docs/operations/redis-import.md",
         "sha256": "a09ef29e3b0579ef1c7535f63259e93204060539304926594d81f886e33143ec"
       },
       {
         "id": "memory-report",
-        "title": "Lavik SPDK vs Redis and Valkey: method and reproduction",
-        "url": "https://github.com/eloqdata/lavik/blob/471f4864357f4a5034c64e7d4972ec0e55b82d94/perf_reports/lavik-v0.1.0-spdk-vs-latest-2026-10-13/README.md",
-        "file": "evidence/benchmarks/0.1.0/lavik-v0.1.0-spdk-vs-latest-2026-10-13/README.md",
-        "sha256": "f41974bbea12a9daa114425d2c3e70f736ce92480fe2fda5f988cc33ec8fc678"
-      },
-      {
-        "id": "compact-report",
-        "title": "Small-instance capacity experiment",
-        "url": "https://github.com/eloqdata/lavik/blob/471f4864357f4a5034c64e7d4972ec0e55b82d94/perf_reports/lavik-v0.1.0-2vcpu-latest-capacity-2026-10-13/README.md",
-        "file": "evidence/benchmarks/0.1.0/lavik-v0.1.0-2vcpu-latest-capacity-2026-10-13/README.md",
-        "sha256": "153afbe2bd978821be955d4b1683fc760dce50a90826ce27d5f469acf911f74b"
+        "title": "Lavik 0.2.0: 2-vCPU and 16-vCPU benchmark method",
+        "file": "evidence/benchmarks/0.2.0/lavik-v0.2.0-vs-memory-databases-2026-10-21/README.md",
+        "url": "https://github.com/eloqdata/lavik/blob/089dbdfd87001c86ad3343ddf2554464720346e9/perf_reports/lavik-v0.2.0-vs-memory-databases-2026-10-21/README.md",
+        "sha256": "5e8bc4ce332ad9e8b62cf4f90d59cbab44dd4a8ad065388820dd5cad09530af9"
       },
       {
         "id": "mixed-report",
-        "title": "Lavik and Aerospike: mixed YCSB workloads",
-        "url": "https://github.com/eloqdata/lavik/blob/471f4864357f4a5034c64e7d4972ec0e55b82d94/perf_reports/lavik-v0.1.0-aerospike-ycsb-2026-10-13/README.md",
-        "file": "evidence/benchmarks/0.1.0/lavik-v0.1.0-aerospike-ycsb-2026-10-13/README.md",
-        "sha256": "8324841157b0b7a19f074678e5c198f39d2ce21c12da815adc39f6dea2292ce2"
-      },
-      {
-        "id": "measurements",
-        "title": "Exact article measurements and histogram derivation",
-        "url": "https://github.com/eloqdata/lavik-agent/blob/main/evidence/technical/agent-era/measurements.json",
-        "file": "evidence/technical/agent-era/measurements.json",
-        "sha256": "90f818d66a761b13cdfc900fe2f6cea0dbc2d5d25d875f71043ecf806099b0d0"
+        "title": "Lavik 0.2.0 mixed-workload YCSB results",
+        "file": "evidence/benchmarks/0.2.0/lavik-v0.2.0-aerospike-ycsb-2026-10-21/README.md",
+        "url": "https://github.com/eloqdata/lavik/blob/089dbdfd87001c86ad3343ddf2554464720346e9/perf_reports/lavik-v0.2.0-aerospike-ycsb-2026-10-21/README.md",
+        "sha256": "db9b1655a679f5cfd398d620e9dad923981776f9df462952db9cc2bbcd97d442"
       },
       {
         "id": "raw-0",
-        "title": "Raw benchmark: memory/lavik-spdk/get-c1280.json",
-        "url": "https://github.com/eloqdata/lavik-agent/blob/a7dbebbc6dee02ff51a537d9f2b5376b7cd52163/perf_reports/lavik-v0.1.0-spdk-vs-latest-2026-10-13/raw/memory/lavik-spdk/get-c1280.json",
-        "file": "perf_reports/lavik-v0.1.0-spdk-vs-latest-2026-10-13/raw/memory/lavik-spdk/get-c1280.json",
-        "sha256": "fe7916b5e4582e047747df2c6514b4c66570c2f7b0a6d064296228d6811f371f"
+        "title": "Raw 0.2.0 comparison: Lavik 0.2.0 SPDK GET",
+        "file": "perf_reports/lavik-v0.2.0-vs-memory-databases-2026-10-21/raw/16vcpu-10m/results/large/memory/lavik-10m/get-c1280.json",
+        "url": "https://github.com/eloqdata/lavik-agent/blob/bb061b97e9836281e71c219f21570d742313fb8c/perf_reports/lavik-v0.2.0-vs-memory-databases-2026-10-21/raw/16vcpu-10m/results/large/memory/lavik-10m/get-c1280.json",
+        "sha256": "3bd088c61a1d115a9219ab37a036b6179f1d0ba0bed557fc4860a9f69543eae1"
       },
       {
         "id": "raw-1",
-        "title": "Raw benchmark: memory/lavik-spdk/set-c1280.json",
-        "url": "https://github.com/eloqdata/lavik-agent/blob/a7dbebbc6dee02ff51a537d9f2b5376b7cd52163/perf_reports/lavik-v0.1.0-spdk-vs-latest-2026-10-13/raw/memory/lavik-spdk/set-c1280.json",
-        "file": "perf_reports/lavik-v0.1.0-spdk-vs-latest-2026-10-13/raw/memory/lavik-spdk/set-c1280.json",
-        "sha256": "c3cd73b0bc20d6c35877c92209aeb57889a6e70d2e4b23a214f5d5f190e15618"
+        "title": "Raw 0.2.0 comparison: Lavik 0.2.0 SPDK SET",
+        "file": "perf_reports/lavik-v0.2.0-vs-memory-databases-2026-10-21/raw/16vcpu-10m/results/large/memory/lavik-10m/set-c1280.json",
+        "url": "https://github.com/eloqdata/lavik-agent/blob/bb061b97e9836281e71c219f21570d742313fb8c/perf_reports/lavik-v0.2.0-vs-memory-databases-2026-10-21/raw/16vcpu-10m/results/large/memory/lavik-10m/set-c1280.json",
+        "sha256": "a4316e3055ab482d36ad8d9ee8cfca2ddc58f22fbf3a62596e293fe6ba0cab27"
       },
       {
         "id": "raw-2",
-        "title": "Raw benchmark: memory/redis/io16/get-c1280.json",
-        "url": "https://github.com/eloqdata/lavik-agent/blob/a7dbebbc6dee02ff51a537d9f2b5376b7cd52163/perf_reports/lavik-v0.1.0-spdk-vs-latest-2026-10-13/raw/memory/redis/io16/get-c1280.json",
-        "file": "perf_reports/lavik-v0.1.0-spdk-vs-latest-2026-10-13/raw/memory/redis/io16/get-c1280.json",
-        "sha256": "94a79196b3bd7dc154e0d03d0b4a5c3c4574987359ab0d755a93bfc186c8ea93"
+        "title": "Raw 0.2.0 comparison: Redis 8.10.2 GET",
+        "file": "perf_reports/lavik-v0.2.0-vs-memory-databases-2026-10-21/raw/16vcpu-10m/results/large/memory/redis/io16/get-c1280.json",
+        "url": "https://github.com/eloqdata/lavik-agent/blob/bb061b97e9836281e71c219f21570d742313fb8c/perf_reports/lavik-v0.2.0-vs-memory-databases-2026-10-21/raw/16vcpu-10m/results/large/memory/redis/io16/get-c1280.json",
+        "sha256": "b97f66eb953dab31ebdd7f26bd4b66ef126c0e347ef8dc48d3d5b1b2cd262018"
       },
       {
         "id": "raw-3",
-        "title": "Raw benchmark: memory/redis/io16/set-c1280.json",
-        "url": "https://github.com/eloqdata/lavik-agent/blob/a7dbebbc6dee02ff51a537d9f2b5376b7cd52163/perf_reports/lavik-v0.1.0-spdk-vs-latest-2026-10-13/raw/memory/redis/io16/set-c1280.json",
-        "file": "perf_reports/lavik-v0.1.0-spdk-vs-latest-2026-10-13/raw/memory/redis/io16/set-c1280.json",
-        "sha256": "2915283e826e52def506101c565b33d8798c5c5341872114a72e9ee7217f17d5"
+        "title": "Raw 0.2.0 comparison: Redis 8.10.2 SET",
+        "file": "perf_reports/lavik-v0.2.0-vs-memory-databases-2026-10-21/raw/16vcpu-10m/results/large/memory/redis/io16/set-c1280.json",
+        "url": "https://github.com/eloqdata/lavik-agent/blob/bb061b97e9836281e71c219f21570d742313fb8c/perf_reports/lavik-v0.2.0-vs-memory-databases-2026-10-21/raw/16vcpu-10m/results/large/memory/redis/io16/set-c1280.json",
+        "sha256": "1886d83892fa2823fa896d0cdec0f9a41d11e7411bf679419bca223a5cf597d1"
       },
       {
         "id": "raw-4",
-        "title": "Raw benchmark: memory/valkey/io16/get-c1280.json",
-        "url": "https://github.com/eloqdata/lavik-agent/blob/a7dbebbc6dee02ff51a537d9f2b5376b7cd52163/perf_reports/lavik-v0.1.0-spdk-vs-latest-2026-10-13/raw/memory/valkey/io16/get-c1280.json",
-        "file": "perf_reports/lavik-v0.1.0-spdk-vs-latest-2026-10-13/raw/memory/valkey/io16/get-c1280.json",
-        "sha256": "ee54eaa701bb85965c0c51d1c25ca7d23bf4b9f34ff4b5b2d5bff5e166a1477e"
+        "title": "Raw 0.2.0 comparison: Valkey 9.1.2 GET",
+        "file": "perf_reports/lavik-v0.2.0-vs-memory-databases-2026-10-21/raw/16vcpu-10m/results/large/memory/valkey/io16/get-c1280.json",
+        "url": "https://github.com/eloqdata/lavik-agent/blob/bb061b97e9836281e71c219f21570d742313fb8c/perf_reports/lavik-v0.2.0-vs-memory-databases-2026-10-21/raw/16vcpu-10m/results/large/memory/valkey/io16/get-c1280.json",
+        "sha256": "4740c214e04214bdc46504178472cb0821108464622935def29a065f0a1c00f9"
       },
       {
         "id": "raw-5",
-        "title": "Raw benchmark: memory/valkey/io8/set-c1280.json",
-        "url": "https://github.com/eloqdata/lavik-agent/blob/a7dbebbc6dee02ff51a537d9f2b5376b7cd52163/perf_reports/lavik-v0.1.0-spdk-vs-latest-2026-10-13/raw/memory/valkey/io8/set-c1280.json",
-        "file": "perf_reports/lavik-v0.1.0-spdk-vs-latest-2026-10-13/raw/memory/valkey/io8/set-c1280.json",
-        "sha256": "10aece99d13238c78db689d82d3d58ebb2f2f58ef9e2eafa57bca9dfdd9cab3d"
-      },
-      {
-        "id": "raw-6",
-        "title": "Raw benchmark: results.csv",
-        "url": "https://github.com/eloqdata/lavik-agent/blob/a7dbebbc6dee02ff51a537d9f2b5376b7cd52163/perf_reports/lavik-v0.1.0-spdk-vs-latest-2026-10-13/metadata/results.csv",
-        "file": "perf_reports/lavik-v0.1.0-spdk-vs-latest-2026-10-13/metadata/results.csv",
-        "sha256": "e3bdb4d3a94db5930e39bf495d159f1af98b1964542431c54a044e132d499a5f"
-      },
-      {
-        "id": "large-objects",
-        "title": "Scope of the 1 MiB large-object experiment",
-        "url": "https://github.com/eloqdata/lavik-agent/blob/a7dbebbc6dee02ff51a537d9f2b5376b7cd52163/perf_reports/lavik-v0.1.0-large-objects-2026-10-14/README.md",
-        "file": "perf_reports/lavik-v0.1.0-large-objects-2026-10-14/README.md",
-        "sha256": "6089e8e71f60100a42d17bd3ece652ff90d36fcef572dcf80a58b76f809b143b"
-      },
-      {
-        "id": "redis-flex",
-        "title": "Redis Flex: workload suitability and the RAM/flash access path",
-        "url": "https://redis.io/docs/latest/operate/rs/databases/flash/",
-        "file": "evidence/technical/agent-era-editorial/sources/redis-flex.json",
-        "sha256": "a9b96513697c0a80a84f58100f38e8033adecd771195d68fda81d7671ecdd0da"
-      },
-      {
-        "id": "redis-flex-latency",
-        "title": "Redis Flex: advertised flash-access latency",
-        "url": "https://redis.io/solutions/flex/",
-        "file": "evidence/technical/agent-era-editorial/sources/redis-flex-latency.json",
-        "sha256": "74477fc3f413c0eaad94ee5b666448bb41d51b3ed9f3c0cf2c705e86a05ee383"
-      },
-      {
-        "id": "azure-pricing",
-        "title": "Azure retail prices: Linux E2s_v4 and L16as_v4 in East US 2",
-        "url": "https://github.com/eloqdata/lavik-agent/blob/main/evidence/technical/agent-era-voter/sources/azure-retail-prices.json",
-        "file": "evidence/technical/agent-era-voter/sources/azure-retail-prices.json",
-        "sha256": "3082b6238db5907208147f51cd1faa6d43f0d0425cb40cd797b0609c6537893e"
+        "title": "Raw 0.2.0 comparison: Valkey 9.1.2 SET",
+        "file": "perf_reports/lavik-v0.2.0-vs-memory-databases-2026-10-21/raw/16vcpu-10m/results/large/memory/valkey/io8/set-c1280.json",
+        "url": "https://github.com/eloqdata/lavik-agent/blob/bb061b97e9836281e71c219f21570d742313fb8c/perf_reports/lavik-v0.2.0-vs-memory-databases-2026-10-21/raw/16vcpu-10m/results/large/memory/valkey/io8/set-c1280.json",
+        "sha256": "c7c96e7221938691d0a62f95dcc6e19ac5b1b76f2766fe8df060e2e177ebba46"
       },
       {
         "id": "azure-esv4",
-        "title": "Microsoft Azure: E2s_v4 specifications",
+        "title": "Microsoft: E2s_v4, E16s_v4 and E32s_v4 RAM and CPU",
+        "file": "evidence/technical/featured-020-sales/sources/azure-esv4.json",
         "url": "https://learn.microsoft.com/en-us/azure/virtual-machines/sizes/memory-optimized/esv4-series",
-        "file": "evidence/technical/agent-era-voter/sources/azure-vm-specifications.json",
-        "sha256": "b229bc35c244ff9fc06737583150fcb17f7065416f5fd9c7cf1892b9768fc470"
+        "sha256": "53f07ab1ad1748c781a511497c91cbddfe569a2b5a0501515e03a34ca40a1437"
       },
       {
         "id": "azure-lasv4",
-        "title": "Microsoft Azure: L16as_v4 specifications and local NVMe capacity",
+        "title": "Microsoft: L16as_v4 and temporary local NVMe",
+        "file": "evidence/technical/featured-020-sales/sources/azure-lasv4.json",
         "url": "https://learn.microsoft.com/en-us/azure/virtual-machines/sizes/storage-optimized/lasv4-series",
-        "file": "evidence/technical/agent-era-voter/sources/azure-vm-specifications.json",
-        "sha256": "b229bc35c244ff9fc06737583150fcb17f7065416f5fd9c7cf1892b9768fc470"
+        "sha256": "add92c2fc5872748a9aecb8514a001e8b6376deb586151afd548b7b3f058caf2"
+      },
+      {
+        "id": "azure-reservations",
+        "title": "Microsoft: reservation terms and monthly payments",
+        "file": "evidence/technical/featured-020-sales/sources/azure-reservations.json",
+        "url": "https://learn.microsoft.com/en-us/azure/cost-management-billing/reservations/prepare-buy-reservation",
+        "sha256": "c8337472c4102060674261cd2ee6c1655a1dd67edd99aedfba74b917be66856a"
+      },
+      {
+        "id": "azure-retail-api",
+        "title": "Microsoft: retail API price and reservation fields",
+        "file": "evidence/technical/featured-020-sales/sources/azure-retail-api.json",
+        "url": "https://learn.microsoft.com/en-us/rest/api/cost-management/retail-prices/azure-retail-prices",
+        "sha256": "3a2fe7a0502dc36e46d8ed71067c37fa660c7d55c9df545b5885c8ad790fe42d"
+      },
+      {
+        "id": "csv-6",
+        "title": "Archived 0.2.0 result matrix",
+        "file": "perf_reports/lavik-v0.2.0-vs-memory-databases-2026-10-21/metadata/results.csv",
+        "url": "https://github.com/eloqdata/lavik-agent/blob/bb061b97e9836281e71c219f21570d742313fb8c/perf_reports/lavik-v0.2.0-vs-memory-databases-2026-10-21/metadata/results.csv",
+        "sha256": "6a4a1f117a66365e9887a885218b9d1f886bf130c94b1054b5d4abeeb7360b0c"
+      },
+      {
+        "id": "csv-7",
+        "title": "Archived 0.2.0 result matrix",
+        "file": "perf_reports/lavik-v0.2.0-aerospike-ycsb-2026-10-21/metadata/results.csv",
+        "url": "https://github.com/eloqdata/lavik-agent/blob/bb061b97e9836281e71c219f21570d742313fb8c/perf_reports/lavik-v0.2.0-aerospike-ycsb-2026-10-21/metadata/results.csv",
+        "sha256": "c86ea86d2f851a064901a730eba7a77afa687ad0b953ea6763225b715f6e85f2"
       }
     ],
     "visuals": [
@@ -418,13 +525,19 @@
         "type": "figure",
         "id": "fleet-model",
         "afterBlock": 0,
-        "src": "/blog-assets/agent-era/consolidation.svg",
-        "sha256": "07235e63c14faa10218f92695ce83f57e90a157a8774e1dfb7d02afa2225a5db",
+        "src": "/blog-assets/featured-020-sales/consolidation.svg",
+        "sha256": "a2466300f2a4afcee8c572d6c053235ed43fa2214737ec2ef232890705873d8d",
         "width": 1200,
-        "height": 650,
-        "caption": "Capacity model: 300 E2s_v4 Redis VMs versus two L16as_v4 Lavik data VMs and one E2s_v4 Meta-only voter. One Meta member runs on each VM; only the primary and follower hold the dataset.",
-        "alt": "300 Redis nodes in 150 primary–replica pairs, compared with a Lavik primary and follower on L16as_v4 plus an E2s_v4 Meta-only voter. The data nodes also run Meta members, giving three Meta votes and two dataset copies.",
-        "sources": ["model", "azure-esv4", "azure-lasv4"]
+        "height": 750,
+        "caption": "Modeled two-copy consolidation: illustrative small-VM Redis fleet versus two Lavik data VMs and one Meta-only voter. VM cost only; the 0.2.0 performance reference is a separate single-server measurement.",
+        "alt": "Modeled 300 small Redis VMs to three Lavik VMs; two data copies per side, 92.4% lower VM bill. Separate Lavik 0.2.0 GET benchmark: 1.157M QPS, not replicated three-VM capacity.",
+        "sources": [
+          "model",
+          "azure-esv4",
+          "azure-lasv4",
+          "memory-report",
+          "measurements"
+        ]
       },
       {
         "type": "table",
@@ -437,46 +550,60 @@
           "Two copies, values only"
         ],
         "rows": [
-          ["1 KB", "1 TB", "2 TB"],
-          ["10 KB", "10 TB", "20 TB"],
-          ["100 KB", "100 TB", "200 TB"]
+          [
+            "1 KB",
+            "1 TB",
+            "2 TB"
+          ],
+          [
+            "10 KB",
+            "10 TB",
+            "20 TB"
+          ],
+          [
+            "100 KB",
+            "100 TB",
+            "200 TB"
+          ]
         ],
-        "sources": ["model"]
+        "sources": [
+          "model"
+        ]
       },
       {
         "type": "table",
         "id": "cost-model",
         "afterBlock": 8,
-        "caption": "Azure East US 2 · Linux pay-as-you-go · USD · 730 hours/month. VM-hour rates identify each SKU; monthly and annual costs cover the complete deployment.",
+        "caption": "Modeled VM costs · East US 2 · Linux PAYG · USD · 730 h/month · rates checked 2026-11-07",
         "columns": [
           "Deployment",
           "USD / VM-hour",
           "Monthly USD",
-          "Annual USD",
-          "USD / million operations at 1M average QPS"
+          "Annual USD"
         ],
         "rows": [
           [
-            "Redis · 300 × Standard_E2s_v4",
+            "Redis · 300 × E2s_v4",
             "$0.126",
             "$27,594.00",
-            "$331,128.00",
-            "$0.01050"
+            "$331,128.00"
           ],
           [
             "Lavik · 2 × L16as_v4 + 1 × E2s_v4",
-            "$1.376 (L16as_v4); $0.126 (E2s_v4)",
+            "$1.376; $0.126",
             "$2,100.94",
-            "$25,211.28",
-            "$0.00080"
+            "$25,211.28"
           ]
         ],
-        "sources": ["azure-pricing", "model"]
+        "sources": [
+          "azure-pricing",
+          "model"
+        ]
       },
       {
         "type": "table",
         "id": "capacity-cost",
-        "afterBlock": 11,
+        "afterBlock": 13,
         "caption": "Monthly VM cost per TB of primary capacity, before database overhead and operational headroom. Replica capacity is counted once.",
         "columns": [
           "Deployment",
@@ -484,28 +611,46 @@
           "USD / TB-month"
         ],
         "rows": [
-          ["Redis · 300 × E2s_v4", "2,400 GiB RAM (≈ 2.577 TB)", "$10,707.88"],
-          ["Lavik · 2 × L16as_v4 + 1 × E2s_v4", "3.84 TB NVMe SSD", "$547.12"]
+          [
+            "Redis · 300 × E2s_v4",
+            "2,400 GiB RAM (≈ 2.577 TB)",
+            "$10,707.88"
+          ],
+          [
+            "Lavik · 2 × L16as_v4 + 1 × E2s_v4",
+            "3.84 TB NVMe SSD",
+            "$547.12"
+          ]
         ],
-        "sources": ["model", "azure-esv4", "azure-lasv4", "azure-pricing"]
+        "sources": [
+          "model",
+          "azure-esv4",
+          "azure-lasv4",
+          "azure-pricing"
+        ]
       },
       {
         "type": "figure",
         "id": "storage-path",
-        "afterBlock": 16,
-        "src": "/blog-assets/agent-era/request-path.svg",
-        "sha256": "80d8bc0387f3619367cba8c3917ac7c62076e214fb0d2ef8fda2d4374bc24c3a",
+        "afterBlock": 18,
+        "src": "/blog-assets/featured-020-sales/request-path.svg",
+        "sha256": "141179d805baf20a847acbf24d72ac19c954ee9891e6c68867856e384c3d5895",
         "width": 1200,
         "height": 650,
-        "caption": "Lavik’s request path: coroutine workers, an in-memory key index and asynchronous SPDK I/O keep NVMe storage busy.",
+        "caption": "Lavik 0.2.0 request path: coroutine workers, in-memory indexes and asynchronous SPDK I/O.",
         "alt": "RESP traffic enters coroutine workers, indexes remain in memory, and asynchronous SPDK queue pairs reach NVMe SSD; kernel TCP and Meta authority remain separate.",
-        "sources": ["overview", "requests", "storage", "spdk-nvme"]
+        "sources": [
+          "overview",
+          "requests",
+          "storage",
+          "spdk-nvme"
+        ]
       },
       {
         "type": "table",
         "id": "peak-results",
-        "afterBlock": 19,
-        "caption": "Same 1,280-connection runs · QPS rounded to whole operations; all latency columns in milliseconds",
+        "afterBlock": 21,
+        "caption": "Lavik 0.2.0 / Redis / Valkey · 10M keys · same 1,280 connections · one server, no replicas · latency in ms",
         "columns": [
           "System / operation",
           "QPS",
@@ -517,58 +662,58 @@
         ],
         "rows": [
           [
-            "Lavik 0.1.0 SPDK GET",
-            "1,145,772",
-            "1.117",
-            "1.031",
-            "1.511",
+            "Lavik 0.2.0 SPDK GET",
+            "1,156,956",
+            "1.106",
+            "1.023",
+            "1.495",
             "3.999",
-            "7.135"
-          ],
-          [
-            "Lavik 0.1.0 SPDK SET",
-            "971,950",
-            "1.317",
-            "1.119",
-            "2.783",
-            "4.479",
-            "7.199"
-          ],
-          [
-            "Redis 8.10.2 GET",
-            "1,018,735",
-            "1.256",
-            "1.087",
-            "2.479",
-            "4.415",
             "7.103"
           ],
           [
+            "Lavik 0.2.0 SPDK SET",
+            "945,384",
+            "1.353",
+            "1.143",
+            "2.719",
+            "4.447",
+            "10.175"
+          ],
+          [
+            "Redis 8.10.2 GET",
+            "976,087",
+            "1.311",
+            "1.119",
+            "2.703",
+            "4.383",
+            "7.039"
+          ],
+          [
             "Redis 8.10.2 SET",
-            "951,053",
-            "1.346",
-            "1.135",
-            "2.943",
-            "4.511",
-            "7.231"
+            "863,860",
+            "1.481",
+            "1.295",
+            "2.751",
+            "4.191",
+            "7.391"
           ],
           [
             "Valkey 9.1.2 GET",
-            "970,288",
-            "1.319",
-            "1.119",
-            "2.511",
-            "4.415",
-            "7.455"
+            "913,756",
+            "1.400",
+            "1.191",
+            "2.639",
+            "4.383",
+            "7.743"
           ],
           [
             "Valkey 9.1.2 SET",
-            "808,103",
-            "1.583",
-            "1.455",
-            "2.559",
-            "4.047",
-            "7.199"
+            "793,809",
+            "1.612",
+            "1.511",
+            "2.543",
+            "3.775",
+            "7.743"
           ]
         ],
         "sources": [
@@ -584,20 +729,23 @@
       {
         "type": "figure",
         "id": "throughput-sweep",
-        "afterBlock": 21,
-        "src": "/blog-assets/agent-era/throughput.svg",
-        "sha256": "236b469be066a5a804885101375c4c6020b41b8699a13da02039557e77f08586",
+        "afterBlock": 23,
+        "src": "/blog-assets/featured-020-sales/throughput.svg",
+        "sha256": "11dd7dd704f2c8916e944eb16de7abc72c2ef4100e6e8648a92b98f954008a33",
         "width": 1200,
         "height": 540,
-        "caption": "GET and SET across 80–1,280 connections. The 10M-key runs use 30-second windows; the 1B-key runs use 60-second windows and distinct client seeds.",
-        "alt": "GET and SET throughput curves for Lavik with ten million and one billion keys, and Redis and Valkey with ten million keys.",
-        "sources": ["memory-report", "measurements"]
+        "caption": "Lavik 0.2.0 GET/SET · 160–1,280 connections · 10M: 30s / 16 client threads; 1B: 60s / 32 threads · no replicas",
+        "alt": "Lavik 0.2.0 throughput curves with 10M and 1B keys; Redis and Valkey with 10M keys. Four measured connection counts per curve.",
+        "sources": [
+          "memory-report",
+          "measurements"
+        ]
       },
       {
         "type": "table",
         "id": "mixed-workloads",
-        "afterBlock": 22,
-        "caption": "Separate io_uring YCSB experiment · 100M records, 10 × 128 B fields, 256 workers, no replicas",
+        "afterBlock": 24,
+        "caption": "Lavik 0.2.0 io_uring YCSB · 100M records · 10 × 128 B fields · 256 client workers · 300s · no replicas",
         "columns": [
           "Lavik workload",
           "Total QPS",
@@ -605,23 +753,114 @@
           "UPDATE P99.9 ms"
         ],
         "rows": [
-          ["50% HGETALL / 50% HREPLACE", "529,501", "5.083", "2.831"],
-          ["95% HGETALL / 5% HREPLACE", "577,373", "1.818", "1.578"]
+          [
+            "50% HGETALL / 50% HREPLACE",
+            "476,454",
+            "4.399",
+            "2.179"
+          ],
+          [
+            "95% HGETALL / 5% HREPLACE",
+            "488,622",
+            "1.902",
+            "1.716"
+          ]
         ],
-        "sources": ["mixed-report"]
+        "sources": [
+          "mixed-report"
+        ]
       },
       {
         "type": "figure",
         "id": "node-count-growth",
-        "afterBlock": 28,
-        "src": "/blog-assets/agent-era/capacity.svg",
-        "sha256": "03b94acef51bbe2319362ddf218dd373892a2ee9478b295f43cc7b99b1362516",
+        "afterBlock": 30,
+        "src": "/blog-assets/featured-020-sales/capacity.svg",
+        "sha256": "f28af653eb9f9aa483a150fd2ff0a22db15820d383a168fda571be8a3c48b92e",
         "width": 1200,
         "height": 540,
-        "caption": "Logarithmic capacity model before overhead. Redis uses a 16 GiB primary and one replica per pair. Each independent Lavik deployment adds two 3.84 TB data VMs and one smaller Meta-only voter; all three VMs are counted.",
-        "alt": "A single logarithmic chart compares capacity-driven VM counts. At 10 TB before overhead, Redis reaches 1,166 VMs; three independent Lavik deployments total nine VMs: six data VMs and three Meta-only voters.",
-        "sources": ["model", "azure-esv4", "azure-lasv4"]
+        "caption": "Capacity-only VM model with two data copies: Redis at 16, 128 or 256 GiB per VM, versus independent Lavik units of two data VMs plus one voter. Before overhead/headroom; throughput may require more hosts.",
+        "alt": "Logarithmic VM counts compare small and larger Redis shards with Lavik raw-capacity units. This is a sizing illustration, not a measured performance scaling result.",
+        "sources": [
+          "model",
+          "azure-esv4",
+          "azure-lasv4"
+        ]
+      },
+      {
+        "type": "table",
+        "id": "redis-vm-alternatives",
+        "afterBlock": 7,
+        "caption": "Larger Redis VMs reduce node count, with similar RAM price per TB · East US 2 PAYG · two copies · raw capacity",
+        "columns": [
+          "Redis VMs",
+          "Primary RAM",
+          "USD / month",
+          "USD / TB-month"
+        ],
+        "rows": [
+          [
+            "300 × E2s_v4",
+            "2,400 GiB",
+            "$27,594.00",
+            "$10,707.88"
+          ],
+          [
+            "40 × E16s_v4",
+            "2,560 GiB",
+            "$29,433.60",
+            "$10,707.88"
+          ],
+          [
+            "20 × E32s_v4",
+            "2,560 GiB",
+            "$29,433.60",
+            "$10,707.88"
+          ]
+        ],
+        "sources": [
+          "model",
+          "azure-pricing",
+          "azure-esv4"
+        ]
+      },
+      {
+        "type": "table",
+        "id": "singapore-pricing",
+        "afterBlock": 10,
+        "caption": "Singapore / Southeast Asia · USD monthly equivalents · identical purchase terms on both sides · 300 E2s_v4 vs 2 L16as_v4 + 1 E2s_v4",
+        "columns": [
+          "Billing basis",
+          "Redis / month",
+          "Lavik / month",
+          "Lower VM cost"
+        ],
+        "rows": [
+          [
+            "Pay-as-you-go",
+            "$33,288.00",
+            "$2,514.12",
+            "92.4%"
+          ],
+          [
+            "1 Year",
+            "$19,575.00",
+            "$1,482.75",
+            "92.4%"
+          ],
+          [
+            "3 Years",
+            "$12,516.67",
+            "$954.72",
+            "92.4%"
+          ]
+        ],
+        "sources": [
+          "model",
+          "azure-pricing",
+          "azure-reservations"
+        ]
       }
     ]
-  }
+  },
+  "sourceRevision": "2908f86f2770e9c6e8acc6585b3bedb4b44d1cd5"
 }
