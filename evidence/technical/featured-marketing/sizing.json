@@ -1,0 +1,143 @@
+{
+  "status": "Modeled VM costs and raw capacity; not a measured migration, replicated workload or throughput sizing result.",
+  "units": "VM RAM: GiB (2^30 bytes); SSD capacity and normalized TB: decimal (10^12 bytes). Both capacity denominators are before database overhead and free-space headroom.",
+  "agents": 1000000000,
+  "bytesPerAgent": [
+    1000,
+    10000,
+    100000
+  ],
+  "region": "southeastasia",
+  "hoursPerMonth": 730,
+  "monthsPerYear": 12,
+  "redis": {
+    "nodes": 300,
+    "primaries": 150,
+    "replicas": 150,
+    "copies": 2,
+    "sku": "Standard_E2s_v4",
+    "vCPUsPerVM": 2,
+    "memoryGiBPerVM": 16,
+    "totalVCPUs": 600,
+    "totalMemoryGiB": 4800,
+    "primaryMemoryGiB": 2400,
+    "capacityDenominatorTB": 2.5769803776,
+    "hourlyUSDPerVM": 0.152,
+    "monthlyUSDPerVM": 110.96,
+    "monthlyUSD": 33288.0,
+    "annualUSD": 399456.0,
+    "localStorage": "None"
+  },
+  "lavik": {
+    "nodes": 3,
+    "dataProcesses": 2,
+    "metaProcesses": 3,
+    "copies": 2,
+    "topology": "one primary and one full follower, each co-located with a Meta Raft member; one dedicated Meta-only voter on a third VM. Three Meta voters, two dataset copies.",
+    "dataVMs": {
+      "count": 2,
+      "sku": "Standard_L16as_v4",
+      "vCPUsPerVM": 16,
+      "memoryGiBPerVM": 128,
+      "localNVMeDevicesPerVM": 4,
+      "localNVMeGBPerDevice": 960,
+      "localNVMeTBPerVM": 3.84,
+      "hourlyUSDPerVM": 1.646,
+      "monthlyUSDPerVM": 1201.58
+    },
+    "voterVM": {
+      "count": 1,
+      "sku": "Standard_E2s_v4",
+      "vCPUs": 2,
+      "memoryGiB": 16,
+      "localStorage": "None",
+      "datasetCopies": 0,
+      "hourlyUSD": 0.152,
+      "monthlyUSD": 110.96,
+      "role": "Meta control-plane voting and failover coordination; persists Meta state on a managed disk"
+    },
+    "totalVCPUs": 34,
+    "totalMemoryGiB": 272,
+    "capacityDenominatorTB": 3.84,
+    "hourlyUSDFleet": 3.444,
+    "monthlyUSD": 2514.12,
+    "annualUSD": 30169.44
+  },
+  "savings": {
+    "monthlyUSD": 30773.88,
+    "annualUSD": 369286.56,
+    "percentLowerMonthlyVMPrice": 92.44736842105263,
+    "redisToLavikMonthlyCostRatio": 13.2404181184669
+  },
+  "capacityNormalizedMonthlyUSDPerTB": {
+    "redis": 12917.444109916687,
+    "lavik": 654.71875
+  },
+  "capacityChart": {
+    "formulaRedisNodes": "2 * ceil(logical_TB * 10^12 / (16 * 2^30))",
+    "formulaLavikNodes": "3 * ceil(logical_TB / 3.84)",
+    "VMsPerLavikDeployment": 3,
+    "dataVMsPerLavikDeployment": 2,
+    "voterOnlyVMsPerLavikDeployment": 1,
+    "pointsTB": [
+      0.1,
+      0.5,
+      1,
+      1.5,
+      2.5,
+      3,
+      3.84,
+      5,
+      7.68,
+      10
+    ],
+    "scale": "single logarithmic VM-count axis",
+    "basis": "Capacity-only illustration before overhead; repeats independent three-VM Lavik deployment units (one primary, one follower, one Meta-only voter) for additional capacity. Includes voter VMs in the count.",
+    "largerRedisFormula": "2*ceil(logical_TB*10^12/(RAM_GiB*2^30)), separately for16,128,256GiB primaries"
+  },
+  "included": "VM compute and RAM for every node, plus the local NVMe included with each of the two L16as_v4 data VMs",
+  "excluded": "Managed OS/data disks, external backup storage, traffic charges, operations staffing, support, taxes and negotiated discounts",
+  "durability": "The two data VMs use Azure temporary local NVMe. All three Meta members need durable managed-disk state. Native data replication is asynchronous; external backups remain required.",
+  "sourceFiles": {
+    "evidence/technical/featured-020-sales/sources/azure-esv4.json": "53f07ab1ad1748c781a511497c91cbddfe569a2b5a0501515e03a34ca40a1437",
+    "evidence/technical/featured-020-sales/sources/azure-retail-api.json": "3a2fe7a0502dc36e46d8ed71067c37fa660c7d55c9df545b5885c8ad790fe42d",
+    "evidence/technical/featured-020-sales/sources/azure-lasv4.json": "add92c2fc5872748a9aecb8514a001e8b6376deb586151afd548b7b3f058caf2",
+    "evidence/technical/featured-020-sales/sources/azure-reservations.json": "c8337472c4102060674261cd2ee6c1655a1dd67edd99aedfba74b917be66856a",
+    "evidence/technical/featured-020-sales/sources/azure-retail-prices.json": "70f6d7640800a4bdf1fddce88893a6f776989ef10a0f766c814b5d8b0dce6b0e"
+  },
+  "observedAt": "2026-11-07T14:54:39.340684+00:00",
+  "targetDatasetDecimalTB": 2.4,
+  "trafficEnvelope": "Read-heavy planning envelope below roughly 1M operations/s; actual acceptance may be lower. Above this, re-size or scale out; no 3-VM claim.",
+  "capacityQualification": "2.4 TB is an illustrative retained-data target, not proven usable capacity. Redis primary RAM is 2400 GiB =2.5769803776 decimal TB before keys/overhead. Both deployments require verified key/index memory and operational space reserves.",
+  "benchmarkSeparation": "Pricing uses L16as_v4; measurements use L16aos_v4 with different local storage. Benchmarks have no replicas and do not establish a 2.4 TB, 3-VM production envelope.",
+  "largerRedisOptions": [
+    {
+      "nodes": 40,
+      "primaries": 20,
+      "replicas": 20,
+      "copies": 2,
+      "sku": "Standard_E16s_v4",
+      "memoryGiBPerVM": 128,
+      "primaryMemoryGiB": 2560,
+      "hourlyUSDPerVM": 1.216,
+      "monthlyUSD": 35507.2,
+      "capacityDenominatorTB": 2.74877906944,
+      "monthlyUSDPerTB": 12917.444109916687,
+      "percentLowerLavikVMPrice": 92.91940789473684
+    },
+    {
+      "nodes": 20,
+      "primaries": 10,
+      "replicas": 10,
+      "copies": 2,
+      "sku": "Standard_E32s_v4",
+      "memoryGiBPerVM": 256,
+      "primaryMemoryGiB": 2560,
+      "hourlyUSDPerVM": 2.432,
+      "monthlyUSD": 35507.2,
+      "capacityDenominatorTB": 2.74877906944,
+      "monthlyUSDPerTB": 12917.444109916687,
+      "percentLowerLavikVMPrice": 92.91940789473684
+    }
+  ]
+}

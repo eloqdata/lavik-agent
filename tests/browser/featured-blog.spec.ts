@@ -37,19 +37,18 @@ test("featured articles and technical evidence are readable without JavaScript o
         ).toEqual(expectedRegular.map((a) => `/${locale}/blog/${a.slug}/`));
         await page.locator(".blog-featured .blog-card-link").click();
         await expect(page.locator("h1")).toHaveCount(1);
-        await expect(page.locator(".technical-figure table")).toHaveCount(7);
+        await expect(page.locator(".technical-figure table")).toHaveCount(6);
         await expect(page.locator(".technical-figure img")).toHaveCount(4);
         await expect(page.locator("#peak-results")).toContainText("1,156,956");
         await expect(page.locator("h1")).toContainText(locale === "en" ? "Modeled" : "建模");
         await expect(page.locator(".technical-article")).not.toContainText("0.1.0");
         await expect(page.locator("#redis-vm-alternatives")).toContainText("40 × E16s_v4");
         await expect(page.locator("#redis-vm-alternatives")).toContainText("20 × E32s_v4");
-        await expect(page.locator("#singapore-pricing")).toContainText("$1,482.75");
-        await expect(page.locator("#singapore-pricing")).toContainText("$954.72");
-        await expect(page.locator("#cost-model")).toContainText("$27,594.00");
-        await expect(page.locator("#cost-model")).toContainText("$2,100.94");
+        await expect(page.locator("#singapore-pricing")).toHaveCount(0);
+        await expect(page.locator("#cost-model")).toContainText("$33,288.00");
+        await expect(page.locator("#cost-model")).toContainText("$2,514.12");
         await expect(page.locator("#capacity-cost")).toContainText("3.84 TB");
-        await expect(page.locator("#capacity-cost")).toContainText("$547.12");
+        await expect(page.locator("#capacity-cost")).toContainText("$654.72");
         await expect(page.locator("#cost-model")).toContainText(
           "2 × L16as_v4 + 1 × E2s_v4",
         );

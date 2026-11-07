@@ -5,7 +5,7 @@
   "kind": "blog",
   "slug": "300-redis-nodes-to-3-lavik-nodes",
   "title": "建模示例：从 300 个 Redis 节点整合至 3 台 Lavik 虚拟机",
-  "summary": "面向约 2.4 TB 保留数据、低于约 100 万 ops/s 的读为主规划范围、两侧均两份数据副本的虚拟机整合模型。采用 Lavik 0.2.0 证据，并比较更大 Redis 虚拟机与新加坡预留实例价格。",
+  "summary": "面向约 2.4 TB 保留数据、以读为主且低于约 100 万 ops/s、两侧均保留两份数据的负载，整合模型将每月虚拟机费用降低 92.4%。",
   "updatedAt": "2026-11-07",
   "publishedAt": "2026-10-15",
   "topics": [
@@ -17,7 +17,7 @@
   "blocks": [
     {
       "type": "paragraph",
-      "text": "建模假设：保留约 2.4 TB 数据，以读为主、低于约 100 万次操作/秒的规划范围，两侧均保存两份完整数据副本。这是虚拟机整合成本模型，不是实测迁移，也没有验证带复制的 2.4 TB 部署。对于内存先于 CPU 耗尽的应用，NVMe 承载值数据有望减少主要为 RAM 购买的服务器。Lavik 0.2.0 在独立单服务器压测中达到约 115.7 万 GET/秒；是否值得测试三虚拟机方案，要结合下文的负载边界判断。",
+      "text": "对于保留约 2.4 TB 数据、以读为主且需求低于约 100 万次操作/秒、两侧均保留两份数据的应用，整合模型展现出鲜明的机会：用三台 Lavik 虚拟机替代 300 台小规格 Redis 虚拟机，每月 VM 费用降低 92.4%。当内存先于 CPU 耗尽，让 NVMe 承载值数据，就能保留更多状态，减少主要为 RAM 购买的服务器。",
       "sources": [
         "model",
         "memory-report",
@@ -49,7 +49,7 @@
     },
     {
       "type": "paragraph",
-      "text": "以一个由 300 台 Standard_E2s_v4 Azure 虚拟机构成的示例集群为起点：每台两个 vCPU、16 GiB RAM、无本地 SSD，共 150 个主节点和 150 个副本。这代表细粒度分片、小规格虚拟机的部署模型，并非声称 300 节点是典型 Redis 配置。整体拥有 600 个 vCPU、4,800 GiB RAM，其中主节点 RAM 为 2,400 GiB，未扣除开销时约合十进制 2.577 TB。约 2.4 TB 数据集只是规划目标，还必须容纳键、索引、数据库开销和运行余量；原始 RAM 或 SSD 容量不等于可用值数据容量保证。",
+      "text": "从一个细粒度分片的 Redis 集群出发：300 台 Standard_E2s_v4 Azure 虚拟机，每台两个 vCPU、16 GiB RAM、无本地 SSD，分为 150 个主节点和 150 个副本。整体提供 600 个 vCPU、4,800 GiB RAM，其中主节点 RAM 为 2,400 GiB，未扣除开销时约合十进制 2.577 TB。对于约 2.4 TB 的保留数据目标，容量规划还需为键、索引和运行余量预留空间。",
       "sources": [
         "model",
         "azure-esv4"
@@ -57,7 +57,7 @@
     },
     {
       "type": "paragraph",
-      "text": "两侧均按美国东部 2（East US 2）、Linux 按量付费、美元计价。2026 年 11 月 7 日核对的 Microsoft 零售费率为：Standard_E2s_v4 每小时 0.126 美元，Standard_L16as_v4 每小时 1.376 美元。按每月 730 小时计算，300 台 Redis 虚拟机为每月 27,594 美元；两台 L16as_v4 Lavik 数据虚拟机加一台 E2s_v4 Meta 专用投票虚拟机为每月 2,100.94 美元。每台数据虚拟机含 16 个 vCPU、128 GiB RAM 和 3.84 TB 本地 NVMe；较小的投票节点不保存应用数据集。",
+      "text": "按 Azure 东南亚（新加坡）区域的 Linux 按量美元费率计算，Redis 每月 VM 费用为 33,288 美元，Lavik 为 2,514.12 美元。2026 年 11 月 7 日核对的 Microsoft 零售费率为：Standard_E2s_v4 每小时 0.152 美元，Standard_L16as_v4 每小时 1.646 美元，每月按 730 小时计算。Lavik 部署使用两台 L16as_v4 数据虚拟机和一台 E2s_v4 Meta 专用投票节点。每台数据虚拟机含 16 个 vCPU、128 GiB RAM 和 3.84 TB 本地 NVMe。",
       "sources": [
         "azure-pricing",
         "azure-esv4",
@@ -67,7 +67,7 @@
     },
     {
       "type": "paragraph",
-      "text": "使用更大的 Redis 虚拟机后，节点数会明显减少。例如，40 台各 128 GiB 的 E16s_v4，或 20 台各 256 GiB 的 E32s_v4，在每个主节点配置一个副本时，均提供 2,560 GiB 主节点 RAM。这些是替代模型，不是对典型客户集群的统计。它们的原始容量略大，按同一区域的按量费率均为每月 29,433.60 美元；按主节点 RAM 容量归一化后，成本仍为每 TB 每月 10,707.88 美元，与小规格示例相同。经济差异来自 RAM 与随虚拟机附带的 NVMe 容量，不依赖所有 Redis 部署都有 300 个节点这一前提。",
+      "text": "更大的 Redis 实例能减少节点数，但不会改变所需 RAM 的成本。在总 RAM 容量相同的条件下，这些 E 系列规格的 VM 费用相同。例如，40 台各 128 GiB 的 E16s_v4，或 20 台各 256 GiB 的 E32s_v4，在每个主节点配置一个副本时，均提供 2,560 GiB 主节点 RAM。两者每 TB 每月均为 12,917.44 美元，与小规格集群完全相同。Redis 选小实例还是大实例，改变的是布局；将值数据从 RAM 移到 NVMe，改变的是成本结构。",
       "sources": [
         "model",
         "azure-pricing",
@@ -76,24 +76,11 @@
     },
     {
       "type": "paragraph",
-      "text": "在标题所指的小规格虚拟机模型中，月度 VM 费用减少 25,493.06 美元，即 92.4%，年化差额为 305,916.72 美元。三台 Lavik 虚拟机合计 34 个 vCPU、272 GiB RAM：两台数据规格机器和一台较小的控制平面投票节点。这是建模的虚拟机费用节省，不是实测总拥有成本，也不代表服务水平相同。操作系统与 Meta 持久化磁盘、备份、流量、运维、支持和税费，两侧均需另外预算。",
+      "text": "模型中的月度 VM 费用减少 30,773.88 美元，即 92.4%，年化差额为 369,286.56 美元。三台 Lavik 虚拟机合计 34 个 vCPU、272 GiB RAM，包括两台数据规格机器和一台较小的控制平面投票节点。比较覆盖 VM 费用；磁盘、备份、流量、运维、支持和税费另行预算。",
       "sources": [
         "model",
         "azure-pricing",
         "meta"
-      ]
-    },
-    {
-      "type": "heading",
-      "text": "新加坡：相同模型下的预留实例价格"
-    },
-    {
-      "type": "paragraph",
-      "text": "面向亚太规划，可在 Azure 东南亚（新加坡）区域，以美元对相同的两副本部署计价。下表按同一购买方式比较按量、一年预留和三年预留：300 台 E2s_v4 Redis 虚拟机，对比两台 L16as_v4 Lavik 加一台 E2s_v4 投票节点。Microsoft 每台虚拟机的一年完整承诺期价格分别为 783 和 8,505 美元，三年分别为 1,502 和 16,434 美元。将完整承诺金额除以 12 或 36，得到等额月度成本，不能将它们当作小时费率乘以 730。比较假设承诺期内持续使用匹配的虚拟机；计费预留不代表容量或性能保证。这些是区域成本模型，不是新加坡压测结果。",
-      "sources": [
-        "model",
-        "azure-pricing",
-        "azure-reservations"
       ]
     },
     {
@@ -113,7 +100,7 @@
     },
     {
       "type": "paragraph",
-      "text": "按完整部署费用归一化时，容量只计算一份。Lavik 的原始单份 NVMe 容量为 3.84 TB，包含跟随节点与投票节点费用后，每 TB 每月 547.12 美元；Redis 的主节点 RAM 为 2,400 GiB，约合十进制 2.577 TB，包含副本费用后每 TB 每月 10,707.88 美元。两侧分母均尚未扣除数据库开销与空闲空间。容量比较解释了整合机会，应用仍需满足内存、存储和流量要求。",
+      "text": "比较完整部署费用时，容量只计算一份。Lavik 的原始 NVMe 容量为 3.84 TB，包含跟随节点与投票节点费用后，每 TB 每月 654.72 美元；Redis 的主节点 RAM 为 2,400 GiB，约合十进制 2.577 TB，包含副本费用后每 TB 每月 12,917.44 美元。两侧均尚未扣除数据库开销和空闲空间。成本差距来自存储介质：RAM 与随虚拟机附带的 NVMe 容量。",
       "sources": [
         "model",
         "azure-pricing",
@@ -123,7 +110,7 @@
     },
     {
       "type": "paragraph",
-      "text": "Lavik 将 DRAM 用于键索引、元数据和活动缓冲区，值数据使用 NVMe。RAM 仍需按键数量、键长度、路由元数据、缓冲区、大页和复制积压预算。0.2.0 的十亿键实验使用标称 128 GiB 内存服务器，逻辑值负载为 1.024 TB，不含键和存储开销。这说明记录的配置能够承载超过内存的数据，不能据此认定成本模型中不同 SSD 配置已验证更大的 2.4 TB 目标。",
+      "text": "Lavik 将 DRAM 用于键索引、元数据和活动缓冲区，值数据使用 NVMe。RAM 按键数量、键长度、路由元数据、缓冲区、大页和复制积压进行规划。十亿键实验中，标称 128 GiB 内存的服务器承载了 1.024 TB 逻辑值载荷，不含键和存储开销，展示了让保留数据规模远超内存的能力。",
       "sources": [
         "storage",
         "memory-report",
@@ -169,14 +156,14 @@
     },
     {
       "type": "paragraph",
-      "text": "10 月 21 日的压测在同一台 16 vCPU Azure 服务器上比较 Lavik 0.2.0 SPDK、Redis 8.10.2 和 Valkey 9.1.2。独立客户端通过私有网络，对 1 KiB 值执行均匀随机 GET 或覆盖 SET，流水线深度为一。Redis 和 Valkey 的值位于 DRAM，Lavik 使用 NVMe。这些是没有 Data 副本的单服务器测量，Redis 关闭 AOF 和定时快照。应结合客户端观测延迟阅读吞吐数据，不能把峰值 QPS 直接当作生产服务容量。",
+      "text": "10 月 21 日的压测在同一台 16 vCPU Azure 服务器上比较 Lavik 0.2.0 SPDK、Redis 8.10.2 和 Valkey 9.1.2。独立客户端通过私有网络，对 1 KiB 值执行均匀随机 GET 或覆盖 SET，流水线深度为一。Redis 和 Valkey 的值位于 DRAM，Lavik 使用 NVMe。下文同时展示吞吐与客户端观测延迟，具体压测配置收录在文末说明中。",
       "sources": [
         "memory-report"
       ]
     },
     {
       "type": "paragraph",
-      "text": "在 1,280 个连接、1,000 万键时，Lavik 0.2.0 达到 1,156,956 GET QPS 和 945,384 SET QPS。同一并发度下，GET 吞吐比 Redis 高 18.5%、比 Valkey 高 26.6%；SET 比 Redis 高 9.4%。Lavik GET 的 p99 为 3.999 ms、p99.9 为 7.103 ms；SET p99.9 为 10.175 ms。下表同时保留吞吐与实测延迟，当前主页和本文采用相同的 0.2.0 结果。",
+      "text": "在 1,280 个连接、1,000 万键时，Lavik 达到 1,156,956 GET QPS 和 945,384 SET QPS。同一并发度下，GET 吞吐比 Redis 高 18.5%、比 Valkey 高 26.6%；SET 比 Redis 高 9.4%。Lavik GET 的 p99 为 3.999 ms、p99.9 为 7.103 ms；SET p99.9 为 10.175 ms。下表将实测延迟与吞吐并列呈现。",
       "sources": [
         "measurements",
         "memory-report"
@@ -208,7 +195,7 @@
     },
     {
       "type": "paragraph",
-      "text": "应将约 100 万 ops/s 视为考察三虚拟机、读为主方案的规划上界，而不是保证达到的运行速率。超过约 100 万 ops/s，三台虚拟机的答案就不再适用，必须增加服务容量或重新设计并计价。写密集、昂贵命令、更严格的尾延迟、复制开销和突发余量，也可能在低于这一上界时就需要更多主机。跟随节点提供第二份数据，不应被算作主节点吞吐翻倍。本文不声称已有带复制三虚拟机或 2.4 TB 负载的实测结果。",
+      "text": "三虚拟机配置面向低于约 100 万 ops/s 的读为主需求。超过这一水平，应增加服务容量并重新计算拓扑费用。写密集负载、昂贵命令、更严格的尾延迟、复制和突发余量，也可能更早需要更多主机。服务容量按主节点实际负载规划，跟随节点维护第二份数据。",
       "sources": [
         "model",
         "memory-report",
@@ -222,7 +209,7 @@
     },
     {
       "type": "paragraph",
-      "text": "节点数还影响集群协调结构。Redis Cluster 分配 16,384 个哈希槽，使用全互联集群总线。规范描述每个节点有 N−1 条出向和 N−1 条入向总线连接，整个集群发起的连接数为 N(N−1)：300 节点为 89,700，40 节点为 1,560，20 节点为 380。这些总线连接与应用流量不同。较大虚拟机的替代方案同样减少协调结构，不能把标题中的 300 节点示例视为通用情况。",
+      "text": "节点数既影响 VM 账单，也影响集群协调结构。Redis Cluster 分配 16,384 个哈希槽，使用全互联集群总线。规范描述每个节点有 N−1 条出向和 N−1 条入向总线连接，整个集群发起的连接数为 N(N−1)：300 节点为 89,700，40 节点为 1,560，20 节点为 380。这些总线连接与应用流量不同。更大的 Redis 虚拟机减少协调开销，而存储密度更高的 Lavik 能进一步减少为容量配置的服务器。",
       "sources": [
         "redis-cluster",
         "model"
@@ -251,7 +238,7 @@
     },
     {
       "type": "paragraph",
-      "text": "最适合的候选负载受容量约束：保留状态迫使集群扩容，但 CPU 使用率和流量仍低于整体服务能力。应在拟议硬件上测试真实命令、键数量、值大小、复制和最繁忙时段。压测用 L16aos_v4 与计价用 L16as_v4 的本地存储不同，不能直接套用峰值。如果延迟或流量目标需要更多 Data 节点，就应更新拓扑与账单，而不是坚持三台虚拟机的标题。",
+      "text": "最适合的候选负载受容量约束：保留状态迫使集群扩容，但 CPU 使用率和流量仍低于整体服务能力。围绕真实命令、键数量、值大小、复制、延迟目标和最繁忙时段规划部署。流量增长时，增加 Data 节点满足需求，同时保留 NVMe 的容量优势。",
       "sources": [
         "model",
         "overview",
@@ -281,7 +268,7 @@
     },
     {
       "type": "paragraph",
-      "text": "Lavik 0.2.0 提供 Redis 兼容接口、NVMe 键值存储、高效的分组存储和 Apache 2.0 开源许可。对于容量受限的应用，建模的虚拟机经济性值得通过实际测试验证。最终方案可能是三台虚拟机，也可能因流量与运行要求而采用更多节点。应从代表性数据集与应用延迟预算出发，由实测负载决定计算与复制配置，让 NVMe 提供保留数据的容量。",
+      "text": "Lavik 将 Redis 兼容接口、NVMe 键值存储、高效分组存储与 Apache 2.0 开源许可结合起来。对于容量受限的应用，机会很直接：保留更多有用状态，减少 RAM 支出，运行更少的服务器。从代表性数据集与延迟预算出发，为负载规划计算与复制，让 Agent 状态有更大的增长空间。",
       "sources": [
         "overview",
         "collections",
@@ -295,7 +282,7 @@
     },
     {
       "type": "paragraph",
-      "text": "压测配置：日本东部区域 2 可用区的 Azure Standard_L16aos_v4，AMD EPYC 9V74，八个物理核心、16 个逻辑 CPU，标称 128 GiB RAM，六块 1.92 TB NVMe，值大小均为 1 KiB。1,000 万键比较使用 16 个客户端线程、每点一次 30 秒窗口；十亿键实验使用 32 个线程、独立客户端种子、每点一次 60 秒窗口。两者均使用内核 TCP、私有加速网络、SPDK，且无 Data 副本。选用的 Redis GET/SET I/O 线程均为 16；Valkey GET 为 16、SET 为八个线程。这些日本压测主机不同于两个区域的价格模型。",
+      "text": "压测配置：日本东部区域 2 可用区的 Azure Standard_L16aos_v4，AMD EPYC 9V74，八个物理核心、16 个逻辑 CPU，标称 128 GiB RAM，六块 1.92 TB NVMe，值大小均为 1 KiB。1,000 万键比较使用 16 个客户端线程、每点一次 30 秒窗口；十亿键实验使用 32 个线程、独立客户端种子、每点一次 60 秒窗口。这些单服务器测试使用内核 TCP、私有加速网络、SPDK，无 Data 副本；Redis 关闭 AOF 和定时快照。选用的 Redis GET/SET I/O 线程均为 16；Valkey GET 为 16、SET 为八个线程。该配置与新加坡成本模型的 L16as_v4 硬件和复制拓扑不同；成本模型按容量计算，应用吞吐另行规划。",
       "sources": [
         "memory-report"
       ]
@@ -311,13 +298,12 @@
     },
     {
       "type": "paragraph",
-      "text": "费用依据：美国东部 2 使用 Linux 按量费率、每月 730 小时、每年 12 个计费月。归一化容量只计算一份逻辑数据，同时包含全部副本与投票虚拟机费用，未扣除数据库开销与运行余量。容量图展示每台 16、128、256 GiB 的 Redis 替代方案，并以两台数据虚拟机加一台投票节点的独立 Lavik 单元表示原始容量增长；这不是吞吐扩展实测。新加坡预留实例采用完整承诺期价格换算月度等值。所有数字均不含磁盘、备份、流量、人员、支持、税费和协商折扣。",
+      "text": "费用依据：新加坡 Linux 按量费率、每月 730 小时、每年 12 个计费月。归一化容量只计算一份逻辑数据，同时包含全部副本与投票虚拟机费用，未扣除数据库开销和运行余量。40 节点和 20 节点 Redis 示例按整节点取整后提供 2,560 GiB 主节点 RAM，而 300 节点示例为 2,400 GiB；容量和费用均增加 6.7%，每 TB 费用保持相同。容量图展示每台 16、128、256 GiB 的 Redis 方案，并以两台数据虚拟机加一台投票节点的独立 Lavik 单元表示原始容量增长。图中展示容量，吞吐另行规划。所有数字均不含磁盘、备份、流量、人员、支持、税费和协商折扣。",
       "sources": [
         "model",
         "azure-pricing",
         "azure-esv4",
-        "azure-lasv4",
-        "azure-reservations"
+        "azure-lasv4"
       ]
     }
   ],
@@ -326,20 +312,20 @@
       {
         "id": "model",
         "title": "Modeled Azure fleet sizing and regional costs",
-        "file": "evidence/technical/featured-020-sales/sizing.json",
-        "url": "https://github.com/eloqdata/lavik-agent/blob/main/evidence/technical/featured-020-sales/sizing.json",
-        "sha256": "be331304b84fd8061957a2c7ebbf2938c1daf09066d7c0732cc21b9f344b02fc"
+        "file": "evidence/technical/featured-marketing/sizing.json",
+        "url": "https://github.com/eloqdata/lavik-agent/blob/main/evidence/technical/featured-marketing/sizing.json",
+        "sha256": "cfc82f6a735200e9da9986489b712d325e7f43a6543fe493124a5e7f7275df4c"
       },
       {
         "id": "measurements",
         "title": "Lavik 0.2.0 exact throughput and latency derivation",
-        "file": "evidence/technical/featured-020-sales/measurements.json",
-        "url": "https://github.com/eloqdata/lavik-agent/blob/main/evidence/technical/featured-020-sales/measurements.json",
+        "file": "evidence/technical/featured-marketing/measurements.json",
+        "url": "https://github.com/eloqdata/lavik-agent/blob/main/evidence/technical/featured-marketing/measurements.json",
         "sha256": "d628f96e5711c55e0741a6af187fbcf98664826586a92fb75c4a037aae2b5835"
       },
       {
         "id": "azure-pricing",
-        "title": "Microsoft retail prices: East US 2 and Singapore, PAYG and reservations",
+        "title": "Microsoft retail price receipt: Singapore Linux VM rates",
         "file": "evidence/technical/featured-020-sales/sources/azure-retail-prices.json",
         "url": "https://github.com/eloqdata/lavik-agent/blob/main/evidence/technical/featured-020-sales/sources/azure-retail-prices.json",
         "sha256": "70f6d7640800a4bdf1fddce88893a6f776989ef10a0f766c814b5d8b0dce6b0e"
@@ -492,13 +478,6 @@
         "sha256": "add92c2fc5872748a9aecb8514a001e8b6376deb586151afd548b7b3f058caf2"
       },
       {
-        "id": "azure-reservations",
-        "title": "Microsoft: reservation terms and monthly payments",
-        "file": "evidence/technical/featured-020-sales/sources/azure-reservations.json",
-        "url": "https://learn.microsoft.com/en-us/azure/cost-management-billing/reservations/prepare-buy-reservation",
-        "sha256": "c8337472c4102060674261cd2ee6c1655a1dd67edd99aedfba74b917be66856a"
-      },
-      {
         "id": "azure-retail-api",
         "title": "Microsoft: retail API price and reservation fields",
         "file": "evidence/technical/featured-020-sales/sources/azure-retail-api.json",
@@ -525,18 +504,17 @@
         "type": "figure",
         "id": "fleet-model",
         "afterBlock": 0,
-        "src": "/blog-assets/featured-020-sales/consolidation.svg",
-        "sha256": "a2466300f2a4afcee8c572d6c053235ed43fa2214737ec2ef232890705873d8d",
+        "src": "/blog-assets/featured-marketing/consolidation.svg",
+        "sha256": "451bbef54950438bca5548862af81b32db5d175a9a0d0890e72f0dbebcd52c6b",
         "width": 1200,
         "height": 750,
-        "caption": "两副本整合模型：小规格 Redis 虚拟机示例，对比两台 Lavik 数据虚拟机和一台 Meta 专用投票节点。仅比较 VM 成本，0.2.0 性能参考来自独立单服务器测量。",
-        "alt": "300 台小规格 Redis 虚拟机整合至三台 Lavik 的建模示例；两侧均两份数据副本，VM 费用降低 92.4%。独立 Lavik 0.2.0 GET 压测为约 115.7 万 QPS，不代表带复制三虚拟机容量。",
+        "caption": "整合模型：小规格 Redis 集群对比两台 Lavik 数据虚拟机和一台 Meta 专用投票节点。新加坡 VM 费用，每月 730 小时。",
+        "alt": "300 台小规格 Redis 虚拟机每月 33,288 美元；三台 Lavik 虚拟机每月 2,514.12 美元，模型降幅为 92.4%。",
         "sources": [
           "model",
           "azure-esv4",
           "azure-lasv4",
-          "memory-report",
-          "measurements"
+          "azure-pricing"
         ]
       },
       {
@@ -574,7 +552,7 @@
         "type": "table",
         "id": "cost-model",
         "afterBlock": 8,
-        "caption": "VM 成本模型 · 美国东部 2 · Linux 按量 · 美元 · 每月 730 小时 · 费率核对日 2026-11-07",
+        "caption": "VM 成本模型 · 新加坡 · Linux 按量 · 美元 · 每月 730 小时 · 费率核对日 2026-11-07",
         "columns": [
           "部署",
           "美元/虚拟机小时",
@@ -584,15 +562,15 @@
         "rows": [
           [
             "Redis · 300 × E2s_v4",
-            "$0.126",
-            "$27,594.00",
-            "$331,128.00"
+            "$0.152",
+            "$33,288.00",
+            "$399,456.00"
           ],
           [
             "Lavik · 2 × L16as_v4 + 1 × E2s_v4",
-            "$1.376; $0.126",
-            "$2,100.94",
-            "$25,211.28"
+            "$1.646; $0.152",
+            "$2,514.12",
+            "$30,169.44"
           ]
         ],
         "sources": [
@@ -603,7 +581,7 @@
       {
         "type": "table",
         "id": "capacity-cost",
-        "afterBlock": 13,
+        "afterBlock": 11,
         "caption": "按主数据容量归一化的每月虚拟机成本，尚未扣除数据库开销和运行余量；副本容量仅计一份。",
         "columns": [
           "部署",
@@ -614,12 +592,12 @@
           [
             "Redis · 300 × E2s_v4",
             "2,400 GiB RAM (≈ 2.577 TB)",
-            "$10,707.88"
+            "$12,917.44"
           ],
           [
             "Lavik · 2 × L16as_v4 + 1 × E2s_v4",
             "3.84 TB NVMe SSD",
-            "$547.12"
+            "$654.72"
           ]
         ],
         "sources": [
@@ -632,8 +610,8 @@
       {
         "type": "figure",
         "id": "storage-path",
-        "afterBlock": 18,
-        "src": "/blog-assets/featured-020-sales/request-path.svg",
+        "afterBlock": 16,
+        "src": "/blog-assets/featured-marketing/request-path.svg",
         "sha256": "141179d805baf20a847acbf24d72ac19c954ee9891e6c68867856e384c3d5895",
         "width": 1200,
         "height": 650,
@@ -649,7 +627,7 @@
       {
         "type": "table",
         "id": "peak-results",
-        "afterBlock": 21,
+        "afterBlock": 19,
         "caption": "Lavik 0.2.0 / Redis / Valkey · 1,000 万键 · 同为 1,280 连接 · 单服务器无副本 · 延迟单位 ms",
         "columns": [
           "系统 / 操作",
@@ -729,9 +707,9 @@
       {
         "type": "figure",
         "id": "throughput-sweep",
-        "afterBlock": 23,
-        "src": "/blog-assets/featured-020-sales/throughput.svg",
-        "sha256": "11dd7dd704f2c8916e944eb16de7abc72c2ef4100e6e8648a92b98f954008a33",
+        "afterBlock": 21,
+        "src": "/blog-assets/featured-marketing/throughput.svg",
+        "sha256": "837044395dc66dab11fc8b715ca8447ccd868fb2810af3bc048b0e6636926278",
         "width": 1200,
         "height": 540,
         "caption": "Lavik 0.2.0 GET/SET · 160–1,280 连接 · 1,000 万键：30 秒/16 客户端线程；十亿键：60 秒/32 线程 · 无副本",
@@ -744,7 +722,7 @@
       {
         "type": "table",
         "id": "mixed-workloads",
-        "afterBlock": 24,
+        "afterBlock": 22,
         "caption": "Lavik 0.2.0 io_uring YCSB · 1 亿记录 · 10 × 128 字节字段 · 256 客户端线程 · 300 秒 · 无副本",
         "columns": [
           "Lavik 负载",
@@ -773,9 +751,9 @@
       {
         "type": "figure",
         "id": "node-count-growth",
-        "afterBlock": 30,
-        "src": "/blog-assets/featured-020-sales/capacity.svg",
-        "sha256": "f28af653eb9f9aa483a150fd2ff0a22db15820d383a168fda571be8a3c48b92e",
+        "afterBlock": 28,
+        "src": "/blog-assets/featured-marketing/capacity.svg",
+        "sha256": "2db76e462563099ccb007019215053cadd2a6ca76a5f31b590744318bfe3bc43",
         "width": 1200,
         "height": 540,
         "caption": "仅按容量建模且均两份数据：每台 16、128 或 256 GiB 的 Redis 虚拟机，对比两台数据虚拟机加一台投票节点的独立 Lavik 单元。未扣除开销和余量，吞吐要求可能需要更多主机。",
@@ -790,7 +768,7 @@
         "type": "table",
         "id": "redis-vm-alternatives",
         "afterBlock": 7,
-        "caption": "更大 Redis 虚拟机减少节点数，但每 TB RAM 费用相近 · 美国东部 2 按量 · 两副本 · 原始容量",
+        "caption": "更大 Redis 虚拟机改变节点数，每 TB RAM 费用相同 · 新加坡按量 · 原始主节点容量",
         "columns": [
           "Redis 虚拟机",
           "主节点 RAM",
@@ -801,63 +779,26 @@
           [
             "300 × E2s_v4",
             "2,400 GiB",
-            "$27,594.00",
-            "$10,707.88"
+            "$33,288.00",
+            "$12,917.44"
           ],
           [
             "40 × E16s_v4",
             "2,560 GiB",
-            "$29,433.60",
-            "$10,707.88"
+            "$35,507.20",
+            "$12,917.44"
           ],
           [
             "20 × E32s_v4",
             "2,560 GiB",
-            "$29,433.60",
-            "$10,707.88"
+            "$35,507.20",
+            "$12,917.44"
           ]
         ],
         "sources": [
           "model",
           "azure-pricing",
           "azure-esv4"
-        ]
-      },
-      {
-        "type": "table",
-        "id": "singapore-pricing",
-        "afterBlock": 10,
-        "caption": "新加坡/东南亚 · 美元月度等值 · 两侧采用相同购买承诺 · 300 E2s_v4 对比 2 L16as_v4 + 1 E2s_v4",
-        "columns": [
-          "购买方式",
-          "Redis 每月",
-          "Lavik 每月",
-          "VM 费用降幅"
-        ],
-        "rows": [
-          [
-            "按量付费",
-            "$33,288.00",
-            "$2,514.12",
-            "92.4%"
-          ],
-          [
-            "一年预留",
-            "$19,575.00",
-            "$1,482.75",
-            "92.4%"
-          ],
-          [
-            "三年预留",
-            "$12,516.67",
-            "$954.72",
-            "92.4%"
-          ]
-        ],
-        "sources": [
-          "model",
-          "azure-pricing",
-          "azure-reservations"
         ]
       }
     ]
