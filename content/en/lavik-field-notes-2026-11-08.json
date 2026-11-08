@@ -1,0 +1,119 @@
+{
+  "id": "lavik-field-notes-2026-11-08",
+  "locale": "en",
+  "version": "0.1.0",
+  "kind": "blog",
+  "slug": "lavik-field-notes-2026-11-08",
+  "title": "Budget the overlap when cached objects change format",
+  "summary": "A larger cache format can temporarily double the key population during rollout. A hypothetical rendering cache shows how Lavik’s SSD values help, while version overlap changes index memory, refresh work, and rollback design.",
+  "updatedAt": "2026-11-08",
+  "sourceRevision": "471f4864357f4a5034c64e7d4972ec0e55b82d94",
+  "topics": [
+    "use-case",
+    "architecture"
+  ],
+  "blocks": [
+    {
+      "type": "paragraph",
+      "text": "A cached object often grows because a new application version needs more information. During a rolling deployment, old readers may still need the old representation while new readers populate the larger one. Lavik 0.1.0 offers a useful foundation for this transition: a compact key index stays in DRAM while values live on storage, including NVMe. That makes retaining both representations a practical design option when payload capacity is the constraint. The important sizing question becomes how many representations coexist, as well as how large each becomes.",
+      "sources": [
+        "current-010-readme",
+        "current-010-storage"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "The rollout has a larger peak than the destination"
+    },
+    {
+      "type": "paragraph",
+      "text": "Consider a hypothetical product-page cache with five million independently addressable objects. Its first format contains 2 KiB per object. A second format adds localized rendering data and expands each payload to 12 KiB. The original population contains about 9.54 GiB of value bytes; the replacement population contains about 57.22 GiB. If both formats are fully populated during deployment, their combined value payload is about 66.76 GiB across ten million keys. These are application sizing calculations, not measurements; they exclude key bytes, record metadata, storage maintenance space, and replicas.",
+      "sources": [
+        "current-010-storage"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "After the rollout, the application still has five million logical objects. During overlap, however, versioned cache entries represent ten million physical keys. Lavik’s split means the extra payload bytes do not require an equally large DRAM value tier, but every additional key still needs index state. Both namespaced key populations also consume storage. Moving values to NVMe therefore changes the economics of keeping both formats available without making rollout overlap free.",
+      "sources": [
+        "current-010-readme",
+        "current-010-storage"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "Make format selection part of the cache identity"
+    },
+    {
+      "type": "paragraph",
+      "text": "For this design, give each format its own namespace and let the application release select the namespace it understands. An old reader requests the old object; a new reader requests the new object. The new release can fill its namespace lazily from the authoritative source, limiting initial population to objects actually requested. Keep the authoritative record outside this reconstructable cache. Lavik supplies ordinary String storage and Redis-compatible client protocols; the application owns format selection, encoding, and regeneration.",
+      "sources": [
+        "current-010-readme",
+        "current-010-requests",
+        "current-010-storage"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "This separates reader deployment from cache retirement. It also exposes a decision that capacity alone cannot solve: must the old namespace remain fresh for rollback? Retaining its bytes does not keep its contents current. If source objects change during deployment, either continue refreshing both representations or make the rollback path regenerate stale entries. The first choice adds refresh traffic and replacement writes; the second makes rollback depend on regeneration capacity. Write down that choice before treating the retained old population as a rollback mechanism.",
+      "sources": [
+        "current-010-storage",
+        "current-010-requests"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "Retirement has three different clocks"
+    },
+    {
+      "type": "paragraph",
+      "text": "Stopping old readers, making old entries expire, and recovering their capacity are separate events. Lavik treats expired values as absent on reads. Background expiration handles deletion, while tombstones may remain necessary to prevent an older durable value from reappearing. Index capacity follows actual index removal, and physical blocks become reusable through reclamation. Consequently, reaching the old namespace’s expiry deadline does not immediately return all of its index memory or SSD space.",
+      "sources": [
+        "current-010-storage"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "Replacement traffic adds another source of overlap inside the engine. Lavik appends immutable record versions; a standalone replacement retains the old durable record in physical accounting until the replacement flush completes. Snapshot pins and reclamation can extend physical lifetimes. The hypothetical 66.76 GiB is therefore a logical payload total, not a device provisioning target. A rollout that repeatedly refreshes both namespaces needs room for obsolete physical versions as well as the two live representations.",
+      "sources": [
+        "current-010-storage"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "Memory planning should likewise use the coexistence period. Lavik divides retained-memory admission into fixed worker shares; one worker cannot borrow another’s unused balance. Its memory setting is not a strict process-RSS ceiling, and client buffers, I/O, and temporary work need headroom. Ten million versioned keys do not imply an exact doubling of total RAM, but budgeting only the final five-million-key population misses the rollout’s additional index demand.",
+      "sources": [
+        "current-010-storage"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "Evaluate the transition you intend to operate"
+    },
+    {
+      "type": "paragraph",
+      "text": "A useful first adoption target is a reconstructable cache whose larger format would otherwise force a DRAM capacity expansion. Lavik can keep the familiar Redis interface while moving the growing value tier onto NVMe. Its Apache 2.0 license also permits inspecting and adapting the implementation. This is a qualitative capacity argument; neither the payload arithmetic nor the storage design establishes a total-cost reduction or an equivalent availability SLA.",
+      "sources": [
+        "current-010-readme",
+        "current-010-storage"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "For the next step, rehearse a partial rollout using representative objects and your intended refresh policy. Observe the combined key population, per-worker memory pressure, available storage blocks, and application tail latency while old and new readers coexist. Then stop old-format refreshes and follow expiry through reclamation before scheduling another rollout. Ordinary successful writes are not synchronous durability fences, so the rehearsal should include regeneration after lost cache writes. The acceptance question is concrete: can both application versions serve their required traffic throughout overlap, and can the chosen rollback path still produce fresh objects? These are proposed evaluation steps, not reported test results.",
+      "sources": [
+        "current-010-storage",
+        "current-010-requests"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "Publication references: Installation and the stable 0.1.0 manual entry point: https://github.com/eloqdata/lavik/blob/471f4864357f4a5034c64e7d4972ec0e55b82d94/README.md . Current benchmark methodology, covering 1 KiB GET/SET workloads rather than this two-format rollout: https://github.com/eloqdata/lavik/blob/471f4864357f4a5034c64e7d4972ec0e55b82d94/perf_reports/lavik-v0.1.0-2vcpu-latest-capacity-2026-10-13/README.md . Compatibility and migration guidance: https://github.com/eloqdata/lavik/blob/471f4864357f4a5034c64e7d4972ec0e55b82d94/docs/operations/redis-import.md . For deployment cost planning, see “Price the capacity you can keep available”: /en/blog/lavik-field-notes-2026-10-10/ .",
+      "sources": [
+        "current-010-readme",
+        "current-010-compact",
+        "current-010-import"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,119 @@
+{
+  "id": "lavik-field-notes-2026-11-08",
+  "locale": "zh-CN",
+  "version": "0.1.0",
+  "kind": "blog",
+  "slug": "lavik-field-notes-2026-11-08",
+  "title": "缓存对象换格式，要为新旧版本共存留出容量",
+  "summary": "缓存格式变大时，滚动发布可能暂时让键数量翻倍。通过一个假设的页面渲染缓存，分析 Lavik 的 SSD 值存储如何帮助承载共存数据，以及索引内存、刷新流量和回滚设计如何随之变化。",
+  "updatedAt": "2026-11-08",
+  "sourceRevision": "471f4864357f4a5034c64e7d4972ec0e55b82d94",
+  "topics": [
+    "use-case",
+    "architecture"
+  ],
+  "blocks": [
+    {
+      "type": "paragraph",
+      "text": "缓存对象变大，往往是因为新版本应用需要更多信息。滚动发布期间，旧读者可能仍然需要旧格式，新读者则开始填充更大的新格式。Lavik 0.1.0 为这种过渡提供了一个实用基础：紧凑的键索引驻留 DRAM，值存放在包括 NVMe 在内的存储上。当瓶颈是载荷容量时，保留两种表示就成为值得考虑的设计。容量规划需要同时回答两个问题：每种表示有多大，以及多少种表示会同时存在。",
+      "sources": [
+        "current-010-readme",
+        "current-010-storage"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "发布期间的峰值，比最终状态更大"
+    },
+    {
+      "type": "paragraph",
+      "text": "假设一个商品页面缓存保存五百万个可独立寻址的对象。第一版格式每个对象占 2 KiB；第二版增加本地化渲染数据，每个载荷扩大到 12 KiB。旧格式的值字节总量约为 9.54 GiB，新格式约为 57.22 GiB。如果发布期间两种格式都已完整填充，合计约为 66.76 GiB，分布在一千万个键上。这些数字是应用容量算术，不是实测结果；它们不包含键字节、记录元数据、存储维护空间或副本。",
+      "sources": [
+        "current-010-storage"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "发布完成后，应用仍然只有五百万个逻辑对象。但在共存阶段，带版本的缓存条目对应一千万个实际键。Lavik 的索引和值分离设计，使额外载荷不必对应同等规模的 DRAM 值存储层；不过，每个新增键仍然需要索引状态，两套命名空间也都占用存储。因此，把值放到 NVMe 上改变了保留两种格式的容量成本结构，但并没有消除共存成本。",
+      "sources": [
+        "current-010-readme",
+        "current-010-storage"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "把格式选择纳入缓存身份"
+    },
+    {
+      "type": "paragraph",
+      "text": "在这个设计中，为每种格式分配独立命名空间，由应用版本选择自己能够解析的格式。旧读者请求旧对象，新读者请求新对象。新版本可以按需从权威数据源生成并填充自己的命名空间，把初期规模限制在实际被请求的对象上。权威记录保留在这个可重建缓存之外。Lavik 提供普通 String 存储和兼容 Redis 的客户端协议；格式选择、编码和重新生成由应用负责。",
+      "sources": [
+        "current-010-readme",
+        "current-010-requests",
+        "current-010-storage"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "这样可以把读者发布与旧缓存退役分开，也暴露出一个仅靠容量无法回答的问题：为了回滚，旧命名空间是否必须持续保持新鲜？保留字节并不会自动更新内容。如果源对象在发布期间发生变化，就需要继续刷新两种表示，或者让回滚路径重新生成过期条目。前者增加刷新流量和替换写入，后者让回滚依赖重新生成数据的能力。在把保留的旧数据视为回滚机制之前，应先明确这一选择。",
+      "sources": [
+        "current-010-storage",
+        "current-010-requests"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "退役涉及三个不同的时间点"
+    },
+    {
+      "type": "paragraph",
+      "text": "停止旧读者、让旧条目过期，以及收回其占用的容量，是三件不同的事。Lavik 在读取时把已过期的值视为不存在。后台过期处理负责删除，但为了防止较旧的持久化值重新出现，系统可能仍需保留墓碑。索引容量随实际索引移除而释放，物理块则通过回收流程重新变得可用。因此，旧命名空间到达过期时间，并不意味着它占用的索引内存和 SSD 空间立即全部归还。",
+      "sources": [
+        "current-010-storage"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "替换流量还会在引擎内部产生另一层版本共存。Lavik 追加不可变记录版本；独立替换操作会在新版本刷新完成前，继续把旧持久化记录计入物理占用。快照固定和回收过程也可能延长物理数据的生命周期。因此，假设中的 66.76 GiB 只是逻辑载荷总量，不能直接作为设备配置容量。反复刷新两个命名空间的发布过程，需要同时容纳两套当前表示和已被替代的物理版本。",
+      "sources": [
+        "current-010-storage"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "内存规划同样应覆盖共存阶段。Lavik 把保留内存的准入预算划分为固定的 worker 份额，一个 worker 无法借用另一个 worker 的空闲余额。内存配置也不是严格的进程 RSS 上限，客户端缓冲、I/O 和临时工作仍然需要余量。一千万个带版本的键不意味着总内存恰好翻倍，但只按最终五百万个键做预算，会遗漏发布期间新增的索引需求。",
+      "sources": [
+        "current-010-storage"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "验证你真正需要运行的过渡过程"
+    },
+    {
+      "type": "paragraph",
+      "text": "适合首先尝试的场景，是一种可重建缓存：新格式变大后，原本需要扩容 DRAM 才能容纳。Lavik 可以保留熟悉的 Redis 接口，同时让持续增长的值存储层转向 NVMe。Apache 2.0 许可证也允许检查和修改实现。这是定性的容量论据；无论载荷算术还是存储设计，都不能证明整体成本降低，也不能证明可用性 SLA 等价。",
+      "sources": [
+        "current-010-readme",
+        "current-010-storage"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "下一步，可以使用有代表性的对象和计划采用的刷新策略，演练一次部分发布。在新旧读者共存时，观察总键数量、各 worker 的内存压力、可用存储块和应用尾延迟。随后停止旧格式刷新，追踪从过期到回收的过程，再安排下一轮发布。普通写入成功并不代表已经跨过同步持久化边界，因此演练还应覆盖缓存写入丢失后的重新生成。验收问题应当具体：两个应用版本能否在整个共存阶段承载所需流量，所选回滚路径是否仍能生成新鲜对象？这些是建议执行的评估步骤，不是已经完成的测试结果。",
+      "sources": [
+        "current-010-storage",
+        "current-010-requests"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "延伸阅读：安装与稳定版 0.1.0 手册入口：https://github.com/eloqdata/lavik/blob/471f4864357f4a5034c64e7d4972ec0e55b82d94/README.md 。当前基准方法覆盖 1 KiB GET/SET 工作负载，并非本文的双格式发布过程：https://github.com/eloqdata/lavik/blob/471f4864357f4a5034c64e7d4972ec0e55b82d94/perf_reports/lavik-v0.1.0-2vcpu-latest-capacity-2026-10-13/README.md 。兼容性与迁移指南：https://github.com/eloqdata/lavik/blob/471f4864357f4a5034c64e7d4972ec0e55b82d94/docs/operations/redis-import.md 。部署成本规划可参阅英文文章“Price the capacity you can keep available”：/en/blog/lavik-field-notes-2026-10-10/ 。",
+      "sources": [
+        "current-010-readme",
+        "current-010-compact",
+        "current-010-import"
+      ]
+    }
+  ]
+}
