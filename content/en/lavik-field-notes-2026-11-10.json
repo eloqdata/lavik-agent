@@ -1,0 +1,128 @@
+{
+  "id": "lavik-field-notes-2026-11-10",
+  "locale": "en",
+  "version": "0.1.0",
+  "kind": "blog",
+  "slug": "lavik-field-notes-2026-11-10",
+  "title": "A Redis migration rehearsal for changing the shard count",
+  "summary": "Moving three Redis primaries into two Lavik Groups changes more than placement. Rehearse transaction boundaries, Function catalogs, data verification, and latency against the application's new routing map.",
+  "updatedAt": "2026-11-10",
+  "sourceRevision": "471f4864357f4a5034c64e7d4972ec0e55b82d94",
+  "topics": [
+    "use-case",
+    "best-practise"
+  ],
+  "blocks": [
+    {
+      "type": "paragraph",
+      "text": "A Redis deployment can accumulate shards because its values need more RAM, even when request volume does not require more compute. Lavik 0.1.0, open source under Apache 2.0, offers a reason to revisit that layout: its key index stays in DRAM while values live on NVMe. A migration rehearsal can ask whether fewer capacity-driven shards will serve the application well. The useful unit of proof is the application's data and routing contract, not a matching source and target node count.",
+      "sources": [
+        "current-010-readme",
+        "current-010-storage"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "Rehearse a new placement map"
+    },
+    {
+      "type": "paragraph",
+      "text": "Consider a hypothetical product catalog on three Redis Cluster primaries. Each product has a detail Hash and a separate availability value; both keys use the same product hashtag. A Function reads the pair, and updates use MULTI/EXEC. The proposed target has two Meta-managed Lavik Groups with native replicas. This topology change is supported by the documented migration design: source and target node counts need not match, and its fixtures include three source primaries and two target Groups. That is a basis for a rehearsal, not evidence that this catalog needs only two Groups.",
+      "sources": [
+        "current-010-import",
+        "current-010-requests"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "Preserve the product hashtags when changing placement. Lavik Cluster requires all keys in a multi-key request, the union of an EXEC transaction's keys, and Lua declared keys to occupy one hash slot. Routing two different slots to the same Group does not make a cross-slot operation valid. Map representative product keys to the target and exercise the application's actual paired reads and updates through its normal Cluster client.",
+      "sources": [
+        "current-010-requests",
+        "current-010-import"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "Separate the imported state from transaction replay"
+    },
+    {
+      "type": "paragraph",
+      "text": "Use the documented RedisShake v4.6.2 path into an isolated, empty Meta-managed target, with Redis 7.2.14 as the source baseline. Create the managed target before importing; adopting a populated non-Meta import node is unsupported. RedisShake strips source MULTI/EXEC boundaries and supplies no cross-shard global snapshot. During copying, the detail Hash and availability value can therefore represent different source moments. Keep application traffic off the target until the final verification has completed.",
+      "sources": [
+        "current-010-import"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "Give the hypothetical catalog a concrete invariant: each pair contains the same application revision, and availability refers to the product represented by the detail record. After source writes stop and the recorded tails have drained, compare both complete records and their revision relationship. Equal key counts cannot establish that relationship. Separately exercise paired updates on an isolated rehearsal dataset after import to assess the target application's transaction behavior. A correct final copy and correct future transactions answer different questions.",
+      "sources": [
+        "current-010-import",
+        "current-010-requests"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "Keyless state needs its own placement decision"
+    },
+    {
+      "type": "paragraph",
+      "text": "A product key has a hash slot; a Function library does not have that same routing rule. Lavik maintains a Function catalog per Group, and RedisShake determines how source libraries reach target nodes. If the three source primaries contain different code under the same library name, reducing them to two Groups does not resolve the conflict. Before importing, define the intended library names and exact code for each destination Group. Verify that catalog and invoke the product Function through the client paths that will reach each Group.",
+      "sources": [
+        "current-010-import",
+        "current-010-requests"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "Administrative operations also follow Group boundaries. On a Lavik Cluster node, FLUSHDB and FLUSHALL affect the receiving Group. A rehearsal cleanup that reaches only one Owner cannot establish an empty two-Group target. Prefer a fresh isolated deployment after a failed attempt. When reusing an isolated target, the documented reset covers every current Owner's keys and Function catalog, native replica verification, and the removal of all old import writers before a new baseline begins.",
+      "sources": [
+        "current-010-import"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "Define acceptance around the new topology"
+    },
+    {
+      "type": "paragraph",
+      "text": "For data acceptance, stop every source writer and record each primary's identity and replication tail. Require every RedisShake reader to reach its recorded tail, with no unanswered writer entries or bytes. Then compare complete key sets—including extra target keys—types, logical values, expiry deadlines within an agreed tolerance, and Function code across every target Group and intended replica. The documented same-connection marker-and-WAIT fence provides replication evidence; it does not turn asynchronous replication into a global commit. An Owner or history change invalidates that verification pass.",
+      "sources": [
+        "current-010-import"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "For latency acceptance, specify the catalog endpoint's offered request rate and p99/p99.9 budgets before choosing connection counts. Measure paired reads, Function calls, updates, and refresh traffic on the proposed two-Group layout, including the busiest product distribution. Lavik's October 2-vCPU benchmark demonstrates capacity beyond RAM: 100 million 1 KiB values on a nominal 16 GiB VM. But its pure GET and overwriting SET workload, SPDK storage, and single 30-second measurement per point do not predict this catalog's transaction or Function latency. Fewer Groups remain an application hypothesis until that workload meets its budget.",
+      "sources": [
+        "current-010-compact",
+        "current-010-requests"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "For fallback acceptance, decide that an interrupted import, uncertain write outcome, topology transition, or failed comparison leaves business traffic on Redis. RedisShake v4.6.2 has no reliable checkpoint resume for this workflow; rebuild from a fresh baseline rather than replaying an uncertain suffix. Retain the stopped source for the agreed rollback window after cutover. Once Lavik accepts business writes, returning to that source requires data reconciliation. SSD capacity may reduce pressure to shard for RAM, but replicas, index memory, and rebuild headroom still belong in the deployment budget; this rehearsal establishes no cost ratio or SLA equivalence.",
+      "sources": [
+        "current-010-import",
+        "current-010-storage"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "Start with one product family that exercises paired keys and Function calls. Write down its slot invariant, expected catalogs on both Groups, final-state comparisons, latency budgets, and fallback boundary. Use that contract to drive an isolated migration rehearsal before enlarging the dataset. The result should answer a specific adoption question: can Lavik's NVMe capacity support this simpler placement map while preserving the application's behavior?",
+      "sources": [
+        "current-010-import",
+        "current-010-requests",
+        "current-010-storage"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "Publication references — Version-pinned 0.1.0 manual and installation entry: https://github.com/eloqdata/lavik/blob/471f4864357f4a5034c64e7d4972ec0e55b82d94/README.md . Managed import and compatibility baseline: https://github.com/eloqdata/lavik/blob/471f4864357f4a5034c64e7d4972ec0e55b82d94/docs/operations/redis-import.md . Capacity benchmark and methodology: https://github.com/eloqdata/lavik/blob/471f4864357f4a5034c64e7d4972ec0e55b82d94/perf_reports/lavik-v0.1.0-2vcpu-latest-capacity-2026-10-13/README.md .",
+      "sources": [
+        "current-010-readme",
+        "current-010-import",
+        "current-010-compact"
+      ]
+    }
+  ]
+}

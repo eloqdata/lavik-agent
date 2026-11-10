@@ -1,0 +1,128 @@
+{
+  "id": "lavik-field-notes-2026-11-10",
+  "locale": "zh-CN",
+  "version": "0.1.0",
+  "kind": "blog",
+  "slug": "lavik-field-notes-2026-11-10",
+  "title": "改变分片数量时，Redis 迁移该怎样演练",
+  "summary": "将三个 Redis 主节点迁入两个 Lavik Group，改变的不只是数据位置。围绕应用的新路由关系，演练事务边界、Function 目录、数据核验与延迟验收。",
+  "updatedAt": "2026-11-10",
+  "sourceRevision": "471f4864357f4a5034c64e7d4972ec0e55b82d94",
+  "topics": [
+    "use-case",
+    "best-practise"
+  ],
+  "blocks": [
+    {
+      "type": "paragraph",
+      "text": "Redis 部署增加分片，有时是因为值数据需要更多内存，而不是请求量需要更多计算资源。采用 Apache 2.0 许可开源的 Lavik 0.1.0 提供了重新考虑布局的理由：键索引保留在 DRAM，值存放在 NVMe。迁移演练可以回答一个实际问题：减少因容量需求而增加的分片后，应用是否仍能正常运行？验收应围绕应用的数据与路由约定展开，而不必追求源端和目标端节点数量相同。",
+      "sources": [
+        "current-010-readme",
+        "current-010-storage"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "演练新的数据分布"
+    },
+    {
+      "type": "paragraph",
+      "text": "假设一个商品目录运行在三个 Redis Cluster 主节点上。每件商品有一个详情 Hash 和一个独立的可售状态值，两个键使用相同的商品 hashtag。应用通过 Function 读取这对记录，通过 MULTI/EXEC 更新它们。拟议目标是两个由 Meta 管理、带原生副本的 Lavik Group。文档中的迁移设计允许源端和目标端节点数量不同，场景也包含三个源主节点迁入两个目标 Group。这为演练提供了依据，但不能证明该商品目录只需要两个 Group。",
+      "sources": [
+        "current-010-import",
+        "current-010-requests"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "改变数据分布时，应保留商品 hashtag。Lavik Cluster 要求多键请求涉及的键、EXEC 事务全部键的并集，以及 Lua 声明的键都属于同一个哈希槽。即使两个不同的槽被分配到同一个 Group，跨槽操作也不会因此合法。将有代表性的商品键映射到目标端，再通过应用正常使用的 Cluster 客户端执行实际的成对读取和更新。",
+      "sources": [
+        "current-010-requests",
+        "current-010-import"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "区分最终导入状态与事务回放"
+    },
+    {
+      "type": "paragraph",
+      "text": "使用文档规定的 RedisShake v4.6.2 路径，将数据导入隔离、空白的 Meta 管理目标，源端基线为 Redis 7.2.14。应在导入前创建受管理目标；不支持将已经装入数据的非 Meta 导入节点直接纳入管理。RedisShake 会去掉源端 MULTI/EXEC 边界，也不提供跨分片全局快照。因此，复制过程中，详情 Hash 与可售状态可能来自源端的不同时间点。最终核验完成前，不应让目标承接应用流量。",
+      "sources": [
+        "current-010-import"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "为这个假设的商品目录定义一个明确的不变量：每对记录携带相同的应用修订号，可售状态对应详情记录所描述的商品。源端停止写入、已记录的增量尾部全部处理完毕后，既比较两条完整记录，也比较修订号之间的关系。键数量相等无法证明这种关系。导入后，再在隔离的演练数据集上执行成对更新，检查目标端的应用事务行为。最终副本正确与未来事务正确，回答的是两个不同的问题。",
+      "sources": [
+        "current-010-import",
+        "current-010-requests"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "无键状态需要单独决定放在哪里"
+    },
+    {
+      "type": "paragraph",
+      "text": "商品键有哈希槽，Function 库却不遵循同样的路由规则。Lavik 为每个 Group 维护 Function 目录，源端库如何到达目标节点由 RedisShake 决定。如果三个源主节点在同一个库名下保存了不同代码，缩减为两个 Group 并不会自动解决冲突。导入前，应明确每个目标 Group 应有的库名和精确代码。核验目录之后，还要沿着能够到达各个 Group 的客户端路径调用商品 Function。",
+      "sources": [
+        "current-010-import",
+        "current-010-requests"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "管理操作同样受 Group 边界约束。在 Lavik Cluster 节点上，FLUSHDB 和 FLUSHALL 影响的是接收命令的 Group。只触达一个 Owner 的演练清理，不能证明两个 Group 都已清空。失败后应优先使用新的隔离部署。如果复用隔离目标，文档规定的重置流程需要覆盖所有当前 Owner 的键和 Function 目录，核验原生副本，并确保旧导入写入方全部停止，再开始新的基线导入。",
+      "sources": [
+        "current-010-import"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "围绕新拓扑定义验收条件"
+    },
+    {
+      "type": "paragraph",
+      "text": "数据验收时，先停止所有源端写入方，记录各主节点的身份和复制尾部位置。要求每个 RedisShake reader 都追上已记录的位置，且 writer 没有未收到响应的条目或字节。随后，在每个目标 Group 和预期副本上比较完整键集合，包括目标端多出的键，并核验类型、逻辑值、约定容差内的过期时间以及 Function 代码。文档中的同连接标记写入与 WAIT 屏障可提供复制进度证据，但不会把异步复制变成全局提交。Owner 或历史发生变化，就必须作废本轮核验。",
+      "sources": [
+        "current-010-import"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "延迟验收时，应先确定商品接口的请求到达速率以及 p99、p99.9 预算，再选择连接数。在拟议的两个 Group 布局上测量成对读取、Function 调用、更新和刷新流量，并覆盖最繁忙的商品分布。Lavik 十月的双 vCPU 基准展示了超出内存的容量：标称 16 GiB 内存的虚拟机承载一亿个 1 KiB 值。但该测试采用纯 GET 和覆盖 SET、SPDK 存储，每个测量点只运行一次、持续 30 秒，不能据此预测商品目录的事务或 Function 延迟。只有实际工作负载满足预算，减少 Group 的方案才得到应用层面的支持。",
+      "sources": [
+        "current-010-compact",
+        "current-010-requests"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "回退验收时，应事先约定：导入中断、写入结果不确定、拓扑变化或比较失败，都意味着业务流量继续留在 Redis。RedisShake v4.6.2 在这条流程中没有可靠的检查点续传能力，应从新基线重建，而不是重放结果不确定的增量尾部。切换后，在约定的回退窗口内保留已停止写入的源端。一旦 Lavik 接受业务写入，返回源端就需要数据对账与合并。SSD 容量可以缓解因 RAM 不足而增加分片的压力，但副本、索引内存和重建余量仍须计入部署预算；这次演练不能证明任何成本倍数或 SLA 等价关系。",
+      "sources": [
+        "current-010-import",
+        "current-010-storage"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "先选一个会使用成对键和 Function 调用的商品类别。写清它的槽内不变量、两个 Group 上预期的 Function 目录、最终状态比较规则、延迟预算与回退边界，再按这份约定开展隔离迁移演练，之后扩大数据集。演练应回答一个具体的采用问题：Lavik 的 NVMe 容量，能否在保留应用行为的同时支持更简单的数据分布？",
+      "sources": [
+        "current-010-import",
+        "current-010-requests",
+        "current-010-storage"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "出版参考资料 — 固定版本的 0.1.0 手册与安装入口：https://github.com/eloqdata/lavik/blob/471f4864357f4a5034c64e7d4972ec0e55b82d94/README.md 。受管理目标导入与兼容性基线：https://github.com/eloqdata/lavik/blob/471f4864357f4a5034c64e7d4972ec0e55b82d94/docs/operations/redis-import.md 。容量基准与测试方法：https://github.com/eloqdata/lavik/blob/471f4864357f4a5034c64e7d4972ec0e55b82d94/perf_reports/lavik-v0.1.0-2vcpu-latest-capacity-2026-10-13/README.md 。",
+      "sources": [
+        "current-010-readme",
+        "current-010-import",
+        "current-010-compact"
+      ]
+    }
+  ]
+}
