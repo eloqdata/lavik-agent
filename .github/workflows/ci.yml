@@ -22,11 +22,17 @@ jobs:
       - run: npm ci
       - name: Enable io_uring on the disposable runner
         run: sudo sysctl -w kernel.io_uring_disabled=0
-      - name: Configure DNS for Docker build and APT verification
-        # Ubuntu mirror lookups failed with Docker's inherited resolver.
-        # Set explicit container DNS on this disposable runner only;
+      - name: Configure DNS for host and Docker dependency installation
+        # Ubuntu mirror lookups failed both on the host and inside Docker.
+        # Set explicit DNS on this disposable runner only;
         # recipe containers still run with their existing --network=none policy.
         run: |
+          dns_interface=$(ip -o route show default | awk 'NR == 1 {print $5}')
+          test -n "$dns_interface"
+          sudo resolvectl dns "$dns_interface" 1.1.1.1 8.8.8.8
+          sudo resolvectl domain "$dns_interface" '~.'
+          sudo resolvectl flush-caches
+          getent hosts azure.archive.ubuntu.com archive.ubuntu.com security.ubuntu.com
           sudo python3 - <<'PY'
           import json
           from pathlib import Path
