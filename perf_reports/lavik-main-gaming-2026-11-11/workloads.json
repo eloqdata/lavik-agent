@@ -1,0 +1,114 @@
+{
+  "source_pdf": "sources/Gaming_Workloads_for_Lavik.pdf",
+  "source_sha256": "943dc6308fa41b09beea1b3d0432a9265f76acfc0650aebdd166e75666ca9ed0",
+  "main": "4b1eb143178955a033635964f291a6f471749d2d",
+  "bycorf": "150a50f87fe8ea61f2a2cb71ec28fb6e9b570e40",
+  "products": [
+    "lavik",
+    "redis",
+    "valkey",
+    "dragonfly",
+    "kvrocks"
+  ],
+  "server_vcpus": 16,
+  "server_ram_gib": 128,
+  "load_threads": 32,
+  "connections": [
+    320
+  ],
+  "A": {
+    "keys": 10,
+    "members_each": 10000000,
+    "member_bytes": 32,
+    "initial_score": "member ID * 1024",
+    "read_top100_percent": 40,
+    "read_rank_percent": 40,
+    "zincrby_percent": 20,
+    "increment": 2048,
+    "writes": "paired +2048/-2048, each command counted separately; cycles complete before exit",
+    "top100_withscores": true,
+    "distribution": "Uniform keys and uniform read members; write members are partitioned by connection ID to avoid concurrent writes to the same member.",
+    "load_method": "Identical sorted ZADD batches of 8192 members on all products, one loading connection per key; initialization excluded. Avoid a 410 MB RESTORE exceeding ordinary per-worker request admission without tuning connection buffers."
+  },
+  "B": {
+    "live_keys_target": 1000000,
+    "members_each": 50,
+    "ttl_seconds": 1800,
+    "create_target_per_second": 555.5555555555555,
+    "update": "ZADD XX existing member; no accidental recreation",
+    "initial_ttl": "staggered residual TTL represents pre-aged population",
+    "duration_seconds": 1860,
+    "metrics": [
+      "achieved create rate",
+      "update throughput",
+      "expired keys",
+      "live cardinality",
+      "memory",
+      "errors"
+    ],
+    "assumptions": "PDF does not specify update load or TTL staggering. Churn and update throughput must be recorded separately; report failure to maintain population rather than normalize it away.",
+    "member_ids": "32-byte deterministic IDs, distinct between match keys (ID=key_index*50+member_index)",
+    "connections": 320,
+    "creator_connections": 32,
+    "update_connections": 288,
+    "threads_total": 32
+  },
+  "C": {
+    "keys": 10000000,
+    "fields": 16,
+    "field_value_bytes": 128,
+    "user_payload_bytes": 2048,
+    "read_percent": 90,
+    "write_percent": 10,
+    "read": "HGETALL",
+    "write": "HSET f00 128-byte payload",
+    "hot_key_percent": [
+      5,
+      10
+    ],
+    "requests_to_hot_percent": 90,
+    "logical_cold": "remaining 10% of traffic selects keys outside hot set; does not imply a physical disk miss",
+    "scope": "20.48 GB five-product comparison; original-size C is a separate extension",
+    "validation_detail": "All reads check exact field set, 128-byte lengths, embedded key/field IDs and valid version encoding. Full checks compare deterministic suffixes. Immutable f01..f15 retain version 0; mutable f00 may contain any self-consistent version produced by concurrent writes. This is content integrity checking, not a full linearizability history audit.",
+    "value_layout": "Each 128-byte field value has 48 ASCII hexadecimal bytes identifying key, field and version, followed by an 80-byte deterministic binary suffix. Structured prefixes are compressible; this is not an incompressible-random-data benchmark."
+  },
+  "measurement": {
+    "short_window_seconds": 60,
+    "warm_seconds": 10,
+    "repeats": 3,
+    "report": "white HTML, sources linked; per-command latency; no average of percentiles",
+    "profiling": "separate from formal timing; no continuous monitoring in timed short windows",
+    "persistence": "record actual per-product configuration; do not present memory-only and durable writes as equivalent",
+    "validation": "count and full logical content verification at load; per-reply structure and deterministic expected values where stable; post-write recovery and final content checks",
+    "maintenance": "Normal Lavik engine maintenance. Host maintenance timers held during tests and restored afterwards.",
+    "C_timed_validation": "Every reply checks shape, lengths and key/field/version identity; full deterministic suffix checked on 1 in 1024 reads per connection. Full content verification before and after measurement."
+  },
+  "lavik_huge_mib_by_workload": {
+    "A": 2048,
+    "B": 2048,
+    "C": 2048
+  },
+  "C_original_size": {
+    "keys": 100000000,
+    "fields": 16,
+    "field_value_bytes": 128,
+    "logical_value_bytes": 204800000000,
+    "products": [
+      "base",
+      "kvrocks"
+    ],
+    "connections": [
+      320
+    ],
+    "threads": 32,
+    "hot_percent": [
+      5,
+      10
+    ],
+    "read_percent": 90,
+    "rounds": 3,
+    "seconds": 60,
+    "measurement_status": "complete",
+    "validation": "Full 100M Hash content verification before and after timing; same per-reply checks as the 20 GB client."
+  }
+}

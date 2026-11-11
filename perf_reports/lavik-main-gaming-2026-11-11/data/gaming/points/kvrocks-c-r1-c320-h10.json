@@ -1,0 +1,161 @@
+{
+  "product": "kvrocks",
+  "label": "kvrocks-c-r1-c320-h10",
+  "started_at": 1794045666.14212,
+  "ended_at": 1794045726.2215662,
+  "runtime_config": {
+    "rocksdb.write_options.sync": [
+      "rocksdb.write_options.sync",
+      "no"
+    ],
+    "rocksdb.write_options.disable_wal": [
+      "rocksdb.write_options.disable_wal",
+      "no"
+    ],
+    "workers": [
+      "workers",
+      "16"
+    ]
+  },
+  "client_binary_sha256": "1cd09a69ba9b10119da71f7039d34dfdf95532343d368e7a3cd2a27eb437703c",
+  "dbsize_refresh": null,
+  "result": {
+    "validation": "shape_identity_every_reply_full_suffix_1_in_1024_full_verify_outside_timing",
+    "workload": "C",
+    "phase": "run",
+    "keys": 10000000,
+    "members": 0,
+    "fields": 16,
+    "field_value_bytes": 128,
+    "connections": 320,
+    "threads": 32,
+    "hot_percent": 10,
+    "creator_connections": 0,
+    "ttl_ms": 1800000,
+    "epoch_ms": 0,
+    "elapsed_s": 60.009633,
+    "client_cpu_cores": 5.170688,
+    "response_mib_s": 418.042438,
+    "operations": 12568770,
+    "no_op_updates": 0,
+    "errors": 0,
+    "metrics": {
+      "HGETALL_cold": {
+        "count": 1131747,
+        "qps": 18859.422091,
+        "avg_ms": 1.527792,
+        "p50_ms": 1.506,
+        "p99_ms": 2.45,
+        "p999_ms": 5.5,
+        "max_ms": 13.992008
+      },
+      "HGETALL_hot": {
+        "count": 10180146,
+        "qps": 169641.863741,
+        "avg_ms": 1.527078,
+        "p50_ms": 1.505,
+        "p99_ms": 2.444,
+        "p999_ms": 5.472,
+        "max_ms": 19.977025
+      },
+      "HSET_cold": {
+        "count": 125938,
+        "qps": 2098.629728,
+        "avg_ms": 1.513405,
+        "p50_ms": 1.483,
+        "p99_ms": 2.66,
+        "p999_ms": 6.944,
+        "max_ms": 19.963894
+      },
+      "HSET_hot": {
+        "count": 1130939,
+        "qps": 18845.957586,
+        "avg_ms": 1.495912,
+        "p50_ms": 1.466,
+        "p99_ms": 2.706,
+        "p999_ms": 6.784,
+        "max_ms": 19.966118
+      },
+      "all": {
+        "count": 12568770,
+        "qps": 209445.873147,
+        "avg_ms": 1.524201,
+        "p50_ms": 1.501,
+        "p99_ms": 2.45,
+        "p999_ms": 5.596,
+        "max_ms": 19.977025
+      }
+    },
+    "per_second": [
+      219873,
+      220932,
+      220181,
+      219889,
+      217278,
+      205502,
+      211900,
+      211375,
+      211071,
+      210394,
+      209507,
+      208762,
+      208986,
+      208775,
+      208554,
+      207952,
+      208497,
+      208436,
+      207945,
+      207331,
+      194711,
+      200933,
+      200979,
+      200985,
+      199074,
+      200233,
+      199564,
+      199323,
+      199247,
+      198795,
+      199168,
+      198721,
+      198880,
+      198779,
+      198488,
+      190709,
+      145009,
+      153817,
+      153605,
+      181007,
+      229134,
+      233099,
+      234001,
+      233808,
+      233150,
+      232755,
+      232471,
+      233620,
+      233358,
+      233159,
+      219829,
+      216754,
+      220462,
+      220339,
+      219768,
+      219447,
+      220086,
+      219056,
+      218894,
+      218801
+    ]
+  },
+  "expected_commands": {
+    "hgetall": 11311893,
+    "hset": 1256877
+  },
+  "actual_commands": {
+    "hgetall": 11311893,
+    "hset": 1256877
+  },
+  "counter_deltas": {}
+}

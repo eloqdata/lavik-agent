@@ -1,0 +1,161 @@
+{
+  "product": "redis",
+  "label": "redis-c-r3-c320-h5",
+  "started_at": 1794033421.088427,
+  "ended_at": 1794033481.1734598,
+  "runtime_config": {
+    "appendonly": [
+      "appendonly",
+      "no"
+    ],
+    "save": [
+      "save",
+      ""
+    ],
+    "io-threads": [
+      "io-threads",
+      "8"
+    ],
+    "io-threads-do-reads": []
+  },
+  "client_binary_sha256": "1cd09a69ba9b10119da71f7039d34dfdf95532343d368e7a3cd2a27eb437703c",
+  "result": {
+    "validation": "shape_identity_every_reply_full_suffix_1_in_1024_full_verify_outside_timing",
+    "workload": "C",
+    "phase": "run",
+    "keys": 10000000,
+    "members": 0,
+    "fields": 16,
+    "field_value_bytes": 128,
+    "connections": 320,
+    "threads": 32,
+    "hot_percent": 5,
+    "creator_connections": 0,
+    "ttl_ms": 1800000,
+    "epoch_ms": 0,
+    "elapsed_s": 60.009896,
+    "client_cpu_cores": 6.997609,
+    "response_mib_s": 555.250501,
+    "operations": 16694110,
+    "no_op_updates": 0,
+    "errors": 0,
+    "metrics": {
+      "HGETALL_cold": {
+        "count": 1500944,
+        "qps": 25011.607964,
+        "avg_ms": 1.147838,
+        "p50_ms": 1.141,
+        "p99_ms": 1.412,
+        "p999_ms": 2.118,
+        "max_ms": 3.481821
+      },
+      "HGETALL_hot": {
+        "count": 13523755,
+        "qps": 225358.746401,
+        "avg_ms": 1.147729,
+        "p50_ms": 1.141,
+        "p99_ms": 1.411,
+        "p999_ms": 2.118,
+        "max_ms": 3.593458
+      },
+      "HSET_cold": {
+        "count": 167344,
+        "qps": 2788.606719,
+        "avg_ms": 1.135935,
+        "p50_ms": 1.129,
+        "p99_ms": 1.401,
+        "p999_ms": 2.043,
+        "max_ms": 2.867049
+      },
+      "HSET_hot": {
+        "count": 1502067,
+        "qps": 25030.321544,
+        "avg_ms": 1.135949,
+        "p50_ms": 1.129,
+        "p99_ms": 1.399,
+        "p999_ms": 2.114,
+        "max_ms": 3.033448
+      },
+      "all": {
+        "count": 16694110,
+        "qps": 278189.282627,
+        "avg_ms": 1.146561,
+        "p50_ms": 1.14,
+        "p99_ms": 1.41,
+        "p999_ms": 2.118,
+        "max_ms": 3.593458
+      }
+    },
+    "per_second": [
+      274780,
+      283952,
+      279864,
+      279185,
+      278298,
+      266164,
+      274468,
+      276374,
+      267435,
+      281164,
+      285771,
+      280905,
+      283999,
+      281885,
+      285627,
+      283251,
+      287041,
+      275514,
+      282083,
+      282188,
+      276787,
+      282430,
+      275394,
+      272911,
+      275801,
+      281958,
+      271290,
+      275363,
+      267642,
+      280389,
+      279082,
+      280793,
+      281149,
+      280048,
+      280120,
+      278640,
+      281032,
+      278759,
+      274708,
+      259983,
+      268612,
+      277766,
+      282580,
+      283895,
+      282303,
+      288317,
+      285220,
+      286474,
+      278303,
+      276119,
+      273570,
+      276728,
+      283330,
+      286931,
+      265065,
+      279899,
+      272757,
+      275144,
+      273602,
+      271461
+    ]
+  },
+  "expected_commands": {
+    "hgetall": 15024699,
+    "hset": 1669411
+  },
+  "actual_commands": {
+    "hgetall": 15024699,
+    "hset": 1669411
+  },
+  "counter_deltas": {}
+}

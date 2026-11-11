@@ -1,0 +1,161 @@
+{
+  "product": "valkey",
+  "label": "valkey-c-r3-c320-h5",
+  "started_at": 1794037124.393174,
+  "ended_at": 1794037184.4712064,
+  "runtime_config": {
+    "appendonly": [
+      "appendonly",
+      "no"
+    ],
+    "save": [
+      "save",
+      ""
+    ],
+    "io-threads": [
+      "io-threads",
+      "8"
+    ],
+    "io-threads-do-reads": []
+  },
+  "client_binary_sha256": "1cd09a69ba9b10119da71f7039d34dfdf95532343d368e7a3cd2a27eb437703c",
+  "result": {
+    "validation": "shape_identity_every_reply_full_suffix_1_in_1024_full_verify_outside_timing",
+    "workload": "C",
+    "phase": "run",
+    "keys": 10000000,
+    "members": 0,
+    "fields": 16,
+    "field_value_bytes": 128,
+    "connections": 320,
+    "threads": 32,
+    "hot_percent": 5,
+    "creator_connections": 0,
+    "ttl_ms": 1800000,
+    "epoch_ms": 0,
+    "elapsed_s": 60.011947,
+    "client_cpu_cores": 4.497935,
+    "response_mib_s": 370.831289,
+    "operations": 11149760,
+    "no_op_updates": 0,
+    "errors": 0,
+    "metrics": {
+      "HGETALL_cold": {
+        "count": 1002582,
+        "qps": 16706.373619,
+        "avg_ms": 1.719325,
+        "p50_ms": 1.716,
+        "p99_ms": 2.009,
+        "p999_ms": 2.212,
+        "max_ms": 7.644281
+      },
+      "HGETALL_hot": {
+        "count": 9032202,
+        "qps": 150506.73283,
+        "avg_ms": 1.719166,
+        "p50_ms": 1.716,
+        "p99_ms": 2.008,
+        "p999_ms": 2.206,
+        "max_ms": 7.699685
+      },
+      "HSET_cold": {
+        "count": 111691,
+        "qps": 1861.146097,
+        "avg_ms": 1.716099,
+        "p50_ms": 1.714,
+        "p99_ms": 2.001,
+        "p999_ms": 2.136,
+        "max_ms": 6.504843
+      },
+      "HSET_hot": {
+        "count": 1003285,
+        "qps": 16718.087953,
+        "avg_ms": 1.715389,
+        "p50_ms": 1.712,
+        "p99_ms": 1.998,
+        "p999_ms": 2.136,
+        "max_ms": 7.541618
+      },
+      "all": {
+        "count": 11149760,
+        "qps": 185792.340499,
+        "avg_ms": 1.71881,
+        "p50_ms": 1.716,
+        "p99_ms": 2.007,
+        "p999_ms": 2.198,
+        "max_ms": 7.699685
+      }
+    },
+    "per_second": [
+      180164,
+      190050,
+      189904,
+      187135,
+      185233,
+      190994,
+      187430,
+      187188,
+      188723,
+      189636,
+      189234,
+      186678,
+      188077,
+      188850,
+      188408,
+      184382,
+      183175,
+      183399,
+      187486,
+      186811,
+      185408,
+      185985,
+      188494,
+      188208,
+      187114,
+      186228,
+      184908,
+      183429,
+      183371,
+      184635,
+      184893,
+      183711,
+      185208,
+      187057,
+      187478,
+      186287,
+      186708,
+      186531,
+      184072,
+      180600,
+      181422,
+      183825,
+      186423,
+      185831,
+      188130,
+      183314,
+      185900,
+      185766,
+      185504,
+      186029,
+      185994,
+      185147,
+      179953,
+      183576,
+      186103,
+      186425,
+      184320,
+      183151,
+      184068,
+      183880
+    ]
+  },
+  "expected_commands": {
+    "hgetall": 10034784,
+    "hset": 1114976
+  },
+  "actual_commands": {
+    "hgetall": 10034784,
+    "hset": 1114976
+  },
+  "counter_deltas": {}
+}

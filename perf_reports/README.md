@@ -4,6 +4,7 @@ Original benchmark outputs are organized by the matching report directory in [el
 
 | Report | Scope |
 |---|---|
+| [Latest main Gaming workloads · 2026-11-11](lavik-main-gaming-2026-11-11) | Complete white-background report, experiment procedure, workload/client sources, 320-connection A/B/C and 200 GB C results, memory comparisons, selected peer controls, raw Lavik logs and checksums. |
 | [v0.2.0 aerospike-ycsb](lavik-v0.2.0-aerospike-ycsb-2026-10-21) | Raw files and metadata for the October 21–22, 2026 measurements. |
 | [v0.2.0 storage-peers-1tb](lavik-v0.2.0-storage-peers-1tb-2026-10-21) | Raw files and metadata for the October 21–22, 2026 measurements. |
 | [v0.2.0 vs-memory-databases](lavik-v0.2.0-vs-memory-databases-2026-10-21) | Raw files and metadata for the October 21–22, 2026 measurements. |

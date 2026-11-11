@@ -1,0 +1,153 @@
+{
+  "product": "kvrocks",
+  "label": "kvrocks-a-r1-c320-h5",
+  "started_at": 1794044402.9851384,
+  "ended_at": 1794044511.8670144,
+  "runtime_config": {
+    "rocksdb.write_options.sync": [
+      "rocksdb.write_options.sync",
+      "no"
+    ],
+    "rocksdb.write_options.disable_wal": [
+      "rocksdb.write_options.disable_wal",
+      "no"
+    ],
+    "workers": [
+      "workers",
+      "16"
+    ]
+  },
+  "client_binary_sha256": "7ced56c2718f471ce25d49e07fccd8b949cf6e87bcd8dbd82cd402d892b44ebc",
+  "dbsize_refresh": null,
+  "result": {
+    "workload": "A",
+    "phase": "run",
+    "keys": 10,
+    "members": 10000000,
+    "fields": 0,
+    "field_value_bytes": 0,
+    "connections": 320,
+    "threads": 32,
+    "hot_percent": 5,
+    "creator_connections": 0,
+    "ttl_ms": 1800000,
+    "epoch_ms": 0,
+    "elapsed_s": 108.812339,
+    "client_cpu_cores": 0.010005,
+    "response_mib_s": 0.064218,
+    "operations": 3200,
+    "no_op_updates": 0,
+    "errors": 0,
+    "metrics": {
+      "Top100": {
+        "count": 1280,
+        "qps": 11.763372,
+        "avg_ms": 2787.021414,
+        "p50_ms": 3.784,
+        "p99_ms": 20135.936,
+        "p999_ms": 23232.512,
+        "max_ms": 31870.76844
+      },
+      "ZINCRBY": {
+        "count": 640,
+        "qps": 5.881686,
+        "avg_ms": 1336.873822,
+        "p50_ms": 0.946,
+        "p99_ms": 15736.832,
+        "p999_ms": 16269.312,
+        "max_ms": 16276.573587
+      },
+      "ZRANK": {
+        "count": 1280,
+        "qps": 11.763372,
+        "avg_ms": 16956.523743,
+        "p50_ms": 17350.656,
+        "p99_ms": 31866.88,
+        "p999_ms": 35684.352,
+        "max_ms": 35692.256488
+      },
+      "all": {
+        "count": 3200,
+        "qps": 29.40843,
+        "avg_ms": 8164.792827,
+        "p50_ms": 2932.736,
+        "p99_ms": 31866.88,
+        "p999_ms": 35684.352,
+        "max_ms": 35692.256488
+      }
+    },
+    "per_second": [
+      320,
+      7,
+      2,
+      5,
+      15,
+      0,
+      12,
+      0,
+      7,
+      0,
+      0,
+      0,
+      41,
+      0,
+      27,
+      61,
+      28,
+      30,
+      70,
+      48,
+      2,
+      46,
+      35,
+      29,
+      97,
+      36,
+      6,
+      4,
+      0,
+      100,
+      0,
+      6,
+      89,
+      0,
+      32,
+      74,
+      34,
+      30,
+      8,
+      0,
+      0,
+      41,
+      41,
+      33,
+      28,
+      2,
+      19,
+      0,
+      2,
+      6,
+      80,
+      98,
+      59,
+      5,
+      6,
+      93,
+      37,
+      6,
+      0,
+      3
+    ]
+  },
+  "expected_commands": {
+    "zrevrange": 1280,
+    "zrank": 1280,
+    "zincrby": 640
+  },
+  "actual_commands": {
+    "zrevrange": 1280,
+    "zrank": 1280,
+    "zincrby": 640
+  },
+  "counter_deltas": {}
+}
