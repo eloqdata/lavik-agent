@@ -1,0 +1,123 @@
+{
+  "id": "lavik-field-notes-2026-11-12",
+  "locale": "en",
+  "version": "0.1.0",
+  "kind": "blog",
+  "slug": "lavik-field-notes-2026-11-12",
+  "title": "The missing baseline between Minimal and SPDK",
+  "summary": "A hypothetical document cache shows why Standard with io_uring is a useful bridge: hold the executable constant, compare reads and refreshes at the required load, and decide whether SPDK earns its deployment requirements.",
+  "updatedAt": "2026-11-12",
+  "sourceRevision": "471f4864357f4a5034c64e7d4972ec0e55b82d94",
+  "topics": [
+    "best-practise",
+    "use-case",
+    "architecture"
+  ],
+  "blocks": [
+    {
+      "type": "paragraph",
+      "text": "A growing document cache can need more capacity without needing more compute. Lavik 0.1.0 offers a useful option for that situation: retain Redis-compatible access while moving values onto NVMe and keeping a compact key index in DRAM. Once an application trial works with Minimal, however, moving directly to Standard with SPDK changes both the executable package and the storage backend. Add Standard with io_uring between them, and the next experiment can answer a narrower question: does SPDK improve this application's operating point enough to justify its device setup?",
+      "sources": [
+        "current-010-readme",
+        "current-010-storage"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "Give the comparison an application workload"
+    },
+    {
+      "type": "paragraph",
+      "text": "Consider a hypothetical cache of 20 million precomputed document summaries, each exactly 4 KiB. Its logical value payload is about 76.3 GiB, excluding keys and metadata. Suppose the service requires 12,000 summary reads and 1,000 whole-summary refreshes per second, with proposed client-observed p99 targets of 5 ms for reads and 10 ms for refreshes. These are trial assumptions, not Lavik measurements. They describe a capacity-heavy application whose retained values could exceed the RAM budget even when request demand remains modest.",
+      "sources": [
+        "current-010-readme",
+        "current-010-storage"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "Model each lookup as one String GET and each refresh as one overwriting SET. Keep authoritative documents and the regeneration process outside the cache; define a cache miss as a request to regenerate or use an application fallback. At 4 KiB, these values remain below Lavik's 16 KiB String promotion threshold and use compact whole-value storage. This deliberately exercises ordinary reads and replacements rather than segmented range access. Include the application's actual popularity distribution: repeatedly reading a recently refreshed summary can encounter staged bytes, while older summaries exercise disk-backed reads.",
+      "sources": [
+        "current-010-storage",
+        "current-010-collections"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "Refresh traffic matters even though it is the smaller command stream. Lavik appends replacement versions and updates its in-memory index; a staged value can be read before it becomes crash-durable. Older durable versions remain physically live until the replacement flush completes, and background reclamation later returns obsolete space. A read-only trial would omit that overlap and maintenance work. Run reads and refreshes together, and distinguish ordinary continuous refresh from a proposed burst of 3,000 refreshes per second while reads remain at 12,000. The burst is an application scenario to measure, not a published capability.",
+      "sources": [
+        "current-010-storage"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "Use Standard/io_uring as the bridge"
+    },
+    {
+      "type": "paragraph",
+      "text": "Minimal with an existing, provisioned regular file remains a convenient first application trial. It includes kernel TCP and io_uring; startup does not create or enlarge the storage file. After that trial, run Standard with io_uring against an equivalent dataset and the same request schedule. Standard also defaults to kernel TCP/io_uring. This intermediate run reveals whether changing the package or accompanying configuration changed the result before SPDK enters the comparison. If Standard is already the intended deployment package, start with this baseline directly.",
+      "sources": [
+        "current-010-readme",
+        "current-010-storage"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "For the backend comparison itself, keep the exact Standard executable, host, worker configuration, client, networking and workload constant. Lavik supports raw block devices through io_uring as well as SPDK NVMe namespaces. Where the evaluation host permits it, independently loading equivalent datasets on the same dedicated NVMe for each backend avoids also comparing file storage with a directly accessed device. Record backend-specific settings, memory reservations and device preparation. These are separate deployments: backend selection occurs before initialization, and device ownership changes require the documented stop, preparation and restoration procedures.",
+      "sources": [
+        "current-010-readme",
+        "current-010-storage"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "The package prerequisites are a short but consequential gate. Both variants require Linux 6.1 or newer with usable io_uring, even when SPDK is selected, plus compatible glibc. Standard additionally requires NUMA and UUID runtime libraries, x86-64-v2 on x86_64 or the CRC32 extension on ARM64; those requirements apply even to its io_uring baseline. Minimal uses compiler-default CPU targets. SPDK needs explicitly provisioned, exclusively owned NVMe and hugepage/device-binding setup. Keep kernel TCP throughout this storage experiment; experimental DPDK networking is a separate variable.",
+      "sources": [
+        "current-010-readme"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "Choose from the required load, not the largest number"
+    },
+    {
+      "type": "paragraph",
+      "text": "For each Standard configuration, first ask whether it sustains the proposed 12,000-read/1,000-refresh mix within both latency targets. Then examine the refresh burst: do read tails rise, do dirty staging bytes or pending flushes accumulate, and does available storage recover after the burst? Use client latency and error observations alongside Lavik's durability and capacity metrics. Continue long enough to observe recurring flush and reclamation activity rather than ending at the first favorable interval. These are proposed measurements; no supplied receipt establishes their outcome.",
+      "sources": [
+        "current-010-storage"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "The decision can be concrete without inventing results. If Standard/io_uring meets the normal and burst requirements with the planned headroom, it supports this cache's deployment goal without SPDK device binding. If SPDK meets an important target that io_uring misses under otherwise comparable conditions, that is an application-specific reason to adopt it. If both miss, inspect request bytes, client load, CPU demand and storage pressure before attributing the shortfall to the backend. A successful SET response is not a synchronous durability fence under either choice; retain the cache's reconstruction contract.",
+      "sources": [
+        "current-010-readme",
+        "current-010-storage"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "The supplied October 13 benchmark supports investigating capacity beyond RAM, but does not answer this backend question. Standard 0.1.0 on a 2-vCPU, nominal 16-GiB Azure L2aos_v5 served 100 million 1-KiB values—95.37 GiB of logical payload—through SPDK. Peak GET throughput was 215,463 ops/s at 320 connections, with 2.495 ms p99.9. That was uniform-random pure GET, pipeline 1, one 30-second measurement per point, kernel TCP and specific tuning. It was neither a mixed 4-KiB cache workload nor an io_uring/SPDK comparison. Its host footprint also included a 2-GiB hugepage reservation beyond reported process RSS.",
+      "sources": [
+        "current-010-compact"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "Start by recording this cache's real retained size, popularity distribution, refresh bursts and latency targets, then choose the first package that its hosts support. Preserve the Standard/io_uring baseline if SPDK is in scope. The economic reason to investigate Lavik is that value capacity can grow on storage while the application retains its Redis interface; budget index memory, storage headroom, replicas and backend reservations before drawing cost conclusions. The website's separate 20:1 value-capacity model is arithmetic, not measured total-cost savings or SLA equivalence. Lavik 0.1.0 is open source under Apache 2.0.",
+      "sources": [
+        "current-010-readme",
+        "current-010-storage",
+        "current-010-compact"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "Publication references — For the tested 0.1.0 installation instructions, platform requirements, compatibility notes and SPDK setup guide entry, use the release-pinned manual: https://github.com/eloqdata/lavik/blob/471f4864357f4a5034c64e7d4972ec0e55b82d94/README.md . For the small-machine benchmark and its complete methodology: https://github.com/eloqdata/lavik/blob/471f4864357f4a5034c64e7d4972ec0e55b82d94/perf_reports/lavik-v0.1.0-2vcpu-latest-capacity-2026-10-13/README.md",
+      "sources": [
+        "current-010-readme",
+        "current-010-compact"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,123 @@
+{
+  "id": "lavik-field-notes-2026-11-12",
+  "locale": "zh-CN",
+  "version": "0.1.0",
+  "kind": "blog",
+  "slug": "lavik-field-notes-2026-11-12",
+  "title": "从 Minimal 到 SPDK，中间还需要一个基线",
+  "summary": "以假设的文档缓存为例，说明 Standard/io_uring 基线的价值：保持可执行文件一致，在目标负载下比较读取与刷新，再判断 SPDK 是否值得引入额外的部署要求。",
+  "updatedAt": "2026-11-12",
+  "sourceRevision": "471f4864357f4a5034c64e7d4972ec0e55b82d94",
+  "topics": [
+    "best-practise",
+    "use-case",
+    "architecture"
+  ],
+  "blocks": [
+    {
+      "type": "paragraph",
+      "text": "文档缓存不断增长，可能需要的是更多容量，而不是更多计算资源。Lavik 0.1.0 为这种情况提供了一个实用选项：保留 Redis 兼容的访问方式，将值放到 NVMe 上，并将紧凑的键索引保留在 DRAM 中。不过，应用通过 Minimal 的初步试用后，如果直接切换到 Standard/SPDK，就会同时改变软件包和存储后端。在中间加入 Standard/io_uring，下一次实验就能回答一个更明确的问题：SPDK 对应用目标运行负载的改善，是否值得引入相应的设备配置？",
+      "sources": [
+        "current-010-readme",
+        "current-010-storage"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "先为比较定义应用负载"
+    },
+    {
+      "type": "paragraph",
+      "text": "设想一个缓存，保存 2,000 万份预生成的文档摘要，每份恰好为 4 KiB。逻辑值载荷约为 76.3 GiB，不含键和元数据。假设服务每秒需要完成 12,000 次摘要读取和 1,000 次完整摘要刷新，并将客户端观测到的 p99 目标设为读取 5 ms、刷新 10 ms。这些是试验假设，不是 Lavik 的实测结果。它们描述了一种容量需求较大的应用：请求量仍然适中，保留的值却可能已经超过内存预算。",
+      "sources": [
+        "current-010-readme",
+        "current-010-storage"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "将每次查询建模为一次 String GET，每次刷新建模为一次覆盖式 SET。权威文档和重新生成摘要的流程保留在缓存之外；缓存未命中时，由应用重新生成或使用备用处理路径。4 KiB 的值低于 Lavik 的 16 KiB String 分组阈值，使用紧凑的完整值存储。因此，这个试验关注普通读取和替换，而不是分段范围访问。还应保留应用真实的访问热度分布：反复读取刚刷新的摘要可能读到暂存字节，较早的摘要则会走磁盘读取路径。",
+      "sources": [
+        "current-010-storage",
+        "current-010-collections"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "刷新虽然只占较小的命令比例，却会改变存储行为。Lavik 追加替换版本并更新内存索引；暂存值可能在具备崩溃持久性之前就已可读。旧的持久化版本会继续计入物理存活数据，直到替换版本刷盘完成，之后后台回收才会返还过时数据占用的空间。只读试验会遗漏这些版本重叠和维护工作。应同时运行读取和刷新，并在持续刷新之外加入一个假设的突发场景：读取保持每秒 12,000 次，刷新升至每秒 3,000 次。这是待测的应用场景，不是已公布的能力。",
+      "sources": [
+        "current-010-storage"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "用 Standard/io_uring 衔接两次评估"
+    },
+    {
+      "type": "paragraph",
+      "text": "Minimal 配合已存在、预先分配的普通文件，仍然适合首次应用试用。它包含内核 TCP 和 io_uring；启动时不会创建或扩展存储文件。试用之后，用 Standard/io_uring 加载等价数据集，并保持相同的请求调度。Standard 默认也使用内核 TCP/io_uring。这个中间步骤可以在引入 SPDK 之前，观察软件包或配套配置的变化是否影响了结果。如果最终部署本就计划使用 Standard，可以直接从这个基线开始。",
+      "sources": [
+        "current-010-readme",
+        "current-010-storage"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "正式比较后端时，保持 Standard 可执行文件、主机、worker 配置、客户端、网络和负载一致。Lavik 既支持通过 io_uring 使用原始块设备，也支持 SPDK NVMe 命名空间。如果评估主机允许，可分别为两种后端在同一块专用 NVMe 上独立加载等价数据，避免同时比较文件存储与直接设备访问。记录各后端特有的设置、内存预留和设备准备过程。这是两次独立部署：后端在初始化前选定，改变设备归属需要遵循文档中的停止、准备和恢复流程。",
+      "sources": [
+        "current-010-readme",
+        "current-010-storage"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "软件包前提不多，但会直接决定实验能否开展。两种软件包都要求 Linux 6.1 或更新版本、可用的 io_uring 和兼容的 glibc；选择 SPDK 也不例外。Standard 额外依赖 NUMA 和 UUID 运行库，x86_64 版本要求 x86-64-v2，ARM64 版本要求 CRC32 扩展；运行其 io_uring 基线时也必须满足这些条件。Minimal 使用编译器默认 CPU 目标。SPDK 需要明确配置、独占使用的 NVMe，以及大页和设备绑定设置。整个存储实验保持内核 TCP；实验性的 DPDK 网络是另一个变量。",
+      "sources": [
+        "current-010-readme"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "根据目标负载选择，而不是根据最大数字选择"
+    },
+    {
+      "type": "paragraph",
+      "text": "对每种 Standard 配置，首先观察它能否在满足两项延迟目标的同时，持续处理每秒 12,000 次读取和 1,000 次刷新。随后检查刷新突发：读取尾延迟是否上升，脏暂存字节或待完成刷盘是否积累，突发结束后可用存储是否恢复？将客户端延迟和错误观测与 Lavik 的持久性、容量指标结合起来。运行时间应足以观察反复发生的刷盘和回收活动，而不是在第一个表现良好的窗口结束。这些都是拟开展的测量，所提供的执行回执没有证明其结果。",
+      "sources": [
+        "current-010-storage"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "即使没有预设结果，也可以明确决策规则。如果 Standard/io_uring 在预留余量的条件下满足常态和突发要求，它就能支持这个缓存的部署目标，无需引入 SPDK 设备绑定。如果在其他条件可比时，SPDK 达到了 io_uring 未能达到的重要目标，这就是采用它的应用层理由。如果两者都不满足，应先检查请求字节量、客户端负载、CPU 需求和存储压力，再判断是否是后端问题。无论选择哪一种，SET 成功响应都不是同步持久性屏障，缓存仍需保留可重建的设计。",
+      "sources": [
+        "current-010-readme",
+        "current-010-storage"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "所提供的 10 月 13 日基准支持探索超出内存的容量，但没有回答这个后端选择问题。Standard 0.1.0 在具有 2 个 vCPU、标称 16 GiB 内存的 Azure L2aos_v5 上，通过 SPDK 承载了 1 亿个 1 KiB 值，逻辑载荷为 95.37 GiB。GET 在 320 个连接时达到每秒 215,463 次操作的峰值，p99.9 为 2.495 ms。该测试采用均匀随机纯 GET、pipeline 1、内核 TCP 和特定调优，每个点只测量一次、持续 30 秒。它既不是 4 KiB 混合缓存负载，也不是 io_uring/SPDK 对照测试。其主机内存占用还包含所报告进程 RSS 之外的 2 GiB 大页预留。",
+      "sources": [
+        "current-010-compact"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "实际下一步是记录这个缓存真实的保留容量、访问热度分布、刷新突发和延迟目标，再选择主机能够支持的首个软件包。如果评估范围包含 SPDK，就保留 Standard/io_uring 基线。Lavik 值得研究的经济性在于：应用保留 Redis 接口，值容量可以随存储增长；但得出成本结论前，还需计入索引内存、存储余量、副本和后端预留。网站单独提供的 20:1 值容量模型是算术模型，不是总成本节省的实测结果，也不证明 SLA 等价。Lavik 0.1.0 以 Apache 2.0 许可开源。",
+      "sources": [
+        "current-010-readme",
+        "current-010-storage",
+        "current-010-compact"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "发布参考资料——经过测试的 0.1.0 安装说明、平台要求、兼容性说明和 SPDK 配置指南入口，见版本固定的手册：https://github.com/eloqdata/lavik/blob/471f4864357f4a5034c64e7d4972ec0e55b82d94/README.md 。小规格主机基准及完整方法：https://github.com/eloqdata/lavik/blob/471f4864357f4a5034c64e7d4972ec0e55b82d94/perf_reports/lavik-v0.1.0-2vcpu-latest-capacity-2026-10-13/README.md",
+      "sources": [
+        "current-010-readme",
+        "current-010-compact"
+      ]
+    }
+  ]
+}
