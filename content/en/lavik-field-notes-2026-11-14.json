@@ -1,0 +1,110 @@
+{
+  "id": "lavik-field-notes-2026-11-14",
+  "locale": "en",
+  "version": "0.1.0",
+  "kind": "blog",
+  "slug": "lavik-field-notes-2026-11-14",
+  "title": "Price the refresh cycle, not just the stored dataset",
+  "summary": "Two caches with identical logical contents can need different storage budgets. A product-feature cache shows how update granularity, retained versions, and reclamation change the economics of NVMe-backed values.",
+  "updatedAt": "2026-11-14",
+  "sourceRevision": "471f4864357f4a5034c64e7d4972ec0e55b82d94",
+  "topics": [
+    "use-case",
+    "architecture"
+  ],
+  "blocks": [
+    {
+      "type": "paragraph",
+      "text": "A product-feature cache can stop growing in key count and still become more expensive to operate. Imagine a recommendation service whose cached product records contain many attributes, while each incoming event changes only a few fields. Its storage decision depends on both the retained dataset and the work required to refresh it. Lavik 0.1.0 offers a concrete reason to move this workload to NVMe: values can grow beyond DRAM capacity, and large Hashes support updates to selected storage groups while preserving the Redis interface. Lavik is open source under Apache 2.0.",
+      "sources": [
+        "current-010-readme",
+        "current-010-collections"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "The refresh contract changes the capacity requirement"
+    },
+    {
+      "type": "paragraph",
+      "text": "Consider two hypothetical implementations of that cache. Both keep the same product keys, fields, and final values. One refresh worker sends a complete record whenever an attribute changes; the other sends only the changed fields. For records that use Lavik's grouped representation, these approaches exercise different storage paths. Hash point updates load affected prefix groups and replace changed groups, including structural records when needed. Whole-Hash replacement builds an after-image from the supplied data and can publish a fresh grouped incarnation without loading the old field payloads. The first choice can save old-value reads; the second can limit replacement work when changes are sparse.",
+      "sources": [
+        "current-010-collections"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "The application must choose according to meaning. Incremental HSET merges fields; it does not remove omitted attributes. LAVIK.HREPLACE replaces the entire field set of an existing Hash and preserves its absolute expiry, but returns null for a missing or expired key. It is a Lavik-specific extension, available through a client's raw command interface. A cache fed by field-change events can use incremental updates and explicit removals. A cache fed by authoritative complete records may need replacement semantics. Converting one into the other merely to improve a cost estimate can leave stale fields or mishandle absent records.",
+      "sources": [
+        "current-010-requests",
+        "current-010-collections"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "A value can occupy space after it stops being current"
+    },
+    {
+      "type": "paragraph",
+      "text": "Lavik appends immutable record versions. Replacing a value does not immediately make its previous bytes reusable: retirement must respect durability, and readers or snapshots can keep physical blocks pinned. Reclamation also works at physical boundaries. Ordinary record blocks become defrag candidates only when durable, inactive, unpinned, and at most half live; live records must reach durable destinations before their source blocks can be released. A fixed logical dataset therefore does not imply fixed physical occupancy during refresh traffic.",
+      "sources": [
+        "current-010-storage"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "Grouped storage helps the sparse-update design by leaving unchanged groups shared rather than rewriting the entire object. Collections promote at 16 KiB of encoded size, with an 8 KiB group target; indivisible entries and Hash collisions can exceed that target. These are representation rules, not a measured amplification ratio. Snapshot readers can retain older graphs, and deleted or replaced groups still follow their reclamation lifecycle. For the product cache, the useful economic question is how much physical space remains occupied while the normal refresh stream overlaps a backup—not just how many bytes the current records contain.",
+      "sources": [
+        "current-010-collections",
+        "current-010-storage"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "Compare complete configurations under the same refresh load"
+    },
+    {
+      "type": "paragraph",
+      "text": "Keep the logical dataset, refresh arrival rate, backup activity, and required data-copy count constant when comparing proposals. Apply the quoted storage unit price to the capacity each proposal actually needs, including record overhead, obsolete versions awaiting reclamation, and free space for maintenance. Account for every replica separately; a lower primary storage price does not remove the replicas' storage and memory requirements. This turns storage amplification into an observed workload property rather than an unexplained multiplier in a spreadsheet.",
+      "sources": [
+        "current-010-storage",
+        "current-010-readme"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "Memory remains a separate constraint. Lavik retains its key index and grouped routing metadata in memory; moving values to NVMe does not eliminate those costs. Retained-memory admission uses fixed worker shares, and max-memory is not a strict process RSS ceiling. Include request, I/O, and allocator headroom when choosing the host. The two refresh designs also consume different amounts of page reading, encoding, appending, and reclamation work. A cheaper capacity tier can still require a different CPU or storage configuration to meet the application's refresh and read-latency targets.",
+      "sources": [
+        "current-010-storage",
+        "current-010-collections"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "The supplied October storage benchmark supports evaluating Lavik at substantial capacity, but it does not price this Hash workload. It measured one billion keys with 1 KiB String values, pure GET and overwriting SET, on a 16-vCPU Azure Standard_L16aos_v4 with six local NVMe devices. Each point ran once for 60 seconds; persistence settings differed between products, and successful responses were not equivalent synchronous durability guarantees. Neither those results nor a value-capacity price ratio establishes total deployment savings or an equivalent SLA.",
+      "sources": [
+        "current-010-storage-benchmark"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "Make the next evaluation a refresh experiment"
+    },
+    {
+      "type": "paragraph",
+      "text": "Use a reconstructable slice of the product cache with its real field sizes and update distribution. Where application semantics allow both designs, compare complete replacement with field-level refreshes through a representative backup overlap and subsequent reclamation period. Record read and refresh tail latency, process memory, per-device available capacity, pending durability work, and defrag activity. Lavik exposes device capacity, durability, and maintenance statistics for this purpose. The decision is whether a configuration can retain the desired cache and sustain its refresh cycle within the application's targets; only then does its quoted unit price become a useful input to deployment cost.",
+      "sources": [
+        "current-010-storage",
+        "current-010-collections"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "Publication references: use the stable 0.1.0 manual and installation entry point at https://github.com/eloqdata/lavik/blob/471f4864357f4a5034c64e7d4972ec0e55b82d94/README.md; its compatibility and operational notes describe the supported interface and durability boundary. For benchmark methodology, read https://github.com/eloqdata/lavik/blob/471f4864357f4a5034c64e7d4972ec0e55b82d94/perf_reports/lavik-v0.1.0-storage-peers-1tb-2026-10-14/README.md. For the broader capacity-budget discussion, see “Price the capacity you can keep available” at /en/blog/lavik-field-notes-2026-10-10/.",
+      "sources": [
+        "current-010-readme",
+        "current-010-storage-benchmark"
+      ]
+    }
+  ]
+}
