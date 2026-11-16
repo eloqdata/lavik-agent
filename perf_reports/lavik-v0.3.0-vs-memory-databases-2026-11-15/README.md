@@ -1,0 +1,13 @@
+# Lavik v0.3.0 Redis / Valkey: raw benchmark results
+
+[Report review](https://github.com/eloqdata/lavik/pull/471) · [Report snapshot](https://github.com/eloqdata/lavik/tree/5369146a1c76cb82a37431b370c4fc8c7d242d24/perf_reports/lavik-v0.3.0-vs-memory-databases-2026-11-15)
+
+Measurements from November 15, 2026 (UTC): 2 vCPUs with 1M / 100M keys, and 16 vCPUs with 10M / 1B keys. Includes the same-host official v0.2.0 baseline, Redis 8.10.2 / Valkey 9.1.2 I/O-thread sweeps, and all follow-up windows. The v0.3.0 tag points to measured source commit `dcb2dda96452610b9aa2625ff2a26abb3303f9b5`; the tested pre-release binary reports `0.3.0-dev`.
+
+[Metadata](metadata) contains all 272 memtier points, 44 matched-version comparisons, eight follow-up summary groups, telemetry and provenance. CSV `main` denotes the exact v0.3.0 source commit; `v020` denotes the official v0.2.0 package.
+
+[Raw archives](raw) retain byte-for-byte acquisition files: measurement counters and histograms, console output, command receipts, fill and warmup measurements, configuration/host snapshots and before/after checks. `raw/2vcpu.tar.gz` and `raw/16vcpu.tar.gz` contain the corresponding `2vcpu/` and `16vcpu/` directories, preserving the original paths below each acquisition root. To unpack, run `tar -xzf raw/2vcpu.tar.gz -C raw` and `tar -xzf raw/16vcpu.tar.gz -C raw`. The CSV `source` prefix `/opt/bench020/` maps to the corresponding unpacked raw directory; the provenance document records the exact mapping. Server logs include incidental private test addresses and source paths from now-deleted disposable hosts. No database dataset, credentials or SSH private keys are included.
+
+[raw/MANIFEST.json](raw/MANIFEST.json) maps every archived raw file to its original archive member and SHA-256. Only the GET/SET experiment and its host/binary provenance are included here; Aerospike/YCSB experiments remain separate. Original archive identities are retained in [provenance](metadata/provenance.json).
+
+Verify every file from this directory with `shasum -a 256 -c SHA256SUMS`. `python3 verify.py` reads the archives without unpacking and reconciles all 272 measurements against raw JSON, duration/error checks, the 44 version comparisons and eight follow-up groups. `python3 plot.py` regenerates both report SVGs from metadata (Matplotlib required). The plotting script preserves fixed per-peer/per-command I/O settings and never replaces initial measurements with rechecks.
