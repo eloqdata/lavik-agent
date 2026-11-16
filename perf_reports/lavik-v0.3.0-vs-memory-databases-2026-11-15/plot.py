@@ -19,7 +19,6 @@ plt.rcParams.update({'font.family': 'DejaVu Sans', 'font.size': 10,
 for suite, cores, small, large in [('small', 2, 10**6, 10**8), ('large', 16, 10**7, 10**9)]:
     fig, axes = plt.subplots(2, 2, figsize=(14, 6.5))
     fig.subplots_adjust(left=.065, right=.77, bottom=.14, top=.88, hspace=.48, wspace=.25)
-    peer_workers = {}
     specs = [('lavik', small, '#1768ac', 'o', 'Lavik v0.3.0'),
              ('lavik', large, '#ad6800', 's', 'Lavik v0.3.0'),
              ('redis', small, '#b64157', '^', 'Redis 8.10.2'),
@@ -36,8 +35,6 @@ for suite, cores, small, large in [('small', 2, 10**6, 10**8), ('large', 16, 10*
                 data = [r for r in data if int(r['connections']) <= 320]
             size = '1B' if keys == 10**9 else f'{keys // 10**6}M'
             label += f' / {size}'
-            if product != 'lavik':
-                peer_workers[(product, operation)] = workers
             for row, metric in enumerate(['qps', 'p999_ms']):
                 ax = axes[row, col]
                 ax.plot([int(r['connections']) for r in data],
@@ -57,9 +54,6 @@ for suite, cores, small, large in [('small', 2, 10**6, 10**8), ('large', 16, 10*
         axes[1, col].set_title(f'{operation} p99.9 latency', loc='left', fontweight='bold')
         axes[1, col].set_ylabel('Milliseconds')
     handles, labels = axes[0, 0].get_legend_handles_labels()
-    for i, (product, _, _, _, _) in enumerate(specs):
-        if product != 'lavik':
-            labels[i] += f"\nI/O: GET {peer_workers[product, 'GET']} · SET {peer_workers[product, 'SET']}"
     fig.legend(handles, labels, loc='center left', bbox_to_anchor=(.785, .51),
                frameon=False, fontsize=10, labelspacing=1.5)
     fig.suptitle(f'{cores} vCPUs | Lavik v0.3.0 vs Redis / Valkey',
@@ -107,3 +101,4 @@ for suite, cores, small, large in [('small', 2, 10**6, 10**8), ('large', 16, 10*
     fig.savefig(output, metadata={'Date': None})
     output.write_text('\n'.join(line.rstrip() for line in output.read_text().splitlines()) + '\n')
     plt.close(fig)
+
