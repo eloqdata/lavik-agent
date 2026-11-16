@@ -52,7 +52,7 @@ for suite, cores, small, large in [('small', 2, 10**6, 10**8), ('large', 16, 10*
         axes[0, col].legend(frameon=False, fontsize=8.5, loc='lower right')
         axes[1, col].set_title(f'{operation} p99.9 latency', loc='left', fontweight='bold')
         axes[1, col].set_ylabel('Milliseconds')
-    fig.suptitle(f'{cores} vCPUs | Lavik v0.3.0 source commit vs Redis / Valkey',
+    fig.suptitle(f'{cores} vCPUs | Lavik v0.3.0 vs Redis / Valkey',
                  fontsize=16, fontweight='bold')
     fig.supxlabel('1 KiB values | Fixed I/O setting per peer / command | Capacity curve has 100x more keys', fontsize=10)
     output = ROOT / f'{cores}vcpu-combined.svg'
