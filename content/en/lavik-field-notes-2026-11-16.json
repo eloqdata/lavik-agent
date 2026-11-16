@@ -1,0 +1,125 @@
+{
+  "id": "lavik-field-notes-2026-11-16",
+  "locale": "en",
+  "version": "0.1.0",
+  "kind": "blog",
+  "slug": "lavik-field-notes-2026-11-16",
+  "title": "Give small and large cache entries different admission budgets",
+  "summary": "Two cache expansions can add the same value bytes while creating very different index pressure. A worked example shows how object-size cohorts can guide retention and admission on Lavik.",
+  "updatedAt": "2026-11-16",
+  "sourceRevision": "471f4864357f4a5034c64e7d4972ec0e55b82d94",
+  "topics": [
+    "use-case",
+    "architecture"
+  ],
+  "blocks": [
+    {
+      "type": "paragraph",
+      "text": "A growing rendering cache may hold millions of small lookup results alongside larger rendered fragments. Giving both populations the same retention policy makes a byte budget hide an important decision: which entries deserve a place in the memory index? Lavik 0.1.0 provides a concrete reason to revisit that policy. Its compact key index remains in DRAM while values live on NVMe, allowing useful large objects to remain cached beyond the machine’s RAM capacity.",
+      "sources": [
+        "current-010-readme",
+        "current-010-storage"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "The application design proposed here gives each population its own admission budget. Retain repeatedly requested large fragments for their reuse value; limit the number of small, rarely reused lookup results. Lavik supplies the storage architecture for this separation. The application supplies the cohort classification and admission policy; these are proposed design choices, not built-in Lavik cache policies.",
+      "sources": [
+        "current-010-storage"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "Equal added bytes can mean 32 times as many new keys"
+    },
+    {
+      "type": "paragraph",
+      "text": "Consider a hypothetical cache with 20 million lookup results averaging 256 bytes each and 2 million fragments averaging 8 KiB each. The lookups contribute 5.12 GB of logical values and the fragments 16.384 GB: 21.504 GB across 22 million keys. These are decimal GB calculated from application payloads, excluding keys, record headers, indexes, spare storage and replicas.",
+      "sources": [
+        "current-010-storage"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "Suppose the application wants to retain 6 million fragments while keeping the lookup population unchanged. Logical values rise to 54.272 GB and the key count reaches 26 million. That is about 2.52 times the value payload but only 18.2% more keys. The additional 32.768 GB comes from 4 million new fragments. Adding those same bytes as 256-byte lookup results would instead introduce 128 million keys, bringing the total to 150 million. Equal value growth produces 32 times as many additional top-level index entries in the second expansion.",
+      "sources": [
+        "current-010-storage"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "This arithmetic explains why a single cache-byte limit is insufficient. It does not predict either deployment’s RAM requirement. Lavik retains key identity, logical versions and physical coordinates; key lengths, expiry state and index table capacity affect memory use. Larger grouped objects also require routing and physical-index metadata. The example’s average value sizes cannot establish one universal bytes-per-key coefficient.",
+      "sources": [
+        "current-010-storage",
+        "current-010-collections"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "Turn the capacity model into an admission decision"
+    },
+    {
+      "type": "paragraph",
+      "text": "For this cache, introduce a maximum admitted key population for lookup results and a separate retained-value budget for fragments. Before inserting a new lookup result, the application can require evidence of repeated demand, while returning a one-time result without caching it. Frequently reused fragments can receive a longer retention window when their avoided regeneration work justifies it. Any application-side bookkeeping for repeat demand needs its own bounded memory budget. These policies deliberately spend index capacity on reuse without requiring a change to the RESP interface.",
+      "sources": [
+        "current-010-readme",
+        "current-010-storage"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "Track each cohort’s live key count, value-size distribution, insertion rate and reuse before expiry. Keep the application’s admission ceiling below the server’s measured memory boundary: Lavik divides retained-memory admission into fixed worker shares, and a worker cannot borrow another worker’s unused share. Expired entries do not instantly become free index and device capacity. Deletion, tombstone removal and physical reclamation have distinct lifecycles, so an expiry wave does not immediately provide room for another insertion burst. Rejecting an object before insertion avoids adding it; it does not reclaim existing entries.",
+      "sources": [
+        "current-010-storage"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "The server bill is shared by both populations"
+    },
+    {
+      "type": "paragraph",
+      "text": "A cohort’s share of value bytes is not its share of the server bill. Small objects still consume index entries and request-processing work. Large objects consume response bandwidth and storage I/O, while refresh frequency changes write and reclamation demand. Both populations share workers, connections, I/O buffers and maintenance capacity. Each worker has ordinary and transaction append streams, so staging capacity also depends on worker configuration rather than scaling only with logical value bytes.",
+      "sources": [
+        "current-010-storage",
+        "current-010-requests"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "The adoption opportunity is to retain more useful fragment bytes on NVMe without purchasing DRAM for every value byte, while controlling the separate growth of lookup keys. Whether that reduces total cost depends on the complete deployment: CPU and network requirements, storage headroom, replicas and operating requirements. The worked example describes logical capacity, supplies no prices and does not measure TCO. A value-capacity ratio alone cannot establish a reduction in the shared server bill or equivalent SLAs.",
+      "sources": [
+        "current-010-readme",
+        "current-010-storage"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "The October 13 capacity report provides a narrower measured anchor: Lavik 0.1.0 held 100 million keys with 1 KiB values, or 95.37 GiB of logical values, on a nominal 2-vCPU / 16-GiB Azure L2aos_v5 using SPDK and a dedicated local NVMe namespace. Post-point process RSS was 5,697.3–5,733.6 MiB, with a separate 2,048 MiB hugepage reservation. The workload used uniform random GET or overwriting SET, no TTL and one 30-second run per point. It demonstrates capacity beyond RAM for that configuration; it does not measure this proposed admission policy, its hit rate or its cost.",
+      "sources": [
+        "current-010-compact"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "Start with the objects that deserve longer retention"
+    },
+    {
+      "type": "paragraph",
+      "text": "Use a representative request trace to estimate how many objects in each cohort are requested again before expiry. Then compare the current policy with one that admits fewer one-time lookup results and retains more reused fragments. A useful Lavik trial should carry those resulting populations through both reads and refreshes, recording retained-memory accounting and process RSS, worker admission pressure, available storage, hit rate and application tail latency. Adopt the larger retention window when it improves reuse within those resource budgets; payload capacity alone cannot establish that result.",
+      "sources": [
+        "current-010-storage",
+        "current-010-requests",
+        "current-010-compact"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "Publication references — Use the tested 0.1.0 manual entry point for installation, compatibility notes and linked operations guidance: https://github.com/eloqdata/lavik/blob/471f4864357f4a5034c64e7d4972ec0e55b82d94/README.md . For the complete measured capacity configuration and limits, read “Lavik on 2 vCPUs: latest Redis / Valkey and a 100M-key capacity test”: https://github.com/eloqdata/lavik/blob/471f4864357f4a5034c64e7d4972ec0e55b82d94/perf_reports/lavik-v0.1.0-2vcpu-latest-capacity-2026-10-13/README.md . Lavik 0.1.0 is open source under Apache 2.0.",
+      "sources": [
+        "current-010-readme",
+        "current-010-compact"
+      ]
+    }
+  ]
+}
