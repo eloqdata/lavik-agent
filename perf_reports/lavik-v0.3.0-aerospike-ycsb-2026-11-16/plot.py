@@ -1,54 +1,48 @@
-"""Regenerate the io_uring / Aerospike report figures from recorded windows."""
+"""Regenerate figures using the established Aerospike report style."""
 import csv
 from pathlib import Path
-
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
+from matplotlib.patches import Patch
 from matplotlib.ticker import FuncFormatter
-
 ROOT = Path(__file__).resolve().parent
-
-def read(name):
-    return list(csv.DictReader((ROOT / 'metadata' / name).open()))
-
-windows = read('windows.csv')
-operations = read('operations.csv')
-plt.rcParams.update({'font.family': 'DejaVu Sans', 'font.size': 10,
-                     'svg.fonttype': 'none', 'svg.hashsalt': 'lavik-v030',
-                     'axes.spines.top': False, 'axes.spines.right': False})
-specs = [('aerospike', '#008579', 'Aerospike CE 8.1.2.4'),
-         ('uring', '#1768ac', 'Lavik v0.3.0 io_uring')]
-cells = [('A', 'READ'), ('A', 'UPDATE'), ('B', 'READ'), ('B', 'UPDATE'),
-         ('C', 'READ'), ('D', 'READ'), ('D', 'INSERT')]
-for target in [0, 100000]:
-    fig, axes = plt.subplots(2, 1, figsize=(12, 8), layout='constrained')
-    for i, (backend, color, label) in enumerate(specs):
-        values = {r['workload']: float(r['qps']) for r in windows
-                  if r['backend'] == backend and int(r['target_ops_sec']) == target}
-        bars = axes[0].bar([x+(i-.5)*.3 for x in range(4)],
-                           [values[w] for w in 'ABCD'], .28, color=color, label=label)
-        axes[0].bar_label(bars, labels=[f'{values[w]/1000:.1f}K' for w in 'ABCD'], padding=3, fontsize=9)
-        latency = {(r['workload'], r['operation']): float(r['p999_ms']) for r in operations
-                   if r['backend'] == backend and int(r['target_ops_sec']) == target}
-        bars = axes[1].bar([x+(i-.5)*.3 for x in range(7)],
-                           [latency[c] for c in cells], .28, color=color)
-        axes[1].bar_label(bars, labels=[f'{latency[c]:.3f}' for c in cells], padding=3, fontsize=8)
-    axes[0].set_xticks(range(4), ['A · 50% read', 'B · 95% read', 'C · all read', 'D · read / insert'])
-    axes[1].set_xticks(range(7), [f'{w}\n{op}' for w, op in cells])
-    axes[0].legend(frameon=False, ncols=2, fontsize=10, loc='upper left')
-    axes[0].set_ylabel('Operations / second')
-    axes[0].yaxis.set_major_formatter(FuncFormatter(lambda x, _: f'{x/1000:,.0f}K'))
-    axes[1].set_ylabel('p99.9 latency (ms)')
-    for ax in axes:
-        ax.set_ylim(0, ax.get_ylim()[1]*1.20)
-        ax.grid(axis='y', alpha=.2)
-        ax.set_axisbelow(True)
-    fig.suptitle(f'100M-record YCSB | {"Unlimited" if target == 0 else "100K target"} | Lavik v0.3.0 io_uring',
-                 fontsize=16, fontweight='bold')
-    fig.supxlabel('16-vCPU server | 16 assigned client CPUs / 256 workers | 300s | Storage layouts differ', fontsize=10)
-    output = ROOT / ('ycsb-unlimited.svg' if target == 0 else 'ycsb-100k.svg')
-    fig.savefig(output, metadata={'Date': None})
-    output.write_text('\n'.join(line.rstrip() for line in output.read_text().splitlines()) + '\n')
-    plt.close(fig)
-
+windows = list(csv.DictReader((ROOT/'metadata/windows.csv').open()))
+operations = list(csv.DictReader((ROOT/'metadata/operations.csv').open()))
+plt.rcParams.update({'font.family':'sans-serif','font.sans-serif':['DejaVu Sans','Arial','sans-serif'],
+ 'font.size':11,'text.color':'#17202a','axes.labelcolor':'#17202a',
+ 'xtick.color':'#566573','ytick.color':'#566573','svg.fonttype':'none',
+ 'svg.hashsalt':'lavik-v030','axes.spines.top':False,'axes.spines.right':False,
+ 'axes.spines.left':False,'axes.spines.bottom':False,'xtick.major.size':0,'ytick.major.size':0})
+specs=[('aerospike','#8a939b','Aerospike CE 8.1.2.4-4'),('uring','#1473e6','Lavik v0.3.0 · io_uring')]
+for target in [100000,0]:
+ fig,axes=plt.subplots(2,1,figsize=(12,8.5))
+ fig.subplots_adjust(left=.09,right=.98,bottom=.09,top=.81,hspace=.34)
+ for i,(backend,color,label) in enumerate(specs):
+  values={r['workload']:float(r['qps']) for r in windows if r['backend']==backend and int(r['target_ops_sec'])==target}
+  bars=axes[0].bar([x+(i-.5)*.36 for x in range(4)],[values[w] for w in 'ABCD'],.34,color=color)
+  axes[0].bar_label(bars,labels=[f'{values[w]/1000:.1f}k' for w in 'ABCD'],padding=3,fontsize=10)
+  lat={(r['workload'],r['operation']):float(r['p999_ms']) for r in operations if r['backend']==backend and int(r['target_ops_sec'])==target}
+  for x,w in enumerate('ABCD'):
+   for j,op in enumerate(['READ','INSERT' if w=='D' else 'UPDATE']):
+    if (w,op) not in lat: continue
+    axes[1].bar(x+(i-.5)*.36+(j-.5)*.16,lat[w,op],.15,color=color,edgecolor='white',linewidth=.5,hatch='///' if j else None)
+ for ax in axes:
+  ax.set_xticks(range(4),['A','B','C','D-Uniform'])
+  ax.set_xlim(-.6,3.6)
+  ax.grid(axis='y',color='#e5e9ed',linewidth=.8)
+  ax.set_axisbelow(True)
+ axes[0].set_ylim(0,max(float(r['qps']) for r in windows if int(r['target_ops_sec'])==target)*1.05)
+ axes[1].set_ylim(0,max(float(r['p999_ms']) for r in operations if int(r['target_ops_sec'])==target)*1.05)
+ axes[0].set_ylabel('Total operations / s')
+ axes[0].yaxis.set_major_formatter(FuncFormatter(lambda x,_:f'{x/1000:,.0f}k'))
+ axes[1].set_ylabel('Operation p99.9 / ms')
+ fig.text(.045,.938,f'Lavik v0.3.0 vs Aerospike · {"100K target" if target else "Unlimited"}',fontsize=22,weight='bold')
+ fig.text(.045,.917,'YCSB A / B / C / D-Uniform · 100M initial records · 300 seconds per cell',fontsize=11,color='#566573')
+ handles=[Patch(facecolor=c,label=l) for _,c,l in specs]+[Patch(facecolor='#8a939b',label='READ'),Patch(facecolor='#8a939b',edgecolor='white',hatch='///',label='UPDATE / INSERT')]
+ fig.legend(handles=handles,loc='upper center',bbox_to_anchor=(.5,.88),ncol=4,frameon=False,fontsize=10)
+ fig.text(.045,.025,'One run per cell · complete-window HDR percentiles · different storage layouts and CPU policies',fontsize=10,color='#566573')
+ output=ROOT/('ycsb-100k.svg' if target else 'ycsb-unlimited.svg')
+ fig.savefig(output,metadata={'Date':None})
+ output.write_text('\n'.join(line.rstrip() for line in output.read_text().splitlines())+'\n')
+ plt.close(fig)
