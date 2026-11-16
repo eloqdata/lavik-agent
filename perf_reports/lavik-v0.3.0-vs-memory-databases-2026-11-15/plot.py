@@ -56,7 +56,7 @@ for suite, cores, small, large in [('small', 2, 10**6, 10**8), ('large', 16, 10*
     handles, labels = axes[0, 0].get_legend_handles_labels()
     fig.legend(handles, labels, loc='center left', bbox_to_anchor=(.785, .51),
                frameon=False, fontsize=10, labelspacing=1.5)
-    fig.suptitle(f'{cores} vCPUs | Lavik v0.3.0 vs Redis / Valkey',
+    fig.suptitle(f'{cores} vCPUs | Lavik vs Redis / Valkey',
                  fontsize=16, fontweight='bold')
     fig.supxlabel('1 KiB values | Fixed I/O setting per peer / command | Capacity curve has 100x more keys', fontsize=10)
     output = ROOT / f'{cores}vcpu-combined.svg'
