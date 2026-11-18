@@ -14,6 +14,6 @@
 
 Lavik纯读361,874 ops/s，比Dragonfly340,929高6.14%。纯读保留默认参数结果，仅B/A继续调参。上次机器释放前排序相反，因此不能把本次优势推广为所有机器分配都成立。
 
-1亿条结果保留原始实验数据，详见[英文主报告](README.md)。[当前CSV](metadata/results.csv) · [同机复测原始记录](same-host-repeat/) · [原始结果](metadata/original-results.json)
+1亿条的 Kvrocks/Dragonfly 已更新为[本次大规模复测](large-peers-repeat/)。Lavik 1亿条仍来自先前机器分配，不将其视为新一轮严格同机对比。详见[英文主报告](README.md)。[当前CSV](metadata/results.csv) · [同机复测原始记录](same-host-repeat/) · [原始结果](metadata/original-results.json)
 
 ![吞吐](figures/throughput.svg)

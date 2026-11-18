@@ -1,12 +1,12 @@
 # Native 4-vCPU Hash YCSB comparison · 2026-11-18
 
-Status: 10M peer data and Lavik C updated to the current allocation. Lavik10M B/A tuning is in progress;100M results are retained from the original campaign.
+Status: 10M peer data and Lavik C updated to the current allocation. Lavik 10M B/A tuning is paused; 100M peers have been rerun; Lavik 100M retains the original campaign.
 
 This experiment compares Lavik v0.3.0, Apache Kvrocks 2.17.0, Dragonfly v2.1 and Redis 8.10.3. All run as native processes, one at a time on the same Azure server. No container measurements enter the formal results.
 
 ## Current measured results
 
-The 10M table now uses the current-allocation rerun: all three peers and Lavik read-only. Lavik B/A remain pending: the existing-data retest completed, but NVMe latency instability persisted. See [tuning and excluded evidence](tuning-retry/). Original values remain in [original-results.json](metadata/original-results.json); the prior full report is preserved in Git history. The 100M results are unchanged and were acquired before VM deallocation/restart, so the two sizes are not a controlled same-host capacity curve.
+The 10M table now uses the current-allocation rerun: all three peers and Lavik read-only. Lavik B/A remain pending: the existing-data retest completed, but NVMe latency instability persisted. See [tuning and excluded evidence](tuning-retry/). Original values remain in [original-results.json](metadata/original-results.json); the prior full report is preserved in Git history. Kvrocks/Dragonfly100M now use the [current large-peer rerun](large-peers-repeat/). Lavik100M retains the earlier allocation. The100M table therefore mixes acquisition periods and is not a controlled same-allocation Lavik-versus-peer comparison.
 
 Each value is the mean of three 60-second runs. C=pure read;B=95%read;A=50%read. P99.9 is the mean of per-run percentiles. [Current data](metadata/results.csv) · [same-host raw evidence](same-host-repeat/)
 
@@ -23,14 +23,14 @@ Each value is the mean of three 60-second runs. C=pure read;B=95%read;A=50%read.
 
 | Product | C ops/s | B ops/s | A ops/s |
 |---|---:|---:|---:|
-| lavik | 339,188 | 326,137 | 275,124 |
+| lavik (earlier allocation) | 339,188 | 326,137 | 275,124 |
 | redis | Not run | Not run | Not run |
-| kvrocks | 27,676 | 25,541 | 17,317 |
-| dragonfly | 295,738 | 300,814 | Warmup OOM |
+| kvrocks | 23,078 | 21,904 | 14,733 |
+| dragonfly | 230,138 | 220,682 | Warmup OOM |
 
 At 10M, Lavik read-only is 361,874 ops/s versus Dragonfly340,929 ops/s (+6.14%). This ranking applies to the current allocation; the original allocation had the opposite ranking. The current Lavik C sample has zero observed active defrag; it is retained while only B/A are tuned.
 
-At100M, Lavik remains12.26×/12.77×/15.89× Kvrocks on C/B/A and14.69%/8.42% above experimental Dragonfly Hash tiering on C/B. DragonflyA failed during warmup; RedisRAM100M was not run.
+At100M, the current peer rerun yielded five valid points and a Dragonfly A warmup OOM. See the [large-peer report](large-peers-repeat/) for all15windows and latency results. No new relative Lavik speed claim is made across the different allocations.
 
 ![Throughput](figures/throughput.svg)
 
