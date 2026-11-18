@@ -2,13 +2,12 @@
 """Sequential native-server campaign: three independent 60-second runs per point."""
 import hashlib,json,pathlib,random,statistics,subprocess,time,traceback
 import redis
-ROOT=pathlib.Path('/opt/bench');OUT=ROOT/'formal-native';OUT.mkdir(exist_ok=True)
+ROOT=pathlib.Path('/opt/bench');OUT=ROOT/'formal-unlimited-native';OUT.mkdir(exist_ok=True)
 SSH=['ssh','-i',str(ROOT/'server-key'),'-o','StrictHostKeyChecking=accept-new','-o','UserKnownHostsFile='+str(ROOT/'server-known-hosts'),'bench@10.83.0.4']
 PAIRS=[('lavik',10_000_000,False),('redis',10_000_000,False),('kvrocks',10_000_000,False),('dragonfly',10_000_000,False),('lavik',100_000_000,False),('kvrocks',100_000_000,False),('dragonfly',100_000_000,True)]
 plan=[]
 for product,n,tiered in PAIRS:
- cells=[(w,t) for w in 'ABC' for t in (100000,0)]
- random.Random(20261118+n+PAIRS.index((product,n,tiered))).shuffle(cells)
+ cells=[(w,0) for w in 'CBA']
  plan.append({'product':product,'records':n,'tiered':tiered,'cells':cells})
 (OUT/'schedule.json').write_text(json.dumps(plan,indent=2)+'\n')
 (OUT/'common-sha256.txt').write_text(hashlib.sha256((ROOT/'kit/common.properties').read_bytes()).hexdigest()+'\n')
@@ -30,7 +29,7 @@ def phase(product,n,label,kind,workload='B',target=0):
 failures=[];summaries=[]
 for row in plan:
  product,n,tiered=[row[k] for k in ['product','records','tiered']]
- tag=f'n{n}-native'+('-tiered' if tiered else '')
+ tag=f'n{n}-native-unlimited'+('-tiered' if tiered else '')
  pairdir=OUT/product/tag;pairdir.mkdir(parents=True,exist_ok=False)
  (OUT/'current.json').write_text(json.dumps({**row,'state':'loading','epoch':time.time()},indent=2)+'\n')
  print('PAIR START',tag,product,flush=True)

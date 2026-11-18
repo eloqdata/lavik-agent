@@ -4,7 +4,7 @@ Original benchmark outputs are organized by the matching report directory in [el
 
 | Report | Scope |
 |---|---|
-| [v0.3.0 native 4-vCPU Hash YCSB · 2026-11-18](lavik-v0.3.0-hash-4vcpu-2026-11-18) | Reproduction protocol and scripts; 8 × 128 B fields; no scan index; 128 connections; three 60-second runs per point. Native acquisition in progress; results pending. |
+| [v0.3.0 native 4-vCPU Hash YCSB · 2026-11-18](lavik-v0.3.0-hash-4vcpu-2026-11-18) | Reproduction protocol and scripts; 8 × 128 B fields; no scan index; 128 connections; unlimited-only A/B/C; three 60-second runs per point. Native acquisition in progress; results pending. |
 | [v0.3.0 Aerospike YCSB · io_uring](lavik-v0.3.0-aerospike-ycsb-2026-11-16) | November 16, 2026: 100M records; A/B/C/D at 100K and unlimited; 16 formal windows, raw logs, recovery receipts, metadata and chart generator. |
 | [v0.3.0 vs-memory-databases](lavik-v0.3.0-vs-memory-databases-2026-11-15) | November 15, 2026: 2 / 16 vCPUs, 1M through 1B keys; 272 raw windows, same-host v0.2.0 baseline, Redis/Valkey sweeps and follow-ups. |
 | [Latest main Gaming workloads · 2026-11-11](lavik-main-gaming-2026-11-11) · [中文](lavik-main-gaming-2026-11-11/README.zh-CN.md) | English (default) and Chinese reports and experimental procedures; white-background HTML, workload/client sources, 320-connection A/B/C and 200 GB C results, memory comparisons, selected peer controls, raw Lavik logs and checksums. |

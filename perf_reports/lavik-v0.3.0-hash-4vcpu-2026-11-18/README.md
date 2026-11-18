@@ -11,8 +11,8 @@ This experiment compares Lavik v0.3.0, Apache Kvrocks 2.17.0, Dragonfly v2.1 and
 - Datasets: 10M and 100M configured records, each with eight 128-byte field values. Logical field-value payloads are 9.537 and 95.367 GiB; keys, field names and overhead are additional.
 - YCSB: `eloqdata/YCSB` commit `247a2d448ebceff11a570a622c49ece161a27ed3`. Use the **Redis binding for all four products**, `redis.scanindex=none`, uniform keys, full-field reads/updates, no scans, no TTL, no pipeline.
 - Commands: `HMSET` loads/updates eight fields; `HGETALL` reads all fields. No `_indices` sorted set or index maintenance; no Lavik-specific replacement command.
-- Concurrency: 128 business connections, one per YCSB worker, for loading, warmup and measurement; one additional persistent control/sampling connection. The total target is 100K operations/second across all workers, or unlimited.
-- Workloads A/B/C: 50/50 read/update, 95/5 read/update, and read-only. Products run sequentially. The archived fixed-seed schedule randomizes workload/rate order within each product/dataset.
+- Concurrency: 128 business connections, one per YCSB worker, for loading, warmup and measurement; one additional persistent control/sampling connection. All formal runs are unlimited; no target-rate option is passed to YCSB.
+- Workloads A/B/C: 50/50 read/update, 95/5 read/update, and read-only. Products run sequentially. Each product/dataset runs in C/B/A order; the schedule is archived.
 - Each point: 60-second warmup, then **three independent 60-second measured runs**, fresh JVM per run. Report the arithmetic mean of three successful QPS values plus all individual values. Any averaged latency quantile is explicitly the mean of three per-run percentiles, not a pooled percentile.
 - A/B/C update existing keys and do not insert new records during measurements. All-field values remain 128 bytes.
 - Memory: each service cgroup has `MemoryMax=28G`, `MemorySwapMax=0`; engine limits are 24 GiB where available. Kvrocks uses an 8 GiB block cache. Four CPUs cover each service and its background threads. Eviction and swap are disabled.
@@ -20,11 +20,13 @@ This experiment compares Lavik v0.3.0, Apache Kvrocks 2.17.0, Dragonfly v2.1 and
 
 10M is the common in-memory-sized comparison. At 100M, run Lavik, Kvrocks and explicitly labeled Dragonfly experimental Hash tiering (`--tiered_prefix` and `--tiered_experimental_hash_support=true`). Verify that actual offloading occurs. Redis in-memory mode cannot be treated as a complete-dataset throughput comparison when it cannot retain the full dataset. Do not silently substitute caching/eviction or a smaller dataset.
 
-Seven feasible product/configuration/dataset pairs × six workload/rate points × (60-second warmup + three 60-second runs) is 2.8 hours before loading and setup. One-minute windows do not establish long-term compaction or cleaning steady state. Product order is fixed, and repetitions are consecutive; disclose that limit.
+Seven feasible product/configuration/dataset pairs × three workload points × (60-second warmup + three 60-second runs) is 1.4 hours before loading and setup. One-minute windows do not establish long-term compaction or cleaning steady state. Product order is fixed, and repetitions are consecutive; disclose that limit.
 
 ## Native builds and deployment
 
 `build-native.sh` builds Redis and Kvrocks on the client outside measurement windows. It records binary SHA-256s, version strings and dynamic-library dependencies. Lavik uses the SHA-256-verified v0.3.0 x86_64 minimal release archive; Dragonfly uses its v2.1 x86_64 release archive. Record archive SHA-256s for both.
+
+Use `provision-azure.sh` with your own `PUBLIC_KEY_FILE` and `ADMIN_CIDR` to provision a fresh resource group. Install native dependencies with `install-deps.sh` as root on each host. The verified empty local NVMe was formatted as ext4 with `lazy_itable_init=0,lazy_journal_init=0` before mounting, outside all measured windows. Apply `swapoff -a`, `vm.overcommit_memory=1` and THP `never` consistently before acquisition.
 
 The dedicated server expects executables and configuration at:
 
@@ -55,8 +57,8 @@ Preview a single run:
 ```bash
 python3 /opt/bench/kit/run.py --ycsb-root /opt/bench/YCSB-247a2d4 \
   --host 10.83.0.4 --product lavik --records 10000000 \
-  --phase measure --workload B --threads 128 --target 100000 \
-  --seconds 60 --label n10m-B-100k-r1
+  --phase measure --workload B --threads 128 --target 0 \
+  --seconds 60 --label n10m-B-unlimited-r1
 ```
 
 The default only prints the command. Add `--execute` to run after a valid load. `--target 0` removes throttling. `campaign.py` implements the full sequential schedule and controls the server over SSH. Each invocation records exact arguments, complete YCSB output, HDR logs, status counts and successful QPS. A failed worker or absent complete measurements invalidates a run even if the Java launcher exits zero.
@@ -67,7 +69,7 @@ The default only prints the command. Add `--execute` to run after a valid load. 
 
 Configured record count and successful load operations are not an independently measured exact server key count. Preserve that distinction in results. Formal runs require zero failed statuses, worker exceptions and missing reads. Retain unsuccessful runs separately.
 
-Record ordinary and intended-start latency statistics; YCSB throttling is not a strict independent open-loop arrival process. Show actual successful QPS when a product fails to sustain the 100K target. Capture client/server sysstat, cgroup CPU/memory/I/O counters and engine INFO snapshots outside measured windows.
+Record ordinary latency statistics and retain intended-start histograms as emitted by YCSB. Report actual successful QPS; there is no target-rate attainment comparison. Capture client/server sysstat, cgroup CPU/memory/I/O counters and engine INFO snapshots outside measured windows.
 
 ## Evidence layout
 
@@ -77,3 +79,7 @@ Record ordinary and intended-start latency statistics; YCSB throttling is not a 
 - `SHA256SUMS`: checksums of checked-in evidence; created when packaging.
 
 Credentials, SSH keys, database files and earlier container pilot results are excluded. Results remain pending until the formal acquisition and checks finish.
+
+## Protocol update
+
+The user removed all rate-limited tests before the final campaign. Earlier mixed-rate logs are excluded. The final unlimited-only campaign starts each product/dataset from a fresh load, avoiding write-history differences introduced by the interrupted protocol. The original completed read-only unlimited point is preserved as a superseded observation, outside the final mean tables. Formal outputs live under `/opt/bench/formal-unlimited-native`.
