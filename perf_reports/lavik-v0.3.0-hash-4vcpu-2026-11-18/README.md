@@ -28,7 +28,9 @@ Seven feasible product/configuration/dataset pairs × three workload points × (
 
 Use `provision-azure.sh` with your own `PUBLIC_KEY_FILE` and `ADMIN_CIDR` to provision a fresh resource group. Install native dependencies with `install-deps.sh` as root on each host. The verified empty local NVMe was formatted as ext4 with `lazy_itable_init=0,lazy_journal_init=0` before mounting, outside all measured windows. Apply `swapoff -a`, `vm.overcommit_memory=1` and THP `never` consistently before acquisition.
 
-The dedicated server expects executables and configuration at:
+`download-native.sh` installs the two official native release archives on the server. After checking `lsblk` and confirming that the selected device is the new empty Azure local NVMe, run `prepare-storage.sh` as root with `BENCH_DEVICE` set explicitly. It rejects mounted disks, existing signatures and non-direct-NVMe models. `host-policy.sh` applies the server policy. The actual scratch device in this acquisition was `/dev/nvme1n1`, 2,879,775,571,968 bytes.
+
+Copy the client-built `native-bin/redis-server`, `native-bin/kvrocks`, and `native-bin/kvrocks.conf` to the server. Place the executables in `/opt/bench/bin/` and copy `kvrocks.conf` to `/opt/bench/kvrocks-default.conf`. Record hashes after transfer. The dedicated server expects executables and configuration at:
 
 ```
 /opt/bench/bin/redis-server
@@ -61,7 +63,7 @@ python3 /opt/bench/kit/run.py --ycsb-root /opt/bench/YCSB-247a2d4 \
   --seconds 60 --label n10m-B-unlimited-r1
 ```
 
-The default only prints the command. Add `--execute` to run after a valid load. `--target 0` removes throttling. `campaign.py` implements the full sequential schedule and controls the server over SSH. Each invocation records exact arguments, complete YCSB output, HDR logs, status counts and successful QPS. A failed worker or absent complete measurements invalidates a run even if the Java launcher exits zero.
+The default only prints the command. Add `--execute` to run after a valid load. `--target 0` removes throttling. `campaign.py` implements the full sequential schedule and controls the server over SSH. The large `operationcount=2000000000` is a non-binding cap; `maxexecutiontime=60` controls each measurement. The YCSB progress line may estimate hours to reach that operation cap; this is not the configured run duration. Each invocation records exact arguments, complete YCSB output, HDR logs, status counts and successful QPS. A failed worker or absent complete measurements invalidates a run even if the Java launcher exits zero.
 
 ## Validation without key-count scans
 

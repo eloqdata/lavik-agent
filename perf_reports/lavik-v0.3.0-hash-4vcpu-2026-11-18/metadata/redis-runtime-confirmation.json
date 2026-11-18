@@ -1,0 +1,8 @@
+{
+  "product": "Redis 8.10.3 native",
+  "observed_runtime_config": {"io-threads": 4},
+  "systemd_allowed_cpus": "0-3",
+  "systemd_cpu_affinity": "0-3",
+  "observed_commands": ["redis-cli -h SERVER_PRIVATE_IP CONFIG GET io-threads*", "systemctl show bench-db-redis -p ExecStart -p AllowedCPUs -p CPUAffinity"],
+  "note": "Confirmed against the running native Redis process during the 10M-record unlimited campaign; no key-count command was issued."
+}
