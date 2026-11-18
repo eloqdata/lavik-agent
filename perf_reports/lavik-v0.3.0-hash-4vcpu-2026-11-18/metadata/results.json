@@ -47,7 +47,9 @@
       "update_mean_ms": null,
       "update_p99_ms": null,
       "update_p999_ms": null,
-      "source_campaign": "same-host-repeat"
+      "source_campaign": "same-host-repeat",
+      "storage_backend": "io_uring",
+      "historical": true
     },
     {
       "product": "redis",
@@ -257,7 +259,9 @@
       "update_mean_ms": null,
       "update_p99_ms": null,
       "update_p999_ms": null,
-      "source_campaign": "original-allocation"
+      "source_campaign": "original-allocation",
+      "storage_backend": "io_uring",
+      "historical": true
     },
     {
       "product": "lavik",
@@ -278,7 +282,9 @@
       "update_mean_ms": 0.5063166280253572,
       "update_p99_ms": 0.7666666666666666,
       "update_p999_ms": 4.783,
-      "source_campaign": "original-allocation"
+      "source_campaign": "original-allocation",
+      "storage_backend": "io_uring",
+      "historical": true
     },
     {
       "product": "lavik",
@@ -299,7 +305,9 @@
       "update_mean_ms": 0.5219369567779613,
       "update_p99_ms": 0.772,
       "update_p999_ms": 1.3383333333333332,
-      "source_campaign": "original-allocation"
+      "source_campaign": "original-allocation",
+      "storage_backend": "io_uring",
+      "historical": true
     },
     {
       "product": "kvrocks",
@@ -407,5 +415,6 @@
       "source_campaign": "same-host-peers-100m"
     }
   ],
-  "note": "10M uses current-allocation rerun.100M Kvrocks/Dragonfly use current large-peer rerun;Lavik100M retains earlier allocation. Never pool repetitions across campaigns."
+  "note": "10M uses current-allocation rerun.100M Kvrocks/Dragonfly use current large-peer rerun;Lavik100M retains earlier allocation. Never pool repetitions across campaigns.",
+  "status": "Archived pre-SPDK table; not a completed requested-backend comparison"
 }

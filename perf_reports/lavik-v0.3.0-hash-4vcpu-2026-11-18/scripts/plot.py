@@ -8,7 +8,7 @@ from matplotlib.patches import Patch
 p=argparse.ArgumentParser();p.add_argument('audit',type=pathlib.Path);p.add_argument('--out',type=pathlib.Path,default=pathlib.Path('.'));a=p.parse_args();a.out.mkdir(parents=True,exist_ok=True)
 rows=json.loads(a.audit.read_text())['rows']
 colors={'lavik':'#2563eb','redis':'#ea580c','kvrocks':'#9333ea','dragonfly':'#15803d'}
-names={'lavik':'Lavik','redis':'Redis','kvrocks':'Kvrocks','dragonfly':'Dragonfly'}
+names={'lavik':'Lavik (io_uring)','redis':'Redis','kvrocks':'Kvrocks','dragonfly':'Dragonfly'}
 workloads=['C','B','A'];labels=['C: 100% read','B: 95% read','A: 50% read']
 plt.rcParams.update({'font.size':10,'axes.spines.top':False,'axes.spines.right':False,'axes.titleweight':'bold','svg.fonttype':'path'})
 datasets=sorted({r['records'] for r in rows})
@@ -33,7 +33,7 @@ for kind in ['throughput','read-p99']:
   ax.set_axisbelow(True);ax.grid(axis='y',color='#e5e7eb',linewidth=.7)
   if kind=='throughput':ax.set_ylabel('Mean successful operations/s (thousands)');ax.set_ylim(bottom=0);ax.margins(y=.17)
   else:ax.set_ylabel('Mean of three READ p99 values (ms, log scale)');ax.set_yscale('log');ax.margins(y=.25)
- fig.suptitle('8 × 128 B Hash · native processes · 4 vCPU · 128 connections',fontsize=13,fontweight='bold')
+ fig.suptitle('Historical pre-SPDK comparison · 8 × 128 B Hash · native processes · 4 vCPU · 128 connections',fontsize=13,fontweight='bold')
  fig.legend(handles=[Patch(facecolor=c,label=names[x]) for x,c in colors.items()],loc='lower center',ncol=4,bbox_to_anchor=(.5,.07),frameon=False)
  note=('Three 60-second runs per point. Throughput whiskers: min–max. ' if kind=='throughput' else 'Mean of three per-run READ p99 values. Logarithmic latency axis. ')
  note+=('10M Lavik B/A pending tuning. ' if any(x.get('pending_points') for x in [json.loads(a.audit.read_text())]) else '')

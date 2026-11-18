@@ -1,4 +1,6 @@
-# 当前同机复测结果
+# 切换 SPDK 前的历史复测结果
+
+> **Backend correction / 后端更正（2026-11-18）:** All Lavik values and figures below are historical **Minimal / io_uring**, not SPDK. Requested **Standard / SPDK** measurements are incomplete (10M C/B completed; A interrupted; 100M not started). Do not treat these tables as an SPDK comparison. See [fio diagnosis and SPDK evidence / fio 排查与 SPDK 证据](fio-diagnostics/).
 
 已将三个对比系统和Lavik纯读更新为当前机器分配下的数据。每点三次一分钟，128连接、不限速、8×128B、关闭索引、原生部署。Lavik B/A 已复用原数据重测，但 NVMe 延迟仍不稳定，暂不进入主表。详见[调参与作废记录](tuning-retry/)。
 
@@ -6,7 +8,7 @@
 
 | Product | C ops/s | B ops/s | A ops/s |
 |---|---:|---:|---:|
-| lavik | 361,874 | Tuning pending | Tuning pending |
+| lavik (io_uring) | 361,874 | Tuning pending | Tuning pending |
 | redis | 258,913 | 259,192 | 233,519 |
 | kvrocks | 85,015 | 77,598 | 34,664 |
 | dragonfly | 340,929 | 330,934 | 277,608 |

@@ -1,5 +1,5 @@
 {
-  "state": "current10MpeersandLavikCupdated;B/A retest completed but not accepted due to persistent NVMe latency instability",
+  "state": "SPDK comparison incomplete; fio diagnosis complete; previous Lavik tables are historical io_uring",
   "valid_points_in_current_table": 18,
   "pending_points": [
     {
@@ -16,12 +16,24 @@
     }
   ],
   "keep_vms_running": true,
-  "diagnostic_report": "tuning-retry/",
+  "diagnostic_report": "fio-diagnostics/",
   "large_peer_rerun": {
     "valid_points": 5,
     "valid_windows": 15,
     "dragonfly_A": "warmupOOM",
     "report": "large-peers-repeat/",
     "lavik100M_source": "earlierallocation"
-  }
+  },
+  "requested_lavik_backend": "spdk",
+  "published_table_lavik_backend": "io_uring",
+  "spdk_completed_points": [
+    "10M C",
+    "10M B"
+  ],
+  "spdk_incomplete_points": [
+    "10M A",
+    "100M C",
+    "100M B",
+    "100M A"
+  ]
 }

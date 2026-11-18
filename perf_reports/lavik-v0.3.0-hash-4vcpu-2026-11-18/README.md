@@ -1,10 +1,12 @@
 # Native 4-vCPU Hash YCSB comparison · 2026-11-18
 
+> **Backend correction / 后端更正（2026-11-18）:** All Lavik values and figures below are historical **Minimal / io_uring**, not SPDK. Requested **Standard / SPDK** measurements are incomplete (10M C/B completed; A interrupted; 100M not started). Do not treat these tables as an SPDK comparison. See [fio diagnosis and SPDK evidence / fio 排查与 SPDK 证据](fio-diagnostics/).
+
 Status: 10M peer data and Lavik C updated to the current allocation. Lavik 10M B/A tuning is paused; 100M peers have been rerun; Lavik 100M retains the original campaign.
 
 This experiment compares Lavik v0.3.0, Apache Kvrocks 2.17.0, Dragonfly v2.1 and Redis 8.10.3. All run as native processes, one at a time on the same Azure server. No container measurements enter the formal results.
 
-## Current measured results
+## Archived results before the SPDK correction
 
 The 10M table now uses the current-allocation rerun: all three peers and Lavik read-only. Lavik B/A remain pending: the existing-data retest completed, but NVMe latency instability persisted. See [tuning and excluded evidence](tuning-retry/). Original values remain in [original-results.json](metadata/original-results.json); the prior full report is preserved in Git history. Kvrocks/Dragonfly100M now use the [current large-peer rerun](large-peers-repeat/). Lavik100M retains the earlier allocation. The100M table therefore mixes acquisition periods and is not a controlled same-allocation Lavik-versus-peer comparison.
 
@@ -14,7 +16,7 @@ Each value is the mean of three 60-second runs. C=pure read;B=95%read;A=50%read.
 
 | Product | C ops/s | B ops/s | A ops/s |
 |---|---:|---:|---:|
-| lavik | 361,874 | Tuning pending | Tuning pending |
+| lavik (io_uring) | 361,874 | Tuning pending | Tuning pending |
 | redis | 258,913 | 259,192 | 233,519 |
 | kvrocks | 85,015 | 77,598 | 34,664 |
 | dragonfly | 340,929 | 330,934 | 277,608 |
@@ -23,7 +25,7 @@ Each value is the mean of three 60-second runs. C=pure read;B=95%read;A=50%read.
 
 | Product | C ops/s | B ops/s | A ops/s |
 |---|---:|---:|---:|
-| lavik (earlier allocation) | 339,188 | 326,137 | 275,124 |
+| lavik (io_uring, earlier allocation) | 339,188 | 326,137 | 275,124 |
 | redis | Not run | Not run | Not run |
 | kvrocks | 23,078 | 21,904 | 14,733 |
 | dragonfly | 230,138 | 220,682 | Warmup OOM |

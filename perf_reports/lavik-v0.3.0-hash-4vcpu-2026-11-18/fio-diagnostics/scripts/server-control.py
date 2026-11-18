@@ -1,0 +1,37 @@
+#!/usr/bin/env python3
+import argparse,json,pathlib,subprocess,time
+p=argparse.ArgumentParser();p.add_argument('action',choices=['start','stop','reset']);p.add_argument('--dataset',required=True);p.add_argument('--defrag-sleep-ms',type=int,default=0);a=p.parse_args()
+assert a.dataset.replace('-','').isalnum()
+pci='97b2:00:00.0';os_pci='c05b:00:00.0';unit='bench-db-lavik'
+setup='/opt/bench/spdk-d519b163cbc0e2f28c35d9bc86d610da368b032c/scripts/setup.sh'
+base=pathlib.Path('/opt/bench/spdk-runs')/a.dataset;base.mkdir(parents=True,exist_ok=True)
+def run(cmd):return subprocess.run(cmd,check=True,text=True,capture_output=True)
+def active(name):return subprocess.run(['systemctl','is-active','--quiet',name]).returncode==0
+if a.action=='stop':
+ run(['systemctl','stop',unit]);raise SystemExit(0)
+for product in ['lavik','redis','kvrocks','dragonfly']:assert not active('bench-db-'+product)
+assert pathlib.Path('/sys/bus/pci/devices/'+os_pci+'/driver').resolve().name=='nvme'
+if a.action=='reset':
+ logs=[]
+ for cmd in [
+  ['env','PCI_ALLOWED='+pci,'PCI_BLOCKED='+os_pci,'DRIVER_OVERRIDE=vfio-pci',setup,'reset'],
+ ]:logs.append({'cmd':cmd,'stdout':run(cmd).stdout})
+ ns=[x for x in pathlib.Path('/sys/class/nvme').glob('nvme*') if (x/'device').resolve().name==pci];assert len(ns)==1
+ assert (ns[0]/'serial').read_text().strip()=='0baff889821a310b0001'
+ dev='/dev/'+ns[0].name+'n1';assert int(run(['blockdev','--getsize64',dev]).stdout)==2879775571968
+ assert subprocess.run(['findmnt','-rn','-S',dev]).returncode!=0
+ for cmd in [['blkdiscard','--force',dev],['dd','if=/dev/zero','of='+dev,'bs=4096','count=1','conv=fsync,notrunc'],['env','PCI_ALLOWED='+pci,'PCI_BLOCKED='+os_pci,'DRIVER_OVERRIDE=vfio-pci','HUGEMEM=2048',setup,'config']]:
+  r=run(cmd);logs.append({'cmd':cmd,'stdout':r.stdout,'stderr':r.stderr})
+ (base/'reset.json').write_text(json.dumps(logs,indent=2)+'\n');raise SystemExit(0)
+assert pathlib.Path('/sys/bus/pci/devices/'+pci+'/driver').resolve().name=='vfio-pci'
+cmd=['systemd-run','--unit',unit,'--collect','-p','AllowedCPUs=0-3','-p','CPUAffinity=0-3','-p','MemoryMax=26G','-p','MemorySwapMax=0','-p','LimitMEMLOCK=infinity','-p','LimitNOFILE=65535','-p','TimeoutStopSec=300','-p','SendSIGKILL=no','-p','StandardOutput=append:'+str(base/'stdout.log'),'-p','StandardError=inherit',
+ '--setenv=BYCORF_EAL_ARGS=-a '+pci,'--setenv=BYCORF_DPDK_MEMORY_MB=2048',
+ '/opt/bench/lavik-standard/lavik-v0.3.0-linux-x86_64/lavik','--storage=spdk','--bind','10.83.0.4','--port','6379','--metrics-port','9100','--threads','4','--max-memory','24gb','--data-file','spdk://'+pci+'/1','--log-dir',str(base/'logs'),'--shutdown-checkpoint','--defrag-sleep-ms',str(a.defrag_sleep_ms)]
+(base/'launch.json').write_text(json.dumps(cmd,indent=2)+'\n')
+print(run(cmd).stderr,flush=True)
+for _ in range(180):
+ r=subprocess.run(['redis-cli','-h','10.83.0.4','PING'],capture_output=True,text=True)
+ if r.stdout.strip()=='PONG':print('READY native SPDK');break
+ if not active(unit):raise RuntimeError('SPDK startup failed; inspect '+str(base/'stdout.log'))
+ time.sleep(1)
+else:raise RuntimeError('SPDK startup timeout')

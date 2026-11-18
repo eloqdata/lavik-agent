@@ -1,0 +1,415 @@
+{
+  "diagnostic_only": true,
+  "mean_qps": 75865.84730928371,
+  "note": "Stage sums/counts are before/after Prometheus differences for all selected traces (sample_every=64). Stages may nest; do not sum them as a partition. Retained GET64 traces are a bounded recent subset, not an unbiased latency distribution. read_io includes completion polling and resumption. Tracing overhead is not separately measured.",
+  "runs": [
+    {
+      "repeat": 1,
+      "qps": 75465.44800119978,
+      "read_mean_us": 1690.7579959977595,
+      "sampled_info_count": 13,
+      "defrag_active_max": 0,
+      "defrag_pending_max": 0,
+      "stages": {
+        "read": {
+          "request_queue": {
+            "observations": 67126.0,
+            "mean_us_per_observation": 0.27709479188391983,
+            "mean_us_per_sampled_command": 0.27709479188391983
+          },
+          "route_to_owner": {
+            "observations": 3.0,
+            "mean_us_per_observation": 2.444,
+            "mean_us_per_sampled_command": 0.00010922742305515001
+          },
+          "route_back": {
+            "observations": 3.0,
+            "mean_us_per_observation": 4.336333333333333,
+            "mean_us_per_sampled_command": 0.00019379971992968448
+          },
+          "key_lock": {
+            "observations": 16797.0,
+            "mean_us_per_observation": 0.41272000952551047,
+            "mean_us_per_sampled_command": 0.10327530316121919
+          },
+          "store_lock": {
+            "observations": 16797.0,
+            "mean_us_per_observation": 0.019125796273144015,
+            "mean_us_per_sampled_command": 0.004785865387480262
+          },
+          "lookup": {
+            "observations": 67126.0,
+            "mean_us_per_observation": 0.697482376426422,
+            "mean_us_per_sampled_command": 0.697482376426422
+          },
+          "read_buffer": {
+            "observations": 67126.0,
+            "mean_us_per_observation": 0.06699118076453238,
+            "mean_us_per_sampled_command": 0.06699118076453238
+          },
+          "read_io": {
+            "observations": 67125.0,
+            "mean_us_per_observation": 1602.635134301676,
+            "mean_us_per_sampled_command": 1602.611259273605
+          },
+          "response_queue": {
+            "observations": 67126.0,
+            "mean_us_per_observation": 0.07512081756696361,
+            "mean_us_per_sampled_command": 0.07512081756696361
+          },
+          "socket_send": {
+            "observations": 67126.0,
+            "mean_us_per_observation": 14.433038464976311,
+            "mean_us_per_sampled_command": 14.433038464976311
+          },
+          "decode": {
+            "observations": 67126.0,
+            "mean_us_per_observation": 0.3598414474272264,
+            "mean_us_per_sampled_command": 0.3598414474272264
+          }
+        },
+        "write": {
+          "request_queue": {
+            "observations": 3498.0,
+            "mean_us_per_observation": 0.25266323613493424,
+            "mean_us_per_sampled_command": 0.25266323613493424
+          },
+          "route_to_owner": {
+            "observations": 2673.0,
+            "mean_us_per_observation": 4.527818930041152,
+            "mean_us_per_sampled_command": 3.459937106918239
+          },
+          "route_back": {
+            "observations": 2673.0,
+            "mean_us_per_observation": 9.011586980920313,
+            "mean_us_per_sampled_command": 6.886212692967409
+          },
+          "key_lock": {
+            "observations": 3498.0,
+            "mean_us_per_observation": 0.26939508290451686,
+            "mean_us_per_sampled_command": 0.26939508290451686
+          },
+          "store_lock": {
+            "observations": 3498.0,
+            "mean_us_per_observation": 0.018072898799313897,
+            "mean_us_per_sampled_command": 0.018072898799313897
+          },
+          "lookup": {
+            "observations": 3498.0,
+            "mean_us_per_observation": 0.039613493424814177,
+            "mean_us_per_sampled_command": 0.039613493424814177
+          },
+          "read_buffer": {
+            "observations": 3498.0,
+            "mean_us_per_observation": 0.07646283590623214,
+            "mean_us_per_sampled_command": 0.07646283590623214
+          },
+          "read_io": {
+            "observations": 3498.0,
+            "mean_us_per_observation": 1637.8544468267582,
+            "mean_us_per_sampled_command": 1637.8544468267582
+          },
+          "append_capacity": {
+            "observations": 3498.0,
+            "mean_us_per_observation": 0.029125500285877643,
+            "mean_us_per_sampled_command": 0.029125500285877643
+          },
+          "response_queue": {
+            "observations": 3498.0,
+            "mean_us_per_observation": 0.07657432818753572,
+            "mean_us_per_sampled_command": 0.07657432818753572
+          },
+          "socket_send": {
+            "observations": 3498.0,
+            "mean_us_per_observation": 10.01256146369354,
+            "mean_us_per_sampled_command": 10.01256146369354
+          },
+          "decode": {
+            "observations": 3498.0,
+            "mean_us_per_observation": 0.28767238421955404,
+            "mean_us_per_sampled_command": 0.28767238421955404
+          },
+          "value_process": {
+            "observations": 3498.0,
+            "mean_us_per_observation": 0.19918324757004,
+            "mean_us_per_sampled_command": 0.19918324757004
+          }
+        }
+      },
+      "retained_read_traces": 736,
+      "retained_read_io_fraction_of_total": 0.9908271719954805
+    },
+    {
+      "repeat": 2,
+      "qps": 76220.72620019663,
+      "read_mean_us": 1673.526931320495,
+      "sampled_info_count": 13,
+      "defrag_active_max": 0,
+      "defrag_pending_max": 0,
+      "stages": {
+        "read": {
+          "request_queue": {
+            "observations": 67614.0,
+            "mean_us_per_observation": 0.27919211997515303,
+            "mean_us_per_sampled_command": 0.27919211997515303
+          },
+          "route_to_owner": {
+            "observations": 4.0,
+            "mean_us_per_observation": 2.2302499999999994,
+            "mean_us_per_sampled_command": 0.00013194013074215396
+          },
+          "route_back": {
+            "observations": 4.0,
+            "mean_us_per_observation": 2.81525,
+            "mean_us_per_sampled_command": 0.00016654834797527138
+          },
+          "key_lock": {
+            "observations": 16932.0,
+            "mean_us_per_observation": 0.4143396527285613,
+            "mean_us_per_sampled_command": 0.10375956162924839
+          },
+          "store_lock": {
+            "observations": 16932.0,
+            "mean_us_per_observation": 0.023218757382471058,
+            "mean_us_per_sampled_command": 0.005814476291892211
+          },
+          "lookup": {
+            "observations": 67614.0,
+            "mean_us_per_observation": 0.7010563492767771,
+            "mean_us_per_sampled_command": 0.7010563492767771
+          },
+          "read_buffer": {
+            "observations": 67614.0,
+            "mean_us_per_observation": 0.06703094033779985,
+            "mean_us_per_sampled_command": 0.06703094033779985
+          },
+          "read_io": {
+            "observations": 67611.0,
+            "mean_us_per_observation": 1586.9328991732116,
+            "mean_us_per_sampled_command": 1586.8624877392258
+          },
+          "response_queue": {
+            "observations": 67614.0,
+            "mean_us_per_observation": 0.0756262756233916,
+            "mean_us_per_sampled_command": 0.0756262756233916
+          },
+          "socket_send": {
+            "observations": 67614.0,
+            "mean_us_per_observation": 15.653671414204158,
+            "mean_us_per_sampled_command": 15.653671414204158
+          },
+          "decode": {
+            "observations": 67614.0,
+            "mean_us_per_observation": 0.364788505339131,
+            "mean_us_per_sampled_command": 0.364788505339131
+          }
+        },
+        "write": {
+          "request_queue": {
+            "observations": 3515.0,
+            "mean_us_per_observation": 0.2641934566145092,
+            "mean_us_per_sampled_command": 0.2641934566145092
+          },
+          "route_to_owner": {
+            "observations": 2642.0,
+            "mean_us_per_observation": 10.349278198334595,
+            "mean_us_per_sampled_command": 7.778888477951635
+          },
+          "route_back": {
+            "observations": 2642.0,
+            "mean_us_per_observation": 15.274668811506439,
+            "mean_us_per_sampled_command": 11.480988620199149
+          },
+          "key_lock": {
+            "observations": 3515.0,
+            "mean_us_per_observation": 0.2784702702702703,
+            "mean_us_per_sampled_command": 0.2784702702702703
+          },
+          "store_lock": {
+            "observations": 3515.0,
+            "mean_us_per_observation": 0.018990042674253197,
+            "mean_us_per_sampled_command": 0.018990042674253197
+          },
+          "lookup": {
+            "observations": 3515.0,
+            "mean_us_per_observation": 0.042122901849217645,
+            "mean_us_per_sampled_command": 0.042122901849217645
+          },
+          "read_buffer": {
+            "observations": 3515.0,
+            "mean_us_per_observation": 0.0728366998577525,
+            "mean_us_per_sampled_command": 0.0728366998577525
+          },
+          "read_io": {
+            "observations": 3515.0,
+            "mean_us_per_observation": 1615.629401422475,
+            "mean_us_per_sampled_command": 1615.629401422475
+          },
+          "append_capacity": {
+            "observations": 3515.0,
+            "mean_us_per_observation": 0.03109302987197724,
+            "mean_us_per_sampled_command": 0.03109302987197724
+          },
+          "response_queue": {
+            "observations": 3515.0,
+            "mean_us_per_observation": 0.07669957325746798,
+            "mean_us_per_sampled_command": 0.07669957325746798
+          },
+          "socket_send": {
+            "observations": 3515.0,
+            "mean_us_per_observation": 13.123783499288761,
+            "mean_us_per_sampled_command": 13.123783499288761
+          },
+          "decode": {
+            "observations": 3515.0,
+            "mean_us_per_observation": 0.28567112375533427,
+            "mean_us_per_sampled_command": 0.28567112375533427
+          },
+          "value_process": {
+            "observations": 3515.0,
+            "mean_us_per_observation": 0.21611891891891893,
+            "mean_us_per_sampled_command": 0.21611891891891893
+          }
+        }
+      },
+      "retained_read_traces": 743,
+      "retained_read_io_fraction_of_total": 0.9895936375760976
+    },
+    {
+      "repeat": 3,
+      "qps": 75911.36772645472,
+      "read_mean_us": 1680.8506925856107,
+      "sampled_info_count": 13,
+      "defrag_active_max": 0,
+      "defrag_pending_max": 0,
+      "stages": {
+        "read": {
+          "request_queue": {
+            "observations": 67638.0,
+            "mean_us_per_observation": 0.2792135190277655,
+            "mean_us_per_sampled_command": 0.2792135190277655
+          },
+          "route_to_owner": {
+            "observations": 4.0,
+            "mean_us_per_observation": 2.326,
+            "mean_us_per_sampled_command": 0.00013755581182175702
+          },
+          "route_back": {
+            "observations": 4.0,
+            "mean_us_per_observation": 2.9620000000000006,
+            "mean_us_per_sampled_command": 0.00017516780507998466
+          },
+          "key_lock": {
+            "observations": 16898.0,
+            "mean_us_per_observation": 0.41667499112320977,
+            "mean_us_per_sampled_command": 0.1040979035453443
+          },
+          "store_lock": {
+            "observations": 16898.0,
+            "mean_us_per_observation": 0.020122085453899874,
+            "mean_us_per_sampled_command": 0.005027100150802805
+          },
+          "lookup": {
+            "observations": 67638.0,
+            "mean_us_per_observation": 0.6950403619267277,
+            "mean_us_per_sampled_command": 0.6950403619267277
+          },
+          "read_buffer": {
+            "observations": 67638.0,
+            "mean_us_per_observation": 0.06836118749815193,
+            "mean_us_per_sampled_command": 0.06836118749815193
+          },
+          "read_io": {
+            "observations": 67638.0,
+            "mean_us_per_observation": 1593.272306794997,
+            "mean_us_per_sampled_command": 1593.272306794997
+          },
+          "response_queue": {
+            "observations": 67638.0,
+            "mean_us_per_observation": 0.07557736775185547,
+            "mean_us_per_sampled_command": 0.07557736775185547
+          },
+          "socket_send": {
+            "observations": 67638.0,
+            "mean_us_per_observation": 15.65976031225051,
+            "mean_us_per_sampled_command": 15.65976031225051
+          },
+          "decode": {
+            "observations": 67638.0,
+            "mean_us_per_observation": 0.36218712853721285,
+            "mean_us_per_sampled_command": 0.36218712853721285
+          }
+        },
+        "write": {
+          "request_queue": {
+            "observations": 3421.0,
+            "mean_us_per_observation": 0.2756919029523532,
+            "mean_us_per_sampled_command": 0.2756919029523532
+          },
+          "route_to_owner": {
+            "observations": 2571.0,
+            "mean_us_per_observation": 6.6764733566705585,
+            "mean_us_per_sampled_command": 5.017600993861446
+          },
+          "route_back": {
+            "observations": 2569.0,
+            "mean_us_per_observation": 10.471330868042036,
+            "mean_us_per_sampled_command": 7.86344606840105
+          },
+          "key_lock": {
+            "observations": 3421.0,
+            "mean_us_per_observation": 0.29175708857059335,
+            "mean_us_per_sampled_command": 0.29175708857059335
+          },
+          "store_lock": {
+            "observations": 3421.0,
+            "mean_us_per_observation": 0.01959368605670857,
+            "mean_us_per_sampled_command": 0.01959368605670857
+          },
+          "lookup": {
+            "observations": 3421.0,
+            "mean_us_per_observation": 0.04452674656533177,
+            "mean_us_per_sampled_command": 0.04452674656533177
+          },
+          "read_buffer": {
+            "observations": 3421.0,
+            "mean_us_per_observation": 0.07494621455714703,
+            "mean_us_per_sampled_command": 0.07494621455714703
+          },
+          "read_io": {
+            "observations": 3421.0,
+            "mean_us_per_observation": 1608.1197372113415,
+            "mean_us_per_sampled_command": 1608.1197372113415
+          },
+          "append_capacity": {
+            "observations": 3421.0,
+            "mean_us_per_observation": 0.033639286758257815,
+            "mean_us_per_sampled_command": 0.033639286758257815
+          },
+          "response_queue": {
+            "observations": 3421.0,
+            "mean_us_per_observation": 0.08303449283835138,
+            "mean_us_per_sampled_command": 0.08303449283835138
+          },
+          "socket_send": {
+            "observations": 3421.0,
+            "mean_us_per_observation": 12.295377082724348,
+            "mean_us_per_sampled_command": 12.295377082724348
+          },
+          "decode": {
+            "observations": 3421.0,
+            "mean_us_per_observation": 0.2834752996199942,
+            "mean_us_per_sampled_command": 0.2834752996199942
+          },
+          "value_process": {
+            "observations": 3421.0,
+            "mean_us_per_observation": 0.20948377667348736,
+            "mean_us_per_sampled_command": 0.20948377667348736
+          }
+        }
+      },
+      "retained_read_traces": 735,
+      "retained_read_io_fraction_of_total": 0.9905137128585398
+    }
+  ]
+}
