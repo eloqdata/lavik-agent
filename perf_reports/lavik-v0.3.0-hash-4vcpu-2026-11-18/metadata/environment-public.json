@@ -1,0 +1,35 @@
+{
+  "region": "eastus",
+  "zone": "3",
+  "server_size": "Standard_L4aos_v5",
+  "client_size": "Standard_L16aos_v5",
+  "compute_retail_usd_per_hour": 3.048,
+  "server_cgroup_memory_gib": 28,
+  "engine_memory_limit_gib": 24,
+  "ycsb_commit": "247a2d448ebceff11a570a622c49ece161a27ed3",
+  "binding": "redis",
+  "redis.scanindex": "none",
+  "records": [
+    10000000,
+    100000000
+  ],
+  "formal_workloads": [
+    "A",
+    "B",
+    "C"
+  ],
+  "targets": [
+    100000,
+    0
+  ],
+  "server_cpu_topology": "4 vCPUs, 2 cores, 2 threads per core",
+  "status": "native preflight in progress; no formal results yet",
+  "seconds_per_run": 60,
+  "repeats": 3,
+  "business_connections": 128,
+  "dbsize_after_load": false,
+  "execution": "sequential native processes",
+  "server_kernel": "7.0.0-1017-azure",
+  "server_os": "Ubuntu 24.04",
+  "server_local_nvme": "Approximately 2.6 TiB in lsblk; exact device size is archived with host metadata."
+}
