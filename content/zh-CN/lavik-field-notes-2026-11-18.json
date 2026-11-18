@@ -1,0 +1,115 @@
+{
+  "id": "lavik-field-notes-2026-11-18",
+  "locale": "zh-CN",
+  "version": "0.1.0",
+  "kind": "blog",
+  "slug": "lavik-field-notes-2026-11-18",
+  "title": "用一次批量读取检验 Redis 客户端兼容性",
+  "summary": "以文档预览缓存为例，评估更大的保留数据集迁入 Lavik 后，批量结果顺序、RESP 解码、集群路由、错误和超时是否满足应用要求。",
+  "updatedAt": "2026-11-18",
+  "sourceRevision": "471f4864357f4a5034c64e7d4972ec0e55b82d94",
+  "topics": [
+    "use-case",
+    "best-practise"
+  ],
+  "blocks": [
+    {
+      "type": "paragraph",
+      "text": "文档预览服务很少只读取一个缓存对象。一个搜索结果页可能需要十二份预览，其中既有重复的文档 ID，也有已经过期的条目。随着需要保留的预览越来越多，Lavik 0.1.0 为继续使用 Redis 接口提供了具体理由：值存放在 NVMe 上，紧凑的键索引保留在 DRAM 中。Lavik 采用 Apache 2.0 许可证开源。客户端评估应围绕页面真正需要的那一批数据展开。",
+      "sources": [
+        "current-010-readme",
+        "current-010-storage"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "设想一种应用设计：每份预览对应一个 String，每页请求十二个位置。缺失的预览先显示占位内容，再从文档源重建。应用利用 Lavik 保留更大的预览集合，使值容量不再由 DRAM 决定。这是容量层面的理由，不是已经测得的成本节省：键索引、请求与响应内存、存储回收以及副本仍然需要资源。",
+      "sources": [
+        "current-010-readme",
+        "current-010-storage"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "先确定批量读取的语义"
+    },
+    {
+      "type": "paragraph",
+      "text": "Lavik 的 MGET 在一个共享锁事务中获取请求涉及的键，并在响应中保留参数位置。每个参与的 worker 按可用读取缓冲区分批读取普通紧凑磁盘记录；其他表示形式走完整的单键读取路径。当一次请求需要对选定的键进行原子读取时，MGET 因而很有用。但这些预览若各自独立刷新，MGET 并不会让它们拥有共同的应用版本。",
+      "sources": [
+        "current-010-requests",
+        "current-010-storage"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "流水线 GET 的约定不同。Lavik 按连接中的线序分派请求，但多个独立命令不会获得 MGET 的共享事务。预览可以独立读取时，可以采用这种方式。在 Cluster 模式下，MGET 涉及的键必须位于同一个哈希槽。任意搜索结果可能跨槽，因此客户端需要拆分请求或逐键读取。不要只为合成一个批次就给整个预览库使用同一个 hashtag，这也会集中数据路由。如果客户端拆分了逻辑批次，就应分别看待各个服务器请求；合并后的结果不受同一个 MGET 事务保护。",
+      "sources": [
+        "current-010-requests",
+        "current-010-storage"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "针对实际客户端的五项验收"
+    },
+    {
+      "type": "paragraph",
+      "text": "1. 协议与结果位置。使用应用实际采用的客户端和序列化器评估 RESP2；如果应用使用 RESP3，也评估 RESP3。样本应包含二进制预览内容、空 String、缺失键，以及在两个位置重复出现的同一个键。检查完整的有序结果，确认客户端能区分缺失与空值，并保留重复项。Lavik 连接起始使用 RESP2，由 HELLO 选择响应版本。记录实际协商的协议，不要假定 SDK 已经完成选择。这些是建议的验收场景，并非该应用已有的测试结果。",
+      "sources": [
+        "current-010-requests"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "2. 精确命令与路由。记录 SDK 为十二份预览实际发送的命令：一个 MGET、多个槽内 MGET，还是流水线 GET。清单也应包括实际使用的连接初始化和刷新操作。在 Cluster 模式下加入跨槽批次，确认 SDK 如何处理路由约束。Lavik 的 Single 和 Cluster 模式具有不同的逻辑数据库与路由约定；单键冒烟测试成功，并没有验证这种差异。",
+      "sources": [
+        "current-010-requests",
+        "current-010-storage"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "3. 流水线中的错误。在同一条流水线中依次放入正常读取、故意构造的无效命令调用，以及另一次正常读取。检查客户端暴露哪些结果、如何把错误关联到对应位置，以及随后能否继续使用该连接。Lavik 将命令错误编码为 Redis 错误，而格式错误的协议输入会结束会话。这两种结果对批量解码器的含义不同。如果客户端只抛出一个批次异常，就可能隐藏已经完成的读取；应用的回退逻辑必须符合 SDK 实际提供的结果模型。",
+      "sources": [
+        "current-010-requests"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "4. 页面级截止时间。为整个十二份预览的逻辑读取设置应用截止时间，将等待连接池以及各个槽内请求的时间计入其中。检查截止时间到达、仍有响应未接收时，SDK 会排空响应、丢弃连接，还是通过其他方式确保连接可以安全复用。应用要求应当明确：被放弃批次的响应不能被误认为后续请求的响应。Lavik 按连接顺序处理命令，响应状态归连接所有，因此这里需要验证客户端的连接生命周期；仅仅发生超时，并不能证明服务器工作已经取消。",
+      "sources": [
+        "current-010-requests"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "5. 批次字节量与运行状态。保持十二个键不变，换用更大的预览，再加入并发刷新流量。除了键数，还要按预计响应字节数限制批次。Lavik 的分批磁盘读取约束活跃读取缓冲区，而组合 MGET 响应会在套接字写出过程中保留编码片段；两者的内存生命周期不同。还应验证托管角色切换后的重连，并区分批次不可用、LOADING 与十二次缓存未命中。托管服务状态转换可能关闭普通连接，因此只读应用同样需要恢复逻辑。",
+      "sources": [
+        "current-010-requests",
+        "current-010-storage"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "让验收结果成为应用决策"
+    },
+    {
+      "type": "paragraph",
+      "text": "有用的产出是一套确定的批量策略：命令选择、最大预计响应字节数、页面截止时间，以及预览缺失和请求失败各自的处理方式。下一步可选取一段有代表性的搜索结果页请求轨迹，在路由允许的情况下比较受限大小的 MGET 批次与流水线 GET，并记录刷新流量下的整页延迟和正确性。如果应用能在满足这些约定的同时保留更多可重建预览，Lavik 的 NVMe 容量就产生了实际价值；已发布的纯 GET/SET 测试并没有测量这个十二份预览的工作流。",
+      "sources": [
+        "current-010-requests",
+        "current-010-storage",
+        "current-010-memory"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "出版参考：安装与可执行操作请使用所提供的、固定到版本快照的 0.1.0 手册：https://github.com/eloqdata/lavik/blob/471f4864357f4a5034c64e7d4972ec0e55b82d94/README.md 。批量处理、协议与路由约定见请求服务手册：https://github.com/eloqdata/lavik/blob/471f4864357f4a5034c64e7d4972ec0e55b82d94/docs/architecture/02-request-serving.md 。所提供的 basic-commands 执行回执仅覆盖历史版本 0.1.0-beta.1，不能验证本文面向稳定版的客户端工作流。",
+      "sources": [
+        "current-010-readme",
+        "current-010-requests"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,115 @@
+{
+  "id": "lavik-field-notes-2026-11-18",
+  "locale": "en",
+  "version": "0.1.0",
+  "kind": "blog",
+  "slug": "lavik-field-notes-2026-11-18",
+  "title": "Make the batch a Redis client compatibility test",
+  "summary": "A document-preview cache shows how to evaluate batch ordering, RESP decoding, cluster routing, errors, and deadlines when moving a larger retained dataset onto Lavik.",
+  "updatedAt": "2026-11-18",
+  "sourceRevision": "471f4864357f4a5034c64e7d4972ec0e55b82d94",
+  "topics": [
+    "use-case",
+    "best-practise"
+  ],
+  "blocks": [
+    {
+      "type": "paragraph",
+      "text": "A document-preview service rarely fetches just one cached object. A results page might need twelve previews, including repeated document IDs and entries that have expired. As the retained preview library grows, Lavik 0.1.0 offers a concrete reason to keep this Redis-shaped application: values live on NVMe while a compact key index stays in DRAM. Lavik is open source under Apache 2.0. The client evaluation should center on the batch the page actually needs.",
+      "sources": [
+        "current-010-readme",
+        "current-010-storage"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "Consider a proposed design with one String per preview and twelve requested positions per page. The application returns a placeholder for an absent preview and reconstructs it from the document source. It retains a larger preview population on Lavik instead of making value capacity depend on DRAM. This is a capacity argument, not a measured cost saving: key indexes, request and reply memory, storage reclamation, and replicas still consume resources.",
+      "sources": [
+        "current-010-readme",
+        "current-010-storage"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "Choose the batch semantics first"
+    },
+    {
+      "type": "paragraph",
+      "text": "Lavik's MGET acquires the requested keys in one shared-lock transaction and preserves argument positions in the reply. On each participating worker, ordinary compact disk records are read in waves paced by available read buffers; other representations use the complete single-key path. That makes MGET useful when one request needs an atomic read across its selected keys. It does not give those independently refreshed previews a common application version.",
+      "sources": [
+        "current-010-requests",
+        "current-010-storage"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "Pipelined GETs have a different contract. Lavik dispatches requests from one connection in wire order, but separate commands do not acquire MGET's shared transaction. Use them when previews can be read independently. In Cluster mode, MGET's keys must belong to one hash slot. Arbitrary search results may span slots, so the client must split the work or issue individual reads. Do not put the entire preview library into one hashtag merely to obtain one batch: that also concentrates its routing. If the client splits a logical batch, assess each server request separately; there is no single MGET transaction covering the combined result.",
+      "sources": [
+        "current-010-requests",
+        "current-010-storage"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "Five acceptance checks for the real client"
+    },
+    {
+      "type": "paragraph",
+      "text": "1. Protocol and result positions. Run the application's actual client and serializer with RESP2 and, if used, RESP3. Include binary preview bytes, an empty String, an absent key, and the same key in two positions. Check the complete ordered result, including whether the client distinguishes absence from an empty value and preserves duplicates. Lavik connections begin in RESP2; HELLO selects the reply version. Record the negotiated protocol rather than assuming the SDK selected it. These are proposed acceptance cases, not results reported for this application.",
+      "sources": [
+        "current-010-requests"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "2. Exact commands and routing. Capture which commands the SDK emits for twelve requested previews: one MGET, several slot-local MGETs, or pipelined GETs. Include the actual connection initialization and refresh operations in the inventory. Exercise a batch spanning slots in Cluster mode and verify how the SDK handles the routing constraint. Lavik's Single and Cluster modes have different database and routing contracts; a successful single-key smoke test does not exercise this distinction.",
+      "sources": [
+        "current-010-requests",
+        "current-010-storage"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "3. Errors inside a pipeline. Place a valid read, a deliberately invalid command invocation, and another valid read in one pipeline. Check which results the client exposes, how it associates the error with its position, and whether it can use the connection afterward. Lavik encodes command errors as Redis errors; malformed protocol input ends the session. Those are different outcomes for a batch decoder. A client that reports only one batch exception may hide completed reads, so the application's fallback logic needs to match the SDK's actual result model.",
+      "sources": [
+        "current-010-requests"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "4. A deadline for the page. Give the logical twelve-preview fetch an application deadline, including time waiting for a pooled connection and any slot-local requests. Check what happens when that deadline expires while replies remain outstanding: whether the SDK drains, discards, or otherwise safely handles the connection before reuse. The required application outcome is clear—no reply from the abandoned batch may be mistaken for a later request. Lavik's sequential connection processing and connection-owned reply state make this a client lifecycle question; a timeout alone does not establish cancellation of server work.",
+      "sources": [
+        "current-010-requests"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "5. Batch bytes and operating state. Repeat the same twelve-key request with larger previews, then with concurrent refresh traffic. Bound batches by expected response bytes as well as key count. Lavik's bounded disk-read waves limit active read buffers, while composite MGET replies retain encoded fragments through socket writes; those are separate memory lifetimes. Also exercise reconnection across a managed role change and distinguish an unavailable or LOADING batch from twelve cache misses. Managed serving transitions can close ordinary connections, so a read-only application still needs recovery behavior.",
+      "sources": [
+        "current-010-requests",
+        "current-010-storage"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "Make the acceptance result an application decision"
+    },
+    {
+      "type": "paragraph",
+      "text": "The useful result is a chosen batch policy: command strategy, maximum expected reply bytes, page deadline, and behavior for missing previews versus failed requests. Start with one representative results-page trace and compare bounded MGET batches with pipelined GETs where routing permits. Record complete-page latency and correctness under refresh traffic. Lavik's NVMe capacity is useful if it lets the service retain more reconstructable previews while this application contract holds; published pure GET/SET sweeps do not measure this twelve-preview workflow.",
+      "sources": [
+        "current-010-requests",
+        "current-010-storage",
+        "current-010-memory"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "Publication references: use the supplied release-pinned 0.1.0 manual for installation and executable instructions: https://github.com/eloqdata/lavik/blob/471f4864357f4a5034c64e7d4972ec0e55b82d94/README.md . For the batch, protocol, and routing contracts, see the request-serving manual: https://github.com/eloqdata/lavik/blob/471f4864357f4a5034c64e7d4972ec0e55b82d94/docs/architecture/02-request-serving.md . The supplied basic-commands execution receipt covers historical 0.1.0-beta.1 only; it does not validate this stable-release client workflow.",
+      "sources": [
+        "current-010-readme",
+        "current-010-requests"
+      ]
+    }
+  ]
+}
