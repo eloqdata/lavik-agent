@@ -31,5 +31,5 @@ manifest=[{'path':str(p.relative_to(RAW)),'bytes':p.stat().st_size,'sha256':hash
 (OUT/'raw-manifest.json').write_text(json.dumps(manifest,indent=2)+'\n')
 for p in files:
  if p.suffix in ('.json','.txt','.log','.properties','.conf') and b'BEGIN OPENSSH PRIVATE KEY' in p.read_bytes():raise RuntimeError('Private key content detected in selected evidence')
-with tarfile.open(OUT/'raw.tar.gz','w:gz') as t:t.add(RAW,arcname='raw')
-print(json.dumps({'archive':str(OUT/'raw.tar.gz'),'bytes':(OUT/'raw.tar.gz').stat().st_size,'files':len(files),'sha256':hashlib.file_digest((OUT/'raw.tar.gz').open('rb'),'sha256').hexdigest()},indent=2))
+with tarfile.open(OUT/'raw.tar.xz','w:xz') as t:t.add(RAW,arcname='raw')
+print(json.dumps({'archive':str(OUT/'raw.tar.xz'),'bytes':(OUT/'raw.tar.xz').stat().st_size,'files':len(files),'sha256':hashlib.file_digest((OUT/'raw.tar.xz').open('rb'),'sha256').hexdigest()},indent=2))

@@ -2,7 +2,7 @@
 """Recompute native unlimited-only summaries from unmodified YCSB logs."""
 import argparse,csv,hashlib,json,pathlib,re,statistics
 p=argparse.ArgumentParser();p.add_argument('root',type=pathlib.Path);p.add_argument('--out',type=pathlib.Path,default=pathlib.Path('audit.json'));a=p.parse_args()
-root=a.root;errors=[];rows=[];windows=0
+root=a.root;errors=[];rows=[];windows=0;failed_points=[]
 schedule=json.loads((root/'schedule.json').read_text())
 common=pathlib.Path(__file__).with_name('common.properties')
 assert hashlib.sha256(common.read_bytes()).hexdigest()==(root/'common-sha256.txt').read_text().strip(),'Common workload properties differ from the acquisition'
@@ -29,7 +29,10 @@ for spec in schedule:
  try:
   load=parse(root/product/(tag+'-load')/'ycsb.log')
   assert load['INSERT']['Return=OK']==n,'Successful load count differs from configured count'
-  for filename in ['verified-load.json','verified-final.json']:
+  final_path=pairdir/'verified-final.json'
+  declared_failure=(product=='dragonfly' and n==100000000 and tiered and (pairdir/'failure.txt').exists())
+  assert final_path.exists() or declared_failure,'Missing final validation without a recorded failure'
+  for filename in ['verified-load.json']+(['verified-final.json'] if final_path.exists() else []):
    sample=json.loads((pairdir/filename).read_text())
    assert sample['configured_records']==n and sample['sample_count']>=1000
    assert sample['index_exists'] is False
@@ -41,6 +44,14 @@ for spec in schedule:
   for workload,target in spec['cells']:
    assert target==0,'Rate-limited condition found in final schedule'
    label=tag+f'-{workload}-t0';run_qps=[];per_run=[]
+   if not (pairdir/(label+'-mean.json')).exists():
+    failure_log=root/product/(label+'-warmup')/'ycsb.log'
+    assert declared_failure and workload=='A' and 'ERR Out of memory' in failure_log.read_text(),'Unexplained missing point'
+    assert not any((root/product/(label+f'-r{i}')).exists() for i in range(1,4)),'Unexpected partial measured windows'
+    failed_points.append({'product':product,'records':n,'tiered':tiered,'workload':workload,'stage':'warmup','reason':'ERR Out of memory','measured_windows':0})
+    continue
+   point_sample=json.loads((pairdir/(label+'-samples.json')).read_text())
+   assert point_sample['configured_records']==n and point_sample['sample_count']>=1000 and point_sample['index_exists'] is False
    for rep in range(1,4):
     folder=root/product/(label+f'-r{rep}')
     invocation=json.loads((folder/'invocation.json').read_text())
@@ -72,10 +83,10 @@ for spec in schedule:
      row[f'{op.lower()}_{field}_ms']=statistics.mean(values)/1000 if all(v is not None for v in values) else None
    rows.append(row)
  except Exception as e:errors.append({'product':product,'records':n,'tiered':tiered,'error':str(e)})
-result={'valid_points':len(rows),'valid_windows':windows,'expected_points':sum(len(x['cells']) for x in schedule),'errors':errors,'rows':rows,'note':'Latency statistics are arithmetic means of per-run values; key counts are not independently scanned.'}
+result={'valid_points':len(rows),'valid_windows':windows,'expected_points':sum(len(x['cells']) for x in schedule),'errors':errors,'failed_points':failed_points,'rows':rows,'note':'Latency statistics are arithmetic means of per-run values; key counts are not independently scanned.'}
 a.out.write_text(json.dumps(result,indent=2)+'\n')
 if rows:
  with a.out.with_suffix('.csv').open('w',newline='') as f:
   writer=csv.DictWriter(f,fieldnames=list(rows[0]));writer.writeheader();writer.writerows(rows)
-print(json.dumps({k:result[k] for k in ['valid_points','valid_windows','expected_points','errors']},indent=2))
+print(json.dumps({k:result[k] for k in ['valid_points','valid_windows','expected_points','failed_points','errors']},indent=2))
 raise SystemExit(bool(errors))

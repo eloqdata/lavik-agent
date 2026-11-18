@@ -1,8 +1,58 @@
 # Native 4-vCPU Hash YCSB comparison · 2026-11-18
 
-Status: all four native 1M-record preflights passed; the formal campaign is running. Formal comparison results are pending.
+Status: completed. Independent raw-log audit validated **20 throughput points / 60 one-minute measured windows**. Dragonfly 100M workload A failed during warmup with `ERR Out of memory`; it has no measured throughput mean.
 
 This experiment compares Lavik v0.3.0, Apache Kvrocks 2.17.0, Dragonfly v2.1 and Redis 8.10.3. All run as native processes, one at a time on the same Azure server. No container measurements enter the formal results.
+
+## Measured results
+
+Successful operations per second, arithmetic mean of three 60-second runs. C = read-only; B = 95% reads / 5% full updates; A = 50% reads / 50% full updates. Full precision, each repeat and per-run latency means are in [results.csv](metadata/results.csv) and [results.json](metadata/results.json).
+
+| Records | Product / configuration | C ops/s | B ops/s | A ops/s |
+|---|---|---:|---:|---:|
+| 10M | Lavik | 328,039 | 327,105 | 219,514 |
+| 10M | Redis RAM | 274,364 | 274,942 | 250,907 |
+| 10M | Kvrocks | 80,875 | 86,442 | 36,984 |
+| 10M | Dragonfly RAM | 352,966 | 343,363 | 289,383 |
+| 100M | Lavik | 339,188 | 326,137 | 275,124 |
+| 100M | Redis RAM | Not run¹ | Not run¹ | Not run¹ |
+| 100M | Kvrocks | 27,676 | 25,541 | 17,317 |
+| 100M | Dragonfly experimental Hash tiering | 295,738 | 300,814 | OOM in warmup |
+
+¹ Redis RAM mode was not run at 100M: values alone total 95.367 GiB, exceeding the 32 GiB host. This is a capacity exclusion, **not an observed Redis OOM test**, and is never plotted as zero throughput. Dragonfly A OOM is an observed application error during warmup, not a valid measurement or a zero-QPS result.
+
+![Successful throughput](figures/throughput.svg)
+
+At 100M, Lavik is **12.26× / 12.77× / 15.89×** Kvrocks on C/B/A, and **14.69% / 8.42%** faster than the eligible Dragonfly tiered configuration on C/B. Lavik completes A at 275,124 ops/s; the tested Dragonfly configuration cannot complete its A warmup. This supports Lavik's advantage for this beyond-memory Hash workload on this machine. It does not prove that every possible Dragonfly configuration fails, nor that Lavik is universally faster.
+
+At 10M, Dragonfly has the highest throughput in all three workloads. Redis also exceeds Lavik on A (250,907 versus 219,514 ops/s). Lavik's A throughput increases in the larger-data campaign; these fixed-order short windows do not establish a general monotonic capacity relationship.
+
+### Latency
+
+These are **means of three per-run READ p99 values**, in milliseconds, at each product's achieved unlimited throughput. They are not pooled p99 values or comparisons at an equal offered QPS. UPDATE mean/p99/p99.9 values are in the normalized files; complete HDR logs are archived.
+
+| Records | Product | C READ p99 ms | B READ p99 ms | A READ p99 ms |
+|---|---|---:|---:|---:|
+| 10M | lavik | 0.531 | 0.534 | 5.828 |
+| 10M | redis | 0.550 | 0.549 | 0.595 |
+| 10M | kvrocks | 2.685 | 4.491 | 13.188 |
+| 10M | dragonfly | 0.687 | 0.696 | 0.865 |
+| 100M | lavik | 0.495 | 0.505 | 0.608 |
+| 100M | redis | — | — | — |
+| 100M | kvrocks | 7.788 | 8.175 | 14.676 |
+| 100M | dragonfly | 1.006 | 0.780 | — |
+
+![READ tail latency](figures/read-p99.svg)
+
+### Memory observations
+
+Immediately after the successful 10M load, RSS was approximately 1.14 GiB for Lavik, 16.22 GiB for Redis, 15.38 GiB for Dragonfly RAM and 3.38 GiB for Kvrocks. Lavik's 100M post-load RSS was approximately 6.04 GiB. These are point-in-time RSS observations, not minimum memory requirements or campaign peak values. Per-window RSS and cgroup current/peak/events are retained. Kvrocks's 10M cgroup usage was 27.45 GiB while its RSS was 3.38 GiB; the cgroup includes reclaimable filesystem cache, so comparing only cgroup totals would misrepresent resident process memory.
+
+### Dragonfly write-heavy failure
+
+The corrected 100M load completed exactly 100,000,000 successful inserts and passed 1,003-key shape sampling. Nonzero `INFO TIERED` counters demonstrated actual SSD offloading. C and B each completed three valid windows and post-point sample checks. After B, INFO reported 21.60 GiB used memory, 23.43 GiB RSS, and a 24 GiB engine limit. A then returned `JedisDataException: ERR Out of memory` during warmup, after the last 10-second progress receipt of 2,646,629 operations. No A measured window was started. The group has no final post-A sample, and its earlier C/B results are validated using their own post-point samples.
+
+No extra memory-threshold tuning was applied after observing this failure. Results describe the published launch flags, not an exhaustive tuning search or a guaranteed long-term stable write rate.
 
 ## Protocol
 
@@ -16,6 +66,7 @@ This experiment compares Lavik v0.3.0, Apache Kvrocks 2.17.0, Dragonfly v2.1 and
 - Before Kvrocks read-only measurements, confirm post-load compaction has completed. The reproduction controller waits for three consecutive 10-second INFO samples with zero running/pending compactions and estimated compaction debt. This uses no key-count command or key scan.
 - Each point: 60-second warmup, then **three independent 60-second measured runs**, fresh JVM per run, including its own JIT/ramp-up. Report the arithmetic mean of three successful QPS values plus all individual values. Any averaged latency quantile is explicitly the mean of three per-run percentiles, not a pooled percentile.
 - A/B/C update existing keys and do not insert new records during measurements. All-field values remain 128 bytes.
+- Native thread settings: Lavik `--threads 4`; Redis `--io-threads 4` (confirmed via live `CONFIG GET`); Kvrocks `workers 4`; Dragonfly `--proactor_threads=4`. Redis I/O threading does not turn the tested commands into parallel command execution.
 - Memory: each service cgroup has `MemoryMax=28G`, `MemorySwapMax=0`; engine limits are 24 GiB where available. Kvrocks uses an 8 GiB block cache. Four CPUs cover each service and its background threads. Eviction and swap are disabled.
 - Primary memory baselines have AOF and scheduled snapshots disabled. Native storage engines retain documented storage maintenance. These configurations do **not** establish equal power-loss durability.
 
@@ -78,10 +129,10 @@ Record ordinary latency statistics and retain intended-start histograms as emitt
 
 - `scripts/`: executable reproduction sources and common properties.
 - `metadata/`: source lock, sanitized environment and normalized measurements.
-- `raw.tar.gz`: formal native load/warmup/measured logs, HDR histograms, sampling receipts and telemetry; created after execution.
+- `raw/raw.tar.xz.part-*`: split archive of formal native load/warmup/measured logs, HDR histograms, sampling receipts and telemetry. Concatenate before extracting.
 - `SHA256SUMS`: checksums of checked-in evidence; created when packaging.
 
-Credentials, SSH keys, database files and earlier container pilot results are excluded. Results remain pending until the formal acquisition and checks finish.
+Credentials, SSH keys, database files and earlier container pilot results are excluded. The main tables contain only the 60 valid measured windows. Both failed Dragonfly attempts and the excluded Kvrocks post-load-compaction attempt remain in the raw archive.
 
 ## Protocol update
 
@@ -95,4 +146,21 @@ The initial 100M Kvrocks read-only triplicate overlapped post-load compaction (t
 
 The initial tiered load used default hash encoding thresholds and returned `ERR Out of memory` after the last progress receipt of 13,571,474 insert operations. Those logs are preserved under `excluded-tiering-default-encoding/`; no complete load count or throughput point is inferred from that failure. The 8 × 128 B schema exceeds default listpack thresholds of 64 B per field/value and 1024 B total. The final large Dragonfly group explicitly permits 256 B fields/values and 2048 B total, as required to keep these hashes eligible for experimental tiering. Logical data and CPU/memory budgets are unchanged. The 10M RAM baseline retains default encoding settings, so Dragonfly capacity-retention comparisons also change configuration and must be labeled accordingly. Reference: [Dragonfly Hash tiering configuration](https://www.dragonflydb.io/blog/ssd-data-tiering-is-generally-available).
 
-After acquisition, Dragonfly is stopped with `SHUTDOWN NOSAVE` to avoid generating an unnecessary large snapshot of disposable test data. This happens after all measured windows and final sample validation; it changes no timed workload.
+After acquisition, Dragonfly is stopped with `SHUTDOWN NOSAVE` to avoid generating an unnecessary large snapshot of disposable test data. This happens after acquisition (after the recorded warmup failure in the incomplete Dragonfly group); it changes no timed workload.
+
+## Inspecting and reproducing the evidence
+
+Concatenate the twelve byte-exact archive parts under `raw/` to reconstruct `raw.tar.xz` (24,000,032 bytes; SHA-256 `1bd5bd731de1575b73691b3e60f9dbe796a7e6d6d2132a9e84026cb10a1297ae`). The archive extracts into `raw/`, including `formal-unlimited-native/`, client toolchain/build/sysstat provenance, and server launch arguments, human logs and telemetry. `metadata/raw-manifest.json` gives uncompressed file byte counts and SHA-256s. No database files or private keys are included.
+
+```bash
+sha256sum -c SHA256SUMS
+cat raw/raw.tar.xz.part-* > raw.tar.xz
+echo "1bd5bd731de1575b73691b3e60f9dbe796a7e6d6d2132a9e84026cb10a1297ae  raw.tar.xz" | sha256sum -c -
+tar -xJf raw.tar.xz
+python3 scripts/verify-evidence.py raw/formal-unlimited-native --out audit.json
+python3 scripts/plot.py audit.json --out figures-reproduced
+```
+
+The auditor reports 20 valid points, 60 valid windows, one explicitly recorded warmup OOM, and zero unexplained audit errors. A recorded expected failure is reported separately from successful measurements; it is not silently discarded. Install Matplotlib to regenerate figures.
+
+The benchmark does not exhaustively sweep connection counts, equalize durability, measure recovery, or demonstrate multi-hour cleaning/compaction steady state. Use the exact logged launch configurations and preserved exclusions when interpreting these results.

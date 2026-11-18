@@ -1,5 +1,5 @@
 {
-  "state": "unlimited-only native acquisition running",
+  "state": "acquisition completed and raw-log audit passed",
   "seconds_per_run": 60,
   "repeats": 3,
   "business_connections": 128,
@@ -12,5 +12,19 @@
   "native_preflight": "all four products passed 1M insert operations +1003 shape samples; no scan index; no DBSIZE",
   "superseded": "Earlier mixed-rate protocol logs are excluded from final tables; final campaign starts fresh datasets.",
   "kvrocks_readiness": "Initial 100M pure-read windows overlapped post-load compaction and are excluded/preserved. Repeat after three quiescent INFO samples; no DBSIZE/scan. The 10M before-C state was already quiescent.",
-  "dragonfly_tiering_eligibility": "Final 100M tiering group uses listpack_max_field_len=256 and listpack_max_bytes=2048; logical shape remains8x128B. Default-limit OOM attempt is preserved/excluded. Successful full100M load and actual tiered counters verified."
+  "dragonfly_tiering_eligibility": "Final 100M tiering group uses listpack_max_field_len=256 and listpack_max_bytes=2048; logical shape remains8x128B. Default-limit OOM attempt is preserved/excluded. Successful full100M load and actual tiered counters verified.",
+  "valid_points": 20,
+  "valid_measured_windows": 60,
+  "failed_points": [
+    {
+      "product": "dragonfly",
+      "records": 100000000,
+      "tiered": true,
+      "workload": "A",
+      "stage": "warmup",
+      "reason": "ERR Out of memory",
+      "measured_windows": 0
+    }
+  ],
+  "unexplained_audit_errors": []
 }
