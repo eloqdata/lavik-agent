@@ -2,7 +2,7 @@
 // The stable lavik.dev addresses do not extend the providers' invite lifetimes.
 export const communityLinks = {
   slack:
-    "https://join.slack.com/t/lavikcommunity/shared_invite/zt-4aie6zvxh-4xKNUZqM468uuXlobAmnkA",
+    "https://join.slack.com/t/lavikcommunity/shared_invite/zt-4hdhpphac-jpY5tXpuQtdmq7zVXABbmA",
   // Owner supplied this non-expiring invite on 2026-09-21.
   discord: "https://discord.gg/D9GB9w3DT6",
 } as const;
