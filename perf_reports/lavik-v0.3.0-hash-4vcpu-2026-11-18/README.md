@@ -6,7 +6,7 @@ This experiment compares Lavik v0.3.0, Apache Kvrocks 2.17.0, Dragonfly v2.1 and
 
 ## Current measured results
 
-The 10M table now uses the current-allocation rerun: all three peers and Lavik read-only. Lavik B/A are pending defrag tuning. Original values remain in [original-results.json](metadata/original-results.json); the prior full report is preserved in Git history. The 100M results are unchanged and were acquired before VM deallocation/restart, so the two sizes are not a controlled same-host capacity curve.
+The 10M table now uses the current-allocation rerun: all three peers and Lavik read-only. Lavik B/A remain pending: the existing-data retest completed, but NVMe latency instability persisted. See [tuning and excluded evidence](tuning-retry/). Original values remain in [original-results.json](metadata/original-results.json); the prior full report is preserved in Git history. The 100M results are unchanged and were acquired before VM deallocation/restart, so the two sizes are not a controlled same-host capacity curve.
 
 Each value is the mean of three 60-second runs. C=pure read;B=95%read;A=50%read. P99.9 is the mean of per-run percentiles. [Current data](metadata/results.csv) · [same-host raw evidence](same-host-repeat/)
 
