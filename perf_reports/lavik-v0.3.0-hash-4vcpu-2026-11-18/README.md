@@ -1,58 +1,40 @@
 # Native 4-vCPU Hash YCSB comparison · 2026-11-18
 
-Status: completed. Independent raw-log audit validated **20 throughput points / 60 one-minute measured windows**. Dragonfly 100M workload A failed during warmup with `ERR Out of memory`; it has no measured throughput mean.
+Status: 10M peer data and Lavik C updated to the current allocation. Lavik10M B/A tuning is in progress;100M results are retained from the original campaign.
 
 This experiment compares Lavik v0.3.0, Apache Kvrocks 2.17.0, Dragonfly v2.1 and Redis 8.10.3. All run as native processes, one at a time on the same Azure server. No container measurements enter the formal results.
 
-## Measured results
+## Current measured results
 
-Successful operations per second, arithmetic mean of three 60-second runs. C = read-only; B = 95% reads / 5% full updates; A = 50% reads / 50% full updates. Full precision, each repeat and per-run latency means are in [results.csv](metadata/results.csv) and [results.json](metadata/results.json).
+The 10M table now uses the current-allocation rerun: all three peers and Lavik read-only. Lavik B/A are pending defrag tuning. Original values remain in [original-results.json](metadata/original-results.json); the prior full report is preserved in Git history. The 100M results are unchanged and were acquired before VM deallocation/restart, so the two sizes are not a controlled same-host capacity curve.
 
-| Records | Product / configuration | C ops/s | B ops/s | A ops/s |
-|---|---|---:|---:|---:|
-| 10M | Lavik | 328,039 | 327,105 | 219,514 |
-| 10M | Redis RAM | 274,364 | 274,942 | 250,907 |
-| 10M | Kvrocks | 80,875 | 86,442 | 36,984 |
-| 10M | Dragonfly RAM | 352,966 | 343,363 | 289,383 |
-| 100M | Lavik | 339,188 | 326,137 | 275,124 |
-| 100M | Redis RAM | Not run¹ | Not run¹ | Not run¹ |
-| 100M | Kvrocks | 27,676 | 25,541 | 17,317 |
-| 100M | Dragonfly experimental Hash tiering | 295,738 | 300,814 | OOM in warmup |
+Each value is the mean of three 60-second runs. C=pure read;B=95%read;A=50%read. P99.9 is the mean of per-run percentiles. [Current data](metadata/results.csv) · [same-host raw evidence](same-host-repeat/)
 
-¹ Redis RAM mode was not run at 100M: values alone total 95.367 GiB, exceeding the 32 GiB host. This is a capacity exclusion, **not an observed Redis OOM test**, and is never plotted as zero throughput. Dragonfly A OOM is an observed application error during warmup, not a valid measurement or a zero-QPS result.
+### 10M records
 
-![Successful throughput](figures/throughput.svg)
+| Product | C ops/s | B ops/s | A ops/s |
+|---|---:|---:|---:|
+| lavik | 361,874 | Tuning pending | Tuning pending |
+| redis | 258,913 | 259,192 | 233,519 |
+| kvrocks | 85,015 | 77,598 | 34,664 |
+| dragonfly | 340,929 | 330,934 | 277,608 |
 
-At 100M, Lavik is **12.26× / 12.77× / 15.89×** Kvrocks on C/B/A, and **14.69% / 8.42%** faster than the eligible Dragonfly tiered configuration on C/B. Lavik completes A at 275,124 ops/s; the tested Dragonfly configuration cannot complete its A warmup. This supports Lavik's advantage for this beyond-memory Hash workload on this machine. It does not prove that every possible Dragonfly configuration fails, nor that Lavik is universally faster.
+### 100M records
 
-At 10M, Dragonfly has the highest throughput in all three workloads. Redis also exceeds Lavik on A (250,907 versus 219,514 ops/s). Lavik's A throughput increases in the larger-data campaign; these fixed-order short windows do not establish a general monotonic capacity relationship.
+| Product | C ops/s | B ops/s | A ops/s |
+|---|---:|---:|---:|
+| lavik | 339,188 | 326,137 | 275,124 |
+| redis | Not run | Not run | Not run |
+| kvrocks | 27,676 | 25,541 | 17,317 |
+| dragonfly | 295,738 | 300,814 | Warmup OOM |
 
-### Latency
+At 10M, Lavik read-only is 361,874 ops/s versus Dragonfly340,929 ops/s (+6.14%). This ranking applies to the current allocation; the original allocation had the opposite ranking. The current Lavik C sample has zero observed active defrag; it is retained while only B/A are tuned.
 
-These are **means of three per-run READ p99 values**, in milliseconds, at each product's achieved unlimited throughput. They are not pooled p99 values or comparisons at an equal offered QPS. UPDATE mean/p99/p99.9 values are in the normalized files; complete HDR logs are archived.
+At100M, Lavik remains12.26×/12.77×/15.89× Kvrocks on C/B/A and14.69%/8.42% above experimental Dragonfly Hash tiering on C/B. DragonflyA failed during warmup; RedisRAM100M was not run.
 
-| Records | Product | C READ p99 ms | B READ p99 ms | A READ p99 ms |
-|---|---|---:|---:|---:|
-| 10M | lavik | 0.531 | 0.534 | 5.828 |
-| 10M | redis | 0.550 | 0.549 | 0.595 |
-| 10M | kvrocks | 2.685 | 4.491 | 13.188 |
-| 10M | dragonfly | 0.687 | 0.696 | 0.865 |
-| 100M | lavik | 0.495 | 0.505 | 0.608 |
-| 100M | redis | — | — | — |
-| 100M | kvrocks | 7.788 | 8.175 | 14.676 |
-| 100M | dragonfly | 1.006 | 0.780 | — |
+![Throughput](figures/throughput.svg)
 
-![READ tail latency](figures/read-p99.svg)
-
-### Memory observations
-
-Immediately after the successful 10M load, RSS was approximately 1.14 GiB for Lavik, 16.22 GiB for Redis, 15.38 GiB for Dragonfly RAM and 3.38 GiB for Kvrocks. Lavik's 100M post-load RSS was approximately 6.04 GiB. These are point-in-time RSS observations, not minimum memory requirements or campaign peak values. Per-window RSS and cgroup current/peak/events are retained. Kvrocks's 10M cgroup usage was 27.45 GiB while its RSS was 3.38 GiB; the cgroup includes reclaimable filesystem cache, so comparing only cgroup totals would misrepresent resident process memory.
-
-### Dragonfly write-heavy failure
-
-The corrected 100M load completed exactly 100,000,000 successful inserts and passed 1,003-key shape sampling. Nonzero `INFO TIERED` counters demonstrated actual SSD offloading. C and B each completed three valid windows and post-point sample checks. After B, INFO reported 21.60 GiB used memory, 23.43 GiB RSS, and a 24 GiB engine limit. A then returned `JedisDataException: ERR Out of memory` during warmup, after the last 10-second progress receipt of 2,646,629 operations. No A measured window was started. The group has no final post-A sample, and its earlier C/B results are validated using their own post-point samples.
-
-No extra memory-threshold tuning was applied after observing this failure. Results describe the published launch flags, not an exhaustive tuning search or a guaranteed long-term stable write rate.
+![READ p99](figures/read-p99.svg)
 
 ## Protocol
 
@@ -132,7 +114,7 @@ Record ordinary latency statistics and retain intended-start histograms as emitt
 - `raw/raw.tar.xz.part-*`: split archive of formal native load/warmup/measured logs, HDR histograms, sampling receipts and telemetry. Concatenate before extracting.
 - `SHA256SUMS`: checksums of checked-in evidence; created when packaging.
 
-Credentials, SSH keys, database files and earlier container pilot results are excluded. The main tables contain only the 60 valid measured windows. Both failed Dragonfly attempts and the excluded Kvrocks post-load-compaction attempt remain in the raw archive.
+Credentials, SSH keys, database files and earlier container pilot results are excluded. The original campaign contains60 valid measured windows; current table provenance is recorded per row in metadata/results.json. Both failed Dragonfly attempts and the excluded Kvrocks post-load-compaction attempt remain in the raw archive.
 
 ## Protocol update
 
@@ -161,6 +143,6 @@ python3 scripts/verify-evidence.py raw/formal-unlimited-native --out audit.json
 python3 scripts/plot.py audit.json --out figures-reproduced
 ```
 
-The auditor reports 20 valid points, 60 valid windows, one explicitly recorded warmup OOM, and zero unexplained audit errors. A recorded expected failure is reported separately from successful measurements; it is not silently discarded. Install Matplotlib to regenerate figures.
+The auditor against the original raw archive reports20 valid points/60 windows;the same-host peer archive reports9 points/27 windows. Current tables select the latest declared campaign per row. A recorded expected failure is reported separately from successful measurements; it is not silently discarded. Install Matplotlib to regenerate figures.
 
 The benchmark does not exhaustively sweep connection counts, equalize durability, measure recovery, or demonstrate multi-hour cleaning/compaction steady state. Use the exact logged launch configurations and preserved exclusions when interpreting these results.
