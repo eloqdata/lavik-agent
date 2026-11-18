@@ -22,7 +22,7 @@ metadata['binary_sha256']={k:hashlib.file_digest(p.open('rb'),'sha256').hexdiges
 for name in ['server-hoststats.sar','binary-checksums.txt','lavik.sha256','lsblk-bytes.txt','lavik-help.txt','dragonfly-help.txt','kvrocks-default.conf']:
  p=ROOT/name
  if p.is_file():shutil.copy2(p,OUT/name)
-allowed={'n10000000-native-unlimited','n100000000-native-unlimited','n100000000-native-unlimited-tiered'}
+allowed={'n10000000-native-unlimited','n100000000-native-unlimited','n100000000-native-unlimited-tiered','n100000000-native-unlimited-tiered-listpack'}
 for product in products:
  for base in (pathlib.Path('/mnt/bench')/product).iterdir():
   if not base.is_dir() or base.name not in allowed:continue
@@ -32,5 +32,8 @@ for product in products:
   for p in files:
    if p.is_file():
     rel=p.relative_to(base);target=dest/rel;target.parent.mkdir(parents=True,exist_ok=True);shutil.copy2(p,target)
+glogs=OUT/'dragonfly-glog';glogs.mkdir(exist_ok=True)
+for p in pathlib.Path('/tmp').glob('dragonfly-x86_64.*.log'):
+ if p.is_file():shutil.copy2(p,glogs/p.name)
 with tarfile.open(ROOT/'server-evidence.tar.gz','w:gz') as t:t.add(OUT,arcname='server')
 print(ROOT/'server-evidence.tar.gz')

@@ -24,7 +24,7 @@ def parse(path):
  return metrics
 for spec in schedule:
  product,n,tiered=(spec[k] for k in ['product','records','tiered'])
- tag=f'n{n}-native-unlimited'+('-tiered' if tiered else '')
+ tag=f'n{n}-native-unlimited'+('-tiered-listpack' if tiered else '')
  pairdir=root/product/tag
  try:
   load=parse(root/product/(tag+'-load')/'ycsb.log')

@@ -19,7 +19,7 @@ This experiment compares Lavik v0.3.0, Apache Kvrocks 2.17.0, Dragonfly v2.1 and
 - Memory: each service cgroup has `MemoryMax=28G`, `MemorySwapMax=0`; engine limits are 24 GiB where available. Kvrocks uses an 8 GiB block cache. Four CPUs cover each service and its background threads. Eviction and swap are disabled.
 - Primary memory baselines have AOF and scheduled snapshots disabled. Native storage engines retain documented storage maintenance. These configurations do **not** establish equal power-loss durability.
 
-10M is the common in-memory-sized comparison. At 100M, run Lavik, Kvrocks and explicitly labeled Dragonfly experimental Hash tiering (`--tiered_prefix` and `--tiered_experimental_hash_support=true`). Verify that actual offloading occurs. Redis in-memory mode cannot be treated as a complete-dataset throughput comparison when it cannot retain the full dataset. Do not silently substitute caching/eviction or a smaller dataset.
+10M is the common in-memory-sized comparison. At 100M, run Lavik, Kvrocks and explicitly labeled Dragonfly experimental Hash tiering (`--tiered_prefix`, `--tiered_experimental_hash_support=true`, `--listpack_max_field_len=256`, and `--listpack_max_bytes=2048`). Verify that actual offloading occurs. Redis in-memory mode cannot be treated as a complete-dataset throughput comparison when it cannot retain the full dataset. Do not silently substitute caching/eviction or a smaller dataset.
 
 Seven feasible product/configuration/dataset pairs × three workload points × (60-second warmup + three 60-second runs) is 1.4 hours before loading and setup. One-minute windows do not establish long-term compaction or cleaning steady state. Product order is fixed, and repetitions are consecutive; disclose that limit.
 
@@ -90,3 +90,9 @@ The user removed all rate-limited tests before the final campaign. Earlier mixed
 ## Kvrocks readiness correction
 
 The initial 100M Kvrocks read-only triplicate overlapped post-load compaction (three active jobs were observed). Those logs and snapshots are retained under `excluded-postload-compaction/` and excluded from the final comparison. The controller was paused, the existing complete dataset was retained, and the read-only triplicate was repeated only after compaction quiescence. A new pre-C field/hash sample records the baseline after the interrupted short B warmup. The 10M Kvrocks before-C snapshot already showed zero running/pending compaction. `campaign.py --resume` resumes validated persistent datasets and skips completed configurations; it does not repeat the 100M bulk load.
+
+## Dragonfly tiering eligibility correction
+
+The initial tiered load used default hash encoding thresholds and returned `ERR Out of memory` after the last progress receipt of 13,571,474 insert operations. Those logs are preserved under `excluded-tiering-default-encoding/`; no complete load count or throughput point is inferred from that failure. The 8 × 128 B schema exceeds default listpack thresholds of 64 B per field/value and 1024 B total. The final large Dragonfly group explicitly permits 256 B fields/values and 2048 B total, as required to keep these hashes eligible for experimental tiering. Logical data and CPU/memory budgets are unchanged. The 10M RAM baseline retains default encoding settings, so Dragonfly capacity-retention comparisons also change configuration and must be labeled accordingly. Reference: [Dragonfly Hash tiering configuration](https://www.dragonflydb.io/blog/ssd-data-tiering-is-generally-available).
+
+After acquisition, Dragonfly is stopped with `SHUTDOWN NOSAVE` to avoid generating an unnecessary large snapshot of disposable test data. This happens after all measured windows and final sample validation; it changes no timed workload.

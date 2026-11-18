@@ -45,7 +45,7 @@ def wait_for_compaction(product,n,path):
 failures=[];summaries=json.loads((OUT/'summary.json').read_text()) if args.resume and (OUT/'summary.json').exists() else []
 for row in plan:
  product,n,tiered=[row[k] for k in ['product','records','tiered']]
- tag=f'n{n}-native-unlimited'+('-tiered' if tiered else '')
+ tag=f'n{n}-native-unlimited'+('-tiered-listpack' if tiered else '')
  pairdir=OUT/product/tag
  if args.resume and (pairdir/'complete.json').exists():
   print('RESUME SKIP COMPLETED',product,n,flush=True);continue

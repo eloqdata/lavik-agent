@@ -6,6 +6,12 @@ if not a.dataset.replace('-','').isalnum():p.error('invalid dataset label')
 def run(cmd,check=True):return subprocess.run(cmd,check=check,text=True,capture_output=True)
 unit='bench-db-'+a.product
 if a.action=='stop':
+ if a.product=='dragonfly' and run(['systemctl','is-active',unit],False).stdout.strip()=='active':
+  run(['redis-cli','-h','10.83.0.4','SHUTDOWN','NOSAVE'],False)
+  for _ in range(20):
+   if run(['systemctl','is-active',unit],False).stdout.strip() not in ('active','activating'):
+    print('Stopped Dragonfly with SHUTDOWN NOSAVE after acquisition');raise SystemExit(0)
+   time.sleep(1)
  r=run(['systemctl','stop',unit],False);print(r.stdout,r.stderr);raise SystemExit(r.returncode)
 # Prevent simultaneous peer processes. A failed unit with no process is harmless.
 for product in ['lavik','redis','dragonfly','kvrocks']:
@@ -35,7 +41,7 @@ else:
  cmd+=['/opt/bench/dragonfly-release/dragonfly-x86_64','--bind=10.83.0.4','--port=6379','--proactor_threads=4','--maxmemory=24gb','--cache_mode=false','--dir='+str(base),'--dbfilename=baseline','--snapshot_cron=']
 if a.tiered:
  if a.product!='dragonfly':p.error('Tiering is only supported here for Dragonfly')
- cmd+=['--tiered_prefix='+str(base/'tiered'),'--tiered_experimental_hash_support=true']
+ cmd+=['--tiered_prefix='+str(base/'tiered'),'--tiered_experimental_hash_support=true','--listpack_max_field_len=256','--listpack_max_bytes=2048']
 (base/'launch.json').write_text(json.dumps(cmd,indent=2)+'\n')
 r=run(cmd,False);print(r.stdout,r.stderr)
 if r.returncode:raise SystemExit(r.returncode)
