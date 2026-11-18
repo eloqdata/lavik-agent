@@ -1,5 +1,7 @@
 # NVMe fio diagnosis and partial SPDK results · 2026-11-18
 
+> **Follow-up:** A later small-I/O matrix reproduced the slowdown in both fio and standalone SPDK; Aerospike was also tested. See [new evidence and counterexamples](../nvme-mixed-io-diagnosis/). The no-reproduction conclusion below applies only to this first matrix.
+
 **本轮 fio 未复现之前的读延迟恶化，不能据此断定坏盘，也不能排除此前 Azure 的瞬时波动。** On the same still-running Azure allocation, all 30 measured fio windows completed without reported I/O errors. A subsequent fresh Lavik SPDK 10M B diagnostic remained slow. This report does not establish a hardware or software root cause.
 
 ## fio results

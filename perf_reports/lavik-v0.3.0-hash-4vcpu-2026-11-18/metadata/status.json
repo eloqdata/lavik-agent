@@ -1,22 +1,22 @@
 {
-  "state": "SPDK comparison incomplete; fio diagnosis complete; previous Lavik tables are historical io_uring",
+  "state": "SPDK full comparison incomplete; independent mixed-I/O reproduction and Aerospike C/B/C-recovery diagnosis complete",
   "valid_points_in_current_table": 18,
   "pending_points": [
     {
       "product": "lavik",
       "records": 10000000,
       "workload": "B",
-      "reason": "defrag tuning in progress"
+      "reason": "Full SPDK comparison incomplete; NVMe mixed-I/O diagnosis and Aerospike controls now documented"
     },
     {
       "product": "lavik",
       "records": 10000000,
       "workload": "A",
-      "reason": "defrag tuning in progress"
+      "reason": "Full SPDK comparison incomplete; NVMe mixed-I/O diagnosis and Aerospike controls now documented"
     }
   ],
   "keep_vms_running": true,
-  "diagnostic_report": "fio-diagnostics/",
+  "diagnostic_report": "nvme-mixed-io-diagnosis/",
   "large_peer_rerun": {
     "valid_points": 5,
     "valid_windows": 15,
@@ -35,5 +35,17 @@
     "100M C",
     "100M B",
     "100M A"
-  ]
+  ],
+  "nvme_reproduction": {
+    "points": 9,
+    "windows": 27,
+    "outside_lavik": true,
+    "physical_ssd_failure_proven": false
+  },
+  "aerospike_diagnosis": {
+    "records": 10000000,
+    "points": 3,
+    "windows": 9,
+    "zero_measured_client_errors": true
+  }
 }

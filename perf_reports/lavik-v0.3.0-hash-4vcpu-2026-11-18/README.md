@@ -1,5 +1,7 @@
 # Native 4-vCPU Hash YCSB comparison · 2026-11-18
 
+> **New diagnosis / 新排查结果:** The slowdown is reproduced with small mixed I/O in fio and standalone SPDK. Same-host Aerospike C/B/C-recovery measurements are complete. See [完整结果与硬件型号 / results and hardware identity](nvme-mixed-io-diagnosis/README.zh-CN.md). Physical SSD failure is not established.
+
 > **Backend correction / 后端更正（2026-11-18）:** All Lavik values and figures below are historical **Minimal / io_uring**, not SPDK. Requested **Standard / SPDK** measurements are incomplete (10M C/B completed; A interrupted; 100M not started). Do not treat these tables as an SPDK comparison. See [fio diagnosis and SPDK evidence / fio 排查与 SPDK 证据](fio-diagnostics/).
 
 Status: 10M peer data and Lavik C updated to the current allocation. Lavik 10M B/A tuning is paused; 100M peers have been rerun; Lavik 100M retains the original campaign.

@@ -1,5 +1,7 @@
 # 切换 SPDK 前的历史复测结果
 
+> **New diagnosis / 新排查结果:** The slowdown is reproduced with small mixed I/O in fio and standalone SPDK. Same-host Aerospike C/B/C-recovery measurements are complete. See [完整结果与硬件型号 / results and hardware identity](nvme-mixed-io-diagnosis/README.zh-CN.md). Physical SSD failure is not established.
+
 > **Backend correction / 后端更正（2026-11-18）:** All Lavik values and figures below are historical **Minimal / io_uring**, not SPDK. Requested **Standard / SPDK** measurements are incomplete (10M C/B completed; A interrupted; 100M not started). Do not treat these tables as an SPDK comparison. See [fio diagnosis and SPDK evidence / fio 排查与 SPDK 证据](fio-diagnostics/).
 
 已将三个对比系统和Lavik纯读更新为当前机器分配下的数据。每点三次一分钟，128连接、不限速、8×128B、关闭索引、原生部署。Lavik B/A 已复用原数据重测，但 NVMe 延迟仍不稳定，暂不进入主表。详见[调参与作废记录](tuning-retry/)。
