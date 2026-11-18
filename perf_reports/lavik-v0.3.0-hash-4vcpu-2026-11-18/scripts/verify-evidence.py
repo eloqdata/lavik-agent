@@ -4,6 +4,10 @@ import argparse,csv,hashlib,json,pathlib,re,statistics
 p=argparse.ArgumentParser();p.add_argument('root',type=pathlib.Path);p.add_argument('--out',type=pathlib.Path,default=pathlib.Path('audit.json'));a=p.parse_args()
 root=a.root;errors=[];rows=[];windows=0
 schedule=json.loads((root/'schedule.json').read_text())
+common=pathlib.Path(__file__).with_name('common.properties')
+assert hashlib.sha256(common.read_bytes()).hexdigest()==(root/'common-sha256.txt').read_text().strip(),'Common workload properties differ from the acquisition'
+props=dict(line.split('=',1) for line in common.read_text().splitlines() if line and not line.startswith('#'))
+for k,v in {'fieldcount':'8','fieldlength':'128','readallfields':'true','writeallfields':'true','redis.scanindex':'none','requestdistribution':'uniform'}.items():assert props.get(k)==v,(k,props.get(k))
 def parse(path):
  text=path.read_text();metrics={}
  for line in text.splitlines():
@@ -29,7 +33,9 @@ for spec in schedule:
    sample=json.loads((pairdir/filename).read_text())
    assert sample['configured_records']==n and sample['sample_count']>=1000
    assert sample['index_exists'] is False
-  baseline=json.loads((pairdir/'verified-load.json').read_text())['sample_sha256']
+  baseline_path=pairdir/'verified-pre-C.json'
+  if not baseline_path.exists():baseline_path=pairdir/'verified-load.json'
+  baseline=json.loads(baseline_path.read_text())['sample_sha256']
   read_only=json.loads((pairdir/(tag+'-C-t0-samples.json')).read_text())['sample_sha256']
   assert baseline==read_only,'Read-only sample hashes changed'
   for workload,target in spec['cells']:
@@ -39,7 +45,10 @@ for spec in schedule:
     folder=root/product/(label+f'-r{rep}')
     invocation=json.loads((folder/'invocation.json').read_text())
     assert '-target' not in invocation['command'],'Rate option present'
-    assert invocation['args']['threads']==128 and invocation['args']['seconds']==60
+    assert invocation['args']['threads']==128 and invocation['args']['seconds']==60 and not invocation['args']['partial']
+    if product=='kvrocks' and workload=='C' and rep==1:
+     before=json.loads((pairdir/(label+'-r1-before')/'info.json').read_text())
+     assert before.get('compaction_pending',0)==0 and before.get('num_running_compactions',0)==0,'Post-load compaction overlapped the read-only point'
     assert (folder/'READ.hdr').stat().st_size>0
     if workload!='C':assert (folder/'UPDATE.hdr').stat().st_size>0
     stats=parse(folder/'ycsb.log');runtime=stats['OVERALL']['RunTime(ms)']/1000

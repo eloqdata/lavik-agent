@@ -10,5 +10,6 @@
   "formal_windows": 63,
   "order": "C/B/A per product/dataset",
   "native_preflight": "all four products passed 1M insert operations +1003 shape samples; no scan index; no DBSIZE",
-  "superseded": "Earlier mixed-rate protocol logs are excluded from final tables; final campaign starts fresh datasets."
+  "superseded": "Earlier mixed-rate protocol logs are excluded from final tables; final campaign starts fresh datasets.",
+  "kvrocks_readiness": "Initial 100M pure-read windows overlapped post-load compaction and are excluded/preserved. Repeat after three quiescent INFO samples; no DBSIZE/scan. The 10M before-C state was already quiescent."
 }

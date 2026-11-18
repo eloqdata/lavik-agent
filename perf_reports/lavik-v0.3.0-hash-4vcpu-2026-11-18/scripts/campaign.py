@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """Sequential native-server campaign: three independent 60-second runs per point."""
-import hashlib,json,pathlib,random,statistics,subprocess,time,traceback
+import argparse,hashlib,json,pathlib,random,statistics,subprocess,time,traceback
 import redis
+parser=argparse.ArgumentParser();parser.add_argument('--resume',action='store_true');args=parser.parse_args()
 ROOT=pathlib.Path('/opt/bench');OUT=ROOT/'formal-unlimited-native';OUT.mkdir(exist_ok=True)
 SSH=['ssh','-i',str(ROOT/'server-key'),'-o','StrictHostKeyChecking=accept-new','-o','UserKnownHostsFile='+str(ROOT/'server-known-hosts'),'bench@10.83.0.4']
 PAIRS=[('lavik',10_000_000,False),('redis',10_000_000,False),('kvrocks',10_000_000,False),('dragonfly',10_000_000,False),('lavik',100_000_000,False),('kvrocks',100_000_000,False),('dragonfly',100_000_000,True)]
@@ -26,18 +27,47 @@ def phase(product,n,label,kind,workload='B',target=0):
  cmd=['python3',str(ROOT/'kit/run.py'),'--ycsb-root',str(ROOT/'YCSB-247a2d4'),'--host','10.83.0.4','--product',product,'--records',str(n),'--phase',kind,'--threads','128','--workload',workload,'--target',str(target),'--seconds','60','--out',str(OUT),'--label',label,'--execute']
  subprocess.run(cmd,check=True)
  return OUT/product/label
-failures=[];summaries=[]
+def wait_for_compaction(product,n,path):
+ if product!='kvrocks':return
+ stable=0;deadline=time.time()+3600
+ with (path/'quiescence-wait.jsonl').open('a') as log:
+  while time.time()<deadline:
+   info=r.info();debt=sum(v for k,v in info.items() if k.startswith('estimate_pending_compaction_bytes[') and isinstance(v,(int,float)))
+   record={'epoch':time.time(),'pending':info.get('compaction_pending',0),'running':info.get('num_running_compactions',0),'estimated_debt_bytes':debt,'background_errors':info.get('num_background_errors',0)}
+   log.write(json.dumps(record)+'\n');log.flush()
+   if record['background_errors']:raise RuntimeError('Kvrocks background errors')
+   stable=stable+1 if not (record['pending'] or record['running'] or debt) else 0
+   (OUT/'current.json').write_text(json.dumps({'product':product,'records':n,'state':'waiting_for_compaction',**record})+'\n')
+   print('COMPACTION WAIT',record,flush=True)
+   if stable>=3:return
+   time.sleep(10)
+ raise RuntimeError('Kvrocks did not finish post-load compaction within one hour')
+failures=[];summaries=json.loads((OUT/'summary.json').read_text()) if args.resume and (OUT/'summary.json').exists() else []
 for row in plan:
  product,n,tiered=[row[k] for k in ['product','records','tiered']]
  tag=f'n{n}-native-unlimited'+('-tiered' if tiered else '')
- pairdir=OUT/product/tag;pairdir.mkdir(parents=True,exist_ok=False)
+ pairdir=OUT/product/tag
+ if args.resume and (pairdir/'complete.json').exists():
+  print('RESUME SKIP COMPLETED',product,n,flush=True);continue
+ pairdir.mkdir(parents=True,exist_ok=args.resume)
  (OUT/'current.json').write_text(json.dumps({**row,'state':'loading','epoch':time.time()},indent=2)+'\n')
  print('PAIR START',tag,product,flush=True)
  try:
-  control('start',product,tag,tiered)
-  phase(product,n,tag+'-load','load')
-  verify(product,n,pairdir/'verified-load.json')
-  snapshot(pairdir/'after-load',product)
+  loaded=args.resume and (pairdir/'verified-load.json').exists()
+  if loaded:
+   receipt=json.loads((OUT/product/(tag+'-load')/'exit.json').read_text())
+   assert receipt['exit_code']==0 and receipt['successful_ops']==n
+   if product not in ('lavik','kvrocks'):raise RuntimeError('Cannot resume an in-memory dataset after stopping its server')
+   state=subprocess.run(SSH+['systemctl','is-active','bench-db-'+product],text=True,capture_output=True).stdout.strip()
+   if state!='active':control('start',product,tag,tiered)
+  else:
+   control('start',product,tag,tiered)
+   phase(product,n,tag+'-load','load')
+   verify(product,n,pairdir/'verified-load.json')
+   snapshot(pairdir/'after-load',product)
+  wait_for_compaction(product,n,pairdir)
+  verify(product,n,pairdir/'verified-pre-C.json')
+  (OUT/'current.json').write_text(json.dumps({**row,'state':'prepared','epoch':time.time()})+'\n')
   if tiered:
    info=r.info('tiered');(pairdir/'tiered-after-load.json').write_text(json.dumps(info,indent=2)+'\n')
    if not any(isinstance(v,(int,float)) and v>0 for k,v in info.items() if k in ('tiered_entries','tiered_entries_bytes','tiered_allocated_bytes')):

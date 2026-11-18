@@ -6,14 +6,15 @@ This experiment compares Lavik v0.3.0, Apache Kvrocks 2.17.0, Dragonfly v2.1 and
 
 ## Protocol
 
-- Server: Azure `Standard_L4aos_v5`, East US zone 3; 4 vCPUs / 32 GiB, AMD EPYC 9V45, local NVMe, Ubuntu 24.04, Linux 7.0.0-1017-azure. The topology is two physical cores with two threads/core, not four physical cores.
+- Server: Azure `Standard_L4aos_v5`, East US zone 3; 4 vCPUs / 32 GiB, AMD EPYC 9V45, local NVMe, Ubuntu 24.04 image `Canonical:ubuntu-24_04-lts:server:24.04.202610250`, Linux 7.0.0-1017-azure. The topology is two physical cores with two threads/core, not four physical cores.
 - Client: separate `Standard_L16aos_v5` in the same zone and private subnet; 16 vCPUs. Retail compute quotes at preparation: $0.610/hour server and $2.438/hour client; disks and network excluded.
 - Datasets: 10M and 100M configured records, each with eight 128-byte field values. Logical field-value payloads are 9.537 and 95.367 GiB; keys, field names and overhead are additional.
 - YCSB: `eloqdata/YCSB` commit `247a2d448ebceff11a570a622c49ece161a27ed3`. Use the **Redis binding for all four products**, `redis.scanindex=none`, uniform keys, full-field reads/updates, no scans, no TTL, no pipeline.
 - Commands: `HMSET` loads/updates eight fields; `HGETALL` reads all fields. No `_indices` sorted set or index maintenance; no Lavik-specific replacement command.
 - Concurrency: 128 business connections, one per YCSB worker, for loading, warmup and measurement; one additional persistent control/sampling connection. All formal runs are unlimited; no target-rate option is passed to YCSB.
 - Workloads A/B/C: 50/50 read/update, 95/5 read/update, and read-only. Products run sequentially. Each product/dataset runs in C/B/A order; the schedule is archived.
-- Each point: 60-second warmup, then **three independent 60-second measured runs**, fresh JVM per run. Report the arithmetic mean of three successful QPS values plus all individual values. Any averaged latency quantile is explicitly the mean of three per-run percentiles, not a pooled percentile.
+- Before Kvrocks read-only measurements, confirm post-load compaction has completed. The reproduction controller waits for three consecutive 10-second INFO samples with zero running/pending compactions and estimated compaction debt. This uses no key-count command or key scan.
+- Each point: 60-second warmup, then **three independent 60-second measured runs**, fresh JVM per run, including its own JIT/ramp-up. Report the arithmetic mean of three successful QPS values plus all individual values. Any averaged latency quantile is explicitly the mean of three per-run percentiles, not a pooled percentile.
 - A/B/C update existing keys and do not insert new records during measurements. All-field values remain 128 bytes.
 - Memory: each service cgroup has `MemoryMax=28G`, `MemorySwapMax=0`; engine limits are 24 GiB where available. Kvrocks uses an 8 GiB block cache. Four CPUs cover each service and its background threads. Eviction and swap are disabled.
 - Primary memory baselines have AOF and scheduled snapshots disabled. Native storage engines retain documented storage maintenance. These configurations do **not** establish equal power-loss durability.
@@ -85,3 +86,7 @@ Credentials, SSH keys, database files and earlier container pilot results are ex
 ## Protocol update
 
 The user removed all rate-limited tests before the final campaign. Earlier mixed-rate logs are excluded. The final unlimited-only campaign starts each product/dataset from a fresh load, avoiding write-history differences introduced by the interrupted protocol. The original completed read-only unlimited point is preserved as a superseded observation, outside the final mean tables. Formal outputs live under `/opt/bench/formal-unlimited-native`.
+
+## Kvrocks readiness correction
+
+The initial 100M Kvrocks read-only triplicate overlapped post-load compaction (three active jobs were observed). Those logs and snapshots are retained under `excluded-postload-compaction/` and excluded from the final comparison. The controller was paused, the existing complete dataset was retained, and the read-only triplicate was repeated only after compaction quiescence. A new pre-C field/hash sample records the baseline after the interrupted short B warmup. The 10M Kvrocks before-C snapshot already showed zero running/pending compaction. `campaign.py --resume` resumes validated persistent datasets and skips completed configurations; it does not repeat the 100M bulk load.

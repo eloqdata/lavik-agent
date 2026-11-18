@@ -11,9 +11,10 @@ colors={'lavik':'#2563eb','redis':'#ea580c','kvrocks':'#9333ea','dragonfly':'#15
 names={'lavik':'Lavik','redis':'Redis','kvrocks':'Kvrocks','dragonfly':'Dragonfly'}
 workloads=['C','B','A'];labels=['C: 100% read','B: 95% read','A: 50% read']
 plt.rcParams.update({'font.size':10,'axes.spines.top':False,'axes.spines.right':False,'axes.titleweight':'bold','svg.fonttype':'path'})
+datasets=sorted({r['records'] for r in rows})
 for kind in ['throughput','read-p99']:
- fig,axes=plt.subplots(1,2,figsize=(12,4.8),sharey=True)
- for ax,n in zip(axes,[10000000,100000000]):
+ fig,grid=plt.subplots(1,len(datasets),figsize=(6*len(datasets),4.8),sharey=True,squeeze=False)
+ for ax,n in zip(grid[0],datasets):
   present=[x for x in colors if any(r['product']==x and r['records']==n for r in rows)]
   width=.18
   for i,product in enumerate(present):
@@ -34,8 +35,8 @@ for kind in ['throughput','read-p99']:
   else:ax.set_ylabel('Mean of three READ p99 values (ms, log scale)');ax.set_yscale('log');ax.margins(y=.25)
  fig.suptitle('8 × 128 B Hash · native processes · 4 vCPU · 128 connections',fontsize=13,fontweight='bold')
  fig.legend(handles=[Patch(facecolor=c,label=names[x]) for x,c in colors.items()],loc='lower center',ncol=4,bbox_to_anchor=(.5,.07),frameon=False)
- note='Three 60-second runs per point. Throughput whiskers: min–max. '
- note+='100M Dragonfly uses experimental Hash tiering; Redis RAM mode is not run at 100M.'
+ note=('Three 60-second runs per point. Throughput whiskers: min–max. ' if kind=='throughput' else 'Mean of three per-run READ p99 values. Logarithmic latency axis. ')
+ note+=('100M Dragonfly uses experimental Hash tiering; Redis RAM mode is not run at 100M.' if 100000000 in datasets else '10M comparison; 100M acquisition is in progress.')
  fig.text(.5,.02,note,ha='center',fontsize=8,color='#4b5563')
  fig.tight_layout(rect=[0,.14,1,.94])
  fig.savefig(a.out/(kind+'.svg'),bbox_inches='tight');fig.savefig(a.out/(kind+'.png'),dpi=160,bbox_inches='tight');plt.close(fig)
