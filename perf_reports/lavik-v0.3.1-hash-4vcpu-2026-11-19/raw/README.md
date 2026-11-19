@@ -7,3 +7,5 @@
 原始数据位于解压目录中各自的 `client-evidence.tgz` / `server-evidence.tgz`，fio 位于 `qualified-fio/evidence.tgz`。再分别解压到对应结果目录的 `raw/client` 与 `raw/server` 即可运行独立审计脚本。
 
 [分片与完整归档的字节数和 SHA-256](manifest.json)。
+
+归档在释放机器前制作，里面的VM状态属于当时快照；最终资源释放状态见[仓库当前凭据](../v031-v5-comparison/cloud-release.json)。

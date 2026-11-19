@@ -1,7 +1,104 @@
 {
-  "status": "pending_upload_verification",
-  "requested_action": "Delete the two dedicated benchmark VMs and their associated resources after repository upload is verified.",
-  "server": "bench-server-v5regional",
-  "client": "bench-client-compute",
-  "resource_group": "lavik-hash-bench-20261118"
+  "status": "released",
+  "authorization": "User requested upload of reports/raw data/parameters and then release of the benchmark machines.",
+  "resource_group": "lavik-hash-bench-20261118",
+  "repository_commit": "76921a01dfbbc0ed9eddae629625430185fc1b5d",
+  "upload_verification": {
+    "files": 104,
+    "root_sha": "43949608de3ac7197ec6f4be48e842f45685f53f",
+    "report_tree": "77859217d9422b200988cad29318b403b4cca0a0",
+    "all_file_git_hashes_match": true,
+    "unrelated_entries_unchanged": true,
+    "commit": "76921a01dfbbc0ed9eddae629625430185fc1b5d",
+    "published": true,
+    "verified": true,
+    "repository": "eloqdata/lavik-agent",
+    "path": "perf_reports/lavik-v0.3.1-hash-4vcpu-2026-11-19",
+    "binary_parts": 22,
+    "bundle_sha256": "b51515a4d25cd664b292789b163e25e31cccbab44e3431cdc5db596dfeffba6e"
+  },
+  "started_at_utc": "2026-11-19T15:49:40.353056+00:00",
+  "resources_before": [
+    {
+      "id": "/subscriptions/36c40ec7-60f5-4337-a221-9cdf25427020/resourceGroups/lavik-hash-bench-20261118/providers/Microsoft.Network/virtualNetworks/bench-vnet",
+      "name": "bench-vnet",
+      "type": "Microsoft.Network/virtualNetworks"
+    },
+    {
+      "id": "/subscriptions/36c40ec7-60f5-4337-a221-9cdf25427020/resourceGroups/lavik-hash-bench-20261118/providers/Microsoft.Network/networkSecurityGroups/bench-nsg",
+      "name": "bench-nsg",
+      "type": "Microsoft.Network/networkSecurityGroups"
+    },
+    {
+      "id": "/subscriptions/36c40ec7-60f5-4337-a221-9cdf25427020/resourceGroups/lavik-hash-bench-20261118/providers/Microsoft.Network/publicIPAddresses/bench-client-computePublicIP",
+      "name": "bench-client-computePublicIP",
+      "type": "Microsoft.Network/publicIPAddresses"
+    },
+    {
+      "id": "/subscriptions/36c40ec7-60f5-4337-a221-9cdf25427020/resourceGroups/lavik-hash-bench-20261118/providers/Microsoft.Network/networkInterfaces/bench-client-computeVMNic",
+      "name": "bench-client-computeVMNic",
+      "type": "Microsoft.Network/networkInterfaces"
+    },
+    {
+      "id": "/subscriptions/36c40ec7-60f5-4337-a221-9cdf25427020/resourceGroups/lavik-hash-bench-20261118/providers/Microsoft.Compute/virtualMachines/bench-client-compute",
+      "name": "bench-client-compute",
+      "type": "Microsoft.Compute/virtualMachines"
+    },
+    {
+      "id": "/subscriptions/36c40ec7-60f5-4337-a221-9cdf25427020/resourceGroups/LAVIK-HASH-BENCH-20261118/providers/Microsoft.Compute/disks/bench-client-compute_OsDisk_1_0f963cf7de664b75a309d4e2694a828d",
+      "name": "bench-client-compute_OsDisk_1_0f963cf7de664b75a309d4e2694a828d",
+      "type": "Microsoft.Compute/disks"
+    },
+    {
+      "id": "/subscriptions/36c40ec7-60f5-4337-a221-9cdf25427020/resourceGroups/lavik-hash-bench-20261118/providers/Microsoft.Network/publicIPAddresses/bench-server-v5regionalPublicIP",
+      "name": "bench-server-v5regionalPublicIP",
+      "type": "Microsoft.Network/publicIPAddresses"
+    },
+    {
+      "id": "/subscriptions/36c40ec7-60f5-4337-a221-9cdf25427020/resourceGroups/lavik-hash-bench-20261118/providers/Microsoft.Network/networkInterfaces/bench-server-v5regionalVMNic",
+      "name": "bench-server-v5regionalVMNic",
+      "type": "Microsoft.Network/networkInterfaces"
+    },
+    {
+      "id": "/subscriptions/36c40ec7-60f5-4337-a221-9cdf25427020/resourceGroups/lavik-hash-bench-20261118/providers/Microsoft.Compute/virtualMachines/bench-server-v5regional",
+      "name": "bench-server-v5regional",
+      "type": "Microsoft.Compute/virtualMachines"
+    },
+    {
+      "id": "/subscriptions/36c40ec7-60f5-4337-a221-9cdf25427020/resourceGroups/LAVIK-HASH-BENCH-20261118/providers/Microsoft.Compute/disks/bench-server-v5regional_OsDisk_1_aa9e969734f04495b0b1ab1a5d0e5e8c",
+      "name": "bench-server-v5regional_OsDisk_1_aa9e969734f04495b0b1ab1a5d0e5e8c",
+      "type": "Microsoft.Compute/disks"
+    }
+  ],
+  "virtual_machines": [
+    {
+      "name": "bench-server-v5regional",
+      "sku": "Standard_L4aos_v5",
+      "vm_id": "/subscriptions/36c40ec7-60f5-4337-a221-9cdf25427020/resourceGroups/lavik-hash-bench-20261118/providers/Microsoft.Compute/virtualMachines/bench-server-v5regional",
+      "os_disk_id": "/subscriptions/36c40ec7-60f5-4337-a221-9cdf25427020/resourceGroups/lavik-hash-bench-20261118/providers/Microsoft.Compute/disks/bench-server-v5regional_OsDisk_1_aa9e969734f04495b0b1ab1a5d0e5e8c",
+      "nic_ids": [
+        "/subscriptions/36c40ec7-60f5-4337-a221-9cdf25427020/resourceGroups/lavik-hash-bench-20261118/providers/Microsoft.Network/networkInterfaces/bench-server-v5regionalVMNic"
+      ],
+      "public_ip_ids": [
+        "/subscriptions/36c40ec7-60f5-4337-a221-9cdf25427020/resourceGroups/lavik-hash-bench-20261118/providers/Microsoft.Network/publicIPAddresses/bench-server-v5regionalPublicIP"
+      ],
+      "deleted_at_utc": "2026-11-19T15:51:21.339865+00:00"
+    },
+    {
+      "name": "bench-client-compute",
+      "sku": "Standard_F16als_v7",
+      "vm_id": "/subscriptions/36c40ec7-60f5-4337-a221-9cdf25427020/resourceGroups/lavik-hash-bench-20261118/providers/Microsoft.Compute/virtualMachines/bench-client-compute",
+      "os_disk_id": "/subscriptions/36c40ec7-60f5-4337-a221-9cdf25427020/resourceGroups/lavik-hash-bench-20261118/providers/Microsoft.Compute/disks/bench-client-compute_OsDisk_1_0f963cf7de664b75a309d4e2694a828d",
+      "nic_ids": [
+        "/subscriptions/36c40ec7-60f5-4337-a221-9cdf25427020/resourceGroups/lavik-hash-bench-20261118/providers/Microsoft.Network/networkInterfaces/bench-client-computeVMNic"
+      ],
+      "public_ip_ids": [
+        "/subscriptions/36c40ec7-60f5-4337-a221-9cdf25427020/resourceGroups/lavik-hash-bench-20261118/providers/Microsoft.Network/publicIPAddresses/bench-client-computePublicIP"
+      ],
+      "deleted_at_utc": "2026-11-19T15:51:15.225886+00:00"
+    }
+  ],
+  "remaining_resources": [],
+  "resource_group_retained_empty": true,
+  "completed_at_utc": "2026-11-19T15:51:56.633039+00:00"
 }

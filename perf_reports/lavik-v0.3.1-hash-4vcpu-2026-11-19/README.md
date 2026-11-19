@@ -83,3 +83,9 @@ Dragonfly 1亿条50:50在预热约20秒后拒绝写入，used_memory接近24 GiB
 运行`python3 restore.py`可以校验分片并恢复完整包到`restored/`。完整包包含Lavik及竞品的客户端/服务端原始归档、fio的九轮原始数据、所有配置和复现脚本。[归档清单](raw/manifest.json)。公开目录另外提供可直接审阅的运行参数和脚本。
 
 成功的测量已独立复算操作数、运行时间、读写比例和三轮均值；运行状态检查核验CPU绑定、内存OOM计数、纯读前后样本、同一NVMe身份与二进制未改变。用户要求上传校验后释放两台测试VM及关联资源，当前执行状态与凭据见[资源状态](v031-v5-comparison/cloud-release.json)。
+
+### 云资源已释放
+
+报告和全部原始分片发布并逐文件校验后，已删除本次服务端L4aos_v5、客户端F16als_v7，以及各自OS盘、网卡、公网IP和专用VNet/NSG，共10个资源；资源组内资源数为0，仅保留空资源组。完成时间见[释放凭据](v031-v5-comparison/cloud-release.json)。
+
+完整原始归档为释放前制作的不可变快照，其中的`final-vms.json`及资源状态反映当时状态；当前释放结果以仓库外层的`cloud-release.json`为准。

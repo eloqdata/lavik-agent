@@ -8,3 +8,5 @@ with partial.open('wb') as out:
 assert partial.stat().st_size==m['bytes'];assert hashlib.file_digest(partial.open('rb'),'sha256').hexdigest()==m['sha256'];partial.replace(archive)
 with tarfile.open(archive) as t:t.extractall(target,filter='data')
 print('Verified and extracted:',target)
+
+print('Latest cloud release receipt:',root/'v031-v5-comparison/cloud-release.json')
