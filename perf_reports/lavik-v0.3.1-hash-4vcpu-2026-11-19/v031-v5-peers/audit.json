@@ -1,0 +1,539 @@
+{
+  "valid_points": 14,
+  "valid_measurement_windows": 42,
+  "loads": [
+    {
+      "path": "dragonfly/n10000000-native-unlimited-load",
+      "records": 10000000.0
+    },
+    {
+      "path": "dragonfly/n100000000-native-unlimited-tiered-listpack-load",
+      "records": 100000000.0
+    },
+    {
+      "path": "kvrocks/n10000000-native-unlimited-load",
+      "records": 10000000.0
+    },
+    {
+      "path": "kvrocks/n100000000-native-unlimited-load",
+      "records": 100000000.0
+    },
+    {
+      "path": "redis/n10000000-native-unlimited-load",
+      "records": 10000000.0
+    }
+  ],
+  "sample_receipts_validated": 28,
+  "summary": [
+    {
+      "scope": ".",
+      "product": "dragonfly",
+      "records": 10000000,
+      "workload": "A",
+      "label": "n10000000-native-unlimited-A-t0",
+      "mean_qps": 295825.9797663074,
+      "qps_min": 292241.31094005133,
+      "qps_max": 300328.5569088758,
+      "read_mean_us": 426.54032231444336,
+      "read_p999_us": 1571.3333333333333,
+      "read_p999_min_us": 1536.0,
+      "read_p999_max_us": 1590.0,
+      "update_p999_us": 1622.6666666666667,
+      "runs": [
+        {
+          "path": "dragonfly/n10000000-native-unlimited-A-t0-r1",
+          "qps": 300328.5569088758,
+          "runtime_seconds": 60.017,
+          "successful_ops": 18024819.0
+        },
+        {
+          "path": "dragonfly/n10000000-native-unlimited-A-t0-r2",
+          "qps": 294908.071449995,
+          "runtime_seconds": 60.014,
+          "successful_ops": 17698613.0
+        },
+        {
+          "path": "dragonfly/n10000000-native-unlimited-A-t0-r3",
+          "qps": 292241.31094005133,
+          "runtime_seconds": 60.018,
+          "successful_ops": 17539739.0
+        }
+      ]
+    },
+    {
+      "scope": ".",
+      "product": "dragonfly",
+      "records": 10000000,
+      "workload": "B",
+      "label": "n10000000-native-unlimited-B-t0",
+      "mean_qps": 343669.7154966489,
+      "qps_min": 341614.1657502749,
+      "qps_max": 344853.01762921986,
+      "read_mean_us": 369.95519897280496,
+      "read_p999_us": 1408.0,
+      "read_p999_min_us": 1367.0,
+      "read_p999_max_us": 1443.0,
+      "update_p999_us": 1439.6666666666667,
+      "runs": [
+        {
+          "path": "dragonfly/n10000000-native-unlimited-B-t0-r1",
+          "qps": 344541.963110452,
+          "runtime_seconds": 60.017,
+          "successful_ops": 20678375.0
+        },
+        {
+          "path": "dragonfly/n10000000-native-unlimited-B-t0-r2",
+          "qps": 344853.01762921986,
+          "runtime_seconds": 60.014,
+          "successful_ops": 20696009.0
+        },
+        {
+          "path": "dragonfly/n10000000-native-unlimited-B-t0-r3",
+          "qps": 341614.1657502749,
+          "runtime_seconds": 60.018,
+          "successful_ops": 20502999.0
+        }
+      ]
+    },
+    {
+      "scope": ".",
+      "product": "dragonfly",
+      "records": 10000000,
+      "workload": "C",
+      "label": "n10000000-native-unlimited-C-t0",
+      "mean_qps": 353322.19700386946,
+      "qps_min": 352626.6182375581,
+      "qps_max": 354572.9900858119,
+      "read_mean_us": 360.1260448337119,
+      "read_p999_us": 1259.0,
+      "read_p999_min_us": 1244.0,
+      "read_p999_max_us": 1283.0,
+      "update_p999_us": null,
+      "runs": [
+        {
+          "path": "dragonfly/n10000000-native-unlimited-C-t0-r1",
+          "qps": 352766.9826882383,
+          "runtime_seconds": 60.017,
+          "successful_ops": 21172016.0
+        },
+        {
+          "path": "dragonfly/n10000000-native-unlimited-C-t0-r2",
+          "qps": 352626.6182375581,
+          "runtime_seconds": 60.019,
+          "successful_ops": 21164297.0
+        },
+        {
+          "path": "dragonfly/n10000000-native-unlimited-C-t0-r3",
+          "qps": 354572.9900858119,
+          "runtime_seconds": 60.015,
+          "successful_ops": 21279698.0
+        }
+      ]
+    },
+    {
+      "scope": ".",
+      "product": "dragonfly",
+      "records": 100000000,
+      "workload": "B",
+      "label": "n100000000-native-unlimited-tiered-listpack-B-t0",
+      "mean_qps": 288998.81613715296,
+      "qps_min": 288904.0803745481,
+      "qps_max": 289085.05356458575,
+      "read_mean_us": 440.2287566052481,
+      "read_p999_us": 3536.3333333333335,
+      "read_p999_min_us": 2997.0,
+      "read_p999_max_us": 4073.0,
+      "update_p999_us": 4427.666666666667,
+      "runs": [
+        {
+          "path": "dragonfly/n100000000-native-unlimited-tiered-listpack-B-t0-r1",
+          "qps": 288904.0803745481,
+          "runtime_seconds": 60.019,
+          "successful_ops": 17339734.0
+        },
+        {
+          "path": "dragonfly/n100000000-native-unlimited-tiered-listpack-B-t0-r2",
+          "qps": 289085.05356458575,
+          "runtime_seconds": 60.021,
+          "successful_ops": 17351174.0
+        },
+        {
+          "path": "dragonfly/n100000000-native-unlimited-tiered-listpack-B-t0-r3",
+          "qps": 289007.314472325,
+          "runtime_seconds": 60.018,
+          "successful_ops": 17345641.0
+        }
+      ]
+    },
+    {
+      "scope": ".",
+      "product": "dragonfly",
+      "records": 100000000,
+      "workload": "C",
+      "label": "n100000000-native-unlimited-tiered-listpack-C-t0",
+      "mean_qps": 281818.0901824179,
+      "qps_min": 277319.5761200993,
+      "qps_max": 288726.41996701044,
+      "read_mean_us": 451.8423123989702,
+      "read_p999_us": 1868.6666666666667,
+      "read_p999_min_us": 1725.0,
+      "read_p999_max_us": 1956.0,
+      "update_p999_us": null,
+      "runs": [
+        {
+          "path": "dragonfly/n100000000-native-unlimited-tiered-listpack-C-t0-r1",
+          "qps": 279408.274460144,
+          "runtime_seconds": 60.016,
+          "successful_ops": 16768967.0
+        },
+        {
+          "path": "dragonfly/n100000000-native-unlimited-tiered-listpack-C-t0-r2",
+          "qps": 277319.5761200993,
+          "runtime_seconds": 60.017,
+          "successful_ops": 16643889.0
+        },
+        {
+          "path": "dragonfly/n100000000-native-unlimited-tiered-listpack-C-t0-r3",
+          "qps": 288726.41996701044,
+          "runtime_seconds": 60.019,
+          "successful_ops": 17329071.0
+        }
+      ]
+    },
+    {
+      "scope": ".",
+      "product": "kvrocks",
+      "records": 10000000,
+      "workload": "A",
+      "label": "n10000000-native-unlimited-A-t0",
+      "mean_qps": 34525.02288274547,
+      "qps_min": 34213.24913777304,
+      "qps_max": 34802.3393371878,
+      "read_mean_us": 3668.923877718805,
+      "read_p999_us": 23071.0,
+      "read_p999_min_us": 22527.0,
+      "read_p999_max_us": 23791.0,
+      "update_p999_us": 23353.666666666668,
+      "runs": [
+        {
+          "path": "kvrocks/n10000000-native-unlimited-A-t0-r1",
+          "qps": 34802.3393371878,
+          "runtime_seconds": 60.017,
+          "successful_ops": 2088732.0
+        },
+        {
+          "path": "kvrocks/n10000000-native-unlimited-A-t0-r2",
+          "qps": 34213.24913777304,
+          "runtime_seconds": 60.019,
+          "successful_ops": 2053445.0
+        },
+        {
+          "path": "kvrocks/n10000000-native-unlimited-A-t0-r3",
+          "qps": 34559.48017327557,
+          "runtime_seconds": 60.02,
+          "successful_ops": 2074260.0
+        }
+      ]
+    },
+    {
+      "scope": ".",
+      "product": "kvrocks",
+      "records": 10000000,
+      "workload": "B",
+      "label": "n10000000-native-unlimited-B-t0",
+      "mean_qps": 78394.37921904225,
+      "qps_min": 76392.79882701856,
+      "qps_max": 80308.97397447433,
+      "read_mean_us": 1627.102960122931,
+      "read_p999_us": 9164.333333333334,
+      "read_p999_min_us": 8415.0,
+      "read_p999_max_us": 9743.0,
+      "update_p999_us": 9337.666666666666,
+      "runs": [
+        {
+          "path": "kvrocks/n10000000-native-unlimited-B-t0-r1",
+          "qps": 80308.97397447433,
+          "runtime_seconds": 60.018,
+          "successful_ops": 4819984.0
+        },
+        {
+          "path": "kvrocks/n10000000-native-unlimited-B-t0-r2",
+          "qps": 76392.79882701856,
+          "runtime_seconds": 60.018,
+          "successful_ops": 4584943.0
+        },
+        {
+          "path": "kvrocks/n10000000-native-unlimited-B-t0-r3",
+          "qps": 78481.36485563386,
+          "runtime_seconds": 60.021,
+          "successful_ops": 4710530.0
+        }
+      ]
+    },
+    {
+      "scope": ".",
+      "product": "kvrocks",
+      "records": 10000000,
+      "workload": "C",
+      "label": "n10000000-native-unlimited-C-t0",
+      "mean_qps": 79899.47186160651,
+      "qps_min": 79840.33725464057,
+      "qps_max": 80003.2990102969,
+      "read_mean_us": 1597.839095627884,
+      "read_p999_us": 6411.0,
+      "read_p999_min_us": 6367.0,
+      "read_p999_max_us": 6467.0,
+      "update_p999_us": null,
+      "runs": [
+        {
+          "path": "kvrocks/n10000000-native-unlimited-C-t0-r1",
+          "qps": 79854.77931988204,
+          "runtime_seconds": 60.019,
+          "successful_ops": 4792804.0
+        },
+        {
+          "path": "kvrocks/n10000000-native-unlimited-C-t0-r2",
+          "qps": 80003.2990102969,
+          "runtime_seconds": 60.018,
+          "successful_ops": 4801638.0
+        },
+        {
+          "path": "kvrocks/n10000000-native-unlimited-C-t0-r3",
+          "qps": 79840.33725464057,
+          "runtime_seconds": 60.014,
+          "successful_ops": 4791538.0
+        }
+      ]
+    },
+    {
+      "scope": ".",
+      "product": "kvrocks",
+      "records": 100000000,
+      "workload": "A",
+      "label": "n100000000-native-unlimited-A-t0",
+      "mean_qps": 14564.312385532414,
+      "qps_min": 14425.681867408653,
+      "qps_max": 14668.771450468163,
+      "read_mean_us": 8772.825826294522,
+      "read_p999_us": 29145.666666666668,
+      "read_p999_min_us": 27455.0,
+      "read_p999_max_us": 30655.0,
+      "update_p999_us": 29220.333333333332,
+      "runs": [
+        {
+          "path": "kvrocks/n100000000-native-unlimited-A-t0-r1",
+          "qps": 14598.483838720425,
+          "runtime_seconds": 60.02,
+          "successful_ops": 876201.0
+        },
+        {
+          "path": "kvrocks/n100000000-native-unlimited-A-t0-r2",
+          "qps": 14668.771450468163,
+          "runtime_seconds": 60.022,
+          "successful_ops": 880449.0
+        },
+        {
+          "path": "kvrocks/n100000000-native-unlimited-A-t0-r3",
+          "qps": 14425.681867408653,
+          "runtime_seconds": 60.019,
+          "successful_ops": 865815.0
+        }
+      ]
+    },
+    {
+      "scope": ".",
+      "product": "kvrocks",
+      "records": 100000000,
+      "workload": "B",
+      "label": "n100000000-native-unlimited-B-t0",
+      "mean_qps": 21740.28223114616,
+      "qps_min": 21673.758747084303,
+      "qps_max": 21781.459822395496,
+      "read_mean_us": 5873.842145794884,
+      "read_p999_us": 17588.333333333332,
+      "read_p999_min_us": 16367.0,
+      "read_p999_max_us": 18271.0,
+      "update_p999_us": 17524.333333333332,
+      "runs": [
+        {
+          "path": "kvrocks/n100000000-native-unlimited-B-t0-r1",
+          "qps": 21673.758747084303,
+          "runtime_seconds": 60.02,
+          "successful_ops": 1300859.0
+        },
+        {
+          "path": "kvrocks/n100000000-native-unlimited-B-t0-r2",
+          "qps": 21781.459822395496,
+          "runtime_seconds": 60.021,
+          "successful_ops": 1307345.0
+        },
+        {
+          "path": "kvrocks/n100000000-native-unlimited-B-t0-r3",
+          "qps": 21765.62812395868,
+          "runtime_seconds": 60.02,
+          "successful_ops": 1306373.0
+        }
+      ]
+    },
+    {
+      "scope": ".",
+      "product": "kvrocks",
+      "records": 100000000,
+      "workload": "C",
+      "label": "n100000000-native-unlimited-C-t0",
+      "mean_qps": 23031.173257330585,
+      "qps_min": 22995.718236646564,
+      "qps_max": 23049.65011662779,
+      "read_mean_us": 5547.225392260157,
+      "read_p999_us": 17876.333333333332,
+      "read_p999_min_us": 17647.0,
+      "read_p999_max_us": 18095.0,
+      "update_p999_us": null,
+      "runs": [
+        {
+          "path": "kvrocks/n100000000-native-unlimited-C-t0-r1",
+          "qps": 22995.718236646564,
+          "runtime_seconds": 60.022,
+          "successful_ops": 1380249.0
+        },
+        {
+          "path": "kvrocks/n100000000-native-unlimited-C-t0-r2",
+          "qps": 23049.65011662779,
+          "runtime_seconds": 60.02,
+          "successful_ops": 1383440.0
+        },
+        {
+          "path": "kvrocks/n100000000-native-unlimited-C-t0-r3",
+          "qps": 23048.151418717407,
+          "runtime_seconds": 60.019,
+          "successful_ops": 1383327.0
+        }
+      ]
+    },
+    {
+      "scope": ".",
+      "product": "redis",
+      "records": 10000000,
+      "workload": "A",
+      "label": "n10000000-native-unlimited-A-t0",
+      "mean_qps": 235088.85332767272,
+      "qps_min": 233068.02959112267,
+      "qps_max": 237922.80391895495,
+      "read_mean_us": 542.581912750745,
+      "read_p999_us": 1360.3333333333333,
+      "read_p999_min_us": 1261.0,
+      "read_p999_max_us": 1417.0,
+      "update_p999_us": 1379.6666666666667,
+      "runs": [
+        {
+          "path": "redis/n10000000-native-unlimited-A-t0-r1",
+          "qps": 234275.72647294056,
+          "runtime_seconds": 60.016,
+          "successful_ops": 14060292.0
+        },
+        {
+          "path": "redis/n10000000-native-unlimited-A-t0-r2",
+          "qps": 233068.02959112267,
+          "runtime_seconds": 60.018,
+          "successful_ops": 13988277.0
+        },
+        {
+          "path": "redis/n10000000-native-unlimited-A-t0-r3",
+          "qps": 237922.80391895495,
+          "runtime_seconds": 60.016,
+          "successful_ops": 14279175.0
+        }
+      ]
+    },
+    {
+      "scope": ".",
+      "product": "redis",
+      "records": 10000000,
+      "workload": "B",
+      "label": "n10000000-native-unlimited-B-t0",
+      "mean_qps": 250329.70738922514,
+      "qps_min": 247375.76434129194,
+      "qps_max": 252051.6669721255,
+      "read_mean_us": 509.1390640054669,
+      "read_p999_us": 1230.6666666666667,
+      "read_p999_min_us": 1210.0,
+      "read_p999_max_us": 1247.0,
+      "update_p999_us": 1244.0,
+      "runs": [
+        {
+          "path": "redis/n10000000-native-unlimited-B-t0-r1",
+          "qps": 247375.76434129194,
+          "runtime_seconds": 60.019,
+          "successful_ops": 14847246.0
+        },
+        {
+          "path": "redis/n10000000-native-unlimited-B-t0-r2",
+          "qps": 251561.69085425793,
+          "runtime_seconds": 60.017,
+          "successful_ops": 15097978.0
+        },
+        {
+          "path": "redis/n10000000-native-unlimited-B-t0-r3",
+          "qps": 252051.6669721255,
+          "runtime_seconds": 60.019,
+          "successful_ops": 15127889.0
+        }
+      ]
+    },
+    {
+      "scope": ".",
+      "product": "redis",
+      "records": 10000000,
+      "workload": "C",
+      "label": "n10000000-native-unlimited-C-t0",
+      "mean_qps": 252076.39279418119,
+      "qps_min": 249823.25891369543,
+      "qps_max": 255247.69235895897,
+      "read_mean_us": 505.24532260676114,
+      "read_p999_us": 1268.0,
+      "read_p999_min_us": 1220.0,
+      "read_p999_max_us": 1354.0,
+      "update_p999_us": null,
+      "runs": [
+        {
+          "path": "redis/n10000000-native-unlimited-C-t0-r1",
+          "qps": 255247.69235895897,
+          "runtime_seconds": 60.018,
+          "successful_ops": 15319456.0
+        },
+        {
+          "path": "redis/n10000000-native-unlimited-C-t0-r2",
+          "qps": 249823.25891369543,
+          "runtime_seconds": 60.02,
+          "successful_ops": 14994392.0
+        },
+        {
+          "path": "redis/n10000000-native-unlimited-C-t0-r3",
+          "qps": 251158.22710988918,
+          "runtime_seconds": 60.015,
+          "successful_ops": 15073261.0
+        }
+      ]
+    }
+  ],
+  "invalid_or_interrupted": [],
+  "incomplete_points": [],
+  "failed_warmups": [
+    {
+      "path": "dragonfly/n100000000-native-unlimited-tiered-listpack-A-t0-warmup",
+      "receipt": {
+        "exit_code": 2,
+        "finished_epoch": 1795101353.6967907,
+        "errors": [
+          "Missing complete measurements",
+          "No successful operations",
+          "Measurement ended early"
+        ],
+        "successful_ops": 0,
+        "runtime_seconds": 0.0,
+        "successful_qps": null,
+        "metrics": {}
+      }
+    }
+  ]
+}

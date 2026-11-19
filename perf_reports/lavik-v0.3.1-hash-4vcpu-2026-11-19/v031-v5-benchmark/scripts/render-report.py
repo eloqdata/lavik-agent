@@ -1,0 +1,31 @@
+import pathlib,json,statistics,sys,html
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+root=pathlib.Path(sys.argv[1]);out=pathlib.Path(sys.argv[2]);audit=json.loads((out/'audit.json').read_text());runtime=json.loads((out/'runtime-audit.json').read_text());baseline=json.loads((out/'v030-baseline-audit.json').read_text())['summary'];old={(r['records'],r['workload']):r for r in baseline};rows=[]
+for r in audit['summary']:
+ # Labels encode workload and optional mature condition; separate from fresh CBA.
+ mature='mature' in r['label'];matching=[x for x in runtime['windows'] if x['scope']==r['scope'] and x['label'].startswith(r['label']+'-r')];assert len(matching)==3
+ row={**r,'condition':'mature' if mature else 'fresh-CBA','gc_success_per_window':[x['gc_success_during_sampled_window'] for x in matching],'space_delta_GiB_per_window':[x['unavailable_GiB_delta'] for x in matching],'space_median_GiB_per_window':[x['unavailable_GiB_median'] for x in matching]}
+ if not mature:
+  b=old[r['records'],r['workload']];row.update(v030_qps=b['mean_qps'],qps_change_percent=(r['mean_qps']/b['mean_qps']-1)*100,v030_read_p999_us=b['read_p999_us'],v030_write_p999_us=b['update_p999_us'])
+ rows.append(row)
+rows.sort(key=lambda r:(r['records'],r['condition']=='mature','CBA'.index(r['workload'])))
+(out/'results.json').write_text(json.dumps(rows,indent=2)+'\n')
+fig,axes=plt.subplots(1,2,figsize=(11,4),layout='constrained')
+for ax,n in zip(axes,[10000000,100000000]):
+ rr=[r for r in rows if r['records']==n and r['condition']=='fresh-CBA'];x=list(range(len(rr)));ax.bar([i-.18 for i in x],[r['v030_qps']/1000 for r in rr],width=.36,color='#b0bec9',label='v0.3.0');ax.bar([i+.18 for i in x],[r['mean_qps']/1000 for r in rr],width=.36,color='#167c9e',label='v0.3.1');ax.set(xticks=x,xticklabels=['Read-only','95:5','50:50'],title=f'{n//1000000} million records',ylabel='Thousands of operations / second');ax.set_ylim(0,None);ax.grid(axis='y',alpha=.2);ax.set_axisbelow(True);ax.legend(frameon=False)
+fig.savefig(out/'throughput.png',dpi=170);fig.savefig(out/'throughput.svg');plt.close(fig)
+def table(group):
+ a='<table><tr><th>数据量 / 场景</th><th>QPS</th><th>读 p999</th><th>写 p999</th><th>三轮成功 defrag 次数</th><th>三轮容量中位数 GiB</th></tr>'
+ for r in group:
+  w={'C':'纯读','B':'95:5','A':'50:50'}[r['workload']];wp='—' if r['update_p999_us'] is None else f"{r['update_p999_us']/1000:.3f} ms";cells=[f"{r['records']//1000000}M / {w}",f"{r['mean_qps']:,.0f}",f"{r['read_p999_us']/1000:.3f} ms",wp,' / '.join(str(int(x)) for x in r['gc_success_per_window']),' / '.join(f'{x:.3f}' for x in r['space_median_GiB_per_window'])];a+='<tr>'+''.join('<td>'+html.escape(c)+'</td>' for c in cells)+'</tr>'
+ return a+'</table>'
+fresh=[r for r in rows if r['condition']=='fresh-CBA'];mature=[r for r in rows if r['condition']=='mature']
+comparison='<table><tr><th>数据量 / 场景</th><th>QPS 变化</th><th>读 p999：v0.3.0 → v0.3.1</th><th>写 p999：v0.3.0 → v0.3.1</th></tr>'
+for r in fresh:
+ w={'C':'纯读','B':'95:5','A':'50:50'}[r['workload']];wp='—' if r['update_p999_us'] is None else f"{r['v030_write_p999_us']/1000:.3f} → {r['update_p999_us']/1000:.3f} ms";comparison+='<tr>'+''.join('<td>'+x+'</td>' for x in [f"{r['records']//1000000}M / {w}",f"{r['qps_change_percent']:+.1f}%",f"{r['v030_read_p999_us']/1000:.3f} → {r['read_p999_us']/1000:.3f} ms",wp])+'</tr>'
+comparison+='</table>'
+conclusion=(out/'conclusion.txt').read_text() if (out/'conclusion.txt').exists() else '结果已完成，逐项独立核验见下方证据。'
+doc='''<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Lavik v0.3.1 默认 defrag 参数复测</title><style>body{font:16px/1.65 system-ui,sans-serif;color:#172c3c;max-width:1150px;margin:40px auto;padding:0 24px}h1{font-size:30px}h2{font-size:22px;margin-top:32px}table{border-collapse:collapse;width:100%;font-size:14px}td,th{padding:10px;text-align:left;border-bottom:1px solid #dde5eb}th{background:#edf3f6}img{width:100%}.note{background:#edf3f6;padding:16px;border-radius:8px}a{color:#146683}code{overflow-wrap:anywhere}</style><h1>Lavik v0.3.1：默认 defrag 参数复测</h1><p>Azure 同一台 4 vCPU 服务端，原生 SPDK，128 条业务连接，不限速，8×128 字节，HGETALL / LAVIK.HREPLACE，均匀键分布。每个点三轮一分钟，表中 QPS 和 p999 均为三轮算术平均，未合并直方图。</p><p class="note">'''+html.escape(conclusion)+'''</p><h2>基础六个点</h2><p>每种规模重新灌入数据，顺序为纯读 → 95:5 → 50:50；每个点预热 60 秒再测 3×60 秒。</p>'''+table(fresh)+'''<h2>成熟 1000 万条数据补测</h2><p>基础 C/B/A 完成后，再持续运行 300 秒 50:50；随后依次测试 95:5、50:50，各预热 60 秒并测 3×60 秒。这两点单独列出，不混入基础六点，也不是一小时稳态验证。是否实际发生 defrag 以每轮计数列为准；95:5 切换后，回收任务可能很快排空。</p>'''+table(mature)+'''<h2>与此前 v0.3.0 同机结果对照</h2><img src="throughput.png" alt="两种规模的发布版吞吐对比">'''+comparison+'''<p>旧基线使用正确 HREPLACE 驱动、相同连接数和 C/B/A 流程，来源已保存。两版顺序测试而非同时或随机交错测试，后台系统活动和物理数据布局可能影响差异；此表说明观测变化，不能单独归因于某一个 PR。</p><h2>版本、参数与审计</h2><p>使用 <a href="https://github.com/eloqdata/lavik/releases/tag/v0.3.1">官方 v0.3.1 x86_64 标准发布包</a>，源码 dc6a3f98f403e952ecd0ffecb95e07eb8d9d7e03；包含 PR #476、#477、#479。发布包 SHA256 为 <code>9412709b508c68ee8e8ed7449705f540570ad7de3544bccbf0d93f1779e6ef71</code>，实际二进制 SHA256 为 <code>29ae32e75ebb79c96cf5535fdf61ec5774dbfbc887fe717dd647ec40f57a9b7e</code>。</p><p>不传入 defrag、flush 或后台调度的覆盖参数。发布版默认值：flush-size-kb=128、defrag-sleep-ms=0、defrag-record-sleep-us=0、defrag-max-active-per-device=8、background-warrant-percent=1、background-budget-us=10。4 个 worker 固定在 CPU 0–3，24GiB 引擎内存上限、26GiB 普通内存 cgroup、2GiB SPDK hugepages，内核 TCP 网络。YCSB 固定源码归档提交 247a2d448ebceff11a570a622c49ece161a27ed3；绑定源码与提交的 Git blob 相符，JAR 与已校验基线相同。</p><p>每轮验证线上 HREPLACE / HGETALL 命令计数与成功更新 / 读取数一致，运行阶段 HMSET 为零；灌入成功数精确等于目标数据量，抽查 1003 个键及字段，确认 scan index 不存在，不执行 DBSIZE / SCAN / KEYS。1Hz 记录空间和 defrag，记录客户端 / 服务端 CPU 及服务端进程。空间指标为原始盘容量减前台可用容量，含元数据、回收预留、临时批量分配，不能视为精确存活数据；单轮变化也不是长期增长斜率。</p><p>常见维护定时器在测试期间临时停止，结束后恢复原状态；Azure Agent 等常驻服务保留。原始结果保留短时异常，不以优化观感为由删除。一次无 .git 目录导致的启动前版本检查失败发生在重置数据盘和负载开始前，修正为源码 / JAR 校验后重启，不计入测量。全部机器保持运行。</p><p><a href="results.json">全部汇总</a> · <a href="audit.json">原始 YCSB 独立审计</a> · <a href="runtime-audit.json">默认参数、命令与空间审计</a> · <a href="client-headroom.json">客户端资源</a> · <a href="release-help.txt">发布版帮助</a> · <a href="release.json">发布元数据</a> · <a href="client-evidence.tgz">客户端原始证据</a> · <a href="server-evidence.tgz">服务端原始证据</a> · <a href="artifact-manifest.json">SHA256 清单</a></p></html>'''
+(out/'report.html').write_text(doc);print('Rendered',len(rows),'points')

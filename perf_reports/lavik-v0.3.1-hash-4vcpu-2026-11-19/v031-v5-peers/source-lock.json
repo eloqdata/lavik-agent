@@ -1,0 +1,27 @@
+{
+  "ycsb_repo": "https://github.com/eloqdata/YCSB",
+  "ycsb_commit": "247a2d448ebceff11a570a622c49ece161a27ed3",
+  "kvrocks_version": "2.17.0",
+  "kvrocks_commit": "185d4221df20af8ed3416e4dec4de8917312a2e9",
+  "dragonfly_version": "v2.1",
+  "redis_version": "8.10.3",
+  "scanindex": "none",
+  "peer_source_archives_sha256": {
+    "redis-8.10.3.tar.gz": "85ae62e175cc76f638015fa18cb384b549b6808a765425d9e9d47466f69532ea",
+    "kvrocks-v2.17.0.tar.gz": "1e47c9b561e618f154ee7a610bb03b8636332cc239a4d6cbf72e301de654f6eb"
+  },
+  "dragonfly_release_archive_sha256": "99c4abdfb0f08de9b228e6bea943ba549e7432ac58386279d6ae08b845f31ae5",
+  "ycsb_jars_sha256": {
+    "core/target/core-0.18.0-SNAPSHOT.jar": "9f7824821c1e464301e64d61975eba000ae4593ec964bc49bea6ecc71e44c66e",
+    "redis/target/redis-binding-0.18.0-SNAPSHOT.jar": "440f273f17660740f7713d21d4eee167232688fd033dbdc52aace9c6b3ee0df1"
+  },
+  "hardware": "Same L4aos_v5 allocation as v0.3.1 run, native sequential peers, 128 connections, no rate limit, 3x60s per point.",
+  "large_redis": "100M not measured: raw field payload alone is102.4GB, exceeding24GiB Redis limit; Redis configuration has no SSD tiering.",
+  "dragonfly_tiering": "100M uses same prior experimental hash tiering and listpack parameters; capacity/load failures are retained and not reported as successful benchmarks.",
+  "dragonfly_build_commit": "1bfc6b18e0e48a9a98c730c25c6c8e788eaf2d85",
+  "binary_sha256": {
+    "bin/redis-server": "820ed85b544a29b7db67852d74f1a9ce69ce131ea08e5abe5ac4f2aec2cdbd70",
+    "bin/kvrocks": "6b907e0256e47485e68dd756f325b46d0106f32076833f84266a1780d596dec7",
+    "dragonfly-release/dragonfly-x86_64": "ea5b802370c8f9ba342dd2829fec9e30f59932b382facd31cd5ff49bd912574b"
+  }
+}

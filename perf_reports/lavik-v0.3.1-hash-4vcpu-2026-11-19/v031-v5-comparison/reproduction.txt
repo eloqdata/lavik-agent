@@ -1,0 +1,52 @@
+同机压测复现说明
+
+环境
+服务端：Azure Standard_L4aos_v5，4 vCPU / 32 GiB，East US regional allocation（未指定可用区），1 个约 2.88 TB 本地 NVMe 设备。
+客户端：Standard_F16als_v7，16 vCPU / 32 GiB，East US zone 3，Java 17.0.21。
+服务端 post-redeploy 实际策略：无 swap、THP=madvise、vm.overcommit_memory=0。所有引擎保持此策略。
+本次 PCI/序列号/IP 等身份见相邻 v031-v5-benchmark/hardware.json 及原始记录；复用脚本前必须替换并核验新机器身份。
+
+数据与负载
+YCSB commit：247a2d448ebceff11a570a622c49ece161a27ed3。
+redis.scanindex=none；每条记录 8 个字段，每字段 128 字节；均匀访问；读取和更新全部字段。
+Lavik 的更新命令是 LAVIK.HREPLACE，竞品 Redis binding 的更新命令是 HMSET。
+128 个压测连接，不设置 -target 限速。
+每个数据集按 C（纯读）、B（95:5）、A（50:50）顺序运行。
+每个测试点先预热 60 秒，然后 3 次各 60 秒；吞吐量和各轮 p999 分别取算术平均，不把三轮直方图合并。
+通过成功插入数及 1003 个固定/分散记录的字段校验确认灌入，不使用 DBSIZE 或全表扫描。
+Kvrocks 在灌入后等待 compaction pending、running 和 estimated debt 连续 3 次（10 秒间隔）为零，再开始测试。
+
+执行顺序
+Lavik 1,000 万条 C/B/A → 继续 5 分钟 A → 追加 B/A；随后重新准备 1 亿条，运行 C/B/A。
+保存、校验所有 Lavik 原始记录后，将同一专用 NVMe 从 SPDK 切回内核驱动、释放 hugepages，建立 ext4 文件系统供竞品使用。
+Redis 1,000 万 → Kvrocks 1,000 万 → Dragonfly 1,000 万 → Kvrocks 1 亿 → Dragonfly 1 亿。各引擎逐个原生运行。
+Redis 1 亿未测试：仅字段值即 102.4 GB，超过 24 GiB 限额，所用 Redis 配置没有 SSD tiering。
+
+关键配置
+Lavik：v0.3.1 官方发布二进制；4 worker，24 GiB 引擎上限，SPDK；后台参数保持发布默认值。
+Redis：8.10.3，io-threads=4，maxmemory=24gb，noeviction，save 为空，appendonly=no。
+Kvrocks：2.17.0，workers=4，rocksdb.block_cache_size=8192 MiB，其余见保存的 bench.conf。
+Dragonfly：v2.1，proactor_threads=4，maxmemory=24gb，cache_mode=false，snapshot_cron 为空。
+Dragonfly 1 亿条额外启用 tiered_prefix、tiered_experimental_hash_support=true、listpack_max_field_len=256、listpack_max_bytes=2048。
+服务 CPU 限制均为 0–3；Lavik cgroup MemoryMax=26 GiB 加 2 GiB SPDK hugepages，竞品 MemoryMax=28 GiB；MemorySwapMax=0。
+配置未统一成相同持久化/崩溃恢复保证；结论限定于报告中的实际配置。
+
+脚本和证据
+相邻 v031-v5-benchmark/scripts 与 v031-v5-peers/scripts 保存启动、灌入、采集、校验与打包脚本。
+各自 run-all.py 为本次编排入口，run.py 为单个 YCSB 阶段入口；脚本固定 /opt/bench 及本次机器路径。
+这些是本次实际环境的复现脚本，不是任意新机器上的一键部署包。重新编译时应核对源版本、记录新的产物哈希，再更新对应校验值。
+peer run-all.py 要求已保存并验证 Lavik 证据；prepare-native.py 会重新格式化专用测试 NVMe，身份校验不得跳过。
+source-lock.json、hardware.json、launch.json、bench.conf 和 invocation.json 是版本、环境、实际服务命令及实际客户端命令的依据。
+原始归档分别为 client-evidence.tgz 和 server-evidence.tgz，SHA256SUMS 校验归档和结果。
+audit-results.py 独立解析 YCSB 文本日志，复算每轮成功操作/运行时间、错误、读写比例、三轮均值和样本校验。
+peer audit-runtime.py 另外核验 CPU affinity、内存 OOM 计数及纯读前后样本哈希。
+client-headroom.json 保存测量窗口内的客户端 CPU、内存和网络采样。
+
+复核示例（先把两份原始归档分别解压到各自 raw/client 和 raw/server；在相应结果目录上一级运行）
+python3 v031-v5-peers/scripts/audit-results.py v031-v5-peers/raw/client/v031-v5-peers --out audit-recomputed.json
+python3 v031-v5-peers/scripts/audit-runtime.py v031-v5-peers/raw/client/v031-v5-peers --out runtime-recomputed.json
+重新生成完整报告：python3 v031-v5-comparison/render-report.py .
+
+本次竞品共14个有效测试点、42个一分钟测量窗口；Dragonfly 1亿条50:50在预热期间触发应用ERR Out of memory。其失败日志保留，不计算该点均值。编排器在结果复核时拒绝了失败预热，随后使用finalize-with-failure.py按明确失败路径验证并打包，其余有效测量保持原样。
+
+报告、运行参数和原始证据上传到 eloqdata/lavik-agent；上传校验完成后释放本次测试云资源。最终资源状态见 cloud-release.json。

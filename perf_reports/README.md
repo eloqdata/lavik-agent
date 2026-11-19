@@ -4,6 +4,7 @@ Original benchmark outputs are organized by the matching report directory in [el
 
 | Report | Scope |
 |---|---|
+| [v0.3.1 4-vCPU Hash YCSB · 2026-11-19](lavik-v0.3.1-hash-4vcpu-2026-11-19) | Same L4aos_v5 allocation: Lavik SPDK, Redis, Kvrocks, Dragonfly; 10M/100M, 8×128B, 128 connections, unlimited, 3×60s. Full raw records, actual parameters, fio qualification procedure and resource-release receipt; Dragonfly100M A warmup OOM is explicitly retained. |
 | [v0.3.0 Aerospike YCSB · io_uring](lavik-v0.3.0-aerospike-ycsb-2026-11-16) | November 16, 2026: 100M records; A/B/C/D at 100K and unlimited; 16 formal windows, raw logs, recovery receipts, metadata and chart generator. |
 | [v0.3.0 vs-memory-databases](lavik-v0.3.0-vs-memory-databases-2026-11-15) | November 15, 2026: 2 / 16 vCPUs, 1M through 1B keys; 272 raw windows, same-host v0.2.0 baseline, Redis/Valkey sweeps and follow-ups. |
 | [Latest main Gaming workloads · 2026-11-11](lavik-main-gaming-2026-11-11) · [中文](lavik-main-gaming-2026-11-11/README.zh-CN.md) | English (default) and Chinese reports and experimental procedures; white-background HTML, workload/client sources, 320-connection A/B/C and 200 GB C results, memory comparisons, selected peer controls, raw Lavik logs and checksums. |
