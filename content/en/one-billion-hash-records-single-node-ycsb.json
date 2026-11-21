@@ -19,15 +19,15 @@
         "id": "report",
         "title": "Benchmark results and reproduction parameters",
         "file": "perf_reports/lavik-v0.3.2-single-node-ycsb-2026-11-21/README.md",
-        "url": "https://github.com/eloqdata/lavik-agent/blob/2da83eec9b5fee09c03a619f4863203f567b75c0/perf_reports/lavik-v0.3.2-single-node-ycsb-2026-11-21/README.md",
-        "sha256": "6f9590bb6bb30901a357348094c5a89e69ca7074d9caab2511947f7882984385"
+        "url": "https://github.com/eloqdata/lavik-agent/blob/3bf0624a3dee209b2d8f88b4eaf52012c1312c63/perf_reports/lavik-v0.3.2-single-node-ycsb-2026-11-21/README.md",
+        "sha256": "8cb1b2b717c410ea23ca71d8ac026cae5798b26afde54bdaef1f52ae87e5efeb"
       },
       {
         "id": "details",
         "title": "Full benchmark report",
         "file": "perf_reports/lavik-v0.3.2-single-node-ycsb-2026-11-21/benchmark-details.md",
-        "url": "https://github.com/eloqdata/lavik-agent/blob/2da83eec9b5fee09c03a619f4863203f567b75c0/perf_reports/lavik-v0.3.2-single-node-ycsb-2026-11-21/benchmark-details.md",
-        "sha256": "8d21b4f7dd62afd228b748b37cec8a32d43c496d2f3c341629843ca6d0ed35d4"
+        "url": "https://github.com/eloqdata/lavik-agent/blob/3bf0624a3dee209b2d8f88b4eaf52012c1312c63/perf_reports/lavik-v0.3.2-single-node-ycsb-2026-11-21/benchmark-details.md",
+        "sha256": "7b29e8899af168d5722c4b2c7f7b665ccec747571fae0f7936072264fd619fd3"
       },
       {
         "id": "fio",
@@ -40,15 +40,15 @@
         "id": "logs",
         "title": "Download YCSB logs and reproduction scripts",
         "file": "perf_reports/lavik-v0.3.2-single-node-ycsb-2026-11-21/README.md",
-        "url": "https://raw.githubusercontent.com/eloqdata/lavik-agent/2da83eec9b5fee09c03a619f4863203f567b75c0/perf_reports/lavik-v0.3.2-single-node-ycsb-2026-11-21/lavik-india-standalone-ycsb-evidence.tar.gz",
-        "sha256": "6f9590bb6bb30901a357348094c5a89e69ca7074d9caab2511947f7882984385"
+        "url": "https://raw.githubusercontent.com/eloqdata/lavik-agent/3bf0624a3dee209b2d8f88b4eaf52012c1312c63/perf_reports/lavik-v0.3.2-single-node-ycsb-2026-11-21/lavik-india-standalone-ycsb-evidence.tar.gz",
+        "sha256": "8cb1b2b717c410ea23ca71d8ac026cae5798b26afde54bdaef1f52ae87e5efeb"
       },
       {
         "id": "capacity",
         "title": "Download the Dragonfly capacity run and 73-million-record logs",
         "file": "perf_reports/lavik-v0.3.2-single-node-ycsb-2026-11-21/README.md",
-        "url": "https://raw.githubusercontent.com/eloqdata/lavik-agent/2da83eec9b5fee09c03a619f4863203f567b75c0/perf_reports/lavik-v0.3.2-single-node-ycsb-2026-11-21/dragonfly-default-capacity.tar.gz",
-        "sha256": "6f9590bb6bb30901a357348094c5a89e69ca7074d9caab2511947f7882984385"
+        "url": "https://raw.githubusercontent.com/eloqdata/lavik-agent/3bf0624a3dee209b2d8f88b4eaf52012c1312c63/perf_reports/lavik-v0.3.2-single-node-ycsb-2026-11-21/dragonfly-default-capacity.tar.gz",
+        "sha256": "8cb1b2b717c410ea23ca71d8ac026cae5798b26afde54bdaef1f52ae87e5efeb"
       },
       {
         "id": "redis-encoding",
@@ -269,9 +269,10 @@
     },
     {
       "type": "paragraph",
-      "text": "Example measured window for Lavik at 80 million records. The billion-record run used recordcount=1000000000. Redis and Dragonfly used the redis binding with the corresponding redis.host, redis.port and redis.timeout properties, plus redis.scanindex=none. All three read with HGETALL. Updates used LAVIK.HREPLACE on Lavik and HMSET on the other two engines. Loading used 64 connections and a pipeline depth of 32.",
+      "text": "Example measured window for Lavik at 80 million records. The billion-record run used recordcount=1000000000. Redis and Dragonfly used the redis binding with the corresponding redis.host, redis.port and redis.timeout properties, plus redis.scanindex=none. All three read with HGETALL. Lavik used LAVIK.HREPLACE to replace the entire Hash without reading its previous field values from NVMe. Redis and Dragonfly used HMSET to write the same eight fields. Loading used 64 connections and a pipeline depth of 32.",
       "sources": [
-        "report"
+        "report",
+        "hash-replace"
       ]
     },
     {
