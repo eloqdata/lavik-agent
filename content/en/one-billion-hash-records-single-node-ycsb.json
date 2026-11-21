@@ -8,7 +8,7 @@
   "summary": "On a single Azure L16aos_v4 VM, Lavik sustained 621,528 operations per second over 1.024 TB of Hash field values. On the same server, Redis sustained 385,755 ops/s over 80 million records. That puts Lavik’s billion-record run at 12.5× the record count and 61.1% higher throughput than the Redis run.",
   "updatedAt": "2026-11-21",
   "publishedAt": "2026-11-21",
-  "sourceRevision": "2da83eec9b5fee09c03a619f4863203f567b75c0",
+  "sourceRevision": "6d54e26adb9f6724edfd35e989971b8236272032",
   "topics": [
     "benchmark"
   ],
@@ -257,7 +257,8 @@
       "type": "paragraph",
       "text": "fio 3.36 read an 8 GiB region on the database partition while YCSB was idle. Each of four jobs used queue depth 32. The protocol PING probe discarded 200 warmup replies before timing 5,000 serial requests.",
       "sources": [
-        "fio"
+        "fio",
+        "report"
       ]
     },
     {

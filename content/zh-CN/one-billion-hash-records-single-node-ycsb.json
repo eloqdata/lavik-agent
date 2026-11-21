@@ -8,7 +8,7 @@
   "summary": "在一台 Azure L16aos_v4 虚拟机上，Lavik 在 10 亿条 Hash 记录上达到每秒 621,528 次操作，字段值合计 1.024 TB。同一台服务器上，Redis 在 8000 万条记录上达到每秒 385,755 次操作。Lavik 的记录数是 Redis 的 12.5 倍，吞吐量高出 61.1%。",
   "updatedAt": "2026-11-21",
   "publishedAt": "2026-11-21",
-  "sourceRevision": "2da83eec9b5fee09c03a619f4863203f567b75c0",
+  "sourceRevision": "6d54e26adb9f6724edfd35e989971b8236272032",
   "topics": [
     "benchmark"
   ],
@@ -257,7 +257,8 @@
       "type": "paragraph",
       "text": "YCSB 空闲时，fio 3.36 在数据库分区的 8 GiB 区域执行读取。4 个作业各使用 32 的队列深度。协议 PING 测试先丢弃 200 次预热应答，再对 5000 次串行请求计时。",
       "sources": [
-        "fio"
+        "fio",
+        "report"
       ]
     },
     {
