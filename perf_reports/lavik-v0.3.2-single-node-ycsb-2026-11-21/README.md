@@ -6,7 +6,7 @@ Lavik sustained 621,528 operations per second over 1.024 TB of Hash field values
 
 ## What happens when the data outgrows RAM?
 
-We started with 80 million records so Redis, Dragonfly and Lavik could all run on the same 128 GiB machine. Each record contained eight 128-byte fields. The values alone occupied 81.92 GB at this scale. Redis and Dragonfly held their datasets in memory. Lavik used the server’s local NVMe drives.
+We started with 80 million records so Redis, Dragonfly and Lavik could all run on the same 128 GiB machine. Each record contained eight 128-byte fields. The values alone occupied 81.92 GB at this scale. Redis and Dragonfly held their datasets in memory. Lavik stored Hash values on local NVMe without an in-memory data cache.
 
 Then we grew only Lavik’s dataset to one billion records. We kept the server, client and 256 connections fixed. For every request, the client chose a key uniformly from the full dataset, including the newly loaded records. It read the whole Hash 95% of the time and updated all eight fields the other 5%.
 
@@ -70,7 +70,7 @@ dragonfly "--bind=10.87.0.21" --port=6379 \
 
 ### YCSB workload and driver parameters
 
-Example measured window for Lavik at 80 million records. The billion-record run used recordcount=1000000000. Redis and Dragonfly used the redis binding with the corresponding redis.host, redis.port and redis.timeout properties, plus redis.scanindex=none. All three read with HGETALL. Updates used LAVIK.HREPLACE on Lavik and HMSET on the other two engines. Loading used 64 connections and a pipeline depth of 32.
+Example measured window for Lavik at 80 million records. The billion-record run used recordcount=1000000000. Redis and Dragonfly used the redis binding with the corresponding redis.host, redis.port and redis.timeout properties, plus redis.scanindex=none. All three read with HGETALL. Lavik used LAVIK.HREPLACE to replace the entire Hash without reading its previous field values from NVMe. Redis and Dragonfly used HMSET to write the same eight fields. Loading used 64 connections and a pipeline depth of 32.
 
 ```
 bin/ycsb.sh run lavik -s -P workloads/workloadb -threads 256 \

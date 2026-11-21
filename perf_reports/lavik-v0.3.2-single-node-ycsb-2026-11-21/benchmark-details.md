@@ -29,9 +29,9 @@ The headline compares the two dataset sizes actually tested. Redis ran at 80 mil
 
 Each database ran alone on an Azure Standard\_L16aos\_v4 in Central India Zone 3, with 16 vCPUs and 128 GiB of RAM. Fourteen vCPUs served the database and two handled the operating system and network interrupts. A separate Standard\_F16als\_v6 generated load in the same zone. Both machines used accelerated networking.
 
-Redis and Dragonfly ran in memory with a 112 GiB limit, eviction disabled and periodic snapshots disabled. Redis AOF was off. Lavik used io\_uring on a raw RAID 0 partition spanning six local NVMe drives, with a 96 GiB engine memory limit.
+Redis and Dragonfly ran in memory with a 112 GiB limit, eviction disabled and periodic snapshots disabled. Redis AOF was off. Lavik stored Hash values on local NVMe without an in-memory data cache. It used io\_uring on a raw RAID 0 partition spanning six local NVMe drives, with a 96 GiB engine memory limit.
 
-YCSB read the entire Hash in 95% of operations and updated all eight fields in the remaining 5%. All engines used `HGETALL` for reads. Lavik’s YCSB binding issued `LAVIK.HREPLACE` for updates. The Redis binding issued `HMSET` for Redis and Dragonfly with `redis.scanindex=none`. Loading used 64 pipelined connections with batches of 32. During measurement, each of the 256 connections issued one request at a time.
+YCSB read the entire Hash in 95% of operations and updated all eight fields in the remaining 5%. All engines used `HGETALL` for reads. Lavik’s YCSB binding issued `LAVIK.HREPLACE` to replace the entire Hash without reading its previous field values from NVMe. The Redis binding issued `HMSET` for Redis and Dragonfly with `redis.scanindex=none`. Loading used 64 pipelined connections with batches of 32. During measurement, each of the 256 connections issued one request at a time.
 
 ## Results by run
 
