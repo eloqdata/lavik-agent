@@ -56,13 +56,34 @@
         "url": "https://github.com/eloqdata/lavik-agent/blob/61961426c789ba7ea530edaecfd7c669c4eb19c0/perf_reports/lavik-v0.3.2-single-node-ycsb-2026-11-21/redis-hash-thresholds.md",
         "sha256": "93fd5440d84de947165baa1207265c6dd22a31e459a346d7e1c17287a5482034",
         "title": "Redis Hash encoding results and raw logs"
+      },
+      {
+        "id": "storage-path",
+        "file": "evidence/technical/single-node-ycsb-hash-updates/04-storage-and-recovery.md",
+        "url": "https://github.com/eloqdata/lavik/blob/6d54e26adb9f6724edfd35e989971b8236272032/docs/architecture/04-storage-and-recovery.md#L21-L26",
+        "sha256": "b6aa7c3f9010fe0e5bbb34b83d5a833459f1741c24f41a37e729c104e319c1ec",
+        "title": "Lavik v0.3.2 storage and read path"
+      },
+      {
+        "id": "hash-replace",
+        "file": "evidence/technical/single-node-ycsb-hash-updates/09-grouped-collections.md",
+        "url": "https://github.com/eloqdata/lavik/blob/6d54e26adb9f6724edfd35e989971b8236272032/docs/architecture/09-grouped-collections.md#L531-L537",
+        "sha256": "32e01e8c350f4a6d44939bcb0ca531dae4f6ff671071086ce2c20078e70d143b",
+        "title": "Lavik v0.3.2 whole-Hash replacement"
+      },
+      {
+        "id": "read-buffers",
+        "title": "Lavik v0.3.2 read-buffer lifetime",
+        "file": "evidence/technical/single-node-ycsb-hash-updates/read-buffer-lifecycle.md",
+        "url": "https://github.com/eloqdata/lavik/blob/6d54e26adb9f6724edfd35e989971b8236272032/docs/architecture/04-storage-and-recovery.md#L815-L859",
+        "sha256": "974464dc6f3ddceb566ed926e7a7531530574745b11fcc19eabccfec65925ff9"
       }
     ],
     "visuals": [
       {
         "id": "measurements",
         "type": "table",
-        "afterBlock": 6,
+        "afterBlock": 7,
         "caption": "YCSB throughput and latency at 256 connections",
         "sources": [
           "details",
@@ -131,6 +152,16 @@
       "type": "paragraph",
       "text": "Then we grew only Lavik’s dataset to one billion records. We kept the server, client and 256 connections fixed. For every request, the client chose a key uniformly from the full dataset, including the newly loaded records. It read the whole Hash 95% of the time and updated all eight fields the other 5%.",
       "sources": [
+        "report"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "Lavik keeps its key index in memory and stores Hash field values on NVMe. Reads can use temporary buffers, but Lavik does not retain completed NVMe reads in an in-memory data cache. For each YCSB update, the Lavik driver sends LAVIK.HREPLACE with all eight fields, replacing the entire Hash without reading the previous field values from NVMe. For Redis and Dragonfly, the Redis driver sends HMSET with the same eight fields. Because every record contains exactly those fields, both commands produce the same logical update in this benchmark.",
+      "sources": [
+        "storage-path",
+        "read-buffers",
+        "hash-replace",
         "report"
       ]
     },

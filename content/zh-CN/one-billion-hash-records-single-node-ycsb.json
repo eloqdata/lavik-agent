@@ -56,13 +56,34 @@
         "url": "https://github.com/eloqdata/lavik-agent/blob/61961426c789ba7ea530edaecfd7c669c4eb19c0/perf_reports/lavik-v0.3.2-single-node-ycsb-2026-11-21/redis-hash-thresholds.md",
         "sha256": "93fd5440d84de947165baa1207265c6dd22a31e459a346d7e1c17287a5482034",
         "title": "Redis Hash 编码对照测试及原始日志"
+      },
+      {
+        "id": "storage-path",
+        "file": "evidence/technical/single-node-ycsb-hash-updates/04-storage-and-recovery.md",
+        "url": "https://github.com/eloqdata/lavik/blob/6d54e26adb9f6724edfd35e989971b8236272032/docs/architecture/04-storage-and-recovery.md#L21-L26",
+        "sha256": "b6aa7c3f9010fe0e5bbb34b83d5a833459f1741c24f41a37e729c104e319c1ec",
+        "title": "Lavik v0.3.2 存储与读取路径"
+      },
+      {
+        "id": "hash-replace",
+        "file": "evidence/technical/single-node-ycsb-hash-updates/09-grouped-collections.md",
+        "url": "https://github.com/eloqdata/lavik/blob/6d54e26adb9f6724edfd35e989971b8236272032/docs/architecture/09-grouped-collections.md#L531-L537",
+        "sha256": "32e01e8c350f4a6d44939bcb0ca531dae4f6ff671071086ce2c20078e70d143b",
+        "title": "Lavik v0.3.2 整条 Hash 替换"
+      },
+      {
+        "id": "read-buffers",
+        "title": "Lavik v0.3.2 读取缓冲区的生命周期",
+        "file": "evidence/technical/single-node-ycsb-hash-updates/read-buffer-lifecycle.md",
+        "url": "https://github.com/eloqdata/lavik/blob/6d54e26adb9f6724edfd35e989971b8236272032/docs/architecture/04-storage-and-recovery.md#L815-L859",
+        "sha256": "974464dc6f3ddceb566ed926e7a7531530574745b11fcc19eabccfec65925ff9"
       }
     ],
     "visuals": [
       {
         "id": "measurements",
         "type": "table",
-        "afterBlock": 6,
+        "afterBlock": 7,
         "caption": "256 个连接下的 YCSB 吞吐量与延迟",
         "sources": [
           "details",
@@ -131,6 +152,16 @@
       "type": "paragraph",
       "text": "随后只把 Lavik 的数据集扩到 10 亿条，服务器、客户端和 256 个连接保持一致。每次请求都在完整数据集内均匀随机选键，覆盖新载入的记录。95% 的请求读取整个 Hash，5% 的请求更新全部 8 个字段。",
       "sources": [
+        "report"
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "Lavik 将键索引放在内存中，Hash 字段值存储在 NVMe 上。读取时会使用临时缓冲区；NVMe 读取完成后，Lavik 不会将结果保留在内存数据缓存中。每次 YCSB 更新时，Lavik 驱动通过 LAVIK.HREPLACE 提交全部 8 个字段，直接替换整条 Hash，无需从 NVMe 读取旧字段值。Redis 和 Dragonfly 使用 HMSET 写入同样的 8 个字段。由于每条记录恰好只含这 8 个字段，两种命令在本次测试中的更新结果相同。",
+      "sources": [
+        "storage-path",
+        "read-buffers",
+        "hash-replace",
         "report"
       ]
     },
