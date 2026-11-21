@@ -106,10 +106,17 @@ test("blog covers, recent posts and topic filters work in both languages", async
       .first()
       .getAttribute("src");
     await page.locator(".blog-card-link").first().click();
-    await expect(page.locator(".blog-detail .blog-cover")).toHaveAttribute(
-      "src",
-      firstImage!,
-    );
+    if (page.url().includes("/one-billion-hash-records-single-node-ycsb/")) {
+      await expect(
+        page.locator(".ycsb-throughput .throughput-bar"),
+      ).toHaveCount(4);
+      await expect(page.locator(".benchmark-command pre code")).toHaveCount(6);
+    } else {
+      await expect(page.locator(".blog-detail .blog-cover")).toHaveAttribute(
+        "src",
+        firstImage!,
+      );
+    }
     await expect(page.locator(".blog-sidebar")).toBeVisible();
     await expect(page.locator(".docs-sidebar")).toHaveCount(0);
   }

@@ -5,6 +5,12 @@ import { technicalPublicationErrors } from "../../../packages/blog/technical-pub
 import "./technical-article.css";
 import { defaultDocVersion } from "../../../packages/docs/versions";
 
+// Display complete benchmark commands with shell continuations at option boundaries.
+function commandLines(text: string) {
+  const parts = text.split(/ (?="--|--|-[pP] |-[scinW] |-threads )/);
+  return parts.join(" " + String.fromCharCode(92, 10) + "  ");
+}
+
 export function TechnicalArticleBody({ article }: { article: Article }) {
   const errors = technicalPublicationErrors(article);
   if (errors.length) throw new Error(errors.join("\n"));
@@ -44,87 +50,104 @@ export function TechnicalArticleBody({ article }: { article: Article }) {
         </ol>
       </nav>
       <div className="prose">
-        {article.blocks.map((block, i) => (
-          <Fragment key={i}>
-            {block.type === "heading" ? (
-              <h2 id={`section-${i}`}>{block.text}</h2>
-            ) : block.type === "paragraph" ? (
-              <p>
-                {block.text}
-                {citations(block.sources)}
-              </p>
-            ) : null}
-            {visuals
-              .filter((visual) => visual.afterBlock === i)
-              .map((visual) =>
-                visual.type === "table" ? (
-                  <figure
-                    className="technical-figure"
-                    key={visual.id}
-                    id={visual.id}
-                  >
-                    <div
-                      className="technical-table-scroll"
-                      role="region"
-                      aria-label={visual.caption}
-                      tabIndex={0}
+        {article.blocks.map((block, i) => {
+          const command =
+            article.id === "one-billion-hash-records-single-node-ycsb" &&
+            block.type === "paragraph" &&
+            /^(?:lavik --|redis-server --|dragonfly "|bin\/ycsb\.sh run |fio --|ping -n )/.test(
+              block.text,
+            );
+          return (
+            <Fragment key={i}>
+              {block.type === "heading" ? (
+                <h2 id={`section-${i}`}>{block.text}</h2>
+              ) : command && block.type === "paragraph" ? (
+                <div className="benchmark-command">
+                  <pre>
+                    <code>{commandLines(block.text)}</code>
+                  </pre>
+                  {citations(block.sources)}
+                </div>
+              ) : block.type === "paragraph" ? (
+                <p>
+                  {block.text}
+                  {citations(block.sources)}
+                </p>
+              ) : null}
+              {visuals
+                .filter((visual) => visual.afterBlock === i)
+                .map((visual) =>
+                  visual.type === "table" ? (
+                    <figure
+                      className="technical-figure"
+                      key={visual.id}
+                      id={visual.id}
                     >
-                      <table>
-                        <caption>{visual.caption}</caption>
-                        <thead>
-                          <tr>
-                            {visual.columns.map((column, n) => (
-                              <th scope="col" key={n}>
-                                {column}
-                              </th>
-                            ))}
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {visual.rows.map((row, n) => (
-                            <tr key={n}>
-                              {row.map((cell, j) =>
-                                j === 0 ? (
-                                  <th scope="row" key={j}>
-                                    {cell}
-                                  </th>
-                                ) : (
-                                  <td key={j}>{cell}</td>
-                                ),
-                              )}
+                      <div
+                        className="technical-table-scroll"
+                        role="region"
+                        aria-label={visual.caption}
+                        tabIndex={0}
+                      >
+                        <table>
+                          <caption>{visual.caption}</caption>
+                          <thead>
+                            <tr>
+                              {visual.columns.map((column, n) => (
+                                <th scope="col" key={n}>
+                                  {column}
+                                </th>
+                              ))}
                             </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
-                    <figcaption>
-                      {zh ? "来源与计算依据" : "Sources and calculation inputs"}
-                      {citations(visual.sources)}
-                    </figcaption>
-                  </figure>
-                ) : (
-                  <figure
-                    className="technical-figure"
-                    key={visual.id}
-                    id={visual.id}
-                  >
-                    <img
-                      src={visual.src}
-                      alt={visual.alt}
-                      width={visual.width}
-                      height={visual.height}
-                      loading="lazy"
-                      decoding="async"
-                    />
-                    <figcaption>
-                      {visual.caption}
-                      {citations(visual.sources)}
-                    </figcaption>
-                  </figure>
-                ),
-              )}
-          </Fragment>
-        ))}
+                          </thead>
+                          <tbody>
+                            {visual.rows.map((row, n) => (
+                              <tr key={n}>
+                                {row.map((cell, j) =>
+                                  j === 0 ? (
+                                    <th scope="row" key={j}>
+                                      {cell}
+                                    </th>
+                                  ) : (
+                                    <td key={j}>{cell}</td>
+                                  ),
+                                )}
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                      <figcaption>
+                        {zh
+                          ? "来源与计算依据"
+                          : "Sources and calculation inputs"}
+                        {citations(visual.sources)}
+                      </figcaption>
+                    </figure>
+                  ) : (
+                    <figure
+                      className="technical-figure"
+                      key={visual.id}
+                      id={visual.id}
+                    >
+                      <img
+                        src={visual.src}
+                        alt={visual.alt}
+                        width={visual.width}
+                        height={visual.height}
+                        loading="lazy"
+                        decoding="async"
+                      />
+                      <figcaption>
+                        {visual.caption}
+                        {citations(visual.sources)}
+                      </figcaption>
+                    </figure>
+                  ),
+                )}
+            </Fragment>
+          );
+        })}
       </div>
       <aside className="technical-next">
         <h2>{zh ? "从自己的数据集开始" : "Start with your dataset"}</h2>

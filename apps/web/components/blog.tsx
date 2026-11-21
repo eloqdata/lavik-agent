@@ -106,10 +106,47 @@ export function BlogSidebar({
 export function BlogCover({
   article,
   priority = false,
+  card = false,
 }: {
   article: Article;
   priority?: boolean;
+  card?: boolean;
 }) {
+  if (!card && article.id === "one-billion-hash-records-single-node-ycsb") {
+    const table = article.technical?.visuals.find(
+      (v) => v.id === "measurements",
+    );
+    if (table?.type === "table") {
+      const zh = article.locale === "zh-CN";
+      const rates = table.rows.map((row) => Number(row[2].replaceAll(",", "")));
+      const maximum = Math.max(...rates);
+      return (
+        <figure className="ycsb-throughput">
+          <figcaption>
+            {zh
+              ? "256 个连接下的平均吞吐量"
+              : "Average throughput at 256 connections"}
+          </figcaption>
+          {table.rows.map(([engine, records, rate], i) => (
+            <div key={engine + records}>
+              <span>
+                {engine} · {records}
+                {zh ? "条记录" : " records"} · {rate} {zh ? "次/秒" : "ops/s"}
+              </span>
+              <div
+                aria-hidden="true"
+                className="throughput-bar"
+                style={{
+                  width: (100 * rates[i]) / maximum + "%",
+                  backgroundColor: engine === "Lavik" ? "#17715f" : "#728884",
+                }}
+              />
+            </div>
+          ))}
+        </figure>
+      );
+    }
+  }
   return (
     <img
       className="blog-cover"
@@ -211,7 +248,7 @@ export function BlogIndex({
                   href={articlePath(article)}
                 >
                   <div className="blog-featured-art">
-                    <BlogCover article={article} priority={index === 0} />
+                    <BlogCover card article={article} priority={index === 0} />
                   </div>
                   <div className="blog-featured-copy">
                     <p className="blog-featured-label">
@@ -245,6 +282,7 @@ export function BlogIndex({
               <Link className="blog-card-link" href={articlePath(article)}>
                 <div className="blog-cover-frame">
                   <BlogCover
+                    card
                     article={article}
                     priority={featured.length === 0 && index === 0}
                   />
