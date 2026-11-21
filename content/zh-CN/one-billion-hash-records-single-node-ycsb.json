@@ -198,28 +198,28 @@
     },
     {
       "type": "paragraph",
-      "text": "三个服务均绑定到 CPU 0–13，文件描述符上限为 65,535。CPU 14–15 留给操作系统和网卡中断。Redis 和 Dragonfly 在内存中运行。",
+      "text": "三个服务均绑定到 CPU 0–13，文件描述符上限为 65,535。CPU 14–15 留给操作系统和网卡中断。Redis 和 Dragonfly 在内存中运行。下列命令省略了取默认值的冗余参数。完整启动命令见归档脚本。",
       "sources": [
         "report"
       ]
     },
     {
       "type": "paragraph",
-      "text": "lavik --storage=uring --network=kernel --bind \"10.87.0.21\" --port 6379 --metrics-port 9100 --threads 14 --pin-workers --max-memory 96gb --shutdown-checkpoint --data-file \"/dev/md/lavikbench3\" --log-dir \"/var/lib/lavik-bench/india-single-lavik\"",
+      "text": "lavik --storage=uring --bind \"10.87.0.21\" --metrics-port 9100 --threads 14 --pin-workers --max-memory 96gb --shutdown-checkpoint --data-file \"/dev/md/lavikbench3\" --log-dir \"/var/lib/lavik-bench/india-single-lavik\"",
       "sources": [
         "report"
       ]
     },
     {
       "type": "paragraph",
-      "text": "redis-server --bind \"10.87.0.21\" --protected-mode no --save \"\" --appendonly no --maxmemory \"112gb\" --maxmemory-policy noeviction --hash-max-listpack-value 256 --hash-max-listpack-entries 512 --io-threads 14 --port 6379",
+      "text": "redis-server --bind \"10.87.0.21\" --protected-mode no --save \"\" --maxmemory \"112gb\" --hash-max-listpack-value 256 --io-threads 14",
       "sources": [
         "report"
       ]
     },
     {
       "type": "paragraph",
-      "text": "dragonfly \"--bind=10.87.0.21\" --port=6379 \"--maxmemory=112gb\" --proactor_threads=14 --snapshot_cron= --cache_mode=false",
+      "text": "dragonfly \"--bind=10.87.0.21\" \"--maxmemory=112gb\" --proactor_threads=14",
       "sources": [
         "report"
       ]
