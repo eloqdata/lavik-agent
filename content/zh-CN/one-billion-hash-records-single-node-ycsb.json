@@ -49,6 +49,13 @@
         "file": "perf_reports/lavik-v0.3.2-single-node-ycsb-2026-11-21/README.md",
         "url": "https://raw.githubusercontent.com/eloqdata/lavik-agent/2da83eec9b5fee09c03a619f4863203f567b75c0/perf_reports/lavik-v0.3.2-single-node-ycsb-2026-11-21/dragonfly-default-capacity.tar.gz",
         "sha256": "6f9590bb6bb30901a357348094c5a89e69ca7074d9caab2511947f7882984385"
+      },
+      {
+        "id": "redis-encoding",
+        "file": "perf_reports/lavik-v0.3.2-single-node-ycsb-2026-11-21/redis-hash-thresholds.md",
+        "url": "https://github.com/eloqdata/lavik-agent/blob/61961426c789ba7ea530edaecfd7c669c4eb19c0/perf_reports/lavik-v0.3.2-single-node-ycsb-2026-11-21/redis-hash-thresholds.md",
+        "sha256": "93fd5440d84de947165baa1207265c6dd22a31e459a346d7e1c17287a5482034",
+        "title": "Redis Hash 编码对照测试及原始日志"
       }
     ],
     "visuals": [
@@ -154,6 +161,13 @@
       ]
     },
     {
+      "type": "paragraph",
+      "text": "使用默认 Hash 阈值时，Redis 在 6500 万条记录下达到每秒 351,594 次操作。将 hash-max-listpack-value 从 64 调高到 256 字节后，128 字节的字段值可以使用紧凑编码。该配置在 8000 万条记录下达到每秒 385,755 次操作，吞吐高出 9.7%。默认配置的读取和更新 P99.9 更低，分别为 2.396 和 2.418 毫秒；8000 万条调优组分别为 2.553 和 2.627 毫秒。",
+      "sources": [
+        "redis-encoding"
+      ]
+    },
+    {
       "type": "heading",
       "text": "测试环境与方法"
     },
@@ -181,13 +195,6 @@
     {
       "type": "paragraph",
       "text": "各数据库单独运行。预热 30 秒后，通过 256 个不使用流水线的连接测量三个 60 秒窗口。表中吞吐量为三轮均值，延迟为各窗口分别计算 P99.9 后的均值。测量期间所有读取和更新均成功。",
-      "sources": [
-        "report"
-      ]
-    },
-    {
-      "type": "paragraph",
-      "text": "Redis 设置了 hash-max-listpack-value=256，让 128 字节的字段值可以使用紧凑编码。",
       "sources": [
         "report"
       ]

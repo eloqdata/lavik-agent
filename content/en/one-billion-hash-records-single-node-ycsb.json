@@ -49,6 +49,13 @@
         "file": "perf_reports/lavik-v0.3.2-single-node-ycsb-2026-11-21/README.md",
         "url": "https://raw.githubusercontent.com/eloqdata/lavik-agent/2da83eec9b5fee09c03a619f4863203f567b75c0/perf_reports/lavik-v0.3.2-single-node-ycsb-2026-11-21/dragonfly-default-capacity.tar.gz",
         "sha256": "6f9590bb6bb30901a357348094c5a89e69ca7074d9caab2511947f7882984385"
+      },
+      {
+        "id": "redis-encoding",
+        "file": "perf_reports/lavik-v0.3.2-single-node-ycsb-2026-11-21/redis-hash-thresholds.md",
+        "url": "https://github.com/eloqdata/lavik-agent/blob/61961426c789ba7ea530edaecfd7c669c4eb19c0/perf_reports/lavik-v0.3.2-single-node-ycsb-2026-11-21/redis-hash-thresholds.md",
+        "sha256": "93fd5440d84de947165baa1207265c6dd22a31e459a346d7e1c17287a5482034",
+        "title": "Redis Hash encoding results and raw logs"
       }
     ],
     "visuals": [
@@ -154,6 +161,13 @@
       ]
     },
     {
+      "type": "paragraph",
+      "text": "With the default Hash thresholds, Redis averaged 351,594 ops/s at 65 million records. Raising hash-max-listpack-value from 64 to 256 bytes let Redis use compact encoding for the 128-byte field values. At 80 million records, that configuration delivered 9.7% higher throughput (385,755 ops/s). The default run had lower read and update P99.9: 2.396 and 2.418 ms, versus 2.553 and 2.627 ms in the 80-million-record run.",
+      "sources": [
+        "redis-encoding"
+      ]
+    },
+    {
       "type": "heading",
       "text": "Benchmark setup"
     },
@@ -181,13 +195,6 @@
     {
       "type": "paragraph",
       "text": "Each database ran alone. After a 30-second warmup, we measured three 60-second windows with 256 unpipelined connections. We report the mean throughput and mean of the per-window latency percentiles. All measured reads and updates succeeded.",
-      "sources": [
-        "report"
-      ]
-    },
-    {
-      "type": "paragraph",
-      "text": "Redis used hash-max-listpack-value=256 so the 128-byte values qualified for compact encoding.",
       "sources": [
         "report"
       ]
