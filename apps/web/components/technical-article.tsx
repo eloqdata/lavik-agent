@@ -16,6 +16,17 @@ export function TechnicalArticleBody({ article }: { article: Article }) {
   if (errors.length) throw new Error(errors.join("\n"));
   const { sources, visuals } = article.technical!;
   const zh = article.locale === "zh-CN";
+  const benchmarkRelease =
+    article.id === "one-billion-hash-records-single-node-ycsb"
+      ? "0.3.2"
+      : undefined;
+  const installVersion = benchmarkRelease ?? defaultDocVersion;
+  const installHref = benchmarkRelease
+    ? `https://github.com/eloqdata/lavik/releases/tag/v${benchmarkRelease}`
+    : `/${article.locale}/docs/${defaultDocVersion}/quick-start/`;
+  const migrateHref = benchmarkRelease
+    ? `https://github.com/eloqdata/lavik/blob/v${benchmarkRelease}/docs/operations/redis-import.md`
+    : `/${article.locale}/docs/${defaultDocVersion}/migrate-redis/`;
   const citations = (ids: string[]) => (
     <span className="technical-citations">
       {ids.map((id) => {
@@ -153,19 +164,14 @@ export function TechnicalArticleBody({ article }: { article: Article }) {
         <h2>{zh ? "从自己的数据集开始" : "Start with your dataset"}</h2>
         <p>
           {zh
-            ? `安装 Lavik ${defaultDocVersion}，回放真实负载，再用 RedisShake 规划迁移。`
-            : `Install Lavik ${defaultDocVersion}, replay your workload, and plan the migration with RedisShake.`}
+            ? `安装 Lavik ${installVersion}，回放真实负载，再用 RedisShake 规划迁移。`
+            : `Install Lavik ${installVersion}, replay your workload, and plan the migration with RedisShake.`}
         </p>
         <div>
-          <Link
-            className="button primary"
-            href={`/${article.locale}/docs/${defaultDocVersion}/quick-start/`}
-          >
+          <Link className="button primary" href={installHref}>
             {zh ? "开始使用" : "Get started"} →
           </Link>
-          <Link
-            href={`/${article.locale}/docs/${defaultDocVersion}/migrate-redis/`}
-          >
+          <Link href={migrateHref}>
             {zh ? "RedisShake 迁移指南" : "RedisShake migration guide"} →
           </Link>
           <Link href={`/${article.locale}/benchmarks/`}>
